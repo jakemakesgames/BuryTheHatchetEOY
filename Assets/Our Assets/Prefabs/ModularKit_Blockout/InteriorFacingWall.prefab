@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4959346103899160}
   - component: {fileID: 33190479112315010}
   - component: {fileID: 23105362507528422}
+  - component: {fileID: 65549835885538178}
   m_Layer: 0
   m_Name: InteriorFacingWall
   m_TagString: Untagged
@@ -34,7 +35,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1370405366190690}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -82,3 +83,15 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1370405366190690}
   m_Mesh: {fileID: 4300000, guid: 10cfb2673fa84b14faa47c636ca300d4, type: 3}
+--- !u!65 &65549835885538178
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1370405366190690}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2, z: 1}
+  m_Center: {x: -0.5, y: 1, z: 0.5}
