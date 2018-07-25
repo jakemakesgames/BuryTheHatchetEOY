@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4130127144205616}
-  - component: {fileID: 114116577935581636}
+  - component: {fileID: 114035070853765762}
   m_Layer: 0
   m_Name: NewCam
   m_TagString: Untagged
@@ -115,7 +115,7 @@ AudioListener:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1696856033005618}
   m_Enabled: 1
---- !u!114 &114116577935581636
+--- !u!114 &114035070853765762
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -123,7 +123,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1631576134071466}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa5a66b9675ecc54c97e47c921e33e27, type: 3}
+  m_Script: {fileID: 11500000, guid: 6a59240ea9da66441af2ef6f0688b79e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_speed: 10
