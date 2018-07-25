@@ -32,8 +32,8 @@ public class Enemy : MonoBehaviour {
     //private Melee m_melee;
     private GameObject m_player;
     [SerializeField] private List<Transform> m_wanderPoints;
-    delegate void OnDeath(Enemy a_enemy);
-    OnDeath died;
+    public delegate void Dead(Enemy enemy);
+    public Dead OnDeath;
     STATE m_state;
     void Awake()
     {
@@ -52,6 +52,7 @@ public class Enemy : MonoBehaviour {
         //{
         //    return;
         //}
+       
     }
 
     // Use this for initialization
@@ -74,12 +75,16 @@ public class Enemy : MonoBehaviour {
             }
             else if (m_distBetweenPlayer <= m_fleeDist + 0.1 && m_distBetweenPlayer >= m_fleeDist - 0.1)
             {
-                m_state = STATE.STATIONARY;
+                return;
             }
             else if (m_distBetweenPlayer < m_fleeDist)
             {
                 m_state = STATE.FLEE;
             }
+        }
+        else
+        {
+            m_state = STATE.WANDER;
         }
 
         if (m_gunDistToPlayer < m_fireDist)
@@ -89,10 +94,11 @@ public class Enemy : MonoBehaviour {
 
         if (m_health <= 0)
         {
-            if (died != null)
+            if (OnDeath != null)
             {
-                died(this);
+                OnDeath(this);
             }
+            Destroy(this);
         }
 
         switch (m_state)
@@ -106,11 +112,11 @@ public class Enemy : MonoBehaviour {
             case STATE.FLEE:
                 Flee();
                 break;
-            case STATE.STATIONARY:
-                return;
             case STATE.COVER:
                 FindCover();
                 break;
+            default:
+                return;
         }
     }
 
@@ -140,14 +146,8 @@ public class Enemy : MonoBehaviour {
     {
 
     }
-    private void OnTriggerEnter(Collider other)
-    {
-       //if (other.tag == "Enemy" && state )
-       //{
-       //    //Find new wander pos
-       //}
-    }
-    private void OnDrawGizmosSelected()
+
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, m_seekDist);
