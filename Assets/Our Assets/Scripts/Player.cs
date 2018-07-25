@@ -16,24 +16,32 @@ public class Player : MonoBehaviour, IDamagable {
     [SerializeField] private GameObject m_equippedWeapon;
     [SerializeField] private List<GameObject> m_heldWeapons;
 
+    public event System.Action OnDeath;
+
     public void TakeHit(int a_damage, RaycastHit a_hit) {
+        TakeDamage(a_damage);
+    }
+    public void TakeDamage(int a_damage) {
         m_health -= a_damage;
-        if (m_health <= 0 && !m_dead) {
+        if (m_health <= 0 && !m_dead)
+        {
             m_dead = true;
         }
     }
 
-    private void OnDeath()
+    private void Die()
     {
         m_dead = true;
+        if (OnDeath != null) {
+            OnDeath();
+        }
     }
 
-	void Start () {
+    private void Start () {
         m_health = m_maxHealth;
     }
-	
-	// Update is called once per frame
-	void Update () {
+    
+    private void Update () {
 		
 	}
 }

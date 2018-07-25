@@ -12,7 +12,7 @@ public class WeaponController : MonoBehaviour {
     public Gun m_startingGun;
     private Gun m_equippedGun;
 
-    public void Start() {
+    public void Awake() {
         if (m_startingGun != null) {
             EquipGun(m_startingGun);
         }

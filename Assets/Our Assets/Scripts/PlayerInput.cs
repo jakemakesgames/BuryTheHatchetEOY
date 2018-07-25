@@ -49,15 +49,15 @@ public class PlayerInput : MonoBehaviour {
 
     }
 
-    public void Move(Vector3 a_velocity) {
+    private void Move(Vector3 a_velocity) {
         m_velocity = a_velocity;
     }
 
-    public void LookAt(Vector3 a_lookPoint) {
+    private void LookAt(Vector3 a_lookPoint) {
         Vector3 heightCorrectedLookPoint = new Vector3(a_lookPoint.x, transform.position.y, a_lookPoint.z);
         transform.LookAt(heightCorrectedLookPoint);
     }
-    public void Dash()
+    private void Dash()
     {
         m_rb.AddForce(m_rb.transform.forward * m_dashSpeed);
     }
@@ -66,8 +66,8 @@ public class PlayerInput : MonoBehaviour {
         m_weaponController = GetComponent<WeaponController>();
         m_viewCamera = Camera.main;
     }
-    // Update is called once per frame
-    void Update () {
+
+    private void Update () {
         //Player movement
         Vector3 movement = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
         Vector3 moveVelocity = movement.normalized * m_speed;
@@ -90,8 +90,8 @@ public class PlayerInput : MonoBehaviour {
         }
 
     }
-   //Anything involving the player's inputs and physics will go here
-    public void FixedUpdate() {
+    //Anything involving the player's inputs and physics will go here
+    private void FixedUpdate() {
         m_rb.MovePosition(m_rb.position + m_velocity * Time.fixedDeltaTime);
     }
 }

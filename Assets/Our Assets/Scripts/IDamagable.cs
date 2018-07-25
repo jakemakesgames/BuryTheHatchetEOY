@@ -8,6 +8,7 @@ using UnityEngine;
 //Last edited 25/07/2018
 public interface IDamagable {
 
-    void TakeHit(int damage, RaycastHit hit);
+    void TakeHit(int a_damage, RaycastHit a_hit);
+    void TakeDamage(int a_damage);
 
 }

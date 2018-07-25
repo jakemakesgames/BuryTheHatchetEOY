@@ -10,10 +10,22 @@ using UnityEngine;
 public class Projectile : MonoBehaviour {
 
     private float m_lifeTime = 20 /*seconds*/;
+    private float m_skinWidth = 0.1f;
     private float m_speed = 10;
     private int m_damage = 1;
-    private LayerMask collisionMask;
+    private LayerMask m_collisionMask;
 
+
+    //delete the projectile if it has existed for too long
+    private void Start() {
+        Destroy(gameObject, m_lifeTime);
+
+        Collider[] initialCollision = Physics.OverlapSphere(transform.position, .1f, m_collisionMask);
+        if (initialCollision.Length > 0) {
+            OnHitObject(initialCollision[0]);
+        }
+    }
+    //speed control from outside the class
     public void SetSpeed(float a_speed) {
         m_speed = a_speed;
     }
@@ -23,7 +35,7 @@ public class Projectile : MonoBehaviour {
     }
 
     public void SetCollisionLayer(LayerMask a_collsionMask) {
-        collisionMask = a_collsionMask;
+        m_collisionMask = a_collsionMask;
     }
 
     public void Update () {
@@ -35,7 +47,7 @@ public class Projectile : MonoBehaviour {
     private void CheckCollisions(float a_distanceToMove) {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, a_distanceToMove, collisionMask)) {
+        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_collisionMask)) {
             OnHitObject(hit);
         }
     }
@@ -44,6 +56,15 @@ public class Projectile : MonoBehaviour {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
         if (damagableObject != null) {
             damagableObject.TakeHit(m_damage, a_hit);
+        }
+        Destroy(gameObject);
+    }
+    private void OnHitObject(Collider a_c)
+    {
+        IDamagable damagableObject = a_c.GetComponent<IDamagable>();
+        if (damagableObject != null)
+        {
+            damagableObject.TakeDamage(m_damage);
         }
         Destroy(gameObject);
     }

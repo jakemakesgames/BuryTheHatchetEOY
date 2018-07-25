@@ -13,6 +13,7 @@ public class Gun : MonoBehaviour {
     public float m_msBetweenShots = 100;
     public float m_muzzleVelocity = 35;
     public float m_effectiveDistance = 15;
+    public LayerMask m_collisionLayer;
 
     private float nextShotTime;
     public void Shoot() {
@@ -21,6 +22,7 @@ public class Gun : MonoBehaviour {
             nextShotTime = Time.time + m_msBetweenShots / 1000;
             Projectile newProjectile = Instantiate(m_projectile, m_muzzle.position, m_muzzle.rotation) as Projectile;
             newProjectile.SetSpeed(m_muzzleVelocity);
+            newProjectile.SetCollisionLayer(m_collisionLayer);
         }
     }
     
