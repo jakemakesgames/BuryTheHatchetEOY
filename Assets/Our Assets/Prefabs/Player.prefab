@@ -40,9 +40,9 @@ GameObject:
   - component: {fileID: 114528098140477852}
   - component: {fileID: 54806016599709308}
   - component: {fileID: 114536937277511750}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -67,7 +67,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1999925407510398}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.203, z: 0}
+  m_LocalPosition: {x: -8.562432, y: 1.5, z: 2.6559563}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4872053998842146}
@@ -157,6 +157,9 @@ MonoBehaviour:
   m_weaponHold: {fileID: 4872053998842146}
   m_startingGun: {fileID: 114749405408589246, guid: fa880337db1abf54880a09e8b58ac82c,
     type: 2}
+  m_collisionMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!136 &136361415522540008
 CapsuleCollider:
   m_ObjectHideFlags: 1

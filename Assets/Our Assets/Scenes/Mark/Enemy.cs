@@ -5,7 +5,7 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(Rigidbody))]
-public class Enemy : MonoBehaviour {
+public class Enemy : MonoBehaviour, IDamagable {
     enum STATE
     {
         WANDER,
@@ -15,6 +15,7 @@ public class Enemy : MonoBehaviour {
         COVER
     }
     private float m_health;
+    [SerializeField] float m_maxHealth = 5;
     [SerializeField] private float m_speed;
     [SerializeField] private float m_maxSpeed;
     [SerializeField] private float m_seekDist;
@@ -28,7 +29,7 @@ public class Enemy : MonoBehaviour {
     private bool m_isDesperate;
     private bool m_isReloading;
     private GameObject m_weapon;
-    //private Gun m_gun;
+    private Gun m_gun;
     //private Melee m_melee;
     private GameObject m_player;
     [SerializeField] private List<Transform> m_wanderPoints;
@@ -38,26 +39,32 @@ public class Enemy : MonoBehaviour {
     void Awake()
     {
         m_player = GameObject.FindGameObjectWithTag("Player");
-        m_weapon = transform.GetChild(0).gameObject;
 
-        //if(m_weapon.tag == "Gun")
-        //{
-        //    m_gun = m_weapon.GetComponent<Gun>();
-        //}
-        //else if (m_weapon.tag == "Melee")
-        //{
-        //    m_melee = m_weapon.GetComponent<Melee>();
-        //}
-        //else
-        //{
-        //    return;
-        //}
+
+
        
     }
 
     // Use this for initialization
     void Start()
     {
+        m_weapon = transform.GetChild(0).GetChild(0).gameObject;
+
+       if(m_weapon.tag == "Gun")
+       {
+           m_gun = m_weapon.GetComponent<Gun>();
+       }
+       else if (m_weapon.tag == "Melee")
+       {
+          // m_melee = m_weapon.GetComponent<Melee>();
+       }
+       else
+       {
+           return;
+       }
+
+        m_health = m_maxHealth;
+
 
     }
 
@@ -91,6 +98,7 @@ public class Enemy : MonoBehaviour {
         {
             Attack();
         }
+        Debug.Log(m_gunDistToPlayer);
 
         if (m_health <= 0)
         {
@@ -98,7 +106,7 @@ public class Enemy : MonoBehaviour {
             {
                 OnDeath(this);
             }
-            Destroy(this);
+            Destroy(gameObject);
         }
 
         switch (m_state)
@@ -139,10 +147,19 @@ public class Enemy : MonoBehaviour {
 
     void Attack()
     {
-        Debug.Log("Attack");
+        m_gun.Shoot();
     }
 
-    void FindCover()
+    public void TakeHit(int a_damage, RaycastHit a_hit)
+    {
+        TakeDamage(a_damage);
+    }
+
+    public void TakeDamage(int a_damage)
+    {
+        m_health -= a_damage;
+    }
+    public void FindCover()
     {
 
     }
