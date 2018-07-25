@@ -16,6 +16,9 @@ public class Gun : MonoBehaviour {
     public LayerMask m_collisionLayer;
 
     private float nextShotTime;
+    public void SetCollisionLayer(LayerMask a_collsionMask) {
+        m_collisionLayer = a_collsionMask;
+    }
     public void Shoot() {
 
         if (Time.time > nextShotTime) {

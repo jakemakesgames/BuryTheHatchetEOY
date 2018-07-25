@@ -11,10 +11,12 @@ public class WeaponController : MonoBehaviour {
     public Transform m_weaponHold;
     public Gun m_startingGun;
     private Gun m_equippedGun;
+    public LayerMask m_collisionMask;
 
     public void Awake() {
         if (m_startingGun != null) {
             EquipGun(m_startingGun);
+            m_equippedGun.SetCollisionLayer(m_collisionMask);
         }
     }
     public void EquipGun(Gun gunToEquip) {
