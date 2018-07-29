@@ -64,7 +64,6 @@ public class Enemy : MonoBehaviour, IDamagable {
 
         m_health = m_maxHealth;
 
-
     }
 
     // Update is called once per frame
@@ -101,10 +100,6 @@ public class Enemy : MonoBehaviour, IDamagable {
         if (m_isReloading == true)
         {
             m_state = STATE.COVER;
-        }
-        else
-        {
-            m_state = STATE.WANDER;
         }
 
         if (m_health <= 0)
@@ -208,11 +203,10 @@ public class Enemy : MonoBehaviour, IDamagable {
         }
 
         Vector3 dirFromPlayer = nearestPoint.position;
-        dirFromPlayer = (( m_player.transform.position - nearestPoint.position).normalized);
+        dirFromPlayer = (( -m_player.transform.position - nearestPoint.position).normalized);
 
-        Vector3 finalPoint = (nearestPoint.position + dirFromPlayer); //5 == cover object's radius;
-        finalPoint = new Vector3(finalPoint.x, nearestPoint.position.y, finalPoint.z * 1.3f);
-
+        Vector3 finalPoint = (nearestPoint.position + dirFromPlayer);
+        finalPoint = new Vector3(finalPoint.x * 1.3f, nearestPoint.position.y, finalPoint.z * 1.3f);
         return finalPoint;
     }
 
