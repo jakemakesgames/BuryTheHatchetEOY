@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//Mark Phillips
+//Created 24/07/2018
+//Last edited 29/07/2018
 
 
 [RequireComponent(typeof(Rigidbody))]
@@ -27,22 +29,19 @@ public class Enemy : MonoBehaviour, IDamagable {
     private float m_gunDistToPlayer;
     private Vector3 m_velocity;
     private bool m_isDesperate;
-    private bool m_isReloading;
+    [SerializeField] private bool m_isReloading;
     private GameObject m_weapon;
     private Gun m_gun;
     //private Melee m_melee;
     private GameObject m_player;
-    [SerializeField] private List<Transform> m_wanderPoints;
+    private List<Transform> m_coverPoints;
     public delegate void Dead(Enemy enemy);
     public Dead OnDeath;
     STATE m_state;
     void Awake()
     {
         m_player = GameObject.FindGameObjectWithTag("Player");
-
-
-
-       
+        m_coverPoints = new List<Transform>();
     }
 
     // Use this for initialization
@@ -82,7 +81,7 @@ public class Enemy : MonoBehaviour, IDamagable {
             }
             else if (m_distBetweenPlayer <= m_fleeDist + 0.1 && m_distBetweenPlayer >= m_fleeDist - 0.1)
             {
-                return;
+                m_state = STATE.STATIONARY;
             }
             else if (m_distBetweenPlayer < m_fleeDist)
             {
@@ -94,11 +93,19 @@ public class Enemy : MonoBehaviour, IDamagable {
             m_state = STATE.WANDER;
         }
 
-        if (m_gunDistToPlayer < m_fireDist)
+        if (m_gunDistToPlayer < m_fireDist && m_isReloading == false)
         {
             Attack();
         }
-        Debug.Log(m_gunDistToPlayer);
+
+        if (m_isReloading == true)
+        {
+            m_state = STATE.COVER;
+        }
+        else
+        {
+            m_state = STATE.WANDER;
+        }
 
         if (m_health <= 0)
         {
@@ -161,7 +168,52 @@ public class Enemy : MonoBehaviour, IDamagable {
     }
     public void FindCover()
     {
+        int layerMask = 1 << 10; //Layer 10
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, m_coverDist, layerMask);
 
+        if (hitColliders.Length == 0)
+        {
+            //reload
+            return;
+        }
+        for (int i = 0; i < hitColliders.Length; i++)
+        {
+            m_coverPoints.Add(hitColliders[i].transform);
+        }
+
+        transform.position = Vector3.MoveTowards(transform.position, FindNearestCover(), m_speed * Time.deltaTime);
+
+        if (transform.position == FindNearestCover())
+        {
+        //    m_isReloading = false;
+        }
+    }
+
+    Vector3 FindNearestCover()
+    {
+        Transform nearestPoint = m_coverPoints[0];
+        float nearestDistance = float.MaxValue;
+        float distance;
+
+        foreach (Transform coverPoint in m_coverPoints)
+        {
+            //distance = Vector3.Distance(transform.position, coverPoint.position);
+            distance = (transform.position - coverPoint.position).sqrMagnitude;
+
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestPoint = coverPoint;
+            }
+        }
+
+        Vector3 dirFromPlayer = nearestPoint.position;
+        dirFromPlayer = (( m_player.transform.position - nearestPoint.position).normalized);
+
+        Vector3 finalPoint = (nearestPoint.position + dirFromPlayer); //5 == cover object's radius;
+        finalPoint = new Vector3(finalPoint.x, nearestPoint.position.y, finalPoint.z * 1.3f);
+
+        return finalPoint;
     }
 
     private void OnDrawGizmos()
@@ -171,6 +223,12 @@ public class Enemy : MonoBehaviour, IDamagable {
         Gizmos.DrawWireSphere(transform.position, m_fleeDist);
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(m_weapon.transform.position, m_fireDist);
+
+        if (m_isReloading == true)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(m_weapon.transform.position, m_coverDist);
+        }
     }
 
 }
