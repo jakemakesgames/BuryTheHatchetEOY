@@ -15,17 +15,13 @@ public class Projectile : MonoBehaviour {
     private int m_damage = 1;
     private LayerMask m_collisionMask;
 
-
-    //delete the projectile if it has existed for too long
     private void Start() {
-        Destroy(gameObject, m_lifeTime);
-
         Collider[] initialCollision = Physics.OverlapSphere(transform.position, .1f, m_collisionMask);
         if (initialCollision.Length > 0) {
             OnHitObject(initialCollision[0]);
         }
     }
-    //speed control from outside the class
+
     public void SetSpeed(float a_speed) {
         m_speed = a_speed;
     }
@@ -37,13 +33,23 @@ public class Projectile : MonoBehaviour {
     public void SetCollisionLayer(LayerMask a_collsionMask) {
         m_collisionMask = a_collsionMask;
     }
+    
+    public void SetLifeTime(float a_lifeTime) {
+        m_lifeTime = a_lifeTime;
+    }
 
+    //moves the projectile also counts down till this should be destroyedad
     public void Update () {
         float moveDistance = m_speed * Time.deltaTime;
         CheckCollisions(moveDistance);
         transform.Translate(Vector3.forward * moveDistance);
+        if (m_lifeTime <= 0) {
+            Destroy(gameObject);
+        }
+        m_lifeTime -= Time.deltaTime;
 	}
 
+    //use ray casts to check for collisions
     private void CheckCollisions(float a_distanceToMove) {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
