@@ -31,14 +31,16 @@ public class Enemy : MonoBehaviour, IDamagable {
     private float m_gunDistToPlayer;
     [SerializeField] private float seekSpeed;
     private bool m_isDesperate;
-    private bool m_isReloading;
+    private bool m_coverFound = false;
     private GameObject m_weapon;
     private Gun m_gun;
     private NavMeshAgent agent;
     LineRenderer line;
     //private Melee m_melee;
     private GameObject m_player;
-    private List<Transform> m_coverPoints;
+    private List<Transform>m_coverPoints;
+    [SerializeField]private LayerMask m_coverLayer;
+    [SerializeField] private LayerMask m_environmentLayer;
     public delegate void Dead(Enemy enemy);
     public Dead OnDeath;
     STATE m_state;
@@ -57,7 +59,8 @@ public class Enemy : MonoBehaviour, IDamagable {
 
         if (m_weapon.tag == "Gun")
        {
-           m_gun = m_weapon.GetComponent<Gun>();
+            m_gun = m_weapon.GetComponent<Gun>();
+            m_gun.SetInfiniteAmmo(true);
        }
        else if (m_weapon.tag == "Melee")
        {
@@ -100,33 +103,20 @@ public class Enemy : MonoBehaviour, IDamagable {
         {
             m_state = STATE.WANDER;
         }
-
-        if (m_gunDistToPlayer < m_fireDist && m_isReloading == false)
+    
+        if (m_gunDistToPlayer < m_fireDist && !m_gun.GetIsEmpty())
         {
             Attack();
         }
 
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if (m_isReloading)
-            {
-                m_isReloading = false;
-            }
-            else
-            {
-                m_isReloading = true;
-            }
-        }
+       if (m_gun.GetIsEmpty() || m_gun.m_isReloading)
+       {
+           m_state = STATE.COVER;
+       }
 
-        if (m_gun.GetIsEmpty())
-        {
-            m_state = STATE.COVER;
-        }
-        else if (m_state == STATE.COVER && !m_gun.GetIsEmpty())
-        {
-           // m_state = STATE.WANDER;
-        }
+
         Debug.Log(m_state);
+        Debug.Log(m_gun.m_isReloading);
 
         if (m_health <= 0)
         {
@@ -158,7 +148,7 @@ public class Enemy : MonoBehaviour, IDamagable {
 
     void Wander()
     {
-        agent.destination = transform.position;
+        agent.velocity = Vector3.zero;
     }
     void Seek()
     {
@@ -186,7 +176,20 @@ public class Enemy : MonoBehaviour, IDamagable {
 
     void Attack()
     {
+        Vector3 vecBetween = (m_player.transform.position - transform.position);
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, vecBetween, out hit, 1000.0f, m_coverLayer))
+        {
+            return;
+        }
+        if (Physics.Raycast(transform.position, vecBetween, out hit, 1000.0f, m_environmentLayer))
+        {
+            return;
+        }
+
         m_gun.Shoot();
+
     }
     public void TakeHit(int a_damage, RaycastHit a_hit)
     {
@@ -199,8 +202,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     }
     public void FindCover()
     {
-        int layerMask = 1 << 10; //Layer 10
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, m_coverDist, layerMask);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, m_coverDist, m_coverLayer);
 
         if (hitColliders.Length == 0)
         {
@@ -216,9 +218,13 @@ public class Enemy : MonoBehaviour, IDamagable {
         agent.destination = targetLocation;
         DrawLinePath(agent.path);
 
-        if ((transform.position - targetLocation).magnitude < 0.1f)
-        { 
-            m_gun.Reload();
+        if ((transform.position - targetLocation).magnitude < 0.2f)
+        {
+            if (!m_gun.m_isReloading)
+            {
+                m_gun.Reload();
+            }
+
         }
     }
     Vector3 FindNearestCover()
@@ -276,14 +282,16 @@ public class Enemy : MonoBehaviour, IDamagable {
         if (m_weapon != null)
         {
             Gizmos.DrawWireSphere(m_weapon.transform.position, m_fireDist);
+
+            if (m_gun.GetIsEmpty())
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere(m_weapon.transform.position, m_coverDist);
+            }
         }
 
 
-        if (m_isReloading == true)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(m_weapon.transform.position, m_coverDist);
-        }
+
     }
 #endif
 }
