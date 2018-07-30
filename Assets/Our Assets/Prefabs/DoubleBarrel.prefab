@@ -348,4 +348,4 @@ MonoBehaviour:
   m_maxAmmo: 10
   m_clipSize: 2
   m_isReloading: 0
-  m_isAutomatic: 0
+  m_isAutomatic: 1

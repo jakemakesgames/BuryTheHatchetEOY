@@ -14,17 +14,16 @@ public class Projectile : MonoBehaviour {
     private float m_speed = 10;
     private int m_damage = 1;
     private LayerMask m_entityCollisionMask;
-    private LayerMask m_terrainCollisionMask;
+    private LayerMask m_environmentCollisionMask;
 
     private void Start() {
         Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
         if (initialEnemyCollision.Length > 0) {
             OnHitObject(initialEnemyCollision[0]);
         }
-        Collider[] initialTerrainCollision = Physics.OverlapSphere(transform.position, .1f, m_terrainCollisionMask);
-        if (initialTerrainCollision.Length > 0)
-        {
-            OnHitObject(initialTerrainCollision[0]);
+        Collider[] initialEnvironmentCollision = Physics.OverlapSphere(transform.position, .1f, m_environmentCollisionMask);
+        if (initialEnvironmentCollision.Length > 0) {
+            OnHitObject(initialEnvironmentCollision[0]);
         }
     }
 
@@ -40,7 +39,7 @@ public class Projectile : MonoBehaviour {
         m_entityCollisionMask = a_collsionMask;
     }
     public void SetTerrainCollisionLayer(LayerMask a_collsionMask) {
-        m_terrainCollisionMask = a_collsionMask;
+        m_environmentCollisionMask = a_collsionMask;
     }
     public void SetLifeTime(float a_lifeTime) {
         m_lifeTime = a_lifeTime;
@@ -64,8 +63,7 @@ public class Projectile : MonoBehaviour {
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
             OnHitObject(hit);
         }
-        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_terrainCollisionMask))
-        {
+        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMask)) {
             OnHitObject(hit);
         }
     }
@@ -77,11 +75,9 @@ public class Projectile : MonoBehaviour {
         }
         Destroy(gameObject);
     }
-    private void OnHitObject(Collider a_c)
-    {
+    private void OnHitObject(Collider a_c) {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
-        if (damagableObject != null)
-        {
+        if (damagableObject != null) {
             damagableObject.TakeDamage(m_damage);
         }
         Destroy(gameObject);
