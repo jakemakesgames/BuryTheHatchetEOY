@@ -38,11 +38,11 @@ GameObject:
   - component: {fileID: 136361415522540008}
   - component: {fileID: 23500645848927442}
   - component: {fileID: 54806016599709308}
-  - component: {fileID: 114175804330071660}
-  - component: {fileID: 114539456787727946}
+  - component: {fileID: 114251143376800352}
+  - component: {fileID: 114347910179529664}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -67,7 +67,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1999925407510398}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.203, z: 0}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4872053998842146}
@@ -130,7 +130,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &114175804330071660
+--- !u!114 &114251143376800352
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -138,12 +138,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1999925407510398}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a37d6ac387a6604694e0e5fd8c73da3, type: 3}
+  m_Script: {fileID: 11500000, guid: 5778159e463981f4eb7ae2dc4350093f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_speed: 10
-  m_dashSpeed: 0
---- !u!114 &114539456787727946
+  m_dashSpeed: 10
+--- !u!114 &114347910179529664
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -151,15 +151,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1999925407510398}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79f44dba0e67c244394324c5cda8208a, type: 3}
+  m_Script: {fileID: 11500000, guid: d9fe1159607e4974ca8e92f28017f448, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_weaponHold: {fileID: 4872053998842146}
-  m_startingGun: {fileID: 114401918023175578, guid: 3c12b33f768c1cc44a7247fc7cd29c8c,
+  m_startingGun: {fileID: 114947134273699152, guid: 10dec18653012df488e64fbc351810a8,
     type: 2}
-  m_collisionMask:
+  m_entityCollisionMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
+  m_terrainCollisionMask:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!136 &136361415522540008
 CapsuleCollider:
   m_ObjectHideFlags: 1

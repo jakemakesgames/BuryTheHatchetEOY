@@ -22,7 +22,9 @@ public class Gun : MonoBehaviour {
     public int m_clipSize = 6;
     private int m_currentClip;
     private float m_nextShotTime;
+    private bool m_infiniteAmmo = false;
     public bool m_isReloading = false;
+    public bool m_isAutomatic = false;
     private LayerMask m_entityCollisionMask;
     private LayerMask m_terrainCollisionMask;
 
@@ -30,15 +32,15 @@ public class Gun : MonoBehaviour {
         m_currentAmmo = m_maxAmmo;
         m_currentClip = m_clipSize;
     }
-    public void SetEntityCollisionLayer(LayerMask a_collsionMask)
-    {
+    public void SetEntityCollisionLayer(LayerMask a_collsionMask) {
         m_entityCollisionMask = a_collsionMask;
     }
-    public void SetTerrainCollisionLayer(LayerMask a_collsionMask)
-    {
+    public void SetTerrainCollisionLayer(LayerMask a_collsionMask) {
         m_terrainCollisionMask = a_collsionMask;
     }
-
+    public void SetInfiniteAmmo(bool a_infiniteAmmo) {
+        m_infiniteAmmo = a_infiniteAmmo;
+    }
     private void Update() {
         if (m_isReloading)
         {
@@ -56,11 +58,15 @@ public class Gun : MonoBehaviour {
         m_isReloading = true;
         if (m_currentAmmo < m_clipSize) {
             m_currentClip = m_currentAmmo;
-            m_currentAmmo = 0;
+            if (!m_infiniteAmmo) {
+                m_currentAmmo = 0;
+            }
         }
         else
         {
-            m_currentAmmo -= m_clipSize - m_currentClip;
+            if (!m_infiniteAmmo) {
+                m_currentAmmo -= m_clipSize - m_currentClip;
+            }
             m_currentClip = m_clipSize;
         }
     }
@@ -93,6 +99,7 @@ public class Gun : MonoBehaviour {
                 for (int i = 0; i < m_numProjectilesPerShot; i++) {
                     Projectile newProjectile = Instantiate(m_projectile, m_muzzle.position, m_muzzle.rotation * Quaternion.Euler(randomAngle())) as Projectile;
                     newProjectile.SetSpeed(m_muzzleVelocity);
+                    newProjectile.SetLifeTime(m_bulletLifeTime);
                     newProjectile.SetEntityCollisionLayer(m_entityCollisionMask);
                     newProjectile.SetTerrainCollisionLayer(m_terrainCollisionMask);
                 }

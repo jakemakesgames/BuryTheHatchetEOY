@@ -46,7 +46,24 @@ public class PlayerInput : MonoBehaviour {
 
     public void Attack()
     {
-
+        if (m_weaponController.GetIsAuto()) {
+            if (Input.GetMouseButton(0)) {
+                m_weaponController.Shoot();
+            }
+            if (m_weaponController.GetIsGunEmpty()) {
+                if (Input.GetMouseButtonDown(0)) {
+                    m_weaponController.ReloadEquipedGun();
+                }
+            }
+        }
+        else {
+            if (Input.GetMouseButtonDown(0)) {
+                if (m_weaponController.GetIsGunEmpty()) {
+                    m_weaponController.ReloadEquipedGun();
+                }
+                m_weaponController.Shoot();
+            }
+        }
     }
 
     private void Move(Vector3 a_velocity) {
@@ -85,17 +102,10 @@ public class PlayerInput : MonoBehaviour {
         }
 
         //Player attacking
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (m_weaponController.GetIsGunEmpty()) {
-                m_weaponController.ReloadEquipedGun();
-            }
-            m_weaponController.Shoot();
-        }
+        Attack();
 
         //Player dashing
-        if (Input.GetMouseButtonDown(1))
-        {
+        if (Input.GetMouseButtonDown(1)) {
             Dash();
         }
     }

@@ -39,8 +39,7 @@ public class Projectile : MonoBehaviour {
     public void SetEntityCollisionLayer(LayerMask a_collsionMask) {
         m_entityCollisionMask = a_collsionMask;
     }
-    public void SetTerrainCollisionLayer(LayerMask a_collsionMask)
-    {
+    public void SetTerrainCollisionLayer(LayerMask a_collsionMask) {
         m_terrainCollisionMask = a_collsionMask;
     }
     public void SetLifeTime(float a_lifeTime) {

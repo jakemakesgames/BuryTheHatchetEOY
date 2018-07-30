@@ -10,33 +10,34 @@ public class WeaponController : MonoBehaviour {
 
     public Transform m_weaponHold;
     public Gun m_startingGun;
-    private Gun m_equippedGun;
+    private Gun m_equipedGun;
     public LayerMask m_entityCollisionMask;
     public LayerMask m_terrainCollisionMask;
 
     public void Awake() {
         if (m_startingGun != null) {
             EquipGun(m_startingGun);
-            m_equippedGun.SetEntityCollisionLayer(m_entityCollisionMask);
-            m_equippedGun.SetTerrainCollisionLayer(m_entityCollisionMask);
+            m_equipedGun.SetEntityCollisionLayer(m_entityCollisionMask);
+            m_equipedGun.SetTerrainCollisionLayer(m_terrainCollisionMask);
         }
     }
     public void EquipGun(Gun gunToEquip) {
-        if (m_equippedGun != null) {
-            Destroy(m_equippedGun.gameObject);
+        if (m_equipedGun != null) {
+            Destroy(m_equipedGun.gameObject);
         }
-        m_equippedGun = Instantiate(gunToEquip, m_weaponHold) as Gun;
-        m_equippedGun.transform.parent = m_weaponHold;
+        m_equipedGun = Instantiate(gunToEquip, m_weaponHold) as Gun;
+        m_equipedGun.transform.parent = m_weaponHold;
     }
     public void ReloadEquipedGun() {
-        m_equippedGun.Reload();
+        m_equipedGun.Reload();
     }
-    public bool GetIsReloading() { return m_equippedGun.m_isReloading; }
-    public bool GetIsGunEmpty() { return m_equippedGun.GetIsEmpty(); }
+    public bool GetIsAuto() { return m_equipedGun.m_isAutomatic; }
+    public bool GetIsReloading() { return m_equipedGun.m_isReloading; }
+    public bool GetIsGunEmpty() { return m_equipedGun.GetIsEmpty(); }
     public void Shoot() {
-        if (m_equippedGun != null)
+        if (m_equipedGun != null)
         {
-            m_equippedGun.Shoot();
+            m_equipedGun.Shoot();
         }
     }
 }
