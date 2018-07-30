@@ -339,7 +339,7 @@ MonoBehaviour:
   m_projectile: {fileID: 114829323488259280, guid: 1a01424ec0f630f47b3c002f83639a55,
     type: 2}
   m_msBetweenShots: 240
-  m_reloadTimeInMilliseconds: 360
+  m_reloadTimeInMilliseconds: 1000
   m_muzzleVelocity: 20
   m_bulletLifeTime: 1
   m_dispersionAngle: 0
