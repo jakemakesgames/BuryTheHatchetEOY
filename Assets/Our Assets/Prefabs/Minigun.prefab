@@ -88,10 +88,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4051265505763174}
-  - component: {fileID: 114372301639788958}
+  - component: {fileID: 114371127991026176}
   m_Layer: 0
   m_Name: Minigun
-  m_TagString: Untagged
+  m_TagString: Gun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -324,7 +324,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114372301639788958
+--- !u!114 &114371127991026176
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -332,22 +332,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1935298216787844}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5512983cfdb54ef4f9c9d571f3058b54, type: 3}
+  m_Script: {fileID: 11500000, guid: b65f9015cd6712f489fd288f8345af39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_muzzle: {fileID: 4187156322923602}
-  m_projectile: {fileID: 114796950569782780, guid: 2ae47bcc15b7c4943bb6897f627ea8e3,
+  m_projectile: {fileID: 114829323488259280, guid: 1a01424ec0f630f47b3c002f83639a55,
     type: 2}
-  m_msBetweenShots: 10
-  m_reloadTimeInMilliseconds: 1000
-  m_muzzleVelocity: 35
-  m_bulletLifeTime: 15
+  m_msBetweenShots: 20
+  m_reloadTimeInMilliseconds: 4000
+  m_muzzleVelocity: 20
+  m_bulletLifeTime: 1
   m_dispersionAngle: 20
   m_numProjectilesPerShot: 1
   m_burstProjectiles: 1
   m_maxAmmo: 1000
   m_clipSize: 1000
   m_isReloading: 0
-  m_collisionLayer:
-    serializedVersion: 2
-    m_Bits: 0
+  m_isAutomatic: 1
