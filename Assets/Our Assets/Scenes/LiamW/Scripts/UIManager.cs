@@ -9,9 +9,9 @@ public class UIManager : MonoBehaviour
     //-------Public Variables------//
     #region public variables
 
-    public GameObject pauseMenu;
-    public GameObject pausePanel;
-    public GameObject optionsPanel;
+    public GameObject m_pauseScreen;
+    public GameObject m_pauseMenu;
+    public GameObject m_optionsMenu;
     
     
     
@@ -24,11 +24,13 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        pauseMenu.SetActive(false);
+        Time.timeScale = 1;
+        m_pauseScreen.SetActive(false);
+        m_pauseMenu.SetActive(true);
     }
 
     #region public functions
-    public void StartGame(int changeScene)
+    public void ChangeScenes(int changeScene)
     {
         //Loads our games Scene
         SceneManager.LoadScene(changeScene);
@@ -41,10 +43,11 @@ public class UIManager : MonoBehaviour
 
     public void Update()
     {
+
         if (Input.GetKeyDown("escape") && !isPaused)
         {
             isPaused = true;
-            pauseMenu.SetActive(true);
+            m_pauseScreen.SetActive(true);
 
             //Sets the game loop speed to 0
             Time.timeScale = 0;
@@ -55,19 +58,18 @@ public class UIManager : MonoBehaviour
         else if (Input.GetKeyDown("escape") && isPaused)
         {
             //Checks if the pause panel is active
-            if (pausePanel.activeSelf)
+            if (m_pauseMenu.activeSelf)
             {
                 isPaused = false;
                 Time.timeScale = 1;
-                pauseMenu.SetActive(false);
+                m_pauseScreen.SetActive(false);
                 Debug.Log("Game Unpaused");
             }
             else
             {
-                optionsPanel.SetActive(false);
-                pausePanel.SetActive(true);
-            }
-            
+                m_optionsMenu.SetActive(false);
+                m_pauseMenu.SetActive(true);
+            }  
         }
     }
 
@@ -76,7 +78,7 @@ public class UIManager : MonoBehaviour
         if (isPaused)
         {
             isPaused = false;
-            pauseMenu.SetActive(false);
+            m_pauseScreen.SetActive(false);
 
             //Sets the game loop speed to 0
             Time.timeScale = 1;
@@ -85,7 +87,6 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    
     public void Back()
     {
         if (isPaused)

@@ -12,7 +12,7 @@ public class Gun : MonoBehaviour {
     public Projectile m_projectile;
     public float m_msBetweenShots = 100;
     public float m_reloadTimeInMilliseconds = 100;
-    public float m_muzzleVelocity = 35;
+    public float m_muzzleVelocity = 15;
     public float m_bulletLifeTime = 15;
     public float m_dispersionAngle = 0;
     public int m_numProjectilesPerShot = 1;
@@ -23,14 +23,30 @@ public class Gun : MonoBehaviour {
     private int m_currentClip;
     private float m_nextShotTime;
     public bool m_isReloading = false;
-    public LayerMask m_collisionLayer;
-    
+    private LayerMask m_entityCollisionMask;
+    private LayerMask m_terrainCollisionMask;
+
     private void Awake() {
         m_currentAmmo = m_maxAmmo;
         m_currentClip = m_clipSize;
     }
-    public void SetCollisionLayer(LayerMask a_collsionMask) {
-        m_collisionLayer = a_collsionMask;
+    public void SetEntityCollisionLayer(LayerMask a_collsionMask)
+    {
+        m_entityCollisionMask = a_collsionMask;
+    }
+    public void SetTerrainCollisionLayer(LayerMask a_collsionMask)
+    {
+        m_terrainCollisionMask = a_collsionMask;
+    }
+
+    private void Update() {
+        if (m_isReloading)
+        {
+            if (Time.time > m_nextShotTime)
+            {
+                m_isReloading = false;
+            }
+        }
     }
 
     //reloads the gun and also prevents shooting for a time based on the reload time in milliseconds variable
@@ -42,11 +58,24 @@ public class Gun : MonoBehaviour {
             m_currentClip = m_currentAmmo;
             m_currentAmmo = 0;
         }
-        else {
+        else
+        {
+            m_currentAmmo -= m_clipSize - m_currentClip;
             m_currentClip = m_clipSize;
-            m_currentAmmo -= m_clipSize;
         }
     }
+
+    //tells who asks is if the gun is empty
+    public bool GetIsEmpty()
+    {
+        if (m_currentClip <= 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     //Randomises the projectiles angle based on the dispersion angle variable
     private Vector3 randomAngle()
     {
@@ -60,19 +89,14 @@ public class Gun : MonoBehaviour {
 
         if (Time.time > m_nextShotTime) {
             if (m_currentClip > 0) {
-                if (m_isReloading) {
-                    m_isReloading = false;
-                }
                 m_nextShotTime = Time.time + m_msBetweenShots / 1000;
                 for (int i = 0; i < m_numProjectilesPerShot; i++) {
                     Projectile newProjectile = Instantiate(m_projectile, m_muzzle.position, m_muzzle.rotation * Quaternion.Euler(randomAngle())) as Projectile;
                     newProjectile.SetSpeed(m_muzzleVelocity);
-                    newProjectile.SetCollisionLayer(m_collisionLayer);
+                    newProjectile.SetEntityCollisionLayer(m_entityCollisionMask);
+                    newProjectile.SetTerrainCollisionLayer(m_terrainCollisionMask);
                 }
                 m_currentClip--;
-            }
-            else {
-            Reload();
             }
         }
     }
