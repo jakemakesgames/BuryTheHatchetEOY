@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//Mark Phillips
+//Created 25/07/2018
+//Last edited 25/07/2018
 public class LootManager : MonoBehaviour
 {
     // private Player player;

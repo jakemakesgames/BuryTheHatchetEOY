@@ -13,12 +13,18 @@ public class Projectile : MonoBehaviour {
     private float m_skinWidth = 0.1f;
     private float m_speed = 10;
     private int m_damage = 1;
-    private LayerMask m_collisionMask;
+    private LayerMask m_entityCollisionMask;
+    private LayerMask m_terrainCollisionMask;
 
     private void Start() {
-        Collider[] initialCollision = Physics.OverlapSphere(transform.position, .1f, m_collisionMask);
-        if (initialCollision.Length > 0) {
-            OnHitObject(initialCollision[0]);
+        Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
+        if (initialEnemyCollision.Length > 0) {
+            OnHitObject(initialEnemyCollision[0]);
+        }
+        Collider[] initialTerrainCollision = Physics.OverlapSphere(transform.position, .1f, m_terrainCollisionMask);
+        if (initialTerrainCollision.Length > 0)
+        {
+            OnHitObject(initialTerrainCollision[0]);
         }
     }
 
@@ -30,10 +36,13 @@ public class Projectile : MonoBehaviour {
         m_damage = a_damage;
     }
 
-    public void SetCollisionLayer(LayerMask a_collsionMask) {
-        m_collisionMask = a_collsionMask;
+    public void SetEntityCollisionLayer(LayerMask a_collsionMask) {
+        m_entityCollisionMask = a_collsionMask;
     }
-    
+    public void SetTerrainCollisionLayer(LayerMask a_collsionMask)
+    {
+        m_terrainCollisionMask = a_collsionMask;
+    }
     public void SetLifeTime(float a_lifeTime) {
         m_lifeTime = a_lifeTime;
     }
@@ -53,7 +62,11 @@ public class Projectile : MonoBehaviour {
     private void CheckCollisions(float a_distanceToMove) {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_collisionMask)) {
+        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
+            OnHitObject(hit);
+        }
+        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_terrainCollisionMask))
+        {
             OnHitObject(hit);
         }
     }

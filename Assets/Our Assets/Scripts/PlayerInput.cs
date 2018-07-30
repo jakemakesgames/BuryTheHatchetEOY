@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 25/07/2018
+//Last edited 30/07/2018
 
 
 [RequireComponent (typeof(Rigidbody))]
@@ -57,9 +57,10 @@ public class PlayerInput : MonoBehaviour {
         Vector3 heightCorrectedLookPoint = new Vector3(a_lookPoint.x, transform.position.y, a_lookPoint.z);
         transform.LookAt(heightCorrectedLookPoint);
     }
-    private void Dash()
-    {
-        m_rb.AddForce(m_rb.transform.forward * m_dashSpeed);
+    private void Dash() {
+        Vector3 movement = new Vector3(transform.forward.x, 0, transform.forward.z);
+        Vector3 moveVelocity = movement.normalized * m_dashSpeed;
+        Move(moveVelocity);
     }
     private void Start() {
         m_rb = GetComponent<Rigidbody>();
@@ -84,11 +85,19 @@ public class PlayerInput : MonoBehaviour {
         }
 
         //Player attacking
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
+            if (m_weaponController.GetIsGunEmpty()) {
+                m_weaponController.ReloadEquipedGun();
+            }
             m_weaponController.Shoot();
         }
 
+        //Player dashing
+        if (Input.GetMouseButtonDown(1))
+        {
+            Dash();
+        }
     }
     //Anything involving the player's inputs and physics will go here
     private void FixedUpdate() {
