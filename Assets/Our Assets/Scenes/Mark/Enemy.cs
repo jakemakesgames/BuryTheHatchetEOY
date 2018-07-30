@@ -8,6 +8,7 @@ using UnityEngine.AI;
 
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class Enemy : MonoBehaviour, IDamagable {
     enum STATE
     {
@@ -117,10 +118,15 @@ public class Enemy : MonoBehaviour, IDamagable {
             }
         }
 
-        if (m_gun.get)
+        if (m_gun.GetIsEmpty())
         {
             m_state = STATE.COVER;
         }
+        else if (m_state == STATE.COVER && !m_gun.GetIsEmpty())
+        {
+           // m_state = STATE.WANDER;
+        }
+        Debug.Log(m_state);
 
         if (m_health <= 0)
         {
@@ -175,7 +181,7 @@ public class Enemy : MonoBehaviour, IDamagable {
         Vector3 vecBetween = (m_player.transform.position - transform.position);
 
 
-       agent.destination = transform.position - vecBetween * m_fleeDist;
+       agent.destination = transform.position - vecBetween;
     }
 
     void Attack()
@@ -198,8 +204,7 @@ public class Enemy : MonoBehaviour, IDamagable {
 
         if (hitColliders.Length == 0)
         {
-            //reload
-            return;
+            m_gun.Reload();
         }
         for (int i = 0; i < hitColliders.Length; i++)
         {
@@ -207,12 +212,13 @@ public class Enemy : MonoBehaviour, IDamagable {
         }
 
         //transform.position = Vector3.MoveTowards(transform.position, FindNearestCover(), m_speed * Time.deltaTime);
-        agent.destination = FindNearestCover();
+        Vector3 targetLocation = FindNearestCover();
+        agent.destination = targetLocation;
         DrawLinePath(agent.path);
 
-        if (transform.position == FindNearestCover())
-        {
-        //    m_isReloading = false;
+        if ((transform.position - targetLocation).magnitude < 0.1f)
+        { 
+            m_gun.Reload();
         }
     }
     Vector3 FindNearestCover()
