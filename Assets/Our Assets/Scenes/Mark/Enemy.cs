@@ -37,7 +37,6 @@ public class Enemy : MonoBehaviour, IDamagable {
     private Gun m_gun;
     private NavMeshAgent agent;
     LineRenderer line;
-    private Vector3 targetLocation;
     private GameObject m_player;
     private List<Transform>m_coverPoints;
     [SerializeField]private LayerMask m_coverLayer;
@@ -57,7 +56,6 @@ public class Enemy : MonoBehaviour, IDamagable {
         m_weapon = transform.GetChild(0).GetChild(0).gameObject;
         line = GetComponent<LineRenderer>();
         agent = GetComponent<NavMeshAgent>();
-        targetLocation = transform.position;
 
         if (m_weapon.tag == "Gun")
        {
@@ -254,15 +252,31 @@ public class Enemy : MonoBehaviour, IDamagable {
         agent.destination = targetLocation;
         DrawLinePath(agent.path);
 
-        if ((transform.position - targetLocation).magnitude < 0.2f)
+        // Check if we've reached the destination
+        if (!agent.pathPending)
         {
-            if (!m_gun.m_isReloading)
+            if (agent.remainingDistance <= agent.stoppingDistance)
             {
-                m_gun.Reload();
+                if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                {
+                    if (!m_gun.m_isReloading)
+                    {
+                        m_gun.Reload();
+                    }
+                    m_coverFound = true;
+                }
             }
-
-            m_coverFound = true;
         }
+
+       // if ((transform.position - targetLocation).magnitude < 0.2f)
+       // {
+       //     if (!m_gun.m_isReloading)
+       //     {
+       //         m_gun.Reload();
+       //     }
+       //
+       //     m_coverFound = true;
+       // }
     }
     Vector3 FindNearestCover()
     {
