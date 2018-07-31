@@ -35,7 +35,6 @@ public class Enemy : MonoBehaviour, IDamagable {
     [SerializeField] private float seekSpeed;
     private bool m_isDesperate;
     private bool m_coverFound = false;
-    private bool attackBlocked = false;
     private bool m_isDead = false;
     private WeaponController m_weaponController;
     private Gun m_gun;
@@ -98,22 +97,22 @@ public class Enemy : MonoBehaviour, IDamagable {
 
             if (m_distBetweenPlayer > m_fleeDist)
             {
+
                 m_state = STATE.SEEK;
+                
             }
             else if (m_distBetweenPlayer <= m_fleeDist + 0.1 && m_distBetweenPlayer >= m_fleeDist - 0.1)
             {
-                if (!attackBlocked)
-                {
-                    m_state = STATE.STATIONARY;
-                }
-                else if (!(m_gun.m_isReloading))
-                {
-                   // m_state = STATE.STRAFE;
-                }
+
+                m_state = STATE.STATIONARY;
+
             }
             else if (m_distBetweenPlayer < m_fleeDist)
             {
-                m_state = STATE.FLEE;
+                if (!(m_state == STATE.COVER))
+                {
+                    m_state = STATE.FLEE;
+                }
             }
         }
         else
@@ -196,11 +195,7 @@ public class Enemy : MonoBehaviour, IDamagable {
 
         //targetLocation = new Vector3(m_player.transform.position.x, transform.position.y, m_player.transform.position.z);
 
-        if (attackBlocked && !(m_gun.m_isReloading))    //DO THIS ON 1/8/18
-        {
-            Strafe();
-            Debug.Log("STRAFE FOR REAL");
-        }
+       
 
         agent.destination = m_player.transform.position;
     }
@@ -222,21 +217,13 @@ public class Enemy : MonoBehaviour, IDamagable {
 
         if (Physics.Raycast(m_weaponController.m_weaponHold.transform.position, vecBetween, out hit, 1000.0f, m_coverLayer))
         {
-            attackBlocked = true;
+            m_state = STATE.STRAFE;
             return;
-        }
-        else
-        {
-            attackBlocked = false;
         }
         if (Physics.Raycast(m_weaponController.m_weaponHold.transform.position, vecBetween, out hit, 1000.0f, m_environmentLayer))
         {
-            attackBlocked = true;
+            m_state = STATE.STRAFE;
             return;
-        }
-        else
-        {
-            attackBlocked = false;
         }
 
         m_gun.Shoot();
@@ -264,8 +251,8 @@ public class Enemy : MonoBehaviour, IDamagable {
         {
             //Cheeky Michael
             agent.destination = transform.right;
+
         }
-       
     }
     public void TakeHit(int a_damage, RaycastHit a_hit)
     {
@@ -309,16 +296,6 @@ public class Enemy : MonoBehaviour, IDamagable {
                 }
             }
         }
-
-       // if ((transform.position - targetLocation).magnitude < 0.2f)
-       // {
-       //     if (!m_gun.m_isReloading)
-       //     {
-       //         m_gun.Reload();
-       //     }
-       //
-       //     m_coverFound = true;
-       // }
     }
     Vector3 FindNearestCover()
     {
