@@ -232,6 +232,10 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 1844052068}
+    - target: {fileID: 1257259039092174, guid: aac387a750817a94d80e9c7e49063a67, type: 2}
+      propertyPath: m_Name
+      value: BountyBoardSystem
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: aac387a750817a94d80e9c7e49063a67, type: 2}
   m_IsPrefabParent: 0
@@ -701,6 +705,14 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1844052068}
+    - target: {fileID: 1554351983481888, guid: 65fe56695de31cb4a92f2c36777cac3f, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1176659783631090, guid: 65fe56695de31cb4a92f2c36777cac3f, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 65fe56695de31cb4a92f2c36777cac3f, type: 2}
   m_IsPrefabParent: 0
@@ -709,6 +721,34 @@ GameObject:
   m_PrefabParentObject: {fileID: 1378351842978922, guid: 864bda7eb469a43418366eefc425f848,
     type: 2}
   m_PrefabInternal: {fileID: 363219325}
+--- !u!1 &1214537286
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1214537287}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1214537287
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1214537286}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 565.16656, y: 300.24445, z: 32.13275}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1493751624 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1165595368815300, guid: aac387a750817a94d80e9c7e49063a67,
