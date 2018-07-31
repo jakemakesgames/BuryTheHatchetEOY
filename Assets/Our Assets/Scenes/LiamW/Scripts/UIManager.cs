@@ -13,6 +13,13 @@ public class UIManager : MonoBehaviour
     public GameObject m_pauseMenu;
     public GameObject m_optionsMenu;
     public GameObject m_bountyScreen;
+    public GameObject m_bountyBoard;
+    public GameObject m_bountyBoardScreen;
+    public GameObject m_bountyInteractionScreen;
+
+    //*! Singleton attempt
+    public static UIManager m_Instance;
+
 
     #endregion
 
@@ -26,7 +33,37 @@ public class UIManager : MonoBehaviour
     float m_soundEffect;
     float m_mainVolume;
 
+    Interactable m_interactable;
     #endregion
+
+
+    #region Getter and Setter
+    public bool GetHasBounty()
+    {
+        return m_hasBounty;
+    }
+    public bool GetIsPaused()
+    {
+        return m_isPaused;
+    }
+
+
+    public void SetHasBounty(bool a_hasBounty)
+    {
+        m_isPaused = a_hasBounty;
+    }
+    public void SetIsPaused(bool a_isPaused)
+    {
+        m_isPaused = a_isPaused;
+    }
+    #endregion
+
+
+    private void Awake()
+    {
+        m_Instance = this;
+    }
+
 
     private void Start()
     {
@@ -34,6 +71,9 @@ public class UIManager : MonoBehaviour
         m_pauseScreen.SetActive(false);
         m_pauseMenu.SetActive(true);
         m_bountyScreen.SetActive(false);
+        m_bountyBoard.SetActive(false);
+        m_bountyBoardScreen.SetActive(false);
+        m_bountyInteractionScreen.SetActive(false);
     }
 
     #region public functions
@@ -41,16 +81,6 @@ public class UIManager : MonoBehaviour
     {
         //Loads our games Scene
         SceneManager.LoadScene(changeScene);
-    }
-
-    void OnTriggerEnter(Collider BountyBoard)
-    {
-
-        if (Input.GetKeyDown("e"))
-        {
-
-            m_hasBounty = true;
-        }
     }
 
     public void Quit()
@@ -66,9 +96,13 @@ public class UIManager : MonoBehaviour
         {
             if (!m_inBounty)
             {
+                //Set any screen that is not the pause screen off
                 m_inPausedMenu = true;
                 m_isPaused = true;
+                m_bountyInteractionScreen.SetActive(false);
                 m_pauseScreen.SetActive(true);
+                m_pauseMenu.SetActive(true);
+
 
                 //Sets the game loop speed to 0
                 Time.timeScale = 0;
@@ -81,12 +115,16 @@ public class UIManager : MonoBehaviour
         {
             if (!m_inBounty)
             {
-                //Checks if the pause panel is active
+                //Checks if the Pause Menu is active
                 if (m_pauseMenu.activeSelf)
                 {
                     m_isPaused = false;
                     Time.timeScale = 1;
+
+                    //Turn all other screens off
                     m_pauseScreen.SetActive(false);
+                    m_bountyBoard.SetActive(false);
+    
                     m_inPausedMenu = false;
                     Debug.Log("Game Unpaused");
                 }
@@ -100,7 +138,8 @@ public class UIManager : MonoBehaviour
         #endregion
 
         #region Bounty Screen Controls
-        if (Input.GetKeyDown("b") && !m_isPaused)
+
+        if (Input.GetKeyDown("b") && !m_isPaused && m_hasBounty)
         {
             if (!m_inPausedMenu)
             {
@@ -111,7 +150,7 @@ public class UIManager : MonoBehaviour
                 m_bountyScreen.SetActive(true);
                 Time.timeScale = 0;
 
-                Debug.Log("Game is Paused");
+                Debug.Log("Looking at Bounty");
             }
         }
         else if (Input.GetKeyDown("b") && m_isPaused)
@@ -121,10 +160,11 @@ public class UIManager : MonoBehaviour
                 m_inBounty = false;
                 m_isPaused = false;
                 m_bountyScreen.SetActive(false);
+                m_bountyBoard.SetActive(false);
 
                 Time.timeScale = 1;
 
-                Debug.Log("Game is UnPaused");
+                Debug.Log("Puts Bounty Away");
             }
         }
         else if (Input.GetKeyDown("escape") && m_isPaused)
@@ -140,6 +180,7 @@ public class UIManager : MonoBehaviour
                 Debug.Log("Game is UnPaused");
             }
         }
+
         #endregion
     }
 
@@ -148,7 +189,8 @@ public class UIManager : MonoBehaviour
         if (m_isPaused)
         {
             m_isPaused = false;
-            m_pauseScreen.SetActive(false);
+            m_inPausedMenu = false;
+            m_pauseMenu.SetActive(false);
             m_bountyScreen.SetActive(false);
 
             //Sets the game loop speed to 0
@@ -156,6 +198,11 @@ public class UIManager : MonoBehaviour
 
             Debug.Log("Game is UnPaused");
         }
+    }
+
+    public void AcceptBounty()
+    {
+        m_hasBounty = true;
     }
 
     public void Back()
