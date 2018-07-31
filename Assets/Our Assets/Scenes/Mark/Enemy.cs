@@ -7,7 +7,7 @@ using UnityEngine.AI;
 //Last edited 29/07/2018
 
 
-[RequireComponent(typeof(Rigidbody))]
+//[RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(NavMeshAgent))]
 public class Enemy : MonoBehaviour, IDamagable {
     enum STATE
@@ -32,11 +32,12 @@ public class Enemy : MonoBehaviour, IDamagable {
     [SerializeField] private float seekSpeed;
     private bool m_isDesperate;
     private bool m_coverFound = false;
+    private bool attackBlocked = false;
     private GameObject m_weapon;
     private Gun m_gun;
     private NavMeshAgent agent;
     LineRenderer line;
-    //private Melee m_melee;
+    private Vector3 targetLocation;
     private GameObject m_player;
     private List<Transform>m_coverPoints;
     [SerializeField]private LayerMask m_coverLayer;
@@ -56,6 +57,7 @@ public class Enemy : MonoBehaviour, IDamagable {
         m_weapon = transform.GetChild(0).GetChild(0).gameObject;
         line = GetComponent<LineRenderer>();
         agent = GetComponent<NavMeshAgent>();
+        targetLocation = transform.position;
 
         if (m_weapon.tag == "Gun")
        {
@@ -82,16 +84,25 @@ public class Enemy : MonoBehaviour, IDamagable {
         m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
         m_gunDistToPlayer = Vector3.Distance(m_weapon.transform.position, m_player.transform.position);
 
+        if (m_state != STATE.WANDER)
+        {
+            agent.isStopped = false;
+        }
+
         if (m_distBetweenPlayer < m_seekDist)
         {
+            transform.LookAt(m_player.transform.position);
+
             if (m_distBetweenPlayer > m_fleeDist)
             {
                 m_state = STATE.SEEK;
             }
             else if (m_distBetweenPlayer <= m_fleeDist + 0.1 && m_distBetweenPlayer >= m_fleeDist - 0.1)
             {
-                m_state = STATE.STATIONARY;
-                agent.destination = transform.position;
+                if (!attackBlocked)
+                {
+                    m_state = STATE.STATIONARY;
+                }
 
             }
             else if (m_distBetweenPlayer < m_fleeDist)
@@ -109,14 +120,17 @@ public class Enemy : MonoBehaviour, IDamagable {
             Attack();
         }
 
-       if (m_gun.GetIsEmpty() || m_gun.m_isReloading)
-       {
-           m_state = STATE.COVER;
-       }
-
+        if (m_gun.GetIsEmpty() || m_gun.m_isReloading)
+        {
+            m_state = STATE.COVER;
+        }
+        else if (!m_gun.GetIsEmpty() && !m_gun.m_isReloading)
+        {
+            m_coverFound = false;
+        }
 
         Debug.Log(m_state);
-        Debug.Log(m_gun.m_isReloading);
+        Debug.Log(m_gun.GetIsEmpty());
 
         if (m_health <= 0)
         {
@@ -139,7 +153,14 @@ public class Enemy : MonoBehaviour, IDamagable {
                 Flee();
                 break;
             case STATE.COVER:
-                FindCover();
+                if (!m_coverFound)
+                {
+                    FindCover();
+                }
+                break;
+            case STATE.STATIONARY:
+
+                Stationary();
                 break;
             default:
                 return;
@@ -148,25 +169,25 @@ public class Enemy : MonoBehaviour, IDamagable {
 
     void Wander()
     {
-        agent.velocity = Vector3.zero;
+        agent.isStopped = true;
     }
     void Seek()
     {
-        transform.LookAt(m_player.transform.position);
+        //transform.LookAt(m_player.transform.position);
         //*!
 
         /*!
          * 
          * 
          * !*/
-        
-        //transform.position = Vector3.MoveTowards(transform.position, m_player.transform.position, m_speed * Time.deltaTime);
+
+        //targetLocation = new Vector3(m_player.transform.position.x, transform.position.y, m_player.transform.position.z);
         agent.destination = m_player.transform.position;
     }
 
     void Flee()
     {
-        transform.LookAt(m_player.transform.position);
+        //transform.LookAt(m_player.transform.position);
         // transform.position = Vector3.MoveTowards(transform.position, m_player.transform.position, -m_speed * Time.deltaTime);
         Vector3 vecBetween = (m_player.transform.position - transform.position);
 
@@ -181,15 +202,30 @@ public class Enemy : MonoBehaviour, IDamagable {
 
         if (Physics.Raycast(transform.position, vecBetween, out hit, 1000.0f, m_coverLayer))
         {
+            attackBlocked = true;
             return;
+        }
+        else
+        {
+            attackBlocked = false;
         }
         if (Physics.Raycast(transform.position, vecBetween, out hit, 1000.0f, m_environmentLayer))
         {
+            attackBlocked = true;
             return;
+        }
+        else
+        {
+            attackBlocked = false;
         }
 
         m_gun.Shoot();
 
+    }
+
+    void Stationary()
+    {
+        agent.destination = transform.position;
     }
     public void TakeHit(int a_damage, RaycastHit a_hit)
     {
@@ -225,6 +261,7 @@ public class Enemy : MonoBehaviour, IDamagable {
                 m_gun.Reload();
             }
 
+            m_coverFound = true;
         }
     }
     Vector3 FindNearestCover()
