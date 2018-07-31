@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
@@ -8,6 +9,7 @@ using UnityEngine;
 
 
 [RequireComponent (typeof(Rigidbody))]
+[RequireComponent(typeof(WeaponController))]
 public class PlayerInput : MonoBehaviour {
 
     [SerializeField] private float m_speed;
@@ -18,6 +20,9 @@ public class PlayerInput : MonoBehaviour {
     private Vector3 m_mosePos;
     private Camera m_viewCamera;
     private WeaponController m_weaponController;
+
+    [SerializeField] private Text m_clipAmmoDisplay;
+    [SerializeField] private Text m_totalAmmoDisplay;
 
     public float Speed
     {
@@ -52,14 +57,14 @@ public class PlayerInput : MonoBehaviour {
             }
             if (m_weaponController.GetIsGunEmpty()) {
                 if (Input.GetMouseButtonDown(0)) {
-                    m_weaponController.ReloadEquipedGun();
+                    m_weaponController.ReloadEquippedGun();
                 }
             }
         }
         else {
             if (Input.GetMouseButtonDown(0)) {
                 if (m_weaponController.GetIsGunEmpty()) {
-                    m_weaponController.ReloadEquipedGun();
+                    m_weaponController.ReloadEquippedGun();
                 }
                 m_weaponController.Shoot();
             }
@@ -107,6 +112,16 @@ public class PlayerInput : MonoBehaviour {
         //Player dashing
         if (Input.GetMouseButtonDown(1)) {
             Dash();
+        }
+        //
+        if (m_clipAmmoDisplay != null) {
+            m_clipAmmoDisplay.GetComponent<Text>().text = 
+                (m_weaponController.GetCurrentClip().ToString() + " / " + m_weaponController.GetEquippedGun().m_clipSize.ToString());
+        }
+
+        if (m_totalAmmoDisplay != null) {
+            m_totalAmmoDisplay.GetComponent<Text>().text =
+                (m_weaponController.GetCurrentAmmo().ToString() + " / " + m_weaponController.GetEquippedGun().m_maxAmmo.ToString());
         }
     }
     //Anything involving the player's inputs and physics will go here

@@ -15,6 +15,7 @@ public class Player : MonoBehaviour, IDamagable {
     [SerializeField] private Transform m_crosshairPos;
     [SerializeField] private GameObject m_equippedWeapon;
     [SerializeField] private List<GameObject> m_heldWeapons;
+    [SerializeField] private GameObject m_ammoDisplay;
 
     public event System.Action OnDeath;
 
@@ -42,6 +43,5 @@ public class Player : MonoBehaviour, IDamagable {
     }
     
     private void Update () {
-		
-	}
+    }
 }
