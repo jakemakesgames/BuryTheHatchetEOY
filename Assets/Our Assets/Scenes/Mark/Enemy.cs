@@ -7,7 +7,7 @@ using UnityEngine.AI;
 //Last edited 29/07/2018
 
 
-//[RequireComponent(typeof(Rigidbody))]
+//[RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(NavMeshAgent))]
 public class Enemy : MonoBehaviour, IDamagable {
     enum STATE
@@ -32,6 +32,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     [SerializeField] private float seekSpeed;
     private bool m_isDesperate;
     private bool m_coverFound = false;
+    private bool attackBlocked = false;
     private GameObject m_weapon;
     private Gun m_gun;
     private NavMeshAgent agent;
@@ -98,7 +99,10 @@ public class Enemy : MonoBehaviour, IDamagable {
             }
             else if (m_distBetweenPlayer <= m_fleeDist + 0.1 && m_distBetweenPlayer >= m_fleeDist - 0.1)
             {
-                m_state = STATE.STATIONARY;
+                if (!attackBlocked)
+                {
+                    m_state = STATE.STATIONARY;
+                }
 
             }
             else if (m_distBetweenPlayer < m_fleeDist)
@@ -155,6 +159,7 @@ public class Enemy : MonoBehaviour, IDamagable {
                 }
                 break;
             case STATE.STATIONARY:
+
                 Stationary();
                 break;
             default:
@@ -197,11 +202,21 @@ public class Enemy : MonoBehaviour, IDamagable {
 
         if (Physics.Raycast(transform.position, vecBetween, out hit, 1000.0f, m_coverLayer))
         {
+            attackBlocked = true;
             return;
+        }
+        else
+        {
+            attackBlocked = false;
         }
         if (Physics.Raycast(transform.position, vecBetween, out hit, 1000.0f, m_environmentLayer))
         {
+            attackBlocked = true;
             return;
+        }
+        else
+        {
+            attackBlocked = false;
         }
 
         m_gun.Shoot();
