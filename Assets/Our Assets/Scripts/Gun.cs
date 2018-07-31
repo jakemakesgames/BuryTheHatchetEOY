@@ -10,23 +10,31 @@ public class Gun : MonoBehaviour {
 
     public Transform m_muzzle;
     public Projectile m_projectile;
+
     public float m_msBetweenShots = 100;
     public float m_reloadTimeInMilliseconds = 100;
     public float m_muzzleVelocity = 15;
     public float m_bulletLifeTime = 15;
     public float m_dispersionAngle = 0;
+
     public int m_numProjectilesPerShot = 1;
     public int m_burstProjectiles = 1;
     public int m_maxAmmo = 100;
-    private int m_currentAmmo;
     public int m_clipSize = 6;
-    private int m_currentClip;
-    private float m_nextShotTime;
-    private bool m_infiniteAmmo = false;
+    public int m_damage = 1;
+
     public bool m_isReloading = false;
     public bool m_isAutomatic = false;
+
     private LayerMask m_entityCollisionMask;
-    private LayerMask m_terrainCollisionMask;
+    private LayerMask m_environmentCollisionMask;
+
+    private float m_nextShotTime;
+
+    [SerializeField] private int m_currentAmmo;
+    [SerializeField] private int m_currentClip;
+
+    private bool m_infiniteAmmo = false;
 
     private void Awake() {
         m_currentAmmo = m_maxAmmo;
@@ -35,8 +43,8 @@ public class Gun : MonoBehaviour {
     public void SetEntityCollisionLayer(LayerMask a_collsionMask) {
         m_entityCollisionMask = a_collsionMask;
     }
-    public void SetTerrainCollisionLayer(LayerMask a_collsionMask) {
-        m_terrainCollisionMask = a_collsionMask;
+    public void SetEnvironmentCollisionLayer(LayerMask a_collsionMask) {
+        m_environmentCollisionMask = a_collsionMask;
     }
     public void SetInfiniteAmmo(bool a_infiniteAmmo) {
         m_infiniteAmmo = a_infiniteAmmo;
@@ -50,6 +58,9 @@ public class Gun : MonoBehaviour {
             }
         }
     }
+    public int GetCurrentClip() { return m_currentClip; }
+    public int GetCurrentAmmo() { return m_currentAmmo; }
+
 
     //reloads the gun and also prevents shooting for a time based on the reload time in milliseconds variable
     public void Reload()
@@ -101,7 +112,7 @@ public class Gun : MonoBehaviour {
                     newProjectile.SetSpeed(m_muzzleVelocity);
                     newProjectile.SetLifeTime(m_bulletLifeTime);
                     newProjectile.SetEntityCollisionLayer(m_entityCollisionMask);
-                    newProjectile.SetTerrainCollisionLayer(m_terrainCollisionMask);
+                    newProjectile.SetTerrainCollisionLayer(m_environmentCollisionMask);
                 }
                 m_currentClip--;
             }

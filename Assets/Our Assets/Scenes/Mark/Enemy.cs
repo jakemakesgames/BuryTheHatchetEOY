@@ -7,7 +7,7 @@ using UnityEngine.AI;
 //Last edited 29/07/2018
 
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(NavMeshAgent))]
 public class Enemy : MonoBehaviour, IDamagable {
     enum STATE
@@ -16,7 +16,8 @@ public class Enemy : MonoBehaviour, IDamagable {
         SEEK,
         FLEE,
         STATIONARY,
-        COVER
+        COVER,
+        STRAFE
     }
     private float m_health;
     [SerializeField] float m_maxHealth = 5;
@@ -29,16 +30,21 @@ public class Enemy : MonoBehaviour, IDamagable {
     [SerializeField] private float m_fireDist;
     private float m_distBetweenPlayer;
     private float m_gunDistToPlayer;
+    private float m_strafeDecision;
+    private float m_nextStrafeDecision;
     [SerializeField] private float seekSpeed;
     private bool m_isDesperate;
-    private bool m_isReloading;
-    private GameObject m_weapon;
+    private bool m_coverFound = false;
+    private bool attackBlocked = false;
+    private bool m_isDead = false;
+    private WeaponController m_weaponController;
     private Gun m_gun;
     private NavMeshAgent agent;
     LineRenderer line;
-    //private Melee m_melee;
     private GameObject m_player;
-    private List<Transform> m_coverPoints;
+    private List<Transform>m_coverPoints;
+    [SerializeField]private LayerMask m_coverLayer;
+    [SerializeField] private LayerMask m_environmentLayer;
     public delegate void Dead(Enemy enemy);
     public Dead OnDeath;
     STATE m_state;
@@ -46,20 +52,22 @@ public class Enemy : MonoBehaviour, IDamagable {
     {
         m_player = GameObject.FindGameObjectWithTag("Player");
         m_coverPoints = new List<Transform>();
+        m_weaponController = GetComponent<WeaponController>();
     }
 
     // Use this for initialization
     void Start()
     {
-        m_weapon = transform.GetChild(0).GetChild(0).gameObject;
+
         line = GetComponent<LineRenderer>();
         agent = GetComponent<NavMeshAgent>();
 
-        if (m_weapon.tag == "Gun")
+        if (m_weaponController.GetEquippedGun() != null)
        {
-           m_gun = m_weapon.GetComponent<Gun>();
+            m_gun = m_weaponController.GetEquippedGun();
+            m_gun.SetInfiniteAmmo(true);
        }
-       else if (m_weapon.tag == "Melee")
+       else if (m_weaponController.GetEquippedMelee() != null)
        {
           // m_melee = m_weapon.GetComponent<Melee>();
        }
@@ -77,19 +85,31 @@ public class Enemy : MonoBehaviour, IDamagable {
     void Update()
     {
         m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
-        m_gunDistToPlayer = Vector3.Distance(m_weapon.transform.position, m_player.transform.position);
+        m_gunDistToPlayer = Vector3.Distance(m_weaponController.GetEquippedWeapon().transform.position, m_player.transform.position);
+
+        if (m_state != STATE.WANDER)
+        {
+            agent.isStopped = false;
+        }
 
         if (m_distBetweenPlayer < m_seekDist)
         {
+            transform.LookAt(m_player.transform.position);
+
             if (m_distBetweenPlayer > m_fleeDist)
             {
                 m_state = STATE.SEEK;
             }
             else if (m_distBetweenPlayer <= m_fleeDist + 0.1 && m_distBetweenPlayer >= m_fleeDist - 0.1)
             {
-                m_state = STATE.STATIONARY;
-                agent.destination = transform.position;
-
+                if (!attackBlocked)
+                {
+                    m_state = STATE.STATIONARY;
+                }
+                else if (!(m_gun.m_isReloading))
+                {
+                   // m_state = STATE.STRAFE;
+                }
             }
             else if (m_distBetweenPlayer < m_fleeDist)
             {
@@ -100,33 +120,23 @@ public class Enemy : MonoBehaviour, IDamagable {
         {
             m_state = STATE.WANDER;
         }
-
-        if (m_gunDistToPlayer < m_fireDist && m_isReloading == false)
+    
+        if (m_gunDistToPlayer < m_fireDist && !m_gun.GetIsEmpty())
         {
             Attack();
         }
 
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if (m_isReloading)
-            {
-                m_isReloading = false;
-            }
-            else
-            {
-                m_isReloading = true;
-            }
-        }
-
-        if (m_gun.GetIsEmpty())
+        if (m_gun.GetIsEmpty() || m_gun.m_isReloading)
         {
             m_state = STATE.COVER;
         }
-        else if (m_state == STATE.COVER && !m_gun.GetIsEmpty())
+        else if (!m_gun.GetIsEmpty() && !m_gun.m_isReloading )
         {
-           // m_state = STATE.WANDER;
+            m_coverFound = false;
         }
+
         Debug.Log(m_state);
+        Debug.Log(m_gun.GetIsEmpty());
 
         if (m_health <= 0)
         {
@@ -135,48 +145,69 @@ public class Enemy : MonoBehaviour, IDamagable {
                 OnDeath(this);
             }
             Destroy(gameObject);
+            m_isDead = true;
         }
 
-        switch (m_state)
+        if (!m_isDead)
         {
-            case STATE.WANDER:
-                Wander();
-                break;
-            case STATE.SEEK:
-                Seek();
-                break;
-            case STATE.FLEE:
-                Flee();
-                break;
-            case STATE.COVER:
-                FindCover();
-                break;
-            default:
-                return;
+            switch (m_state)
+            {
+                case STATE.WANDER:
+                    Wander();
+                    break;
+                case STATE.SEEK:
+                    Seek();
+                    break;
+                case STATE.FLEE:
+                    Flee();
+                    break;
+                case STATE.COVER:
+                    if (!m_coverFound)
+                    {
+                        FindCover();
+                    }
+                    break;
+                case STATE.STATIONARY:
+
+                    Stationary();
+                    break;
+                case STATE.STRAFE:
+                    Strafe();
+                    break;
+                default:
+                    return;
+            }
         }
     }
 
     void Wander()
     {
-        agent.destination = transform.position;
+        agent.isStopped = true;
     }
     void Seek()
     {
-        transform.LookAt(m_player.transform.position);
+        //transform.LookAt(m_player.transform.position);
         //*!
 
         /*!
          * 
          * 
          * !*/
-        
-        //transform.position = Vector3.MoveTowards(transform.position, m_player.transform.position, m_speed * Time.deltaTime);
+
+        //targetLocation = new Vector3(m_player.transform.position.x, transform.position.y, m_player.transform.position.z);
+
+        if (attackBlocked && !(m_gun.m_isReloading))    //DO THIS ON 1/8/18
+        {
+            Strafe();
+            Debug.Log("STRAFE FOR REAL");
+        }
+
         agent.destination = m_player.transform.position;
     }
 
     void Flee()
     {
-        transform.LookAt(m_player.transform.position);
+        //transform.LookAt(m_player.transform.position);
         // transform.position = Vector3.MoveTowards(transform.position, m_player.transform.position, -m_speed * Time.deltaTime);
         Vector3 vecBetween = (m_player.transform.position - transform.position);
 
@@ -186,7 +217,55 @@ public class Enemy : MonoBehaviour, IDamagable {
 
     void Attack()
     {
+        Vector3 vecBetween = (m_player.transform.position - m_weaponController.m_weaponHold.transform.position);
+        RaycastHit hit;
+
+        if (Physics.Raycast(m_weaponController.m_weaponHold.transform.position, vecBetween, out hit, 1000.0f, m_coverLayer))
+        {
+            attackBlocked = true;
+            return;
+        }
+        else
+        {
+            attackBlocked = false;
+        }
+        if (Physics.Raycast(m_weaponController.m_weaponHold.transform.position, vecBetween, out hit, 1000.0f, m_environmentLayer))
+        {
+            attackBlocked = true;
+            return;
+        }
+        else
+        {
+            attackBlocked = false;
+        }
+
         m_gun.Shoot();
+
+    }
+
+    void Stationary()
+    {
+        agent.destination = transform.position;
+    }
+
+    void Strafe()
+    {
+        if (Time.time > m_nextStrafeDecision)
+        {
+            m_nextStrafeDecision = Time.time + 2;
+            m_strafeDecision = Random.Range(0.0f, 1.0f);
+        }
+
+        if (m_strafeDecision < 0.5f)
+        {
+            agent.destination = - transform.right;
+        }
+        else
+        {
+            //Cheeky Michael
+            agent.destination = transform.right;
+        }
+       
     }
     public void TakeHit(int a_damage, RaycastHit a_hit)
     {
@@ -199,8 +278,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     }
     public void FindCover()
     {
-        int layerMask = 1 << 10; //Layer 10
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, m_coverDist, layerMask);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, m_coverDist, m_coverLayer);
 
         if (hitColliders.Length == 0)
         {
@@ -216,10 +294,31 @@ public class Enemy : MonoBehaviour, IDamagable {
         agent.destination = targetLocation;
         DrawLinePath(agent.path);
 
-        if ((transform.position - targetLocation).magnitude < 0.1f)
-        { 
-            m_gun.Reload();
+        // Check if we've reached the destination
+        if (!agent.pathPending)
+        {
+            if (agent.remainingDistance <= agent.stoppingDistance)
+            {
+                if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                {
+                    if (!m_gun.m_isReloading && m_gun.GetIsEmpty())
+                    {
+                        m_gun.Reload();
+                    }
+                    m_coverFound = true;
+                }
+            }
         }
+
+       // if ((transform.position - targetLocation).magnitude < 0.2f)
+       // {
+       //     if (!m_gun.m_isReloading)
+       //     {
+       //         m_gun.Reload();
+       //     }
+       //
+       //     m_coverFound = true;
+       // }
     }
     Vector3 FindNearestCover()
     {
@@ -273,17 +372,21 @@ public class Enemy : MonoBehaviour, IDamagable {
         Gizmos.DrawWireSphere(transform.position, m_seekDist);
         Gizmos.DrawWireSphere(transform.position, m_fleeDist);
         Gizmos.color = Color.red;
-        if (m_weapon != null)
+        if (m_weaponController != null)
         {
-            Gizmos.DrawWireSphere(m_weapon.transform.position, m_fireDist);
+            Gizmos.DrawWireSphere(m_weaponController.m_weaponHold.transform.position, m_fireDist);
+
+            if (m_gun.GetIsEmpty())
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere(m_weaponController.m_weaponHold.transform.position, m_coverDist);
+            }
         }
 
 
-        if (m_isReloading == true)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(m_weapon.transform.position, m_coverDist);
-        }
+
     }
+
+  
 #endif
 }

@@ -1,23 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 30/07/2018
+//Last edited 31/07/2018
 
 
-[RequireComponent (typeof(Rigidbody))]
+[RequireComponent (typeof(NavMeshAgent))]
+[RequireComponent(typeof(WeaponController))]
 public class PlayerInput : MonoBehaviour {
 
     [SerializeField] private float m_speed;
     [SerializeField] private float m_dashSpeed;
-    private Rigidbody m_rb;
+    private NavMeshAgent m_nma;
     private Vector3 m_velocity;
     private Vector3 m_movement;
     private Vector3 m_mosePos;
     private Camera m_viewCamera;
     private WeaponController m_weaponController;
+
+    [SerializeField] private Text m_clipAmmoDisplay;
+    [SerializeField] private Text m_totalAmmoDisplay;
 
     public float Speed
     {
@@ -52,14 +58,14 @@ public class PlayerInput : MonoBehaviour {
             }
             if (m_weaponController.GetIsGunEmpty()) {
                 if (Input.GetMouseButtonDown(0)) {
-                    m_weaponController.ReloadEquipedGun();
+                    m_weaponController.ReloadEquippedGun();
                 }
             }
         }
         else {
             if (Input.GetMouseButtonDown(0)) {
                 if (m_weaponController.GetIsGunEmpty()) {
-                    m_weaponController.ReloadEquipedGun();
+                    m_weaponController.ReloadEquippedGun();
                 }
                 m_weaponController.Shoot();
             }
@@ -79,8 +85,8 @@ public class PlayerInput : MonoBehaviour {
         Vector3 moveVelocity = movement.normalized * m_dashSpeed;
         Move(moveVelocity);
     }
-    private void Start() {
-        m_rb = GetComponent<Rigidbody>();
+    private void Awake() {
+        m_nma = GetComponent<NavMeshAgent>();
         m_weaponController = GetComponent<WeaponController>();
         m_viewCamera = Camera.main;
     }
@@ -108,9 +114,19 @@ public class PlayerInput : MonoBehaviour {
         if (Input.GetMouseButtonDown(1)) {
             Dash();
         }
+        //Ammo display
+        if (m_clipAmmoDisplay != null) {
+            m_clipAmmoDisplay.GetComponent<Text>().text = 
+                (m_weaponController.GetCurrentClip().ToString() + " / " + m_weaponController.GetEquippedGun().m_clipSize.ToString());
+        }
+
+        if (m_totalAmmoDisplay != null) {
+            m_totalAmmoDisplay.GetComponent<Text>().text =
+                (m_weaponController.GetCurrentAmmo().ToString() + " / " + m_weaponController.GetEquippedGun().m_maxAmmo.ToString());
+        }
     }
     //Anything involving the player's inputs and physics will go here
     private void FixedUpdate() {
-        m_rb.MovePosition(m_rb.position + m_velocity * Time.fixedDeltaTime);
+        m_nma.SetDestination(transform.position + m_velocity * Time.fixedDeltaTime);
     }
 }

@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 114123123401581420}
   m_Layer: 0
   m_Name: DoubleBarrel
-  m_TagString: Untagged
+  m_TagString: Gun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -338,14 +338,14 @@ MonoBehaviour:
   m_muzzle: {fileID: 4263439028790062}
   m_projectile: {fileID: 114829323488259280, guid: 1a01424ec0f630f47b3c002f83639a55,
     type: 2}
-  m_msBetweenShots: 20
+  m_msBetweenShots: 100
   m_reloadTimeInMilliseconds: 800
   m_muzzleVelocity: 10
   m_bulletLifeTime: 1
-  m_dispersionAngle: 20
-  m_numProjectilesPerShot: 12
+  m_dispersionAngle: 45
+  m_numProjectilesPerShot: 5
   m_burstProjectiles: 1
   m_maxAmmo: 10
   m_clipSize: 2
   m_isReloading: 0
-  m_isAutomatic: 0
+  m_isAutomatic: 1
