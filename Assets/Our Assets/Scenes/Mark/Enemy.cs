@@ -230,6 +230,7 @@ public class Enemy : MonoBehaviour, IDamagable {
         }
 
         m_gun.Shoot();
+        Debug.Log("SHOOT!");
 
     }
 
