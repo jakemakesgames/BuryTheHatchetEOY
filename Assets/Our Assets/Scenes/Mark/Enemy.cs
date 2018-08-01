@@ -274,6 +274,7 @@ public class Enemy : MonoBehaviour, IDamagable {
         if (hitColliders.Length == 0)
         {
             m_gun.Reload();
+            return;
         }
         for (int i = 0; i < hitColliders.Length; i++)
         {
