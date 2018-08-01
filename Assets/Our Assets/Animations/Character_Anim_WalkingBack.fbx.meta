@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 04f6c513ab14d6c429816a19bf2560b6
-timeCreated: 1533087653
+guid: df385a417f4057c45aa2d137a50e398f
+timeCreated: 1533090261
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -137,7 +137,7 @@ ModelImporter:
     400126: mixamorig:Spine1
     400128: mixamorig:Spine2
     400130: //RootNode
-    7400000: Character_Anim_Walking_Hatchet_v01
+    7400000: Character_Anim_WalkingBack
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -167,10 +167,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Character_Anim_Walking_Hatchet_v01
+      name: Character_Anim_WalkingBack
       takeName: mixamo.com
       firstFrame: 0
-      lastFrame: 27
+      lastFrame: 30
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
