@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//Michael Corben
+//Created 31/07/2018
+//Last edited 01/08/2018
 
 public class Melee : MonoBehaviour {
 
@@ -12,22 +15,28 @@ public class Melee : MonoBehaviour {
     [SerializeField] private int m_damage;
     [SerializeField] private LayerMask m_entityCollisionMask;
     [SerializeField] private LayerMask m_environmentCollisionMask;
+    [SerializeField] private Animation m_axeSwingAnimation;
+    [SerializeField] private Animator m_animator;
 
     private float m_skinWidth = 0.1f;
     private bool m_isSwinging = false;
     
     public void Swing() {
-        if (!m_isSwinging) {
+        if (!m_isSwinging)
+        {
+            //do the swing animaion
+
             m_isSwinging = true;
         }
     }
 
-    public void Update()
-    {
-        if (m_isSwinging)
-        {
-            //do the swing animaion if the animation isn't already playing
+    //to be called by the animator in the animations last frame
+    public void EndSwing() {
+        m_isSwinging = false;
+    }
 
+    public void Update() {
+        if (m_isSwinging) {
             CheckCollisions(1f);
         }
     }
@@ -45,6 +54,10 @@ public class Melee : MonoBehaviour {
             Ray ray = new Ray(m_contactPoints[i].transform.position, m_contactPoints[i].transform.forward);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
+                OnHitObject(hit);
+            }
+            if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMask))
+            {
                 OnHitObject(hit);
             }
         }

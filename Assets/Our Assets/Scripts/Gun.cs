@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 30/07/2018
+//Last edited 31/07/2018
 
 public class Gun : MonoBehaviour {
 
@@ -50,10 +50,8 @@ public class Gun : MonoBehaviour {
         m_infiniteAmmo = a_infiniteAmmo;
     }
     private void Update() {
-        if (m_isReloading)
-        {
-            if (Time.time > m_nextShotTime)
-            {
+        if (m_isReloading) {
+            if (Time.time > m_nextShotTime) {
                 m_isReloading = false;
             }
         }
@@ -63,8 +61,7 @@ public class Gun : MonoBehaviour {
 
 
     //reloads the gun and also prevents shooting for a time based on the reload time in milliseconds variable
-    public void Reload()
-    {
+    public void Reload() {
         m_nextShotTime = Time.time + m_reloadTimeInMilliseconds / 1000;
         m_isReloading = true;
         if (m_currentAmmo < m_clipSize) {
@@ -83,8 +80,7 @@ public class Gun : MonoBehaviour {
     }
 
     //tells who asks is if the gun is empty
-    public bool GetIsEmpty()
-    {
+    public bool GetIsEmpty() {
         if (m_currentClip <= 0) {
             return true;
         }
@@ -94,8 +90,7 @@ public class Gun : MonoBehaviour {
     }
 
     //Randomises the projectiles angle based on the dispersion angle variable
-    private Vector3 randomAngle()
-    {
+    private Vector3 RandomAngle() {
         Vector3 direction = m_muzzle.forward + Random.insideUnitSphere * m_dispersionAngle;
         direction.x = 0;
         return direction;
@@ -103,12 +98,12 @@ public class Gun : MonoBehaviour {
 
     //creates projectiles will only shoot after reload time
     public void Shoot() {
-
         if (Time.time > m_nextShotTime) {
             if (m_currentClip > 0) {
                 m_nextShotTime = Time.time + m_msBetweenShots / 1000;
                 for (int i = 0; i < m_numProjectilesPerShot; i++) {
-                    Projectile newProjectile = Instantiate(m_projectile, m_muzzle.position, m_muzzle.rotation * Quaternion.Euler(randomAngle())) as Projectile;
+                    Projectile newProjectile = Instantiate(m_projectile, m_muzzle.position, m_muzzle.rotation * Quaternion.Euler(RandomAngle())) as Projectile;
+                    newProjectile.SetDamage(m_damage);
                     newProjectile.SetSpeed(m_muzzleVelocity);
                     newProjectile.SetLifeTime(m_bulletLifeTime);
                     newProjectile.SetEntityCollisionLayer(m_entityCollisionMask);

@@ -4,18 +4,19 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 25/07/2018
+//Last edited 1/08/2018
 
+[RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour, IDamagable {
 
-    [SerializeField] private int m_maxHealth;
-    private int m_health;
     private bool m_dead;
+    private int m_health;
     private int m_money = 0;
+    [SerializeField] private int m_maxHealth;
+    [SerializeField] private int m_startingMoney;
     [SerializeField] private Transform m_crosshairPos;
     [SerializeField] private GameObject m_equippedWeapon;
     [SerializeField] private List<GameObject> m_heldWeapons;
-    [SerializeField] private GameObject m_ammoDisplay;
 
     public event System.Action OnDeath;
 
@@ -24,22 +25,24 @@ public class Player : MonoBehaviour, IDamagable {
     }
     public void TakeDamage(int a_damage) {
         m_health -= a_damage;
-        if (m_health <= 0 && !m_dead)
-        {
-            m_dead = true;
+        if (m_health <= 0 && !m_dead) {
+            Die();
         }
     }
 
-    private void Die()
-    {
+    public void SetMoney(int a_money) { m_money = a_money; }
+    public int GetMoney() { return m_money; }
+
+    private void Die() {
         m_dead = true;
         if (OnDeath != null) {
             OnDeath();
         }
     }
 
-    private void Start () {
+    private void Awake () {
         m_health = m_maxHealth;
+        m_money = m_startingMoney;
     }
     
     private void Update () {

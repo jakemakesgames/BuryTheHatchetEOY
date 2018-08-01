@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//Michael Corben
+//Created 24/07/2018
+//Last edited 28/07/2018
 
 public class MoveCamera : MonoBehaviour {
 

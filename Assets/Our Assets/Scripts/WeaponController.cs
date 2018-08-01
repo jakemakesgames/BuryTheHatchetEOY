@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 31/07/2018
+//Last edited 01/08/2018
 
 public class WeaponController : MonoBehaviour {
 
@@ -51,7 +51,9 @@ public class WeaponController : MonoBehaviour {
         m_equippedMelee.transform.parent = m_weaponHold;
     }
     public void ReloadEquippedGun() {
-        m_equippedGun.Reload();
+        if (m_equippedGun != null) {
+            m_equippedGun.Reload();
+        }
     }
     public Gun GetEquippedGun() { return m_equippedGun; }
     public Melee GetEquippedMelee() { return m_equippedMelee; }
