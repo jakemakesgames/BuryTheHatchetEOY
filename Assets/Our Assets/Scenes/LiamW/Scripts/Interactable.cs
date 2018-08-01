@@ -67,6 +67,10 @@ public class Interactable : MonoBehaviour
                     Debug.Log("Player stopped looking at Bounty");
                 }
             }
+            else if (m_uiManager.GetHasBounty())
+            {
+                m_uiManager.m_bountyInteractionScreen.SetActive(false);
+            }
             //Debug.Log("Interacting");
         }
     }
