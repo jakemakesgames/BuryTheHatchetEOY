@@ -32,10 +32,13 @@ public class Enemy : MonoBehaviour, IDamagable {
     private float m_gunDistToPlayer;
     private float m_strafeDecision;
     private float m_nextStrafeDecision;
+    [SerializeField] private float m_coverFoundThreshold;
     [SerializeField] private float seekSpeed;
     private bool m_isDesperate;
     private bool m_coverFound = false;
     private bool m_isDead = false;
+    private bool m_targetFound = false;
+    Vector3 m_targetLocation;
     private WeaponController m_weaponController;
     private Gun m_gun;
     private NavMeshAgent agent;
@@ -161,7 +164,7 @@ public class Enemy : MonoBehaviour, IDamagable {
                     Flee();
                     break;
                 case STATE.COVER:
-                    if (!m_coverFound)
+                    if (!m_coverFound && m_gun.GetIsEmpty())
                     {
                         FindCover();
                     }
@@ -245,7 +248,8 @@ public class Enemy : MonoBehaviour, IDamagable {
 
         if (m_strafeDecision < 0.5f)
         {
-            agent.destination = - transform.right;
+            agent.destination = -transform.right;
+
         }
         else
         {
@@ -276,11 +280,22 @@ public class Enemy : MonoBehaviour, IDamagable {
             m_coverPoints.Add(hitColliders[i].transform);
         }
 
-        //transform.position = Vector3.MoveTowards(transform.position, FindNearestCover(), m_speed * Time.deltaTime);
-        Vector3 targetLocation = FindNearestCover();
-        agent.destination = targetLocation;
-        DrawLinePath(agent.path);
 
+
+        if (!m_targetFound)
+        {
+            m_targetLocation = FindNearestCover();
+            agent.destination = m_targetLocation;
+            m_targetFound = true;
+        }
+
+        if (agent.remainingDistance >= m_coverFoundThreshold)
+        {
+            m_targetLocation = FindNearestCover();
+            agent.destination = m_targetLocation;
+        }
+
+        DrawLinePath(agent.path);
         // Check if we've reached the destination
         if (!agent.pathPending)
         {
@@ -293,6 +308,7 @@ public class Enemy : MonoBehaviour, IDamagable {
                         m_gun.Reload();
                     }
                     m_coverFound = true;
+                    m_targetFound = false;
                 }
             }
         }
