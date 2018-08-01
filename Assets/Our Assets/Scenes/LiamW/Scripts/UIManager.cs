@@ -90,7 +90,6 @@ public class UIManager : MonoBehaviour
 
     public void Update()
     {
-
         #region Pause Screen Controls
         if (Input.GetKeyDown("escape") && !m_isPaused)
         {
@@ -131,6 +130,7 @@ public class UIManager : MonoBehaviour
                 else
                 {
                     m_optionsMenu.SetActive(false);
+                    m_bountyBoard.SetActive(false);
                     m_pauseMenu.SetActive(true);
                 }  
             }
