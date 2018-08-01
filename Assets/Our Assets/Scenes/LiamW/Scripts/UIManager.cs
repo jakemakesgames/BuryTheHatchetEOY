@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
 public class UIManager : MonoBehaviour
@@ -30,10 +31,10 @@ public class UIManager : MonoBehaviour
     bool m_inBounty;
     bool m_inPausedMenu;
     bool m_soldOut;
-    float m_soundEffect;
-    float m_mainVolume;
 
     Interactable m_interactable;
+    SoundManager m_soundManager;
+
     #endregion
 
 
@@ -74,13 +75,15 @@ public class UIManager : MonoBehaviour
         m_bountyBoard.SetActive(false);
         m_bountyBoardScreen.SetActive(false);
         m_bountyInteractionScreen.SetActive(false);
+
+        m_soundManager = SoundManager.m_instance;
     }
 
     #region public functions
     public void ChangeScenes(int changeScene)
     {
         //Loads our games Scene
-        SceneManager.LoadScene(changeScene);
+        SceneManager.LoadScene(changeScene, LoadSceneMode.Single);
     }
 
     public void Quit()
@@ -90,7 +93,6 @@ public class UIManager : MonoBehaviour
 
     public void Update()
     {
-
         #region Pause Screen Controls
         if (Input.GetKeyDown("escape") && !m_isPaused)
         {
@@ -131,6 +133,7 @@ public class UIManager : MonoBehaviour
                 else
                 {
                     m_optionsMenu.SetActive(false);
+                    m_bountyBoard.SetActive(false);
                     m_pauseMenu.SetActive(true);
                 }  
             }
@@ -180,6 +183,15 @@ public class UIManager : MonoBehaviour
                 Debug.Log("Game is UnPaused");
             }
         }
+
+        #endregion
+
+        #region Options Controls
+
+
+        //PlayerPrefs.SetFloat("m_mainVolumeValue", m_soundManager.GetMainVolume());
+
+        PlayerPrefs.GetFloat("m_mainVolumeValue");
 
         #endregion
     }
