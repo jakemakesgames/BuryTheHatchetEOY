@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 //Mark Phillips
 //Created 24/07/2018
-//Last edited 29/07/2018
+//Last edited 1/08/2018
 
 
 [RequireComponent(typeof(WeaponController))]
@@ -19,37 +19,62 @@ public class Enemy : MonoBehaviour, IDamagable {
         COVER,
         STRAFE
     }
-    private float m_health;
+
+    [Tooltip("Max health value, currently at 5 (5 hits to die).")]
     [SerializeField] float m_maxHealth = 5;
-    [SerializeField] private float m_speed;
-    [SerializeField] private float m_maxSpeed;
-    [SerializeField] private float m_seekDist;
-    [SerializeField] private float m_fleeDist;
-    [SerializeField] private float m_coverDist;
+
+    [Tooltip("Seek radius/Blue sphere (large) - distance to seek to player.")]
+    [SerializeField] private float m_seekRadius;
+
+    [Tooltip("Flee radius/Blue sphere (small) - distance to flee from player.")]
+    [SerializeField] private float m_fleeRadius;
+
+    [Tooltip("Cover radius/Green sphere - finds objects on the cover layer.")]
+    [SerializeField] private float m_coverRadius;
     private float m_enemyRadius;
-    [SerializeField] private float m_fireDist;
+
+    [Tooltip("Attack radius/Red sphere - shoots at player.")]
+    [SerializeField] private float m_attackRadius;
+
+    [Tooltip("The distance from enemy to cover point at which to stop calculating a new position.")]
+    [SerializeField]
+    private float m_coverFoundThreshold = 3;
+
+    [Tooltip("Set this to the Cover layer for cover collision detection")]
+    [SerializeField]
+    private LayerMask m_coverLayer;
+
+    [Tooltip("Set this to the Environment layer for enivironment collision detection")]
+    [SerializeField]
+    private LayerMask m_environmentLayer;
+
+    private float m_health;
     private float m_distBetweenPlayer;
     private float m_gunDistToPlayer;
     private float m_strafeDecision;
     private float m_nextStrafeDecision;
-    [SerializeField] private float m_coverFoundThreshold;
-    [SerializeField] private float seekSpeed;
+
     private bool m_isDesperate;
     private bool m_coverFound = false;
     private bool m_isDead = false;
     private bool m_targetFound = false;
+
     Vector3 m_targetLocation;
-    private WeaponController m_weaponController;
-    private Gun m_gun;
+
+    STATE m_state;
+
     private NavMeshAgent agent;
     LineRenderer line;
     private GameObject m_player;
-    private List<Transform>m_coverPoints;
-    [SerializeField]private LayerMask m_coverLayer;
-    [SerializeField] private LayerMask m_environmentLayer;
+    private List<Transform> m_coverPoints;
+
+    private WeaponController m_weaponController;
+    private Gun m_gun;
+
     public delegate void Dead(Enemy enemy);
     public Dead OnDeath;
-    STATE m_state;
+
+
     void Awake()
     {
         m_player = GameObject.FindGameObjectWithTag("Player");
@@ -94,23 +119,23 @@ public class Enemy : MonoBehaviour, IDamagable {
             agent.isStopped = false;
         }
 
-        if (m_distBetweenPlayer < m_seekDist)
+        if (m_distBetweenPlayer < m_seekRadius)
         {
             transform.LookAt(m_player.transform.position);
 
-            if (m_distBetweenPlayer > m_fleeDist)
+            if (m_distBetweenPlayer > m_fleeRadius)
             {
 
                 m_state = STATE.SEEK;
                 
             }
-            else if (m_distBetweenPlayer <= m_fleeDist + 0.1 && m_distBetweenPlayer >= m_fleeDist - 0.1)
+            else if (m_distBetweenPlayer <= m_fleeRadius + 0.1 && m_distBetweenPlayer >= m_fleeRadius - 0.1)
             {
 
                 m_state = STATE.STATIONARY;
 
             }
-            else if (m_distBetweenPlayer < m_fleeDist)
+            else if (m_distBetweenPlayer < m_fleeRadius)
             {
                 if (!(m_state == STATE.COVER))
                 {
@@ -123,7 +148,7 @@ public class Enemy : MonoBehaviour, IDamagable {
             m_state = STATE.WANDER;
         }
     
-        if (m_gunDistToPlayer < m_fireDist && !m_gun.GetIsEmpty())
+        if (m_gunDistToPlayer < m_attackRadius && !m_gun.GetIsEmpty())
         {
             Attack();
         }
@@ -196,21 +221,13 @@ public class Enemy : MonoBehaviour, IDamagable {
          * 
          * !*/
 
-        //targetLocation = new Vector3(m_player.transform.position.x, transform.position.y, m_player.transform.position.z);
-
-       
-
         agent.destination = m_player.transform.position;
     }
 
     void Flee()
-    {
-        //transform.LookAt(m_player.transform.position);
-        // transform.position = Vector3.MoveTowards(transform.position, m_player.transform.position, -m_speed * Time.deltaTime);
+    { 
         Vector3 vecBetween = (m_player.transform.position - transform.position);
-
-
-       agent.destination = transform.position - vecBetween;
+        agent.destination = transform.position - vecBetween;
     }
 
     void Attack()
@@ -230,8 +247,6 @@ public class Enemy : MonoBehaviour, IDamagable {
         }
 
         m_gun.Shoot();
-        Debug.Log("SHOOT!");
-
     }
 
     void Stationary()
@@ -269,7 +284,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     }
     public void FindCover()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, m_coverDist, m_coverLayer);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, m_coverRadius, m_coverLayer);
 
         if (hitColliders.Length == 0)
         {
@@ -336,8 +351,6 @@ public class Enemy : MonoBehaviour, IDamagable {
         Vector3 dirFromPlayer = nearestPoint.position;
         dirFromPlayer = (( nearestPoint.position - m_player.transform.position).normalized);
 
-
-
         Vector3 finalPoint = (nearestPoint.position + dirFromPlayer);
         finalPoint = new Vector3(finalPoint.x, nearestPoint.position.y, finalPoint.z);
 
@@ -364,24 +377,15 @@ public class Enemy : MonoBehaviour, IDamagable {
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, m_seekDist);
-        Gizmos.DrawWireSphere(transform.position, m_fleeDist);
+        Gizmos.DrawWireSphere(transform.position, m_seekRadius);
+        Gizmos.DrawWireSphere(transform.position, m_fleeRadius);
         Gizmos.color = Color.red;
         if (m_weaponController != null)
         {
-            Gizmos.DrawWireSphere(m_weaponController.m_weaponHold.transform.position, m_fireDist);
-
-            if (m_gun.GetIsEmpty())
-            {
-                Gizmos.color = Color.green;
-                Gizmos.DrawWireSphere(m_weaponController.m_weaponHold.transform.position, m_coverDist);
-            }
+            Gizmos.DrawWireSphere(m_weaponController.m_weaponHold.transform.position, m_attackRadius);   
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(m_weaponController.m_weaponHold.transform.position, m_coverRadius);  
         }
-
-
-
-    }
-
-  
+    } 
 #endif
 }
