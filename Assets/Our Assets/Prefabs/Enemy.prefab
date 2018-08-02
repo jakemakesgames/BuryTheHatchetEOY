@@ -129,14 +129,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_maxHealth: 5
-  m_speed: 5
-  m_maxSpeed: 0
-  m_seekDist: 10
-  m_fleeDist: 4
-  m_coverDist: 8.5
-  m_fireDist: 6
+  m_seekRadius: 10
+  m_fleeRadius: 5
+  m_coverRadius: 12
+  m_attackRadius: 8
   m_coverFoundThreshold: 3
-  seekSpeed: 5
   m_coverLayer:
     serializedVersion: 2
     m_Bits: 1024
