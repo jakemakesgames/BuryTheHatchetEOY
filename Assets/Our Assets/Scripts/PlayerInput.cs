@@ -86,7 +86,14 @@ public class PlayerInput : MonoBehaviour {
                 m_nma.speed = m_dashSpeed;
                 m_nma.angularSpeed = m_dashSpeed;
                 m_nma.acceleration = m_dashAcceleration;
-                Vector3 dashDestination = transform.position + (transform.forward * m_dashDistance);
+                Vector3 dashDestination;
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, transform.forward, out hit, m_dashDistance)) {
+                    dashDestination = hit.transform.position - transform.forward;
+                }
+                else {
+                    dashDestination = transform.position + (transform.forward * m_dashDistance);
+                }
                 m_nma.SetDestination(dashDestination);
             }
         }
