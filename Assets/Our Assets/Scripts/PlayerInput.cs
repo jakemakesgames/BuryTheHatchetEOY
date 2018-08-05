@@ -16,6 +16,12 @@ public class PlayerInput : MonoBehaviour {
     [SerializeField] private float m_speed;
     [SerializeField] private float m_dashSpeed;
     [SerializeField] private float m_dashAcceleration;
+    [SerializeField] private float m_dashStoppingDistance = 25f;
+
+    private float m_nmaSpeed;
+    private float m_nmaAngledSpeed;
+    private float m_nmaAcceleration;
+    private bool m_isDashing = false;
     private NavMeshAgent m_nma;
     private Vector3 m_velocity;
     private Camera m_viewCamera;
@@ -73,11 +79,26 @@ public class PlayerInput : MonoBehaviour {
 
     //quickly moves the player in the direction they are facing
     private void Dash() {
-        m_nma.speed = m_dashSpeed;
-        m_nma.angularSpeed = m_dashSpeed;
-        m_nma.acceleration = m_dashAcceleration;
-        //calculate the destination
-        m_nma.SetDestination(Vector3.zero);
+        if (!m_isDashing) {
+            if (Input.GetMouseButtonDown(1)) {
+                m_isDashing = true;
+                m_nma.speed = m_dashSpeed;
+                m_nma.angularSpeed = m_dashSpeed;
+                m_nma.acceleration = m_dashAcceleration;
+                Vector3 dashDestination = transform.position + (transform.forward * m_dashSpeed * 4);
+                m_nma.SetDestination(Vector3.zero);
+            }
+        }
+        else {
+            Vector3 distanceToDestination;
+            distanceToDestination = transform.position - m_nma.destination;
+            if (distanceToDestination.sqrMagnitude <= m_dashStoppingDistance) {
+                m_nma.speed = m_nmaSpeed;
+                m_nma.angularSpeed = m_nmaAngledSpeed;
+                m_nma.acceleration = m_nmaAcceleration;
+                m_isDashing = false;
+            }
+        }
     }
 
     //gives a ui text object the players ammo for their currently equipped weapon
@@ -99,6 +120,9 @@ public class PlayerInput : MonoBehaviour {
         m_nma = GetComponent<NavMeshAgent>();
         m_weaponController = GetComponent<WeaponController>();
         m_viewCamera = Camera.main;
+        m_nmaAcceleration = m_nma.acceleration;
+        m_nmaAngledSpeed = m_nma.angularSpeed;
+        m_nmaSpeed = m_nma.speed;
     }
 
     private void Update () {
@@ -112,15 +136,14 @@ public class PlayerInput : MonoBehaviour {
         Attack();
 
         //Player dashing
-        if (Input.GetMouseButtonDown(1)) {
-            Dash();
-        }
+        Dash();
 
         //Ammo display
         DisplayAmmo();
     }
 
     private void FixedUpdate() {
-        m_nma.SetDestination(transform.position + m_velocity * Time.fixedDeltaTime);
+        if (!m_isDashing)
+            m_nma.SetDestination(transform.position + m_velocity * Time.fixedDeltaTime);
     }
 }
