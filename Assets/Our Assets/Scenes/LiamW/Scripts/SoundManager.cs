@@ -1,22 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SoundManager : MonoBehaviour
 {
+    #region Public Variables
+
+    public Slider m_mainSlider;
+    public Slider m_musicSlider;
+    public Slider m_SFXSlider;
+
     public AudioSource m_mainVolume;
     public AudioSource m_sfxVolume;
     public AudioSource m_musicVolume;
 
-    float m_mainVolumeValue;
-    float m_sfxVolumeValue;
-    float m_musicVolumeValue;
+    #endregion
+
+    #region Private Regions
+
+    bool m_loop = true;
+    private UIManager m_uiManager;
+
+    #endregion
 
 
-    public float GetMainVolume()
-    {
-        return m_mainVolumeValue;
-    }
+    #region Saving Instance
 
     public static SoundManager m_instance;
 
@@ -31,28 +40,49 @@ public class SoundManager : MonoBehaviour
             //Destroys this object
             Destroy(gameObject);
         }
+
+        DontDestroyOnLoad(gameObject);
+
+    }
+
+    private void Start()
+    {
+        m_mainVolume.Play();
+    }
+
+    private void Update()
+    {
+        MainVolume();
+    }
+
+    #endregion
+
+    #region Public Functions
+
+    public float GetMainVolume()
+    {
+        return m_mainSlider.value;
     }
 
     public void MainVolume()
     {
-        m_mainVolumeValue = m_mainVolume.volume;
+        m_mainVolume.volume = m_mainSlider.value;
 
-        PlayerPrefs.SetFloat("m_mainVolumeValue", m_mainVolumeValue);
+        PlayerPrefs.SetFloat("m_mainVolumeValue", m_mainSlider.value);
+        
     }
 
-    public void SFXVolume(float a_sfxVolume)
+    public void SFXVolume()
     {
-        m_sfxVolume.volume = a_sfxVolume;
+        m_sfxVolume.volume = m_SFXSlider.value;
     }
 
-    public void MusicVolume(float a_musicVolume)
+    public void MusicVolume()
     {
-        m_musicVolume.volume = a_musicVolume;
+        m_musicVolume.volume = m_musicSlider.value;
     }
 
-    public void LoadScene()
-    {
+    #endregion
 
-    }
 
 }

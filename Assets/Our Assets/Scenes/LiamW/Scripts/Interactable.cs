@@ -9,15 +9,19 @@ public class Interactable : MonoBehaviour
 
     public static Interactable m_instance;
 
+    #region Setters
     public bool GetIsInteracting()
     {
         return m_isInteracting;
     }
+
     public void SetIsInteracting(bool a_isInteracting)
     {
         m_isInteracting = a_isInteracting;
     }
+    #endregion
 
+    #region Private functions
     private void Awake()
     {
         m_instance = this;
@@ -32,8 +36,9 @@ public class Interactable : MonoBehaviour
     {
         
     }
+    #endregion
 
-
+    #region
     public void OnTriggerStay(Collider other)
     {
         if (other.tag == "Player")
@@ -83,4 +88,5 @@ public class Interactable : MonoBehaviour
             Debug.Log("Leaving interactable area");
         }
     }
+    #endregion
 }

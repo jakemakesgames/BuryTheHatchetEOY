@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     //-------Public Variables------//
-    #region public variables
+    #region Public Variables
 
     public GameObject m_pauseScreen;
     public GameObject m_pauseMenu;
@@ -18,9 +18,12 @@ public class UIManager : MonoBehaviour
     public GameObject m_bountyBoardScreen;
     public GameObject m_bountyInteractionScreen;
 
+    public Slider m_uiMainSlider;
+    public Slider m_uiMusicSlider;
+    public Slider m_uiSFXSlider;
+
     //*! Singleton attempt
     public static UIManager m_Instance;
-
 
     #endregion
 
@@ -39,6 +42,7 @@ public class UIManager : MonoBehaviour
 
 
     #region Getter and Setter
+
     public bool GetHasBounty()
     {
         return m_hasBounty;
@@ -57,8 +61,15 @@ public class UIManager : MonoBehaviour
     {
         m_isPaused = a_isPaused;
     }
+
+    public float GetMainVolume()
+    {
+        return m_uiMainSlider.value;
+    }
+
     #endregion
 
+    #region Private Functions
 
     private void Awake()
     {
@@ -79,7 +90,10 @@ public class UIManager : MonoBehaviour
         m_soundManager = SoundManager.m_instance;
     }
 
-    #region public functions
+    #endregion
+
+    #region Public Functions
+
     public void ChangeScenes(int changeScene)
     {
         //Loads our games Scene
@@ -186,12 +200,11 @@ public class UIManager : MonoBehaviour
 
         #endregion
 
-        #region Options Controls
+        #region Sound Controls
 
+        MainGameMusic();
 
-        //PlayerPrefs.SetFloat("m_mainVolumeValue", m_soundManager.GetMainVolume());
-
-        PlayerPrefs.GetFloat("m_mainVolumeValue");
+        PlayerPrefs.GetFloat("m_mainVolumeValue", m_soundManager.GetMainVolume());
 
         #endregion
     }
@@ -230,14 +243,14 @@ public class UIManager : MonoBehaviour
 
     }
 
-    public void SoundEffectControl()
+    public void MainGameMusic()
     {
+        m_uiMainSlider.value = m_soundManager.m_mainSlider.value;
 
+        m_soundManager.m_mainVolume.volume = m_uiMainSlider.value;
+
+        PlayerPrefs.SetFloat("MainGameMusic", m_uiMainSlider.value);
     }
 
-    public void MainVolumeControl()
-    {
-
-    }
     #endregion
 }
