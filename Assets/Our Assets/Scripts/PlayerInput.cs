@@ -14,6 +14,7 @@ using UnityEngine.AI;
 public class PlayerInput : MonoBehaviour {
 
     [SerializeField] private float m_speed;
+    [SerializeField] private float m_dashDistance;
     [SerializeField] private float m_dashSpeed;
     [SerializeField] private float m_dashAcceleration;
     [SerializeField] private float m_dashStoppingDistance = 25f;
@@ -85,8 +86,8 @@ public class PlayerInput : MonoBehaviour {
                 m_nma.speed = m_dashSpeed;
                 m_nma.angularSpeed = m_dashSpeed;
                 m_nma.acceleration = m_dashAcceleration;
-                Vector3 dashDestination = transform.position + (transform.forward * m_dashSpeed * 4);
-                m_nma.SetDestination(Vector3.zero);
+                Vector3 dashDestination = transform.position + (transform.forward * m_dashDistance);
+                m_nma.SetDestination(dashDestination);
             }
         }
         else {
