@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 31/07/2018
+//Last edited 05/0/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -15,41 +15,18 @@ public class PlayerInput : MonoBehaviour {
 
     [SerializeField] private float m_speed;
     [SerializeField] private float m_dashSpeed;
+    [SerializeField] private float m_dashAcceleration;
     private NavMeshAgent m_nma;
     private Vector3 m_velocity;
-    private Vector3 m_movement;
-    private Vector3 m_mosePos;
     private Camera m_viewCamera;
     private WeaponController m_weaponController;
 
     [SerializeField] private Text m_clipAmmoDisplay;
     [SerializeField] private Text m_totalAmmoDisplay;
-
-    public float Speed
-    {
-        get
-        {
-            return m_speed;
-        }
-
-        set
-        {
-            m_speed = value;
-        }
-    }
-    public float DashSpeed
-    {
-        get
-        {
-            return m_dashSpeed;
-        }
-
-        set
-        {
-            m_dashSpeed = value;
-        }
-    }
-
+    [SerializeField] private GameObject m_crosshair;
+    
+    //calls the equipped weapons attacking method (swing for melee or shoot for gun)
+    //via the weapon controller script
     public void Attack()
     {
         if (m_weaponController.GetIsAuto()) {
@@ -72,19 +49,52 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
-    private void Move(Vector3 a_velocity) {
-        m_velocity = a_velocity;
+    //calculates a players velocity for the current frame
+    private void Move() {
+        Vector3 movement = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        Vector3 moveVelocity = movement.normalized * m_speed;
+        m_velocity = moveVelocity;
     }
 
-    private void LookAt(Vector3 a_lookPoint) {
-        Vector3 heightCorrectedLookPoint = new Vector3(a_lookPoint.x, transform.position.y, a_lookPoint.z);
-        transform.LookAt(heightCorrectedLookPoint);
+    //forces the player to look at the mouse position on screen
+    private void PlayerLookAt() {
+        Ray ray = m_viewCamera.ScreenPointToRay(Input.mousePosition);
+        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+        float rayDistance;
+
+        if (groundPlane.Raycast(ray, out rayDistance)) {
+            Vector3 pointOnGround = ray.GetPoint(rayDistance);
+            Vector3 heightCorrectedLookPoint = new Vector3(pointOnGround.x, transform.position.y, pointOnGround.z);
+            transform.LookAt(heightCorrectedLookPoint);
+            if (m_crosshair != null)
+                m_crosshair.transform.position = pointOnGround;
+        }
     }
+
+    //quickly moves the player in the direction they are facing
     private void Dash() {
-        Vector3 movement = new Vector3(transform.forward.x, 0, transform.forward.z);
-        Vector3 moveVelocity = movement.normalized * m_dashSpeed;
-        Move(moveVelocity);
+        m_nma.speed = m_dashSpeed;
+        m_nma.angularSpeed = m_dashSpeed;
+        m_nma.acceleration = m_dashAcceleration;
+        //calculate the destination
+        m_nma.SetDestination(Vector3.zero);
     }
+
+    //gives a ui text object the players ammo for their currently equipped weapon
+    private void DisplayAmmo() {
+        if (m_weaponController.GetEquippedGun() != null) {
+            if (m_clipAmmoDisplay != null) {
+                m_clipAmmoDisplay.GetComponent<Text>().text =
+                    (m_weaponController.GetCurrentClip().ToString() + " / " + m_weaponController.GetEquippedGun().m_clipSize.ToString());
+            }
+
+            if (m_totalAmmoDisplay != null) {
+                m_totalAmmoDisplay.GetComponent<Text>().text =
+                    (m_weaponController.GetCurrentAmmo().ToString() + " / " + m_weaponController.GetEquippedGun().m_maxAmmo.ToString());
+            }
+        }
+    }
+
     private void Awake() {
         m_nma = GetComponent<NavMeshAgent>();
         m_weaponController = GetComponent<WeaponController>();
@@ -93,19 +103,10 @@ public class PlayerInput : MonoBehaviour {
 
     private void Update () {
         //Player movement
-        Vector3 movement = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-        Vector3 moveVelocity = movement.normalized * m_speed;
-        Move(moveVelocity);
+        Move();
 
         //Player looking at mouse
-        Ray ray = m_viewCamera.ScreenPointToRay(Input.mousePosition);
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-        float rayDistance;
-
-        if (groundPlane.Raycast(ray, out rayDistance)) {
-            Vector3 pointOnGround = ray.GetPoint(rayDistance);
-            LookAt(pointOnGround);
-        }
+        PlayerLookAt();
 
         //Player attacking
         Attack();
@@ -114,18 +115,11 @@ public class PlayerInput : MonoBehaviour {
         if (Input.GetMouseButtonDown(1)) {
             Dash();
         }
-        //Ammo display
-        if (m_clipAmmoDisplay != null) {
-            m_clipAmmoDisplay.GetComponent<Text>().text = 
-                (m_weaponController.GetCurrentClip().ToString() + " / " + m_weaponController.GetEquippedGun().m_clipSize.ToString());
-        }
 
-        if (m_totalAmmoDisplay != null) {
-            m_totalAmmoDisplay.GetComponent<Text>().text =
-                (m_weaponController.GetCurrentAmmo().ToString() + " / " + m_weaponController.GetEquippedGun().m_maxAmmo.ToString());
-        }
+        //Ammo display
+        DisplayAmmo();
     }
-    //Anything involving the player's inputs and physics will go here
+
     private void FixedUpdate() {
         m_nma.SetDestination(transform.position + m_velocity * Time.fixedDeltaTime);
     }
