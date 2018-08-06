@@ -60,7 +60,7 @@ public class PlayerInput : MonoBehaviour {
     private void Move()
     {
         Vector3 movement = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-        Vector3 direction = Quaternion.Inverse(m_camera.transform.rotation) * movement;
+        Vector3 direction = m_camera.transform.rotation * movement;
         direction.y = 0;
         Vector3 moveVelocity = direction.normalized * m_speed;
         m_velocity = moveVelocity;

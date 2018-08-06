@@ -36,10 +36,6 @@ public class Gun : MonoBehaviour {
 
     private bool m_infiniteAmmo = false;
 
-    private void Awake() {
-        m_currentAmmo = m_maxAmmo;
-        m_currentClip = m_clipSize;
-    }
     public void SetEntityCollisionLayer(LayerMask a_collsionMask) {
         m_entityCollisionMask = a_collsionMask;
     }
@@ -49,16 +45,10 @@ public class Gun : MonoBehaviour {
     public void SetInfiniteAmmo(bool a_infiniteAmmo) {
         m_infiniteAmmo = a_infiniteAmmo;
     }
-    private void Update() {
-        if (m_isReloading) {
-            if (Time.time > m_nextShotTime) {
-                m_isReloading = false;
-            }
-        }
-    }
     public int GetCurrentClip() { return m_currentClip; }
     public int GetCurrentAmmo() { return m_currentAmmo; }
     public int GetTotalAmmo() { return GetCurrentAmmo() + GetCurrentClip(); }
+    public int GetMaxAmmo() { return m_maxAmmo + m_clipSize; }
 
     //reloads the gun and also prevents shooting for a time based on the reload time in milliseconds variable
     public void Reload() {
@@ -110,6 +100,18 @@ public class Gun : MonoBehaviour {
                     newProjectile.SetTerrainCollisionLayer(m_environmentCollisionMask);
                 }
                 m_currentClip--;
+            }
+        }
+    }
+
+    private void Awake() {
+        m_currentAmmo = m_maxAmmo;
+        m_currentClip = m_clipSize;
+    }
+    private void Update() {
+        if (m_isReloading) {
+            if (Time.time > m_nextShotTime) {
+                m_isReloading = false;
             }
         }
     }
