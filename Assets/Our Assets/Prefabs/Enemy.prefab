@@ -69,7 +69,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1359657046224042}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 10.51, y: 1.52, z: 7.32}
+  m_LocalPosition: {x: -89.083176, y: 1.105, z: -27.410534}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4414056363114828}
@@ -129,10 +129,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_maxHealth: 5
-  m_seekRadius: 10
+  m_seekRadius: 20
   m_fleeRadius: 5
-  m_coverRadius: 12
-  m_attackRadius: 8
+  m_coverRadius: 6.1
+  m_attackRadius: 11
   m_coverFoundThreshold: 3
   m_coverLayer:
     serializedVersion: 2
@@ -258,7 +258,7 @@ LineRenderer:
     alignment: 0
     textureMode: 0
     generateLightingData: 0
-  m_UseWorldSpace: 1
+  m_UseWorldSpace: 0
   m_Loop: 0
 --- !u!136 &136270636679169820
 CapsuleCollider:
@@ -282,7 +282,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 5
+  m_Speed: 2
   m_Acceleration: 15
   avoidancePriority: 50
   m_AngularSpeed: 120

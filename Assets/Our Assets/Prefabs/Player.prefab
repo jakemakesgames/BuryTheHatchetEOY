@@ -2071,6 +2071,7 @@ GameObject:
   - component: {fileID: 114458206597468066}
   - component: {fileID: 195865846727744702}
   - component: {fileID: 114219781730608420}
+  - component: {fileID: 114494286414739098}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -3945,7 +3946,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1999925407510398}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: -82, y: 1.184, z: -75.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4872053998842146}
@@ -4122,10 +4123,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5778159e463981f4eb7ae2dc4350093f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_speed: 40
+  m_speed: 500
+  m_dashTime: 10
   m_dashSpeed: 100
   m_clipAmmoDisplay: {fileID: 0}
   m_totalAmmoDisplay: {fileID: 0}
+  m_crosshair: {fileID: 0}
+  m_camera: {fileID: 0}
 --- !u!114 &114458206597468066
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4147,6 +4151,22 @@ MonoBehaviour:
   m_terrainCollisionMask:
     serializedVersion: 2
     m_Bits: 3072
+--- !u!114 &114494286414739098
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1999925407510398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa9b54cf6b5d4249a506d25978f87e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_maxHealth: 100
+  m_startingMoney: 0
+  m_crosshairPos: {fileID: 0}
+  m_equippedWeapon: {fileID: 0}
+  m_heldWeapons: []
 --- !u!136 &136361415522540008
 CapsuleCollider:
   m_ObjectHideFlags: 1
