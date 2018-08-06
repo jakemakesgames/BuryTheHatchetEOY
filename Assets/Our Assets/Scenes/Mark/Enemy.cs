@@ -354,9 +354,6 @@ public class Enemy : MonoBehaviour, IDamagable {
         Vector3 finalPoint = (nearestPoint.position + dirFromPlayer);
         finalPoint = new Vector3(finalPoint.x, nearestPoint.position.y, finalPoint.z);
 
-        //Vector3 coverFromCentre = Vector3.zero;
-       // finalPoint = cover
-
         return finalPoint;
     }
 
