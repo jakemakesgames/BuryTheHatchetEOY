@@ -58,7 +58,7 @@ public class Gun : MonoBehaviour {
     }
     public int GetCurrentClip() { return m_currentClip; }
     public int GetCurrentAmmo() { return m_currentAmmo; }
-
+    public int GetTotalAmmo() { return GetCurrentAmmo() + GetCurrentClip(); }
 
     //reloads the gun and also prevents shooting for a time based on the reload time in milliseconds variable
     public void Reload() {

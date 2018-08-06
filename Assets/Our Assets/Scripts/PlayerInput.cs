@@ -6,19 +6,19 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 05/0/2018
+//Last edited 06/0/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
 [RequireComponent(typeof(WeaponController))]
 public class PlayerInput : MonoBehaviour {
 
-    [SerializeField] private float m_speed;
-    [SerializeField] private float m_dashSpeed;
-    [SerializeField] private float m_dashAcceleration;
-    [SerializeField] private float m_dashStoppingDistance = 25f;
+    [SerializeField] private float m_speed = 10f;
+    [SerializeField] private float m_dashTime = 10f;
+    [SerializeField] private float m_dashSpeed = 1000f;
 
     private float m_nmaSpeed;
+    private float m_dashTimer = 0;
     private float m_nmaAngledSpeed;
     private float m_nmaAcceleration;
     private bool m_isDashing = false;
@@ -30,16 +30,17 @@ public class PlayerInput : MonoBehaviour {
     [SerializeField] private Text m_clipAmmoDisplay;
     [SerializeField] private Text m_totalAmmoDisplay;
     [SerializeField] private GameObject m_crosshair;
-    
+    [SerializeField] private GameObject m_camera;
+
     //calls the equipped weapons attacking method (swing for melee or shoot for gun)
     //via the weapon controller script
-    public void Attack()
-    {
-        if (m_weaponController.GetIsAuto()) {
+    public void Attack() {
+        Gun equippedGun = m_weaponController.GetEquippedGun();
+        if (equippedGun.m_isAutomatic) {
             if (Input.GetMouseButton(0)) {
                 m_weaponController.Shoot();
             }
-            if (m_weaponController.GetIsGunEmpty()) {
+            if (equippedGun.GetIsEmpty()) {
                 if (Input.GetMouseButtonDown(0)) {
                     m_weaponController.ReloadEquippedGun();
                 }
@@ -47,7 +48,7 @@ public class PlayerInput : MonoBehaviour {
         }
         else {
             if (Input.GetMouseButtonDown(0)) {
-                if (m_weaponController.GetIsGunEmpty()) {
+                if (equippedGun.GetIsEmpty()) {
                     m_weaponController.ReloadEquippedGun();
                 }
                 m_weaponController.Shoot();
@@ -56,10 +57,16 @@ public class PlayerInput : MonoBehaviour {
     }
 
     //calculates a players velocity for the current frame
-    private void Move() {
+    private void Move()
+    {
         Vector3 movement = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-        Vector3 moveVelocity = movement.normalized * m_speed;
+        Vector3 direction = Quaternion.Inverse(m_camera.transform.rotation) * movement;
+        direction.y = 0;
+        Vector3 moveVelocity = direction.normalized * m_speed;
         m_velocity = moveVelocity;
+        if (!m_isDashing) {
+            m_nma.velocity = m_velocity * Time.deltaTime;
+        }
     }
 
     //forces the player to look at the mouse position on screen
@@ -69,9 +76,13 @@ public class PlayerInput : MonoBehaviour {
         float rayDistance;
 
         if (groundPlane.Raycast(ray, out rayDistance)) {
+            Transform hand = m_weaponController.m_weaponHold;
             Vector3 pointOnGround = ray.GetPoint(rayDistance);
             Vector3 heightCorrectedLookPoint = new Vector3(pointOnGround.x, transform.position.y, pointOnGround.z);
             transform.LookAt(heightCorrectedLookPoint);
+            heightCorrectedLookPoint = new Vector3(pointOnGround.x, hand.position.y, pointOnGround.z);
+            hand.LookAt(heightCorrectedLookPoint);
+            m_weaponController.m_weaponHold = hand;
             if (m_crosshair != null)
                 m_crosshair.transform.position = pointOnGround;
         }
@@ -82,17 +93,12 @@ public class PlayerInput : MonoBehaviour {
         if (!m_isDashing) {
             if (Input.GetMouseButtonDown(1)) {
                 m_isDashing = true;
-                m_nma.speed = m_dashSpeed;
-                m_nma.angularSpeed = m_dashSpeed;
-                m_nma.acceleration = m_dashAcceleration;
-                Vector3 dashDestination = transform.position + (transform.forward * m_dashSpeed * 4);
-                m_nma.SetDestination(Vector3.zero);
+                m_dashTimer = Time.time + m_dashTime;
+                m_nma.velocity = transform.forward * m_dashSpeed;
             }
         }
         else {
-            Vector3 distanceToDestination;
-            distanceToDestination = transform.position - m_nma.destination;
-            if (distanceToDestination.sqrMagnitude <= m_dashStoppingDistance) {
+            if (m_dashTimer <= Time.time) {
                 m_nma.speed = m_nmaSpeed;
                 m_nma.angularSpeed = m_nmaAngledSpeed;
                 m_nma.acceleration = m_nmaAcceleration;
@@ -103,15 +109,17 @@ public class PlayerInput : MonoBehaviour {
 
     //gives a ui text object the players ammo for their currently equipped weapon
     private void DisplayAmmo() {
-        if (m_weaponController.GetEquippedGun() != null) {
+        Gun equippedGun = m_weaponController.GetEquippedGun();
+
+        if (equippedGun != null) {
             if (m_clipAmmoDisplay != null) {
                 m_clipAmmoDisplay.GetComponent<Text>().text =
-                    (m_weaponController.GetCurrentClip().ToString() + " / " + m_weaponController.GetEquippedGun().m_clipSize.ToString());
+                    (equippedGun.GetCurrentClip().ToString() + " / " + equippedGun.m_clipSize.ToString());
             }
 
             if (m_totalAmmoDisplay != null) {
                 m_totalAmmoDisplay.GetComponent<Text>().text =
-                    (m_weaponController.GetCurrentAmmo().ToString() + " / " + m_weaponController.GetEquippedGun().m_maxAmmo.ToString());
+                    (equippedGun.GetCurrentAmmo().ToString() + " / " + equippedGun.m_maxAmmo.ToString());
             }
         }
     }
@@ -126,9 +134,6 @@ public class PlayerInput : MonoBehaviour {
     }
 
     private void Update () {
-        //Player movement
-        Move();
-
         //Player looking at mouse
         PlayerLookAt();
 
@@ -138,12 +143,10 @@ public class PlayerInput : MonoBehaviour {
         //Player dashing
         Dash();
 
+        //Player movement
+        Move();
+
         //Ammo display
         DisplayAmmo();
-    }
-
-    private void FixedUpdate() {
-        if (!m_isDashing)
-            m_nma.SetDestination(transform.position + m_velocity * Time.fixedDeltaTime);
     }
 }

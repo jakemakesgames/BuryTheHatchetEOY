@@ -33,6 +33,12 @@ public class Player : MonoBehaviour, IDamagable {
     public void SetMoney(int a_money) { m_money = a_money; }
     public int GetMoney() { return m_money; }
 
+    public int GetHealth() { return m_health; }
+
+    public int GetMaxHealth() { return m_maxHealth; }
+
+
+
     private void Die() {
         m_dead = true;
         if (OnDeath != null) {
