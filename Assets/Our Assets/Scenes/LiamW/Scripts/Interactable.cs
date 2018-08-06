@@ -38,12 +38,12 @@ public class Interactable : MonoBehaviour
     }
     #endregion
 
-    #region
+    #region OnTriggerStay
     public void OnTriggerStay(Collider other)
     {
         if (other.tag == "Player")
         {
-            m_uiManager.m_bountyBoardScreen.SetActive(true);
+            m_uiManager.m_bountyBoard.SetActive(true);
             m_uiManager.m_bountyInteractionScreen.SetActive(true);
 
             if (!m_uiManager.GetHasBounty())
