@@ -24,6 +24,7 @@ public class PlayerInput : MonoBehaviour {
     private bool m_isDashing = false;
     private NavMeshAgent m_nma;
     private Vector3 m_velocity;
+	private Vector3 m_movementVector;
     private Camera m_viewCamera;
     private WeaponController m_weaponController;
 
@@ -31,6 +32,9 @@ public class PlayerInput : MonoBehaviour {
     [SerializeField] private Text m_totalAmmoDisplay;
     [SerializeField] private GameObject m_crosshair;
     [SerializeField] private GameObject m_camera;
+
+	//Charlie
+	public Animator playerAnimator;
 
     //calls the equipped weapons attacking method (swing for melee or shoot for gun)
     //via the weapon controller script
@@ -59,8 +63,8 @@ public class PlayerInput : MonoBehaviour {
     //calculates a players velocity for the current frame
     private void Move()
     {
-        Vector3 movement = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-        Vector3 direction = m_camera.transform.rotation * movement;
+        m_movementVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+		Vector3 direction = m_camera.transform.rotation * m_movementVector;
         direction.y = 0;
         Vector3 moveVelocity = direction.normalized * m_speed;
         m_velocity = moveVelocity;
@@ -148,5 +152,16 @@ public class PlayerInput : MonoBehaviour {
 
         //Ammo display
         DisplayAmmo();
+
+		//Charlie
+		UpdateAnims ();
     }
+
+	//Charlie
+	private void UpdateAnims(){
+		float myVelocity = m_velocity.magnitude;
+		playerAnimator.SetFloat ("Velocity", myVelocity);
+		playerAnimator.SetFloat ("MovementDirectionForward", m_movementVector.z);
+		playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.x);
+	}
 }
