@@ -19,9 +19,6 @@ public class SoundManager : MonoBehaviour
 
     #region Private Regions
 
-    bool m_loop = true;
-    private UIManager m_uiManager;
-
     #endregion
 
 
@@ -42,7 +39,6 @@ public class SoundManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
-
     }
 
     private void Start()
