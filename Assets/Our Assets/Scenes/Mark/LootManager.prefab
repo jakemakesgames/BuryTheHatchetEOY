@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4426743788224366}
-  - component: {fileID: 114097427893854126}
+  - component: {fileID: 114410941968836660}
   m_Layer: 0
   m_Name: LootManager
   m_TagString: Untagged
@@ -40,7 +40,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114097427893854126
+--- !u!114 &114410941968836660
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -51,3 +51,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a68273801e5ae64b90765bad7a690e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_healthPrefab: {fileID: 1750361218449288, guid: cab6e9bceb378ae41af1d7bdf5d5f3de,
+    type: 2}
+  m_ammoPrefab: {fileID: 1841863497974762, guid: 071eed0f8f82fac49b4d3afd4842e856,
+    type: 2}
+  m_goldPrefab: {fileID: 1802440728763070, guid: e294e4c94ca196d459dc1252a39a3566,
+    type: 2}
+  m_healthThreshold: 30
+  m_healthChance: 75
+  m_ammoThreshold: 15
+  m_ammoChance: 75
