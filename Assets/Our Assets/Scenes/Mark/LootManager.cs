@@ -9,8 +9,8 @@ public class LootManager : MonoBehaviour
     private GameObject m_playerGO;
     private Player m_player;
     private Gun m_playerGun;
-    private int m_remainingAmmoPercent;
-    private int m_missingHealthPercent;
+    private float m_remainingAmmoPercent;
+    private float m_missingHealthPercent;
     private int m_lootType;
 
     private bool wasDropped = false;
@@ -59,7 +59,8 @@ public class LootManager : MonoBehaviour
     private void CalculateStats()
     {
         m_missingHealthPercent = m_player.GetHealth() / m_player.GetMaxHealth();
-        m_remainingAmmoPercent = m_playerGun.GetTotalAmmo() / m_playerGun.GetAMMO;
+        m_remainingAmmoPercent = m_playerGun.GetTotalAmmo();
+        m_remainingAmmoPercent /= m_playerGun.GetMaxAmmo();
 
         float lootChance;
         float healthChance;
@@ -72,11 +73,11 @@ public class LootManager : MonoBehaviour
         }
         else
         {
-            healthChance = 100.0f / 2.0f;
+            healthChance = 100.0f / 2.0f; // 100 / amount of items
             wasDropped = false;
         }
 
-        if (m_remainingAmmoPercent / 100.0f <= m_ammoThreshold)
+        if (m_remainingAmmoPercent <= m_ammoThreshold)
         {
             ammoChance = m_ammoChance;
             wasDropped = true;
@@ -109,16 +110,16 @@ public class LootManager : MonoBehaviour
         //Instantiate loot;
         if (m_lootType == 0)
         {
-            GameObject health = Instantiate(m_healthPrefab, deadEnemy.transform);
-            GameObject gold = Instantiate(m_goldPrefab, deadEnemy.transform);
+            GameObject health = Instantiate(m_healthPrefab, deadEnemy.transform.position, Quaternion.identity);
+            GameObject gold = Instantiate(m_goldPrefab, deadEnemy.transform.position, Quaternion.identity);
             gold.GetComponent<Gold>().SetGoldFlag(wasDropped);
 
 
         }
         if (m_lootType == 1)
         {
-            GameObject ammo = Instantiate(m_ammoPrefab, deadEnemy.transform);
-            GameObject gold = Instantiate(m_goldPrefab, deadEnemy.transform);
+            GameObject ammo = Instantiate(m_ammoPrefab, deadEnemy.transform.position, Quaternion.identity);
+            GameObject gold = Instantiate(m_goldPrefab, deadEnemy.transform.position, Quaternion.identity);
             gold.GetComponent<Gold>().SetGoldFlag(wasDropped);
         }
     }
