@@ -16,19 +16,7 @@ public class WeaponController : MonoBehaviour {
     public LayerMask m_entityCollisionMask;
     public LayerMask m_terrainCollisionMask;
 
-    public void Awake() {
-        if (m_startingGun != null) {
-            EquipGun(m_startingGun);
-            m_equippedGun.SetEntityCollisionLayer(m_entityCollisionMask);
-            m_equippedGun.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
-        }
-        else if (m_startingMelee != null)
-        {
-            EquipMelee(m_startingMelee);
-            m_equippedMelee.SetEntityCollisionLayer(m_entityCollisionMask);
-            m_equippedMelee.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
-        }
-    }
+    //destroys any currently equipped weapon and equips a new gun
     public void EquipGun(Gun a_gunToEquip) {
         if (m_equippedGun != null) {
             Destroy(m_equippedGun.gameObject);
@@ -39,6 +27,8 @@ public class WeaponController : MonoBehaviour {
         m_equippedGun = Instantiate(a_gunToEquip, m_weaponHold) as Gun;
         m_equippedGun.transform.parent = m_weaponHold;
     }
+
+    //destroys any currently equipped weapon and equips a new melee weapon
     public void EquipMelee(Melee a_meleeToEquip)
     {
         if (m_equippedGun != null) {
@@ -50,12 +40,18 @@ public class WeaponController : MonoBehaviour {
         m_equippedMelee = Instantiate(a_meleeToEquip, m_weaponHold) as Melee;
         m_equippedMelee.transform.parent = m_weaponHold;
     }
+
+    //reloads the equipped gun
     public void ReloadEquippedGun() {
         if (m_equippedGun != null) {
             m_equippedGun.Reload();
         }
     }
+
+    //returns if there is an equipped gun
     public Gun GetEquippedGun() { return m_equippedGun; }
+
+    //returns if there is an equipped melee
     public Melee GetEquippedMelee() { return m_equippedMelee; }
     public GameObject GetEquippedWeapon() {
         if (m_equippedGun != null) {
@@ -67,15 +63,23 @@ public class WeaponController : MonoBehaviour {
         else
             return null;
     }
-    public bool GetIsAuto() { return m_equippedGun.m_isAutomatic; }
-    public bool GetIsReloading() { return m_equippedGun.m_isReloading; }
-    public bool GetIsGunEmpty() { return m_equippedGun.GetIsEmpty(); }
-    public int GetCurrentClip() { return m_equippedGun.GetCurrentClip(); }
-    public int GetCurrentAmmo() { return m_equippedGun.GetCurrentAmmo(); }
     public void Shoot() {
         if (m_equippedGun != null)
         {
             m_equippedGun.Shoot();
+        }
+    }
+    public void Awake() {
+        if (m_startingGun != null) {
+            EquipGun(m_startingGun);
+            m_equippedGun.SetEntityCollisionLayer(m_entityCollisionMask);
+            m_equippedGun.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
+        }
+        else if (m_startingMelee != null)
+        {
+            EquipMelee(m_startingMelee);
+            m_equippedMelee.SetEntityCollisionLayer(m_entityCollisionMask);
+            m_equippedMelee.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
         }
     }
 }
