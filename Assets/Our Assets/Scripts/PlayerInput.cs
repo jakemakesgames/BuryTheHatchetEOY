@@ -30,7 +30,8 @@ public class PlayerInput : MonoBehaviour {
     [SerializeField] private Text m_clipAmmoDisplay;
     [SerializeField] private Text m_totalAmmoDisplay;
     [SerializeField] private GameObject m_crosshair;
-    
+    [SerializeField] private GameObject m_camera;
+
     //calls the equipped weapons attacking method (swing for melee or shoot for gun)
     //via the weapon controller script
     public void Attack() {
@@ -59,7 +60,9 @@ public class PlayerInput : MonoBehaviour {
     private void Move()
     {
         Vector3 movement = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-        Vector3 moveVelocity = movement.normalized * m_speed;
+        Vector3 direction = Quaternion.Inverse(m_camera.transform.rotation) * movement;
+        direction.y = 0;
+        Vector3 moveVelocity = direction.normalized * m_speed;
         m_velocity = moveVelocity;
         if (!m_isDashing) {
             m_nma.velocity = m_velocity * Time.deltaTime;
@@ -73,9 +76,13 @@ public class PlayerInput : MonoBehaviour {
         float rayDistance;
 
         if (groundPlane.Raycast(ray, out rayDistance)) {
+            Transform hand = m_weaponController.m_weaponHold;
             Vector3 pointOnGround = ray.GetPoint(rayDistance);
             Vector3 heightCorrectedLookPoint = new Vector3(pointOnGround.x, transform.position.y, pointOnGround.z);
             transform.LookAt(heightCorrectedLookPoint);
+            heightCorrectedLookPoint = new Vector3(pointOnGround.x, hand.position.y, pointOnGround.z);
+            hand.LookAt(heightCorrectedLookPoint);
+            m_weaponController.m_weaponHold = hand;
             if (m_crosshair != null)
                 m_crosshair.transform.position = pointOnGround;
         }
