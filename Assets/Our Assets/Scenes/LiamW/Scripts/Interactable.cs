@@ -43,20 +43,19 @@ public class Interactable : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            m_uiManager.m_bountyBoard.SetActive(true);
             m_uiManager.m_bountyInteractionScreen.SetActive(true);
 
             if (!m_uiManager.GetHasBounty())
             {
                 if (Input.GetKeyDown("e") && !m_uiManager.GetIsPaused())
                 {
+                    Time.timeScale = 0;
+
                     m_isInteracting = true;
                     m_uiManager.SetIsPaused(true);
 
                     m_uiManager.m_bountyInteractionScreen.SetActive(false);
                     m_uiManager.m_bountyBoard.SetActive(true);
-                    Time.timeScale = 0;
-
 
                     Debug.Log("Player is looking at Bounty");
                 }
