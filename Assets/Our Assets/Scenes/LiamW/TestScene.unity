@@ -1044,7 +1044,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1367219842}
+      - m_Target: {fileID: 1025014989}
         m_MethodName: SetActive
         m_Mode: 6
         m_Arguments:
@@ -1636,7 +1636,7 @@ Transform:
   m_LocalScale: {x: 1, y: 4.158364, z: 1.107257}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &366308120
 Rigidbody:
@@ -1691,8 +1691,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d8ec48711c25747a9664c6242c1040, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_uiManager: {fileID: 0}
-  m_startMenuGUI: {fileID: 0}
 --- !u!114 &394945666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1770,7 +1768,7 @@ RectTransform:
   - {fileID: 1339742893}
   - {fileID: 1113337962}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1943,7 +1941,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &491290116
 GameObject:
@@ -1971,14 +1969,14 @@ RectTransform:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 491290116}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 2.2357178}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 2089831015}
   - {fileID: 805672012}
-  m_Father: {fileID: 1362299993}
-  m_RootOrder: 1
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2519,13 +2517,13 @@ RectTransform:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 797880501}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 2.2357178}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 32708139}
-  m_Father: {fileID: 1362299993}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2979,8 +2977,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d8ec48711c25747a9664c6242c1040, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_uiManager: {fileID: 0}
-  m_startMenuGUI: {fileID: 0}
 --- !u!1 &858397292
 GameObject:
   m_ObjectHideFlags: 0
@@ -3324,7 +3320,7 @@ GameObject:
   - component: {fileID: 910698822}
   - component: {fileID: 910698821}
   m_Layer: 5
-  m_Name: BountyScreen
+  m_Name: BountyPoster
   m_TagString: UI Bounty Screen
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3437,17 +3433,17 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 919429789}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -13.770606}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1073079454}
   - {fileID: 896014831}
-  m_Father: {fileID: 1367219843}
-  m_RootOrder: 1
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 46.30005, y: -29.242126}
+  m_AnchoredPosition: {x: 574, y: 280}
   m_SizeDelta: {x: 1148, y: 560}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &919429791
@@ -3676,8 +3672,8 @@ RectTransform:
   - {fileID: 154592306}
   - {fileID: 1893389560}
   - {fileID: 1025464426}
-  m_Father: {fileID: 1367219843}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4120,6 +4116,17 @@ MonoBehaviour:
       - m_Target: {fileID: 394945664}
         m_MethodName: SetActive
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 370075059}
+        m_MethodName: Back
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -4758,70 +4765,6 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1344496406}
---- !u!1 &1362299992
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 1004242140220372, guid: aac387a750817a94d80e9c7e49063a67,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1362299993}
-  m_Layer: 0
-  m_Name: BountyBoardScreen
-  m_TagString: UI BB Screen
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1362299993
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 4843855424503118, guid: aac387a750817a94d80e9c7e49063a67,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1362299992}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 106.45879, y: 43.11271, z: 2.2357178}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 797880502}
-  - {fileID: 491290117}
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1367219842
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 1865863599486352, guid: 76111ce6f978dbe428ff964e606a7461,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1367219843}
-  m_Layer: 0
-  m_Name: StartScreen
-  m_TagString: UI Menus
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1367219843
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 4445530464266794, guid: 76111ce6f978dbe428ff964e606a7461,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1367219842}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 527.69995, y: 309.24213, z: 13.770606}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1025014993}
-  - {fileID: 919429790}
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1406051936
 GameObject:
   m_ObjectHideFlags: 0
@@ -5129,7 +5072,7 @@ Transform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1563162773
 MonoBehaviour:
@@ -5945,7 +5888,7 @@ Prefab:
         type: 2}
       propertyPath: m_bountyBoardScreen
       value: 
-      objectReference: {fileID: 1362299992}
+      objectReference: {fileID: 0}
     - target: {fileID: 114500523971020098, guid: 0f12d7701357b7b43815f2280ab6b096,
         type: 2}
       propertyPath: m_bountyInteractionScreen
@@ -5956,6 +5899,11 @@ Prefab:
       propertyPath: m_bountyBoard
       value: 
       objectReference: {fileID: 491290116}
+    - target: {fileID: 114500523971020098, guid: 0f12d7701357b7b43815f2280ab6b096,
+        type: 2}
+      propertyPath: m_bountyPoster
+      value: 
+      objectReference: {fileID: 910698820}
     m_RemovedComponents:
     - {fileID: 114301127134905708, guid: 0f12d7701357b7b43815f2280ab6b096, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 0f12d7701357b7b43815f2280ab6b096, type: 2}
@@ -6106,9 +6054,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1367219842}
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 370075059}
+        m_MethodName: StartGame
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

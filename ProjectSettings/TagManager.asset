@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Gun
+  - UI Menus
+  - UI Options Menu
   layers:
   - Default
   - TransparentFX
@@ -18,7 +20,7 @@ TagManager:
   - Enemy
   - Cover
   - Environment
-  - 
+  - Loot
   - 
   - 
   - 

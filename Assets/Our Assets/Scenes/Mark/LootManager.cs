@@ -15,6 +15,7 @@ public class LootManager : MonoBehaviour
      
     private bool m_goldMinFlag = false;
 
+    [SerializeField] private GameObject m_enemyPrefab;
     [SerializeField] private GameObject m_healthPrefab;
     [SerializeField] private GameObject m_ammoPrefab;
     [SerializeField] private GameObject m_goldPrefab;
@@ -58,6 +59,15 @@ public class LootManager : MonoBehaviour
     void Start()
     {
         m_playerGun = m_playerGO.GetComponent<WeaponController>().GetEquippedGun();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Instantiate(m_enemyPrefab, new Vector3(5f, 0f, 0f), Quaternion.identity);
+        }
+    
     }
     private void CalculateStats()
     {
@@ -112,9 +122,11 @@ public class LootManager : MonoBehaviour
         CalculateStats();
         GameObject loot;
 
-        Vector3 spawnPos = RandomCircle(deadEnemy.transform.position, m_spawnRadius);
+        Vector3 randUnitCirclePos = Random.insideUnitCircle * m_spawnRadius;
+        Vector3 spawnPos = new Vector3(randUnitCirclePos.x, 0, randUnitCirclePos.y) + deadEnemy.transform.position;
         Quaternion randomRotationY = RandomRotationY(deadEnemy.transform.rotation);
 
+  
         //Instantiate loot;
         if (m_lootType == 0)
         {
@@ -125,10 +137,14 @@ public class LootManager : MonoBehaviour
             loot = Instantiate(m_ammoPrefab, deadEnemy.transform.position, Quaternion.identity);
         }
 
-        Vector3 newSpawnPos = RandomCircle(deadEnemy.transform.position, m_spawnRadius);
-        while (newSpawnPos == spawnPos)
+        randUnitCirclePos = Random.insideUnitCircle * m_spawnRadius;
+        Vector3 newSpawnPos = new Vector3(randUnitCirclePos.x, 0, randUnitCirclePos.y) + deadEnemy.transform.position;
+        randomRotationY = RandomRotationY(deadEnemy.transform.rotation);
+
+        while ((spawnPos - newSpawnPos).sqrMagnitude <= 1)
         {
-            newSpawnPos = RandomCircle(deadEnemy.transform.position, 5.0f);
+            randUnitCirclePos = Random.insideUnitCircle * m_spawnRadius;
+            newSpawnPos = new Vector3(randUnitCirclePos.x, 0, randUnitCirclePos.y) + deadEnemy.transform.position;
         }
 
         GameObject gold = Instantiate(m_goldPrefab, newSpawnPos, randomRotationY);
@@ -137,18 +153,7 @@ public class LootManager : MonoBehaviour
 
     Quaternion RandomRotationY(Quaternion a_rotation)
     {
-        Quaternion randomRotationY = new Quaternion(a_rotation.x, Random.Range(0, 360), a_rotation.z, a_rotation.w);
-        return randomRotationY;
-    }
-
-    Vector3 RandomCircle(Vector3 a_center, float a_radius)
-    {
-        float angle = Random.value * 360;
-        Vector3 pos;
-        pos.x = a_center.x + a_radius * Mathf.Sin(angle * Mathf.Deg2Rad);
-        pos.y = a_center.y ;
-        pos.z = a_center.z + a_radius * Mathf.Cos(angle * Mathf.Deg2Rad);
-        return pos;
-
+        //Quaternion randomRotationY = new Quaternion(a_rotation.x, Random.Range(0, 360), a_rotation.z, a_rotation.w);
+        return Quaternion.Euler(a_rotation.x, Random.Range(0, 360), a_rotation.z);
     }
 }
