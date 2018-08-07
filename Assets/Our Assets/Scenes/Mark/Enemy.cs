@@ -284,22 +284,22 @@ public class Enemy : MonoBehaviour, IDamagable {
     }
     public void FindCover()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, m_coverRadius, m_coverLayer);
-
-        if (hitColliders.Length == 0)
-        {
-            m_gun.Reload();
-            m_coverFound = true;
-            return;
-        }
-        for (int i = 0; i < hitColliders.Length; i++)
-        {
-            m_coverPoints.Add(hitColliders[i].transform);
-        }
-
         //transform.position = Vector3.MoveTowards(transform.position, FindNearestCover(), m_speed * Time.deltaTime);
         if (!m_targetFound)
         {
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, m_coverRadius, m_coverLayer);
+
+            if (hitColliders.Length == 0)
+            {
+                m_gun.Reload();
+                m_coverFound = true;
+                return;
+            }
+            for (int i = 0; i < hitColliders.Length; i++)
+            {
+                m_coverPoints.Add(hitColliders[i].transform);
+            }
+
             m_targetLocation = FindNearestCover();
             agent.destination = m_targetLocation;
             m_targetFound = true;
