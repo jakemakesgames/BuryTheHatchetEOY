@@ -30,6 +30,9 @@ public class LootManager : MonoBehaviour
     [Tooltip("Ammo drop chance in percent.")]
     [SerializeField] private float m_ammoChance;
 
+    [Tooltip("Radius around enemy to spawn loot.")]
+    [SerializeField] float m_spawnRadius;
+
 
 
 
@@ -106,21 +109,45 @@ public class LootManager : MonoBehaviour
     void GenerateLoot(Enemy deadEnemy)
     {
         CalculateStats();
+        GameObject loot;
+
+        Vector3 spawnPos = RandomCircle(deadEnemy.transform.position, m_spawnRadius);
+        Quaternion randomRotationY = RandomRotationY(deadEnemy.transform.rotation);
 
         //Instantiate loot;
         if (m_lootType == 0)
         {
-            GameObject health = Instantiate(m_healthPrefab, deadEnemy.transform.position, Quaternion.identity);
-            GameObject gold = Instantiate(m_goldPrefab, deadEnemy.transform.position, Quaternion.identity);
-            gold.GetComponent<Gold>().SetGoldFlag(wasDropped);
-
-
+            loot = Instantiate(m_healthPrefab, spawnPos, randomRotationY);
         }
         if (m_lootType == 1)
         {
-            GameObject ammo = Instantiate(m_ammoPrefab, deadEnemy.transform.position, Quaternion.identity);
-            GameObject gold = Instantiate(m_goldPrefab, deadEnemy.transform.position, Quaternion.identity);
-            gold.GetComponent<Gold>().SetGoldFlag(wasDropped);
+            loot = Instantiate(m_ammoPrefab, deadEnemy.transform.position, Quaternion.identity);
         }
+
+        Vector3 newSpawnPos = RandomCircle(deadEnemy.transform.position, m_spawnRadius);
+        while (newSpawnPos == spawnPos)
+        {
+            newSpawnPos = RandomCircle(deadEnemy.transform.position, 5.0f);
+        }
+
+        GameObject gold = Instantiate(m_goldPrefab, newSpawnPos, randomRotationY);
+        gold.GetComponent<Gold>().SetGoldFlag(wasDropped);
+    }
+
+    Quaternion RandomRotationY(Quaternion a_rotation)
+    {
+        Quaternion randomRotationY = new Quaternion(a_rotation.x, Random.Range(0, 360), a_rotation.z, a_rotation.w);
+        return randomRotationY;
+    }
+
+    Vector3 RandomCircle(Vector3 a_center, float a_radius)
+    {
+        float angle = Random.value * 360;
+        Vector3 pos;
+        pos.x = a_center.x + a_radius * Mathf.Sin(angle * Mathf.Deg2Rad);
+        pos.y = a_center.y ;
+        pos.z = a_center.z + a_radius * Mathf.Cos(angle * Mathf.Deg2Rad);
+        return pos;
+
     }
 }
