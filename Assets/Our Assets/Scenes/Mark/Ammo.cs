@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class Ammo : MonoBehaviour {
 
     [Tooltip("Amount of ammo to drop.")]

@@ -111,6 +111,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     // Update is called once per frame
     void Update()
     {
+        DrawLinePath(agent.path);
         m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
         m_gunDistToPlayer = Vector3.Distance(m_weaponController.GetEquippedWeapon().transform.position, m_player.transform.position);
 
@@ -163,7 +164,6 @@ public class Enemy : MonoBehaviour, IDamagable {
         }
 
         Debug.Log(m_state);
-        Debug.Log(m_gun.GetIsEmpty());
 
         if (m_health <= 0)
         {
@@ -310,7 +310,7 @@ public class Enemy : MonoBehaviour, IDamagable {
             m_targetLocation = FindNearestCover();
             agent.destination = m_targetLocation;
         }
-        DrawLinePath(agent.path);
+
 
 
         // Check if we've reached the destination
