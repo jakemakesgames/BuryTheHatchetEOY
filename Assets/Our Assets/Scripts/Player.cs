@@ -21,6 +21,10 @@ public class Player : MonoBehaviour, IDamagable {
 
     public event System.Action OnDeath;
 
+    public struct WeaponInfo
+    {
+        bool m_isMelee;
+    }
 
     public void TakeHit(int a_damage, RaycastHit a_hit) {
         TakeDamage(a_damage);

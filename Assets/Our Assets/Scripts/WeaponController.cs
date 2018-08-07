@@ -26,6 +26,8 @@ public class WeaponController : MonoBehaviour {
         }
         m_equippedGun = Instantiate(a_gunToEquip, m_weaponHold) as Gun;
         m_equippedGun.transform.parent = m_weaponHold;
+        m_equippedGun.SetEntityCollisionLayer(m_entityCollisionMask);
+        m_equippedGun.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
     }
 
     //destroys any currently equipped weapon and equips a new melee weapon
@@ -52,10 +54,14 @@ public class WeaponController : MonoBehaviour {
         if (a_weaponToEquip.GetComponent<Melee>() != null) {
             m_equippedMelee = Instantiate(a_weaponToEquip.GetComponent<Melee>(), m_weaponHold) as Melee;
             m_equippedMelee.transform.parent = m_weaponHold;
+            m_equippedMelee.SetEntityCollisionLayer(m_entityCollisionMask);
+            m_equippedMelee.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
         }
         else if (a_weaponToEquip.GetComponent<Gun>() != null) {
             m_equippedGun = Instantiate(a_weaponToEquip.GetComponent<Gun>(), m_weaponHold) as Gun;
             m_equippedGun.transform.parent = m_weaponHold;
+            m_equippedGun.SetEntityCollisionLayer(m_entityCollisionMask);
+            m_equippedGun.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
         }
     }
 
