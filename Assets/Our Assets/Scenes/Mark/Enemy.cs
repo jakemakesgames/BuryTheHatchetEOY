@@ -64,7 +64,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     STATE m_state;
 
     private NavMeshAgent agent;
-    LineRenderer line;
+    LineRenderer m_line;
     private GameObject m_player;
     private List<Transform> m_coverPoints;
 
@@ -86,7 +86,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     void Start()
     {
 
-        line = GetComponent<LineRenderer>();
+        m_line = GetComponent<LineRenderer>();
         agent = GetComponent<NavMeshAgent>();
 
         if (m_weaponController.GetEquippedGun() != null)
@@ -361,12 +361,12 @@ public class Enemy : MonoBehaviour, IDamagable {
     {
         if (path.corners.Length < 2) //if the path has 1 or no corners, there is no need
             return;
-
-        line.positionCount = path.corners.Length; //set the array of positions to the amount of corners
-
+        
+        m_line.positionCount = path.corners.Length; //set the array of positions to the amount of corners
+        
         for (int i = 0; i < path.corners.Length; i++)
         {
-            line.SetPosition(i, path.corners[i]); //go through each corner and set that to the line renderer's position
+            m_line.SetPosition(i, path.corners[i]); //go through each corner and set that to the line renderer's position
         }
     }
 
