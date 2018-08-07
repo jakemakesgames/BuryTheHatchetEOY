@@ -311,8 +311,6 @@ public class Enemy : MonoBehaviour, IDamagable {
             agent.destination = m_targetLocation;
         }
 
-
-
         // Check if we've reached the destination
         if (!agent.pathPending)
         {

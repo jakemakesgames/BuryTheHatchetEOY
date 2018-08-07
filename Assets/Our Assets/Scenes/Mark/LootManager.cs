@@ -12,8 +12,8 @@ public class LootManager : MonoBehaviour
     private float m_remainingAmmoPercent;
     private float m_missingHealthPercent;
     private int m_lootType;
-
-    private bool wasDropped = false;
+     
+    private bool m_goldMinFlag = false;
 
     [SerializeField] private GameObject m_healthPrefab;
     [SerializeField] private GameObject m_ammoPrefab;
@@ -72,26 +72,27 @@ public class LootManager : MonoBehaviour
         if (m_missingHealthPercent <= m_healthThreshold)
         {
             healthChance = m_healthChance;
-            wasDropped = true;
+            m_goldMinFlag = true;
         }
         else
         {
-            healthChance = 100.0f / 2.0f; // 100 / amount of items
-            wasDropped = false;
+            healthChance = 1f / 2f; // 1 / 2 : amount of items
+            m_goldMinFlag = false;
         }
 
         if (m_remainingAmmoPercent <= m_ammoThreshold)
         {
             ammoChance = m_ammoChance;
-            wasDropped = true;
+            m_goldMinFlag = true;
         }
         else
         {
-            ammoChance = 100.0f / 2.0f;
-            wasDropped = false;
+            ammoChance = 1f / 2f;
+            m_goldMinFlag = false;
         }
 
         lootChance = Random.Range(0f, 1f);
+        Debug.Log(lootChance);
 
         if (lootChance <= healthChance)
         {
@@ -131,7 +132,7 @@ public class LootManager : MonoBehaviour
         }
 
         GameObject gold = Instantiate(m_goldPrefab, newSpawnPos, randomRotationY);
-        gold.GetComponent<Gold>().SetGoldFlag(wasDropped);
+        gold.GetComponent<Gold>().SetGoldFlag(m_goldMinFlag);
     }
 
     Quaternion RandomRotationY(Quaternion a_rotation)
