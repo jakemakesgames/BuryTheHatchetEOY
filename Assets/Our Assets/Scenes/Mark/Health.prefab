@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 114437973887675054}
   - component: {fileID: 54288101541269814}
   - component: {fileID: 135978217583544224}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59,7 +59,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 1424d17d88f376045b670a5510d0ee33, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -99,7 +99,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 10
   m_CollisionDetection: 0
 --- !u!65 &65214552773188652
 BoxCollider:
