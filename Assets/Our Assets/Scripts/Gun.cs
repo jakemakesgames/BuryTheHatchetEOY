@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 31/07/2018
+//Last edited 07/08/2018
 
 public class Gun : MonoBehaviour {
 
@@ -112,7 +112,7 @@ public class Gun : MonoBehaviour {
     }
 
     //creates projectiles will only shoot after reload time
-    public void Shoot() {
+    public bool Shoot() {
         if (Time.time > m_nextShotTime) {
             if (m_currentClip > 0) {
                 m_nextShotTime = Time.time + m_msBetweenShots / 1000;
@@ -125,8 +125,10 @@ public class Gun : MonoBehaviour {
                     newProjectile.SetTerrainCollisionLayer(m_environmentCollisionMask);
                 }
                 m_currentClip--;
+                return true;
             }
         }
+        return false;
     }
 
     private void Awake() {

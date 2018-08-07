@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 06/0/2018
+//Last edited 07/08/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -54,14 +54,14 @@ public class PlayerInput : MonoBehaviour {
             m_weaponController.Swing();
         }
         else if (equippedGun.m_isAutomatic) {
-            if (Input.GetMouseButton(0)) {
-                m_weaponController.Shoot();
-				playerAnimator.SetTrigger ("Shoot");
-            }
             if (equippedGun.GetIsEmpty()) {
                 if (Input.GetMouseButtonDown(0)) {
                     m_weaponController.ReloadEquippedGun();
                 }
+            }
+            else if (Input.GetMouseButton(0)) {
+                if (m_weaponController.Shoot())
+				    playerAnimator.SetTrigger ("Shoot");
             }
         }
         else {
@@ -69,8 +69,10 @@ public class PlayerInput : MonoBehaviour {
                 if (equippedGun.GetIsEmpty()) {
                     m_weaponController.ReloadEquippedGun();
                 }
-                m_weaponController.Shoot();
-				playerAnimator.SetTrigger ("Shoot");
+                else {
+                    if (m_weaponController.Shoot())
+                        playerAnimator.SetTrigger("Shoot");
+                }
             }
         }
     }
@@ -146,7 +148,7 @@ public class PlayerInput : MonoBehaviour {
         }
     }
     
-    //caches the weapon info for storing on weapon switch
+    //caches the weapon info of the currently equipped weapon for storing on weapon switch
     private void SetWeaponInfo() {
         if (m_weaponController.GetEquippedGun() == null) {
             m_ammoInClip = 0;
@@ -161,46 +163,75 @@ public class PlayerInput : MonoBehaviour {
     }
 
     //weapon switching
-    private void SwitchWeapon()
-    {
+    private void SwitchWeapon() {
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            if (m_player.m_heldWeapons[0] != null) {
+            int weaponInumerator = 0;
+            if (m_player.m_heldWeapons[weaponInumerator] != null) {
                 SetWeaponInfo();
                 m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                m_equippedWeaponInumerator = 0;
-                m_weaponController.EquipWeapon(m_player.m_heldWeapons[0]);
+                m_equippedWeaponInumerator = weaponInumerator;
+                m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
+                if (!m_player.ToEquipIsMelee(weaponInumerator)){
+                    m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
+                    m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+                }
+
             }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-                if (m_player.m_heldWeapons[1] != null) {
+            int weaponInumerator = 1;
+            if (m_player.m_heldWeapons[weaponInumerator] != null) {
                 SetWeaponInfo();
                 m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                m_equippedWeaponInumerator = 1;
-                    m_weaponController.EquipWeapon(m_player.m_heldWeapons[1]);
+                m_equippedWeaponInumerator = weaponInumerator;
+                m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
+                if (!m_player.ToEquipIsMelee(weaponInumerator)) {
+                    m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
+                    m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
                 }
+
+            }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-            if (m_player.m_heldWeapons[2] != null) {
+            int weaponInumerator = 2;
+            if (m_player.m_heldWeapons[weaponInumerator] != null) {
                 SetWeaponInfo();
                 m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                m_equippedWeaponInumerator = 2;
-                m_weaponController.EquipWeapon(m_player.m_heldWeapons[2]);
+                m_equippedWeaponInumerator = weaponInumerator;
+                m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
+                if (!m_player.ToEquipIsMelee(weaponInumerator)) {
+                    m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
+                    m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+                }
+
             }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha4)) {
-            if (m_player.m_heldWeapons[3] != null) {
+            int weaponInumerator = 3;
+            if (m_player.m_heldWeapons[weaponInumerator] != null) {
                 SetWeaponInfo();
                 m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                m_equippedWeaponInumerator = 3;
-                m_weaponController.EquipWeapon(m_player.m_heldWeapons[3]);
+                m_equippedWeaponInumerator = weaponInumerator;
+                m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
+                if (!m_player.ToEquipIsMelee(weaponInumerator)) {
+                    m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
+                    m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+                }
+
             }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha5)) {
-            if (m_player.m_heldWeapons[4] != null) {
+            int weaponInumerator = 4;
+            if (m_player.m_heldWeapons[weaponInumerator] != null) {
                 SetWeaponInfo();
                 m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                m_equippedWeaponInumerator = 4;
-                m_weaponController.EquipWeapon(m_player.m_heldWeapons[4]);
+                m_equippedWeaponInumerator = weaponInumerator;
+                m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
+                if (!m_player.ToEquipIsMelee(weaponInumerator)) {
+                    m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
+                    m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+                }
+
             }
         }
     }
@@ -237,12 +268,34 @@ public class PlayerInput : MonoBehaviour {
 		//Charlie
 		UpdateAnims ();
     }
+    //Charlie
+    private void UpdateAnims()
+    {
+        float myVelocity = m_velocity.magnitude;
+        Vector3 localVel = transform.InverseTransformDirection(m_velocity);
 
-	//Charlie
-	private void UpdateAnims(){
-		float myVelocity = m_velocity.magnitude;
-		playerAnimator.SetFloat ("Velocity", myVelocity);
-		playerAnimator.SetFloat ("MovementDirectionForward", m_movementVector.z * transform.forward.z);
-		playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.x * transform.forward.x);
-	}
+
+        playerAnimator.SetFloat("Velocity", myVelocity);
+
+
+        //
+        playerAnimator.SetFloat("MovementDirectionRight", localVel.x * transform.right.x);
+        playerAnimator.SetFloat("MovementDirectionForward", localVel.z * transform.forward.z);
+
+        //ORIGINAL CODE//////////////////////////////////////////////////////////////////////////////
+        //        playerAnimator.SetFloat ("MovementDirectionRight", m_velocity.x * transform.right.x);
+        //        playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
+        //////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        //        if (m_velocity.x * transform.right.x == 0){
+        //            playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
+        //        }
+
+
+        //playerAnimator.SetFloat ("MovementDirectionForward", m_movementVector.x * transform.forward.x);
+
+        //playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.z * transform.right.z);
+
+    }
 }

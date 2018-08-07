@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 01/08/2018
+//Last edited 07/08/2018
 
 public class WeaponController : MonoBehaviour {
 
@@ -15,7 +15,7 @@ public class WeaponController : MonoBehaviour {
     private Melee m_equippedMelee;
     public LayerMask m_entityCollisionMask;
     public LayerMask m_terrainCollisionMask;
-
+    
     //destroys any currently equipped weapon and equips a new gun
     public void EquipGun(Gun a_gunToEquip) {
         if (m_equippedGun != null) {
@@ -87,10 +87,11 @@ public class WeaponController : MonoBehaviour {
         else
             return null;
     }
-    public void Shoot() {
+    public bool Shoot() {
         if (m_equippedGun != null) {
-            m_equippedGun.Shoot();
+            return m_equippedGun.Shoot();
         }
+        return false;
     }
     public void Swing() {
         if (m_equippedMelee != null) {

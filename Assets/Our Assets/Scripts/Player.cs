@@ -4,27 +4,33 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 1/08/2018
+//Last edited 07/08/2018
 
 [RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour, IDamagable {
+    public struct WeaponInfo {
+        public bool m_isMelee;
+        public int m_curClip;
+        public int m_curReserve;
+
+        public WeaponInfo(bool a_isMelee, int a_curClip, int a_curReserve) {
+            m_isMelee = a_isMelee;
+            m_curClip = a_curClip;
+            m_curReserve = a_curReserve;
+        }
+    }
 
     private bool m_dead;
     private int m_health;
     private int m_money = 0;
+    private List<WeaponInfo> m_heldWeaponsInfo;
     [SerializeField] private int m_maxHealth;
     [SerializeField] private int m_startingMoney;
-    [SerializeField] private Transform m_crosshairPos;
     [SerializeField] private GameObject m_equippedWeapon;
 
     public List<GameObject> m_heldWeapons;
 
     public event System.Action OnDeath;
-
-    public struct WeaponInfo
-    {
-        bool m_isMelee;
-    }
 
     public void TakeHit(int a_damage, RaycastHit a_hit) {
         TakeDamage(a_damage);
@@ -47,23 +53,32 @@ public class Player : MonoBehaviour, IDamagable {
 
     //returns false if a successful assignment could
     public bool AssignWeaponInfo(int a_listIterator, int a_clip, int a_reserveAmmo) {
-        if (m_heldWeapons[a_listIterator].GetComponent<Melee>() != null) {
-            return true;
-        }
-        else if (m_heldWeapons[a_listIterator].GetComponent<Gun>() != null) {
+
+        if (m_heldWeapons[a_listIterator].GetComponent<Gun>() != null) {
             if (!m_heldWeapons[a_listIterator].GetComponent<Gun>().SetCurrentClip(a_clip)) {
                 return false;
             }
-            if (!m_heldWeapons[a_listIterator].GetComponent<Gun>().SetCurrentReserveAmmo(a_reserveAmmo)) {
-                return false;
-            }
-        return true;
+            m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(false, a_clip, a_reserveAmmo);
+            return true;
+        }
+        else if (m_heldWeapons[a_listIterator].GetComponent<Melee>() != null) {
+            m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(true, 0, 0);
+            return true;
         }
         else {
             return false;
         }
     }
 
+    public bool ToEquipIsMelee(int a_iterator) {
+        return m_heldWeaponsInfo[a_iterator].m_isMelee;
+    }
+    public int ToEquipCurrentClip(int a_iterator) {
+        return m_heldWeaponsInfo[a_iterator].m_curClip;
+    }
+    public int ToEquipCurrentReserve(int a_iterator) {
+        return m_heldWeaponsInfo[a_iterator].m_curReserve;
+    }
 
     private void Die() {
         m_dead = true;
@@ -75,6 +90,17 @@ public class Player : MonoBehaviour, IDamagable {
     private void Awake () {
         m_health = m_maxHealth;
         m_money = m_startingMoney;
+        m_heldWeaponsInfo.Capacity = m_heldWeapons.Capacity;
+        for (int i = 0; i < m_heldWeapons.Count; i++) {
+            if (m_heldWeapons[i].GetComponent<Gun>() != null) {
+                int currentAmmo = m_heldWeapons[i].GetComponent<Gun>().GetCurrentAmmo();
+                int currentClip = m_heldWeapons[i].GetComponent<Gun>().GetCurrentClip();
+                m_heldWeaponsInfo[i] = new WeaponInfo(false, currentClip, currentAmmo);
+            }
+            else if (m_heldWeapons[i].GetComponent<Melee>() != null) {
+                m_heldWeaponsInfo[i] = new WeaponInfo(true, 0, 0);
+            }
+        }
     }
     
     private void Update () {
