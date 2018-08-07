@@ -43,6 +43,7 @@ public class PlayerInput : MonoBehaviour {
         if (equippedGun.m_isAutomatic) {
             if (Input.GetMouseButton(0)) {
                 m_weaponController.Shoot();
+				playerAnimator.SetTrigger ("Shoot");
             }
             if (equippedGun.GetIsEmpty()) {
                 if (Input.GetMouseButtonDown(0)) {
@@ -56,6 +57,7 @@ public class PlayerInput : MonoBehaviour {
                     m_weaponController.ReloadEquippedGun();
                 }
                 m_weaponController.Shoot();
+				playerAnimator.SetTrigger ("Shoot");
             }
         }
     }
@@ -96,6 +98,7 @@ public class PlayerInput : MonoBehaviour {
     private void Dash() {
         if (!m_isDashing) {
             if (Input.GetMouseButtonDown(1)) {
+				playerAnimator.SetTrigger ("Roll");
                 m_isDashing = true;
                 m_dashTimer = Time.time + m_dashTime;
                 m_nma.velocity = transform.forward * m_dashSpeed;
