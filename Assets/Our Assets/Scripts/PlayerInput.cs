@@ -14,15 +14,18 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Player))]
 public class PlayerInput : MonoBehaviour {
 
-    [SerializeField] private int m_equippedWeaopnInumerator;
+    [SerializeField] private int m_equippedWeaponInumerator;
     [SerializeField] private float m_speed = 10f;
     [SerializeField] private float m_dashTime = 10f;
     [SerializeField] private float m_dashSpeed = 1000f;
 
+    private int m_ammoInClip;
+    private int m_ammoInReserve;
     private float m_nmaSpeed;
     private float m_dashTimer = 0;
     private float m_nmaAngledSpeed;
     private float m_nmaAcceleration;
+    private bool m_isHoldingGun;
     private bool m_isDashing = false;
     private NavMeshAgent m_nma;
     private Vector3 m_velocity;
@@ -142,43 +145,62 @@ public class PlayerInput : MonoBehaviour {
             }
         }
     }
+    
+    //caches the weapon info for storing on weapon switch
+    private void SetWeaponInfo() {
+        if (m_weaponController.GetEquippedGun() == null) {
+            m_ammoInClip = 0;
+            m_ammoInReserve = 0;
+            m_isHoldingGun = false;
+        }
+        else {
+            m_ammoInClip = m_weaponController.GetEquippedGun().GetCurrentClip();
+            m_ammoInReserve = m_weaponController.GetEquippedGun().GetCurrentAmmo();
+            m_isHoldingGun = true;
+        }
+    }
 
     //weapon switching
     private void SwitchWeapon()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            if (m_player.m_heldWeapons[1] != null) {
-                m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
-                m_equippedWeaopnInumerator = 1;
-                m_weaponController.EquipWeapon(m_player.m_heldWeapons[1]);
+            if (m_player.m_heldWeapons[0] != null) {
+                SetWeaponInfo();
+                m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
+                m_equippedWeaponInumerator = 0;
+                m_weaponController.EquipWeapon(m_player.m_heldWeapons[0]);
             }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-                if (m_player.m_heldWeapons[2] != null) {
-                    m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
-                    m_equippedWeaopnInumerator = 2;
+                if (m_player.m_heldWeapons[1] != null) {
+                SetWeaponInfo();
+                m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
+                m_equippedWeaponInumerator = 1;
                     m_weaponController.EquipWeapon(m_player.m_heldWeapons[1]);
                 }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-            if (m_player.m_heldWeapons[3] != null) {
-            m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
-            m_equippedWeaopnInumerator = 3;
-            m_weaponController.EquipWeapon(m_player.m_heldWeapons[3]);
+            if (m_player.m_heldWeapons[2] != null) {
+                SetWeaponInfo();
+                m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
+                m_equippedWeaponInumerator = 2;
+                m_weaponController.EquipWeapon(m_player.m_heldWeapons[2]);
             }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha4)) {
-            if (m_player.m_heldWeapons[4] != null) {
-                m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
-                m_equippedWeaopnInumerator = 4;
-                m_weaponController.EquipWeapon(m_player.m_heldWeapons[4]);
+            if (m_player.m_heldWeapons[3] != null) {
+                SetWeaponInfo();
+                m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
+                m_equippedWeaponInumerator = 3;
+                m_weaponController.EquipWeapon(m_player.m_heldWeapons[3]);
             }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha5)) {
-            if (m_player.m_heldWeapons[5] != null) {
-                m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
-                m_equippedWeaopnInumerator = 5;
-                m_weaponController.EquipWeapon(m_player.m_heldWeapons[5]);
+            if (m_player.m_heldWeapons[4] != null) {
+                SetWeaponInfo();
+                m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
+                m_equippedWeaponInumerator = 4;
+                m_weaponController.EquipWeapon(m_player.m_heldWeapons[4]);
             }
         }
     }
