@@ -5,6 +5,11 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
+//I couldnt find where but Bounty Interaction and Bounty Board get set to true somewhere
+//In the game loop need to check if the Main Menu is active, if it isnt open up the options menu
+//Same with the Bounty Menu when you interact with the Bounty board and Bounty Screen when you obtain
+//The Bounty
+
 public class UIManager : MonoBehaviour
 {
     //-------Public Variables------//
@@ -16,7 +21,7 @@ public class UIManager : MonoBehaviour
 
     public GameObject m_pauseScreen;
     public GameObject m_pauseMenu;
-    public GameObject m_bountyScreen;
+    public GameObject m_bountyPoster;
     public GameObject m_bountyBoard;
     public GameObject m_bountyInteractionScreen;
 
@@ -80,15 +85,15 @@ public class UIManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-
     private void Start()
     {
+        //Sets Only the Start Menu to active 
         m_inMainMenu = true;
         m_startMenu.SetActive(true);
 
-        m_pauseMenu.SetActive(true);
+        m_pauseMenu.SetActive(false);
         m_pauseScreen.SetActive(false);
-        m_bountyScreen.SetActive(false);
+        m_bountyPoster.SetActive(false);
         m_bountyBoard.SetActive(false);
         m_bountyInteractionScreen.SetActive(false);
         m_optionsMenu.SetActive(false);
@@ -111,11 +116,32 @@ public class UIManager : MonoBehaviour
 
         #region Main Menu Controls
 
+        //In Main Menu
         if (m_inMainMenu)
         {
-            m_startMenu.SetActive(true);
+            //Set the Bounty Screens to false
             m_bountyBoard.SetActive(false);
             m_bountyInteractionScreen.SetActive(false);
+
+            //Takes you back to the Start Screen from the Options Menu
+            if (Input.GetKeyDown("escape") && m_optionsMenu.activeSelf)
+            {
+                m_optionsMenu.SetActive(false);
+                m_startMenu.SetActive(true);
+
+                Debug.Log("In Options Menu while Main Menu is active");
+            }
+
+            //Takes you back to the Start Screen from the Controls Menu
+            if (Input.GetKeyDown("escape") && m_controlsMenu.activeSelf)
+            {
+                m_controlsMenu.SetActive(false);
+                m_startMenu.SetActive(true);
+
+                Debug.Log("In Options Menu while Main Menu is active");
+            }
+
+            Debug.Log("In Pause Menu");
 
         }
 
@@ -123,8 +149,13 @@ public class UIManager : MonoBehaviour
 
         #region Pause Screen Controls
 
-        if (m_pauseMenu != null)
+        //If it is not in the Main Menu
+        if (!m_inMainMenu)
+        {
+            //If the pause Menu is active
+            if (m_pauseMenu)
             {
+                //If the game is currently not paused
                 if (Input.GetKeyDown("escape") && !m_isPaused)
                 {
                     if (!m_inBounty)
@@ -146,6 +177,7 @@ public class UIManager : MonoBehaviour
                 }
                 else if (Input.GetKeyDown("escape") && m_isPaused)
                 {
+                    //If we are currently not in the Bounty Board
                     if (!m_inBounty)
                     {
                         //Checks if the Pause Menu is active
@@ -163,40 +195,49 @@ public class UIManager : MonoBehaviour
                         }
                         else
                         {
+                            //If the Pause Menu is not active turn it on
                             m_bountyBoard.SetActive(false);
                             m_pauseMenu.SetActive(true);
                         }  
                     }
                 }
             }
+        }
 
-            #endregion
+        #endregion
 
         #region Bounty Screen Controls
 
-            if (m_bountyScreen != null)
+        if (!m_inMainMenu)
+        {
+            if (!m_bountyPoster)
             {
+                //Brings up the Bounty Poster when you obtain it from the Bounty Board
                 if (Input.GetKeyDown("b") && !m_isPaused && m_hasBounty)
                 {
                     if (!m_inPausedMenu)
                     {
+                        //Pauses the game and displays the Bounty Poster
                         m_inBounty = true;
 
                         m_isPaused = true;
                         m_pauseScreen.SetActive(false);
-                        m_bountyScreen.SetActive(true);
+                        m_bountyPoster.SetActive(true);
                         Time.timeScale = 0;
 
                         Debug.Log("Looking at Bounty");
                     }
                 }
+
+                //Closes the Bounty Poster
                 else if (Input.GetKeyDown("b") && m_isPaused)
                 {
                     if (!m_inPausedMenu)
                     {
+                        //Resumes the game
                         m_inBounty = false;
                         m_isPaused = false;
-                        m_bountyScreen.SetActive(false);
+                        m_bountyPoster.SetActive(false);
                         m_bountyBoard.SetActive(false);
 
                         Time.timeScale = 1;
@@ -208,9 +249,10 @@ public class UIManager : MonoBehaviour
                 {
                     if (!m_inPausedMenu)
                     {
+                        //Resumes the game
                         m_inBounty = false;
                         m_isPaused = false;
-                        m_bountyScreen.SetActive(false);
+                        m_bountyPoster.SetActive(false);
 
                         Time.timeScale = 1;
 
@@ -218,6 +260,7 @@ public class UIManager : MonoBehaviour
                     }
                 }
             }
+        }
 
             #endregion
 
@@ -238,7 +281,7 @@ public class UIManager : MonoBehaviour
             m_isPaused = false;
             m_inPausedMenu = false;
             m_pauseMenu.SetActive(false);
-            m_bountyScreen.SetActive(false);
+            m_bountyPoster.SetActive(false);
 
             //Sets the game loop speed to 0
             Time.timeScale = 1;
@@ -249,6 +292,8 @@ public class UIManager : MonoBehaviour
 
     public void StartGame()
     {
+        m_inMainMenu = false;
+        m_startMenu.SetActive(false);
         Time.timeScale = 1;
     }
 
@@ -266,6 +311,12 @@ public class UIManager : MonoBehaviour
             {
                 m_pauseMenu.SetActive(true);
             }
+        }
+
+        if (m_inMainMenu)
+        {
+            m_optionsMenu.SetActive(false);
+            m_startMenu.SetActive(true);
         }
     }
 
