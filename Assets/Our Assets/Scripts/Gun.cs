@@ -135,6 +135,12 @@ public class Gun : MonoBehaviour {
                 m_isReloading = false;
             }
         }
+        if (m_currentAmmo > m_maxAmmo) {
+            m_currentAmmo = m_maxAmmo;
+        }
+        if (m_currentClip > m_clipSize) {
+            m_currentClip = m_clipSize;
+        }
     }
     
 }
