@@ -45,6 +45,27 @@ public class Gun : MonoBehaviour {
     public void SetInfiniteAmmo(bool a_infiniteAmmo) {
         m_infiniteAmmo = a_infiniteAmmo;
     }
+    //will return false if the max clip size is smaller than the attemped assignment
+    public bool SetCurrentClip(int a_currentClip) {
+        if (a_currentClip > m_clipSize) {
+            return false;
+        }
+        else {
+            m_currentClip = a_currentClip;
+            return true;
+        }
+    }
+    //will return false if the max ammo pool is smaller than the attemped assignment
+    public bool SetCurrentReserveAmmo(int a_reserveAmmo)
+    {
+        if (a_reserveAmmo > m_maxAmmo) {
+            return false;
+        }
+        else {
+            m_currentAmmo = a_reserveAmmo;
+            return true;
+        }
+    }
     public int GetCurrentClip() { return m_currentClip; }
     public int GetCurrentAmmo() { return m_currentAmmo; }
     public int GetTotalAmmo() { return GetCurrentAmmo() + GetCurrentClip(); }

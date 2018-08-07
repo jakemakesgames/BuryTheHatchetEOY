@@ -16,9 +16,11 @@ public class Player : MonoBehaviour, IDamagable {
     [SerializeField] private int m_startingMoney;
     [SerializeField] private Transform m_crosshairPos;
     [SerializeField] private GameObject m_equippedWeapon;
-    [SerializeField] private List<GameObject> m_heldWeapons;
+
+    public List<GameObject> m_heldWeapons;
 
     public event System.Action OnDeath;
+
 
     public void TakeHit(int a_damage, RaycastHit a_hit) {
         TakeDamage(a_damage);
@@ -30,6 +32,8 @@ public class Player : MonoBehaviour, IDamagable {
         }
     }
 
+    public void Heal(int a_healAmount) { m_health += a_healAmount; }
+    public void AddMoney(int a_money) { m_money += a_money; }
     public void SetMoney(int a_money) { m_money = a_money; }
     public int GetMoney() { return m_money; }
 
@@ -37,6 +41,24 @@ public class Player : MonoBehaviour, IDamagable {
 
     public int GetMaxHealth() { return m_maxHealth; }
 
+    //returns false if a successful assignment could
+    public bool AssignWeaponInfo(int a_listIterator, int a_clip, int a_reserveAmmo) {
+        if (m_heldWeapons[a_listIterator].GetComponent<Melee>() != null) {
+            return true;
+        }
+        else if (m_heldWeapons[a_listIterator].GetComponent<Gun>() != null) {
+            if (!m_heldWeapons[a_listIterator].GetComponent<Gun>().SetCurrentClip(a_clip)) {
+                return false;
+            }
+            if (!m_heldWeapons[a_listIterator].GetComponent<Gun>().SetCurrentReserveAmmo(a_reserveAmmo)) {
+                return false;
+            }
+        return true;
+        }
+        else {
+            return false;
+        }
+    }
 
 
     private void Die() {
@@ -52,5 +74,8 @@ public class Player : MonoBehaviour, IDamagable {
     }
     
     private void Update () {
+        if (m_health > m_maxHealth) {
+            m_health = m_maxHealth;
+        }
     }
 }

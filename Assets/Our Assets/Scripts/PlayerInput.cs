@@ -11,8 +11,10 @@ using UnityEngine.AI;
 
 [RequireComponent (typeof(NavMeshAgent))]
 [RequireComponent(typeof(WeaponController))]
+[RequireComponent(typeof(Player))]
 public class PlayerInput : MonoBehaviour {
 
+    [SerializeField] private int m_equippedWeaopnInumerator;
     [SerializeField] private float m_speed = 10f;
     [SerializeField] private float m_dashTime = 10f;
     [SerializeField] private float m_dashSpeed = 1000f;
@@ -27,6 +29,7 @@ public class PlayerInput : MonoBehaviour {
 	private Vector3 m_movementVector;
     private Camera m_viewCamera;
     private WeaponController m_weaponController;
+    private Player m_player;
 
     [SerializeField] private Text m_clipAmmoDisplay;
     [SerializeField] private Text m_totalAmmoDisplay;
@@ -40,7 +43,14 @@ public class PlayerInput : MonoBehaviour {
     //via the weapon controller script
     public void Attack() {
         Gun equippedGun = m_weaponController.GetEquippedGun();
-        if (equippedGun.m_isAutomatic) {
+        if (equippedGun == null) {
+            Melee equippedMelee = m_weaponController.GetEquippedMelee();
+            if (equippedMelee == null) {
+                return;
+            }
+            m_weaponController.Swing();
+        }
+        else if (equippedGun.m_isAutomatic) {
             if (Input.GetMouseButton(0)) {
                 m_weaponController.Shoot();
 				playerAnimator.SetTrigger ("Shoot");
@@ -131,9 +141,50 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
+    //weapon switching
+    private void SwitchWeapon()
+    {
+        if (Input.GetButtonDown("1")) {
+            if (m_player.m_heldWeapons[1] != null) {
+                m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
+                m_equippedWeaopnInumerator = 1;
+                m_weaponController.EquipWeapon(m_player.m_heldWeapons[1]);
+            }
+        }
+        else if (Input.GetButtonDown("2")) {
+                if (m_player.m_heldWeapons[2] != null) {
+                    m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
+                    m_equippedWeaopnInumerator = 2;
+                    m_weaponController.EquipWeapon(m_player.m_heldWeapons[1]);
+                }
+        }
+        else if (Input.GetButtonDown("3")) {
+            if (m_player.m_heldWeapons[3] != null) {
+            m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
+            m_equippedWeaopnInumerator = 3;
+            m_weaponController.EquipWeapon(m_player.m_heldWeapons[3]);
+            }
+        }
+        else if (Input.GetButtonDown("4")) {
+            if (m_player.m_heldWeapons[4] != null) {
+                m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
+                m_equippedWeaopnInumerator = 4;
+                m_weaponController.EquipWeapon(m_player.m_heldWeapons[4]);
+            }
+        }
+        else if (Input.GetButtonDown("5")) {
+            if (m_player.m_heldWeapons[5] != null) {
+                m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
+                m_equippedWeaopnInumerator = 5;
+                m_weaponController.EquipWeapon(m_player.m_heldWeapons[5]);
+            }
+        }
+    }
+
     private void Awake() {
         m_nma = GetComponent<NavMeshAgent>();
         m_weaponController = GetComponent<WeaponController>();
+        m_player = GetComponent<Player>();
         m_viewCamera = Camera.main;
         m_nmaAcceleration = m_nma.acceleration;
         m_nmaAngledSpeed = m_nma.angularSpeed;
@@ -141,6 +192,9 @@ public class PlayerInput : MonoBehaviour {
     }
 
     private void Update () {
+        //Switch Weapons
+        SwitchWeapon();
+
         //Player looking at mouse
         PlayerLookAt();
 

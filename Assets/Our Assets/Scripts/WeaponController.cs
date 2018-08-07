@@ -41,6 +41,24 @@ public class WeaponController : MonoBehaviour {
         m_equippedMelee.transform.parent = m_weaponHold;
     }
 
+    //destroys any currently equipped weapon and equips a new weapon
+    public void EquipWeapon(GameObject a_weaponToEquip) {
+        if (m_equippedGun != null) {
+            Destroy(m_equippedGun.gameObject);
+        }
+        else if (m_equippedMelee != null) {
+            Destroy(m_equippedMelee.gameObject);
+        }
+        if (a_weaponToEquip.GetComponent<Melee>() != null) {
+            m_equippedMelee = Instantiate(a_weaponToEquip.GetComponent<Melee>(), m_weaponHold) as Melee;
+            m_equippedMelee.transform.parent = m_weaponHold;
+        }
+        else if (a_weaponToEquip.GetComponent<Gun>() != null) {
+            m_equippedGun = Instantiate(a_weaponToEquip.GetComponent<Gun>(), m_weaponHold) as Gun;
+            m_equippedGun.transform.parent = m_weaponHold;
+        }
+    }
+
     //reloads the equipped gun
     public void ReloadEquippedGun() {
         if (m_equippedGun != null) {
@@ -64,9 +82,13 @@ public class WeaponController : MonoBehaviour {
             return null;
     }
     public void Shoot() {
-        if (m_equippedGun != null)
-        {
+        if (m_equippedGun != null) {
             m_equippedGun.Shoot();
+        }
+    }
+    public void Swing() {
+        if (m_equippedMelee != null) {
+            m_equippedMelee.Swing();
         }
     }
     public void Awake() {
