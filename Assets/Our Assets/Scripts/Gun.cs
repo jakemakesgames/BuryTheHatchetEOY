@@ -36,6 +36,7 @@ public class Gun : MonoBehaviour {
 
     private bool m_infiniteAmmo = false;
 
+    public void AddAmmo(int a_ammoToAdd) { m_currentAmmo += a_ammoToAdd; }
     public void SetEntityCollisionLayer(LayerMask a_collsionMask) {
         m_entityCollisionMask = a_collsionMask;
     }
