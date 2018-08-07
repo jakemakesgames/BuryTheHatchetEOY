@@ -128,6 +128,8 @@ public class PlayerInput : MonoBehaviour {
     private void DisplayAmmo() {
         Gun equippedGun = m_weaponController.GetEquippedGun();
 
+        Debug.Log("Player ammo clip " + equippedGun.GetCurrentClip());
+        Debug.Log("Player ammo reserve " + equippedGun.GetCurrentAmmo());
         if (equippedGun != null) {
             if (m_clipAmmoDisplay != null) {
                 m_clipAmmoDisplay.GetComponent<Text>().text =
@@ -144,35 +146,35 @@ public class PlayerInput : MonoBehaviour {
     //weapon switching
     private void SwitchWeapon()
     {
-        if (Input.GetButtonDown("1")) {
+        if (Input.GetKeyDown(KeyCode.Alpha1)) {
             if (m_player.m_heldWeapons[1] != null) {
                 m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
                 m_equippedWeaopnInumerator = 1;
                 m_weaponController.EquipWeapon(m_player.m_heldWeapons[1]);
             }
         }
-        else if (Input.GetButtonDown("2")) {
+        else if (Input.GetKeyDown(KeyCode.Alpha2)) {
                 if (m_player.m_heldWeapons[2] != null) {
                     m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
                     m_equippedWeaopnInumerator = 2;
                     m_weaponController.EquipWeapon(m_player.m_heldWeapons[1]);
                 }
         }
-        else if (Input.GetButtonDown("3")) {
+        else if (Input.GetKeyDown(KeyCode.Alpha3)) {
             if (m_player.m_heldWeapons[3] != null) {
             m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
             m_equippedWeaopnInumerator = 3;
             m_weaponController.EquipWeapon(m_player.m_heldWeapons[3]);
             }
         }
-        else if (Input.GetButtonDown("4")) {
+        else if (Input.GetKeyDown(KeyCode.Alpha4)) {
             if (m_player.m_heldWeapons[4] != null) {
                 m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
                 m_equippedWeaopnInumerator = 4;
                 m_weaponController.EquipWeapon(m_player.m_heldWeapons[4]);
             }
         }
-        else if (Input.GetButtonDown("5")) {
+        else if (Input.GetKeyDown(KeyCode.Alpha5)) {
             if (m_player.m_heldWeapons[5] != null) {
                 m_player.AssignWeaponInfo(m_equippedWeaopnInumerator, 0, 0);
                 m_equippedWeaopnInumerator = 5;

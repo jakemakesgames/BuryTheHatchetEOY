@@ -77,5 +77,6 @@ public class Player : MonoBehaviour, IDamagable {
         if (m_health > m_maxHealth) {
             m_health = m_maxHealth;
         }
+        Debug.Log("Player health " + m_health);
     }
 }
