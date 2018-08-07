@@ -220,7 +220,7 @@ public class PlayerInput : MonoBehaviour {
 	private void UpdateAnims(){
 		float myVelocity = m_velocity.magnitude;
 		playerAnimator.SetFloat ("Velocity", myVelocity);
-		playerAnimator.SetFloat ("MovementDirectionForward", m_movementVector.z);
-		playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.x);
+		playerAnimator.SetFloat ("MovementDirectionForward", m_movementVector.z * transform.forward.z);
+		playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.x * transform.forward.x);
 	}
 }

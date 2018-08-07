@@ -36,6 +36,7 @@ public class Gun : MonoBehaviour {
 
     private bool m_infiniteAmmo = false;
 
+    public void AddAmmo(int a_ammoToAdd) { m_currentAmmo += a_ammoToAdd; }
     public void SetEntityCollisionLayer(LayerMask a_collsionMask) {
         m_entityCollisionMask = a_collsionMask;
     }
@@ -134,6 +135,12 @@ public class Gun : MonoBehaviour {
             if (Time.time > m_nextShotTime) {
                 m_isReloading = false;
             }
+        }
+        if (m_currentAmmo > m_maxAmmo) {
+            m_currentAmmo = m_maxAmmo;
+        }
+        if (m_currentClip > m_clipSize) {
+            m_currentClip = m_clipSize;
         }
     }
     

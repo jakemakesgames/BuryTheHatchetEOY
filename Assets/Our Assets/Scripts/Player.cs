@@ -78,5 +78,6 @@ public class Player : MonoBehaviour, IDamagable {
             m_health = m_maxHealth;
         }
         Debug.Log("Player health " + m_health);
+        Debug.Log("Player money " + m_money);
     }
 }
