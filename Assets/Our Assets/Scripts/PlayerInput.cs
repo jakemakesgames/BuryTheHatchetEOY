@@ -6,19 +6,19 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 07/08/2018
+//Last edited 08/08/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
 [RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(Player))]
 public class PlayerInput : MonoBehaviour {
-
-    [SerializeField] private int m_equippedWeaponInumerator;
+    
     [SerializeField] private float m_speed = 10f;
     [SerializeField] private float m_dashTime = 10f;
     [SerializeField] private float m_dashSpeed = 1000f;
 
+    private int m_equippedWeaponInumerator;
     private int m_ammoInClip;
     private int m_ammoInReserve;
     private float m_nmaSpeed;
@@ -105,7 +105,9 @@ public class PlayerInput : MonoBehaviour {
             hand.LookAt(heightCorrectedLookPoint);
             m_weaponController.m_weaponHold = hand;
             if (m_crosshair != null)
-                m_crosshair.transform.position = pointOnGround;
+            {
+                m_crosshair.transform.position = heightCorrectedLookPoint;
+            }
         }
     }
 
@@ -166,72 +168,87 @@ public class PlayerInput : MonoBehaviour {
     private void SwitchWeapon() {
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
             int weaponInumerator = 0;
-            if (m_player.m_heldWeapons[weaponInumerator] != null) {
-                SetWeaponInfo();
-                m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                m_equippedWeaponInumerator = weaponInumerator;
-                m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
-                if (!m_player.ToEquipIsMelee(weaponInumerator)){
-                    m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
-                    m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+            if (m_player.m_weaponsAvailableToPlayer[weaponInumerator]) {
+                if (m_player.m_heldWeapons[weaponInumerator] != null) {
+                    SetWeaponInfo();
+                    if (m_weaponController.GetEquippedWeapon() != null) {
+                        m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
+                    }
+                    m_equippedWeaponInumerator = weaponInumerator;
+                    m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
+                    if (!m_player.ToEquipIsMelee(weaponInumerator)) {
+                        m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
+                        m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+                    }
                 }
-
             }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2)) {
             int weaponInumerator = 1;
-            if (m_player.m_heldWeapons[weaponInumerator] != null) {
-                SetWeaponInfo();
-                m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                m_equippedWeaponInumerator = weaponInumerator;
-                m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
-                if (!m_player.ToEquipIsMelee(weaponInumerator)) {
-                    m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
-                    m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+            if (m_player.m_weaponsAvailableToPlayer[weaponInumerator]) {
+                if (m_player.m_heldWeapons[weaponInumerator] != null) {
+                    SetWeaponInfo();
+                    if (m_weaponController.GetEquippedWeapon() != null) {
+                        m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
+                    }
+                    m_equippedWeaponInumerator = weaponInumerator;
+                    m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
+                    if (!m_player.ToEquipIsMelee(weaponInumerator)) {
+                        m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
+                        m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+                    }
                 }
-
             }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3)) {
             int weaponInumerator = 2;
-            if (m_player.m_heldWeapons[weaponInumerator] != null) {
-                SetWeaponInfo();
-                m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                m_equippedWeaponInumerator = weaponInumerator;
-                m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
-                if (!m_player.ToEquipIsMelee(weaponInumerator)) {
-                    m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
-                    m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+            if (m_player.m_weaponsAvailableToPlayer[weaponInumerator]) {
+                if (m_player.m_heldWeapons[weaponInumerator] != null) {
+                    SetWeaponInfo();
+                    if (m_weaponController.GetEquippedWeapon() != null) {
+                        m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
+                    }
+                    m_equippedWeaponInumerator = weaponInumerator;
+                    m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
+                    if (!m_player.ToEquipIsMelee(weaponInumerator)) {
+                        m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
+                        m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+                    }
                 }
-
             }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha4)) {
             int weaponInumerator = 3;
-            if (m_player.m_heldWeapons[weaponInumerator] != null) {
-                SetWeaponInfo();
-                m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                m_equippedWeaponInumerator = weaponInumerator;
-                m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
-                if (!m_player.ToEquipIsMelee(weaponInumerator)) {
-                    m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
-                    m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+            if (m_player.m_weaponsAvailableToPlayer[weaponInumerator]) {
+                if (m_player.m_heldWeapons[weaponInumerator] != null) {
+                    SetWeaponInfo();
+                    if (m_weaponController.GetEquippedWeapon() != null) {
+                        m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
+                    }
+                    m_equippedWeaponInumerator = weaponInumerator;
+                    m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
+                    if (!m_player.ToEquipIsMelee(weaponInumerator)) {
+                        m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
+                        m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+                    }
                 }
-
             }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha5)) {
             int weaponInumerator = 4;
-            if (m_player.m_heldWeapons[weaponInumerator] != null) {
-                SetWeaponInfo();
-                m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                m_equippedWeaponInumerator = weaponInumerator;
-                m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
-                if (!m_player.ToEquipIsMelee(weaponInumerator)) {
-                    m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
-                    m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+            if (m_player.m_weaponsAvailableToPlayer[weaponInumerator]) {
+                if (m_player.m_heldWeapons[weaponInumerator] != null) {
+                    SetWeaponInfo();
+                    if (m_weaponController.GetEquippedWeapon() != null) {
+                        m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
+                    }
+                    m_equippedWeaponInumerator = weaponInumerator;
+                    m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
+                    if (!m_player.ToEquipIsMelee(weaponInumerator)) {
+                        m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
+                        m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
+                    }
                 }
-
             }
         }
     }
