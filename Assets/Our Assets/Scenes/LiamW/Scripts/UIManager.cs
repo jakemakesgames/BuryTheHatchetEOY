@@ -25,6 +25,8 @@ public class UIManager : MonoBehaviour
     public GameObject m_bountyBoard;
     public GameObject m_bountyInteractionScreen;
 
+    public List<Image> m_revBullets;
+
     //*! Singleton attempt
     public static UIManager m_Instance;
 
@@ -38,13 +40,12 @@ public class UIManager : MonoBehaviour
     bool m_inPausedMenu;
     bool m_soldOut;
     bool m_inMainMenu;
-    
 
+    WeaponController m_weaponController;
     Interactable m_interactable;
     SoundManager m_soundManager;
 
     #endregion
-
 
     #region Getter and Setter
 
@@ -329,6 +330,14 @@ public class UIManager : MonoBehaviour
     public void Shop()
     {
 
+    }
+
+    public void Shoot()
+    {
+        if (m_weaponController.Shoot())
+        {
+            //m_revBullets.
+        }
     }
 
     public void StartMenu()
