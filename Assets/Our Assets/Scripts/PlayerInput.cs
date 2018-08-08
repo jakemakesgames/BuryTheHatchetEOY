@@ -105,7 +105,9 @@ public class PlayerInput : MonoBehaviour {
             hand.LookAt(heightCorrectedLookPoint);
             m_weaponController.m_weaponHold = hand;
             if (m_crosshair != null)
-                m_crosshair.transform.position = pointOnGround;
+            {
+                m_crosshair.transform.position = heightCorrectedLookPoint;
+            }
         }
     }
 
