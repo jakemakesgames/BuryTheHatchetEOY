@@ -141,20 +141,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b65f9015cd6712f489fd288f8345af39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_muzzle: {fileID: 4958622633375614}
+  m_muzzle: {fileID: 4263439028790062, guid: 33b693dc2f66a0543bc098ae73bf7f66, type: 2}
   m_projectile: {fileID: 114829323488259280, guid: 1a01424ec0f630f47b3c002f83639a55,
     type: 2}
   m_msBetweenShots: 100
-  m_reloadTimeInMilliseconds: 100
-  m_muzzleVelocity: 15
-  m_bulletLifeTime: 15
-  m_dispersionAngle: 0
-  m_numProjectilesPerShot: 1
+  m_reloadTimeInMilliseconds: 800
+  m_muzzleVelocity: 10
+  m_bulletLifeTime: 1
+  m_dispersionAngle: 45
+  m_numProjectilesPerShot: 5
   m_burstProjectiles: 1
-  m_maxAmmo: 100
-  m_clipSize: 6
+  m_maxAmmo: 10
+  m_clipSize: 2
   m_damage: 1
   m_isReloading: 0
-  m_isAutomatic: 0
+  m_isAutomatic: 1
   m_currentAmmo: 0
   m_currentClip: 0
