@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a68273801e5ae64b90765bad7a690e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_enemyPrefab: {fileID: 0}
   m_healthPrefab: {fileID: 1750361218449288, guid: cab6e9bceb378ae41af1d7bdf5d5f3de,
     type: 2}
   m_ammoPrefab: {fileID: 1841863497974762, guid: 071eed0f8f82fac49b4d3afd4842e856,
@@ -61,3 +62,4 @@ MonoBehaviour:
   m_healthChance: 75
   m_ammoThreshold: 15
   m_ammoChance: 75
+  m_spawnRadius: 1

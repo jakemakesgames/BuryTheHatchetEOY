@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 07/08/2018
+//Last edited 08/08/2018
 
 [RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour, IDamagable {
@@ -23,11 +23,12 @@ public class Player : MonoBehaviour, IDamagable {
     private bool m_dead;
     private int m_health;
     private int m_money = 0;
-    private List<WeaponInfo> m_heldWeaponsInfo;
+    private List<WeaponInfo> m_heldWeaponsInfo = new List<WeaponInfo>();
     [SerializeField] private int m_maxHealth;
     [SerializeField] private int m_startingMoney;
-    [SerializeField] private GameObject m_equippedWeapon;
-
+    [Header("Needs to be the same number as held weapons")]
+    public List<bool> m_weaponsAvailableToPlayer;
+    [Header("Needs to be filled with weapon prefabs")]
     public List<GameObject> m_heldWeapons;
 
     public event System.Action OnDeath;
@@ -90,7 +91,7 @@ public class Player : MonoBehaviour, IDamagable {
     private void Awake () {
         m_health = m_maxHealth;
         m_money = m_startingMoney;
-        m_heldWeaponsInfo.Capacity = m_heldWeapons.Capacity;
+        m_heldWeaponsInfo.Capacity = m_heldWeapons.Count;
         for (int i = 0; i < m_heldWeapons.Count; i++) {
             if (m_heldWeapons[i].GetComponent<Gun>() != null) {
                 int currentAmmo = m_heldWeapons[i].GetComponent<Gun>().GetCurrentAmmo();
