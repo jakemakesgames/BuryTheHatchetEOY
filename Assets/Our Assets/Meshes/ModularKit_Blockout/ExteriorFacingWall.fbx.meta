@@ -8,10 +8,12 @@ ModelImporter:
     100000: //RootNode
     400000: //RootNode
     2100000: lambert1
+    2100002: lambert2
     2300000: //RootNode
     3300000: //RootNode
     4300000: ExteriorFacingWall
     4300002: Module_Corner_OUT_Mesh_v01
+    4300004: Module_Corner_OUT_Mesh_v02
   externalObjects: {}
   materials:
     importMaterials: 1
