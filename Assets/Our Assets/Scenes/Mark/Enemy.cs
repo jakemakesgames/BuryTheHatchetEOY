@@ -273,10 +273,6 @@ public class Enemy : MonoBehaviour, IDamagable {
 
         }
     }
-    public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_Projectile)
-    {
-        TakeDamage(a_damage);
-    }
     public void TakeHit(int a_damage, RaycastHit a_hit)
     {
         TakeDamage(a_damage);
@@ -286,6 +282,12 @@ public class Enemy : MonoBehaviour, IDamagable {
     {
         m_health -= a_damage;
     }
+
+    public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile)
+    {
+
+    }
+
     public void FindCover()
     {
         //transform.position = Vector3.MoveTowards(transform.position, FindNearestCover(), m_speed * Time.deltaTime);
