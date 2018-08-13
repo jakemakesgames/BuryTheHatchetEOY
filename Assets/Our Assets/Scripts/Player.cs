@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 08/08/2018
+//Last edited 13/08/2018
 
 [RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour, IDamagable {
@@ -41,6 +41,9 @@ public class Player : MonoBehaviour, IDamagable {
         if (m_health <= 0 && !m_dead) {
             Die();
         }
+    }
+    public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile) {
+        TakeDamage(a_damage);
     }
 
     public void Heal(int a_healAmount) { m_health += a_healAmount; }

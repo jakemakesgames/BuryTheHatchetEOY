@@ -15,7 +15,8 @@ public class WeaponController : MonoBehaviour {
     private Melee m_equippedMelee;
     public LayerMask m_entityCollisionMask;
     public LayerMask m_terrainCollisionMask;
-    
+    public LayerMask m_ricochetCollisionMask;
+
     //destroys any currently equipped weapon and equips a new gun
     public void EquipGun(Gun a_gunToEquip) {
         if (m_equippedGun != null) {
@@ -28,6 +29,7 @@ public class WeaponController : MonoBehaviour {
         m_equippedGun.transform.parent = m_weaponHold;
         m_equippedGun.SetEntityCollisionLayer(m_entityCollisionMask);
         m_equippedGun.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
+        m_equippedGun.SetRicochetCollisionLayer(m_ricochetCollisionMask);
     }
 
     //destroys any currently equipped weapon and equips a new melee weapon
@@ -103,6 +105,7 @@ public class WeaponController : MonoBehaviour {
             EquipGun(m_startingGun);
             m_equippedGun.SetEntityCollisionLayer(m_entityCollisionMask);
             m_equippedGun.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
+            m_equippedGun.SetRicochetCollisionLayer(m_ricochetCollisionMask);
         }
         else if (m_startingMelee != null)
         {
