@@ -6,11 +6,16 @@ ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Module_Corner_IN_Mesh_v01
     400000: //RootNode
+    400002: Module_Corner_IN_Mesh_v01
     2100000: lambert1
     2300000: //RootNode
+    2300002: Module_Corner_IN_Mesh_v01
     3300000: //RootNode
+    3300002: Module_Corner_IN_Mesh_v01
     4300000: InteriorFacingWall
+    4300002: Module_Corner_IN_Mesh_v01
   externalObjects: {}
   materials:
     importMaterials: 1
