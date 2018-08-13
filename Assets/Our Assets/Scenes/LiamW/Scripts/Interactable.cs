@@ -2,12 +2,14 @@
 
 public class Interactable : MonoBehaviour
 {
+    #region Variables
 
     UIManager m_uiManager;
+    
     bool m_isInteracting;
-
-
     public static Interactable m_instance;
+
+    #endregion
 
     #region Setters
     public bool GetIsInteracting()
@@ -43,7 +45,7 @@ public class Interactable : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            m_uiManager.m_bountyInteractionScreen.SetActive(true);
+            m_uiManager.m_bountyInteraction.SetActive(true);
 
             if (!m_uiManager.GetHasBounty())
             {
@@ -54,7 +56,7 @@ public class Interactable : MonoBehaviour
                     m_isInteracting = true;
                     m_uiManager.SetIsPaused(true);
 
-                    m_uiManager.m_bountyInteractionScreen.SetActive(false);
+                    m_uiManager.m_bountyInteraction.SetActive(false);
                     m_uiManager.m_bountyBoard.SetActive(true);
 
                     Debug.Log("Player is looking at Bounty");
@@ -73,7 +75,7 @@ public class Interactable : MonoBehaviour
             }
             else if (m_uiManager.GetHasBounty())
             {
-                m_uiManager.m_bountyInteractionScreen.SetActive(false);
+                m_uiManager.m_bountyInteraction.SetActive(false);
             }
             //Debug.Log("Interacting");
         }
@@ -83,7 +85,7 @@ public class Interactable : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            m_uiManager.m_bountyInteractionScreen.SetActive(false);
+            m_uiManager.m_bountyInteraction.SetActive(false);
             Debug.Log("Leaving interactable area");
         }
     }

@@ -9,18 +9,17 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1764522871048122}
+  m_RootGameObject: {fileID: 1819446468980726}
   m_IsPrefabParent: 1
---- !u!1 &1764522871048122
+--- !u!1 &1819446468980726
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4366950580406968}
-  - component: {fileID: 114301127134905708}
-  - component: {fileID: 114500523971020098}
+  - component: {fileID: 4324019885575616}
+  - component: {fileID: 114566882781926468}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -28,12 +27,12 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4366950580406968
+--- !u!4 &4324019885575616
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1764522871048122}
+  m_GameObject: {fileID: 1819446468980726}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 527.69995, y: 309.24213, z: 13.770607}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -41,35 +40,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114301127134905708
+--- !u!114 &114566882781926468
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1764522871048122}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03dd475885f6c434db7f3dd595cebf35, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_startMenu: {fileID: 0}
-  m_optionMenu: {fileID: 0}
-  m_controlMenu: {fileID: 0}
---- !u!114 &114500523971020098
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1764522871048122}
+  m_GameObject: {fileID: 1819446468980726}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88a0d12707d20064d904d4c7f36e4d5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_pauseScreen: {fileID: 0}
-  m_pauseMenu: {fileID: 0}
+  m_startMenu: {fileID: 0}
+  m_controlsMenu: {fileID: 0}
   m_optionsMenu: {fileID: 0}
-  m_bountyScreen: {fileID: 0}
+  m_optionsPanel: {fileID: 0}
+  m_pauseMenu: {fileID: 0}
+  m_bountyPoster: {fileID: 0}
   m_bountyBoard: {fileID: 0}
-  m_bountyBoardScreen: {fileID: 0}
   m_bountyInteractionScreen: {fileID: 0}
+  m_revBullets:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
