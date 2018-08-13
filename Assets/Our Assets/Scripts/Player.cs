@@ -31,6 +31,8 @@ public class Player : MonoBehaviour, IDamagable {
     [Header("Needs to be filled with weapon prefabs")]
     public List<GameObject> m_heldWeapons;
 
+    public Animator m_playerAnimator;
+
     public event System.Action OnDeath;
 
     public void TakeHit(int a_damage, RaycastHit a_hit) {
@@ -88,6 +90,9 @@ public class Player : MonoBehaviour, IDamagable {
         m_dead = true;
         if (OnDeath != null) {
             OnDeath();
+        }
+        if (m_playerAnimator != null) {
+            m_playerAnimator.SetTrigger("Death");
         }
     }
 

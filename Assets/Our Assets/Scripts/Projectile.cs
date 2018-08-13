@@ -17,20 +17,6 @@ public class Projectile : MonoBehaviour {
     private LayerMask m_environmentCollisionMask;
     private LayerMask m_ricochetCollisionMask;
 
-    private void Start() {
-        Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
-        if (initialEnemyCollision.Length > 0) {
-            OnHitObject(initialEnemyCollision[0]);
-        }
-        Collider[] initialEnvironmentCollision = Physics.OverlapSphere(transform.position, .1f, m_environmentCollisionMask);
-        if (initialEnvironmentCollision.Length > 0) {
-            OnHitObject(initialEnvironmentCollision[0]);
-        }
-        Collider[] initialRicoCchetCollision = Physics.OverlapSphere(transform.position, .1f, m_ricochetCollisionMask);
-        if (initialRicoCchetCollision.Length > 0) {
-            OnHitObject(initialRicoCchetCollision[0]);
-        }
-    }
 
     public void SetSpeed(float a_speed) {
         m_speed = a_speed;
@@ -49,20 +35,10 @@ public class Projectile : MonoBehaviour {
     public void SetRicochetCollisionLayer(LayerMask a_collsionMask) {
         m_ricochetCollisionMask = a_collsionMask;
     }
+
     public void SetLifeTime(float a_lifeTime) {
         m_lifeTime = a_lifeTime;
     }
-
-    //moves the projectile also counts down till this should be destroyedad
-    public void Update () {
-        float moveDistance = m_speed * Time.deltaTime;
-        CheckCollisions(moveDistance);
-        transform.Translate(Vector3.forward * moveDistance);
-        if (m_lifeTime <= 0) {
-            Destroy(gameObject);
-        }
-        m_lifeTime -= Time.deltaTime;
-	}
 
     //use ray casts to check for collisions
     private void CheckCollisions(float a_distanceToMove) {
@@ -100,4 +76,30 @@ public class Projectile : MonoBehaviour {
             damagableObject.TakeImpact(m_damage, a_hit, a_bullet);
         }
     }
+    private void Start() {
+        Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
+        if (initialEnemyCollision.Length > 0) {
+            OnHitObject(initialEnemyCollision[0]);
+        }
+        Collider[] initialEnvironmentCollision = Physics.OverlapSphere(transform.position, .1f, m_environmentCollisionMask);
+        if (initialEnvironmentCollision.Length > 0) {
+            OnHitObject(initialEnvironmentCollision[0]);
+        }
+        Collider[] initialRicochetCollision = Physics.OverlapSphere(transform.position, .1f, m_ricochetCollisionMask);
+        if (initialRicochetCollision.Length > 0) {
+            OnHitObject(initialRicochetCollision[0]);
+        }
+    }
+
+    //moves the projectile also counts down till this should be destroyedad
+    public void Update () {
+        float moveDistance = m_speed * Time.deltaTime;
+        CheckCollisions(moveDistance);
+        transform.Translate(Vector3.forward * moveDistance);
+        if (m_lifeTime <= 0) {
+            Destroy(gameObject);
+        }
+        m_lifeTime -= Time.deltaTime;
+	}
+
 }

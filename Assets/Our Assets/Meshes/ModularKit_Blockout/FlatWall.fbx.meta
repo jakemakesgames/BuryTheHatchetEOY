@@ -6,14 +6,19 @@ ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Module_Wall_2x2_Mesh_v01
     400000: //RootNode
+    400002: Module_Wall_2x2_Mesh_v01
     2100000: lambert1
     2100002: lambert3
     2300000: //RootNode
+    2300002: Module_Wall_2x2_Mesh_v01
     3300000: //RootNode
+    3300002: Module_Wall_2x2_Mesh_v01
     4300000: FlatWall
     4300002: Module_Wall_2x2_Mesh_v01_fbx
     4300004: Module_Wall_2x2_Mesh_v02
+    4300006: Module_Wall_2x2_Mesh_v01
   externalObjects: {}
   materials:
     importMaterials: 1

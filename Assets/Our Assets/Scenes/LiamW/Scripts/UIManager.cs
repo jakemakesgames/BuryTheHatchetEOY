@@ -5,14 +5,12 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
-//I couldnt find where but Bounty Interaction and Bounty Board get set to true somewhere
-//In the game loop need to check if the Main Menu is active, if it isnt open up the options menu
-//Same with the Bounty Menu when you interact with the Bounty board and Bounty Screen when you obtain
-//The Bounty
+//Get the bullet images disappearing when the player shoots
+//Health go down when the player hits
 
 public class UIManager : MonoBehaviour
 {
-    //-------Public Variables------//
+
     #region Public Variables
 
     public GameObject m_startMenu;
@@ -20,13 +18,17 @@ public class UIManager : MonoBehaviour
     public GameObject m_optionsMenu;
     public GameObject m_optionsPanel;
 
+
     public GameObject m_pauseMenu;
     public GameObject m_bountyPoster;
     public GameObject m_bountyBoard;
-    public GameObject m_bountyInteractionScreen;
+    public GameObject m_bountyInteraction;
 
-    public List<Image> m_revBullets;
+    public GameObject m_playerHud;
+    public Text m_goldAmount;
+    public Image m_health;
 
+    public List<GameObject> m_revBullets;
     //*! Singleton attempt
     public static UIManager m_Instance;
 
@@ -40,8 +42,14 @@ public class UIManager : MonoBehaviour
     bool m_inPausedMenu;
     bool m_soldOut;
     bool m_inMainMenu;
+    bool m_combat;
 
+    private float m_currHealth;
+    private float m_maxHealth;
+
+    private int m_numBullets;
     WeaponController m_weaponController;
+    [SerializeField] Player m_player;
     Interactable m_interactable;
     SoundManager m_soundManager;
 
@@ -96,11 +104,16 @@ public class UIManager : MonoBehaviour
         m_pauseMenu.SetActive(false);
         m_bountyPoster.SetActive(false);
         m_bountyBoard.SetActive(false);
-        m_bountyInteractionScreen.SetActive(false);
+        m_bountyInteraction.SetActive(false);
         m_optionsMenu.SetActive(false);
+        m_playerHud.SetActive(false);
+        m_combat = false;
+
+
 
         Time.timeScale = 0;
         m_soundManager = SoundManager.m_instance;
+        m_weaponController = m_player.GetComponent<WeaponController>();
     }
 
     #endregion
@@ -114,6 +127,13 @@ public class UIManager : MonoBehaviour
 
     public void Update()
     {
+        CurrentHealth();
+        CurrentGold();
+
+        if (m_combat)
+        {
+            ClipDisplay();
+        }
 
         #region Main Menu Controls
 
@@ -122,7 +142,9 @@ public class UIManager : MonoBehaviour
         {
             //Set the Bounty Screens to false
             m_bountyBoard.SetActive(false);
-            m_bountyInteractionScreen.SetActive(false);
+            m_bountyInteraction.SetActive(false);
+            m_playerHud.SetActive(false);
+            m_combat = false;
 
             //Takes you back to the Start Screen from the Options Menu
             if (Input.GetKeyDown("escape") && m_optionsMenu.activeSelf)
@@ -166,9 +188,10 @@ public class UIManager : MonoBehaviour
                         m_inPausedMenu = true;
                         m_isPaused = true;
 
-                        m_bountyInteractionScreen.SetActive(false);
+                        m_bountyInteraction.SetActive(false);
                         m_pauseMenu.SetActive(true);
-
+                        m_playerHud.SetActive(false);
+                        m_combat = false;
 
                         //Sets the game loop speed to 0
                         Time.timeScale = 0;
@@ -187,6 +210,10 @@ public class UIManager : MonoBehaviour
                         {
                             m_isPaused = false;
                             Time.timeScale = 1;
+
+                            //Player HUD and Firing
+                            m_playerHud.SetActive(true);
+                            m_combat = true;
 
                             //Turn all other screens off
                             m_pauseMenu.SetActive(false);
@@ -220,10 +247,15 @@ public class UIManager : MonoBehaviour
             {
                 if (!m_inPausedMenu)
                 {
+
                     //Pauses the game and displays the Bounty Poster
                     m_inBounty = true;
 
                     m_isPaused = true;
+
+                    //Player Hud and Firing turned off
+                    m_playerHud.SetActive(false);
+                    m_combat = false;
 
                     m_pauseMenu.SetActive(false);
                     m_bountyPoster.SetActive(true);
@@ -244,6 +276,10 @@ public class UIManager : MonoBehaviour
                     m_bountyPoster.SetActive(false);
                     m_bountyBoard.SetActive(false);
 
+                    //Player Hud and Firing to True
+                    m_playerHud.SetActive(true);
+                    m_combat = true;
+
                     Time.timeScale = 1;
 
                     Debug.Log("Puts Bounty Away");
@@ -257,6 +293,10 @@ public class UIManager : MonoBehaviour
                     m_inBounty = false;
                     m_isPaused = false;
                     m_bountyPoster.SetActive(false);
+
+                    //Player Hud and Firing True
+                    m_playerHud.SetActive(true);
+                    m_combat = true;
 
                     Time.timeScale = 1;
 
@@ -285,6 +325,8 @@ public class UIManager : MonoBehaviour
             m_inPausedMenu = false;
             m_inBounty = false;
             m_bountyPoster.SetActive(false);
+            m_playerHud.SetActive(true);
+            m_combat = true;
 
             //Sets the game loop speed to 0
             Time.timeScale = 1;
@@ -297,6 +339,10 @@ public class UIManager : MonoBehaviour
     {
         m_inMainMenu = false;
         m_startMenu.SetActive(false);
+
+        //Player Hud and Firing True
+        m_playerHud.SetActive(true);
+        m_combat = true;
         Time.timeScale = 1;
     }
 
@@ -312,6 +358,7 @@ public class UIManager : MonoBehaviour
             if (m_isPaused)
             {
                 m_optionsMenu.SetActive(false);
+
                 if(m_pauseMenu != null)
                 {
                     m_pauseMenu.SetActive(true);
@@ -332,12 +379,41 @@ public class UIManager : MonoBehaviour
 
     }
 
-    public void Shoot()
+    public void ClipDisplay()
     {
-        if (m_weaponController.Shoot())
+        if (!m_inBounty && !m_inMainMenu && !m_inPausedMenu)
         {
-            //m_revBullets.
+            if (m_weaponController.GetEquippedGun() != null)
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    m_numBullets = m_weaponController.GetEquippedGun().GetCurrentClip();
+           
+                    for (int i = 0; i < m_revBullets.Count; i++)
+                    {
+                        m_revBullets[i].SetActive(false);
+                    }
+           
+                    for (int i = 0; i < m_numBullets; i++)
+                    {
+                        m_revBullets[i].SetActive(true);
+                    }
+                }
+            }
         }
+    }
+
+    public void CurrentHealth()
+    {
+        m_currHealth = m_player.GetHealth();
+        m_maxHealth = m_player.GetMaxHealth();
+
+        m_health.fillAmount = m_currHealth / m_maxHealth;
+    }
+
+    public void CurrentGold()
+    {
+        m_goldAmount.text = m_player.GetMoney().ToString();
     }
 
     public void StartMenu()
@@ -352,8 +428,10 @@ public class UIManager : MonoBehaviour
         m_pauseMenu.SetActive(false);
         m_bountyPoster.SetActive(false);
         m_bountyBoard.SetActive(false);
-        m_bountyInteractionScreen.SetActive(false);
+        m_bountyInteraction.SetActive(false);
         m_optionsMenu.SetActive(false);
+        m_playerHud.SetActive(false);
+        m_combat = false;
     }
 
     #endregion
