@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 25/07/2018
+//Last edited 13/08/2018
 
 
 public class Projectile : MonoBehaviour {
@@ -15,6 +15,7 @@ public class Projectile : MonoBehaviour {
     private int m_damage = 1;
     private LayerMask m_entityCollisionMask;
     private LayerMask m_environmentCollisionMask;
+    private LayerMask m_ricochetCollisionMask;
 
     private void Start() {
         Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
@@ -24,6 +25,10 @@ public class Projectile : MonoBehaviour {
         Collider[] initialEnvironmentCollision = Physics.OverlapSphere(transform.position, .1f, m_environmentCollisionMask);
         if (initialEnvironmentCollision.Length > 0) {
             OnHitObject(initialEnvironmentCollision[0]);
+        }
+        Collider[] initialRicoCchetCollision = Physics.OverlapSphere(transform.position, .1f, m_ricochetCollisionMask);
+        if (initialRicoCchetCollision.Length > 0) {
+            OnHitObject(initialRicoCchetCollision[0]);
         }
     }
 
@@ -40,6 +45,9 @@ public class Projectile : MonoBehaviour {
     }
     public void SetTerrainCollisionLayer(LayerMask a_collsionMask) {
         m_environmentCollisionMask = a_collsionMask;
+    }
+    public void SetRicochetCollisionLayer(LayerMask a_collsionMask) {
+        m_ricochetCollisionMask = a_collsionMask;
     }
     public void SetLifeTime(float a_lifeTime) {
         m_lifeTime = a_lifeTime;
@@ -66,6 +74,10 @@ public class Projectile : MonoBehaviour {
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMask)) {
             OnHitObject(hit);
         }
+        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_ricochetCollisionMask))
+        {
+            OnHitObject(hit, this);
+        }
     }
 
     private void OnHitObject(RaycastHit a_hit) {
@@ -81,5 +93,11 @@ public class Projectile : MonoBehaviour {
             damagableObject.TakeDamage(m_damage);
         }
         Destroy(gameObject);
+    }
+    private void OnHitObject(RaycastHit a_hit, Projectile a_bullet) {
+        IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
+        if (damagableObject != null) {
+            damagableObject.TakeImpact(m_damage, a_hit, a_bullet);
+        }
     }
 }

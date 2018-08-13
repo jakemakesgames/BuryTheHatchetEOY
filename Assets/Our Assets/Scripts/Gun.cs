@@ -28,6 +28,7 @@ public class Gun : MonoBehaviour {
 
     private LayerMask m_entityCollisionMask;
     private LayerMask m_environmentCollisionMask;
+    private LayerMask m_ricochetCollisionMask;
 
     private float m_nextShotTime;
 
@@ -42,6 +43,9 @@ public class Gun : MonoBehaviour {
     }
     public void SetEnvironmentCollisionLayer(LayerMask a_collsionMask) {
         m_environmentCollisionMask = a_collsionMask;
+    }
+    public void SetRicochetCollisionLayer(LayerMask a_collsionMask) {
+        m_ricochetCollisionMask = a_collsionMask;
     }
     public void SetInfiniteAmmo(bool a_infiniteAmmo) {
         m_infiniteAmmo = a_infiniteAmmo;
@@ -123,6 +127,7 @@ public class Gun : MonoBehaviour {
                     newProjectile.SetLifeTime(m_bulletLifeTime);
                     newProjectile.SetEntityCollisionLayer(m_entityCollisionMask);
                     newProjectile.SetTerrainCollisionLayer(m_environmentCollisionMask);
+                    newProjectile.SetRicochetCollisionLayer(m_ricochetCollisionMask);
                 }
                 m_currentClip--;
                 return true;
