@@ -23,7 +23,11 @@ public class AI : MonoBehaviour, IDamagable
     [SerializeField] float m_fleeRadius;
 
     [Tooltip("Cover radius/Green sphere - finds objects on the cover layer.")]
-    [SerializeField] private float m_coverRadius;
+    [SerializeField] float m_coverRadius;
+
+
+    [Tooltip("Accounts for floating point precision - when AI knows to switch to Stationary")]
+    [SerializeField] float m_deadZone;
 
     float m_enemyRadius;
 
@@ -88,7 +92,6 @@ public class AI : MonoBehaviour, IDamagable
         }
 
         m_health = m_maxHealth;
-        agent = GetComponent<NavMeshAgent>();
     }
 
     void Update()
@@ -104,16 +107,22 @@ public class AI : MonoBehaviour, IDamagable
                 //If player is within seek and outside flee radius
                 m_stateMachine.ChangeState(new Seek());
             }
-            else if (DestinationReached())
+            else if (m_distBetweenPlayer <= m_fleeRadius + m_deadZone && m_distBetweenPlayer >= m_fleeRadius - m_deadZone)
             {
-                //If player is within seek and we've reached the destination
+                //If player is within seek and we're at max flee distance (deadzone for floating point precision)
                 m_stateMachine.ChangeState(new Stationary());
             }
+            else if (m_distBetweenPlayer < m_fleeRadius)
+            {
+                //If player is within flee
+                m_stateMachine.ChangeState(new Flee());
+            }
         }
-        if (m_distBetweenPlayer < m_fleeRadius)
+        else
         {
-            m_stateMachine.ChangeState(new Flee());
+            m_stateMachine.ChangeState(new Wander());
         }
+
         m_stateMachine.Update();
 	}
 
