@@ -15,6 +15,6 @@ public class Stationary : IState<AI>
 
     public void Update(AI a_owner)
     {
-
+        a_owner.GetAgent().SetDestination(a_owner.transform.position);
     }
 }

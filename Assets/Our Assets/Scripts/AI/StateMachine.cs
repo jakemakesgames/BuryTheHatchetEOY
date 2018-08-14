@@ -4,6 +4,12 @@ using UnityEngine;
 
 namespace StateMachine
 {
+    public interface IState<T>
+    {
+        void Enter(T a_owner);
+        void Update(T a_owner);
+        void Exit(T a_owner);
+    }
     public class StateMachine<T>
     {
         public IState<T> currentState { get; private set; }
@@ -41,12 +47,4 @@ namespace StateMachine
             }
         }
     }
-
-    public interface IState<T>
-    {
-        void Enter(T a_owner);
-        void Update(T a_owner);
-        void Exit(T a_owner);
-    }
-
 }

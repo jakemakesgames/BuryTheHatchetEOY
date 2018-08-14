@@ -15,7 +15,6 @@ public class Seek : IState<AI>
 
     public void Update(AI a_owner)
     {
-        a_owner.transform.LookAt(a_owner.GetPlayerPos());
-        a_owner.SetDestination(a_owner.GetPlayerPos());
+        a_owner.GetAgent().SetDestination(a_owner.GetPlayerPos());
     }
 }

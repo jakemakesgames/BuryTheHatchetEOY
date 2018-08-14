@@ -11,6 +11,15 @@ using StateMachine;
 [RequireComponent(typeof(NavMeshAgent))]
 public class AI : MonoBehaviour, IDamagable
 {
+    enum STATE
+    {
+        WANDER,
+        SEEK,
+        FLEE,
+        STATIONARY,
+        RELOAD
+    }
+
 
     [Tooltip("Max health value, currently at 5 (5 hits to die).")]
     [SerializeField]
@@ -47,7 +56,9 @@ public class AI : MonoBehaviour, IDamagable
     float m_distBetweenPlayer;
     float m_gunDistToPlayer;
 
-    private NavMeshAgent agent;
+    STATE m_state;
+
+    private NavMeshAgent m_agent;
     LineRenderer m_line;
     private GameObject m_player;
     private List<Transform> m_coverPoints;
@@ -70,10 +81,10 @@ public class AI : MonoBehaviour, IDamagable
         m_weaponController = GetComponent<WeaponController>();
     }
 
-    void Start ()
+    void Start()
     {
         m_line = GetComponent<LineRenderer>();
-        agent = GetComponent<NavMeshAgent>();
+        m_agent = GetComponent<NavMeshAgent>();
         m_stateMachine = new StateMachine<AI>(this);
         m_stateMachine.ChangeState(new Wander());
 
@@ -96,48 +107,37 @@ public class AI : MonoBehaviour, IDamagable
 
     void Update()
     {
-        DrawLinePath(agent.path);
+        DrawLinePath(m_agent.path);
         m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
         m_gunDistToPlayer = Vector3.Distance(m_weaponController.GetEquippedWeapon().transform.position, m_player.transform.position);
 
-        if (m_distBetweenPlayer < m_seekRadius)
+        // check what state I should be in
+
+        // Change to that state
+
+        // proccess current state
+
+        if (CheckStates())
         {
-            if (m_distBetweenPlayer > m_fleeRadius)
-            {
-                //If player is within seek and outside flee radius
-                m_stateMachine.ChangeState(new Seek());
-            }
-            else if (m_distBetweenPlayer <= m_fleeRadius + m_deadZone && m_distBetweenPlayer >= m_fleeRadius - m_deadZone)
-            {
-                //If player is within seek and we're at max flee distance (deadzone for floating point precision)
-                m_stateMachine.ChangeState(new Stationary());
-            }
-            else if (m_distBetweenPlayer < m_fleeRadius)
-            {
-                //If player is within flee
-                m_stateMachine.ChangeState(new Flee());
-            }
+            SwitchState();
         }
-        else
+
+        if (CanAttack())
         {
-            m_stateMachine.ChangeState(new Wander());
+            Attack();
         }
 
         m_stateMachine.Update();
-	}
-
-    public void SetDestination(Vector3 a_target)
-    {
-        agent.destination = a_target;
     }
 
-    public bool DestinationReached()
+    public NavMeshAgent GetAgent() { return m_agent; }
+    bool HasDestinationReached()
     {
-        if (!agent.pathPending)
+        if (!m_agent.pathPending)
         {
-            if (agent.remainingDistance <= agent.stoppingDistance)
+            if (m_agent.remainingDistance <= m_agent.stoppingDistance)
             {
-                if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                if (!m_agent.hasPath || m_agent.velocity.sqrMagnitude == 0f)
                 {
                     return true;
                 }
@@ -146,7 +146,98 @@ public class AI : MonoBehaviour, IDamagable
         return false;
     }
 
-    public Vector3 GetVelocity() { return agent.velocity; }
+    bool CheckStates()
+    {
+        STATE prevState = m_state;
+
+        if (m_distBetweenPlayer < m_seekRadius)
+        {
+            transform.LookAt(GetPlayerPos());
+
+            if (m_distBetweenPlayer > m_fleeRadius)
+            {
+                //If player is within seek and outside flee radius
+                m_state = STATE.SEEK;
+            }
+            else if (m_distBetweenPlayer <= m_fleeRadius + m_deadZone && m_distBetweenPlayer >= m_fleeRadius - m_deadZone)
+            {
+                //If player is within seek and we're at max flee distance (deadzone for floating point precision)
+                m_state = STATE.STATIONARY;
+            }
+            else if (m_distBetweenPlayer < m_fleeRadius)
+            {
+                //If player is within flee
+                m_state = STATE.FLEE;
+            }
+        }
+        else
+        {
+            m_state = STATE.WANDER;
+        }
+
+        if (m_gunDistToPlayer < m_attackRadius && !m_gun.GetIsEmpty())
+        {
+            if (CanAttack() == false)
+                m_state = STATE.SEEK;
+        }
+
+        if (prevState != m_state)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    void SwitchState()
+    {
+        switch (m_state)
+        {
+            case STATE.WANDER:
+                m_stateMachine.ChangeState(new Wander());
+                break;
+            case STATE.SEEK:
+                m_stateMachine.ChangeState(new Seek());
+                break;
+            case STATE.FLEE:
+                m_stateMachine.ChangeState(new Flee());
+                break;
+            case STATE.RELOAD:
+                break;
+            case STATE.STATIONARY:
+                m_stateMachine.ChangeState(new Stationary());
+                break;
+            default:
+                return;
+        }
+
+    }
+
+    bool CanAttack()
+    {
+        Vector3 vecBetween = (m_player.transform.position - m_weaponController.m_weaponHold.transform.position);
+        RaycastHit hit;
+
+        if (Physics.Raycast(m_weaponController.m_weaponHold.transform.position, vecBetween, out hit, 1000.0f, m_coverLayer))
+        {
+            return false;
+        }
+        if (Physics.Raycast(m_weaponController.m_weaponHold.transform.position, vecBetween, out hit, 1000.0f, m_environmentLayer))
+        {
+            return false;
+        }
+        return true;   
+    }
+
+    void Attack()
+    {
+        if (m_gunDistToPlayer < m_attackRadius && !m_gun.GetIsEmpty())
+        {
+            m_gun.Shoot();
+        }
+    }
 
     public void TakeHit(int a_damage, RaycastHit a_hit)
     {
