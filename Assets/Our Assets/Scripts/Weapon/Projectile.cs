@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 13/08/2018
+//Last edited 14/08/2018
 
 
 public class Projectile : MonoBehaviour {
@@ -44,51 +44,45 @@ public class Projectile : MonoBehaviour {
     private void CheckCollisions(float a_distanceToMove) {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
+        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask))
             OnHitObject(hit);
-        }
-        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMask)) {
+
+        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMask))
             OnHitObject(hit);
-        }
+
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_ricochetCollisionMask))
-        {
             OnHitObject(hit, this);
-        }
     }
 
     private void OnHitObject(RaycastHit a_hit) {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
-        if (damagableObject != null) {
+        if (damagableObject != null)
             damagableObject.TakeHit(m_damage, a_hit);
-        }
         Destroy(gameObject);
     }
     private void OnHitObject(Collider a_c) {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
-        if (damagableObject != null) {
+        if (damagableObject != null)
             damagableObject.TakeDamage(m_damage);
-        }
         Destroy(gameObject);
     }
     private void OnHitObject(RaycastHit a_hit, Projectile a_bullet) {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
-        if (damagableObject != null) {
+        if (damagableObject != null)
             damagableObject.TakeImpact(m_damage, a_hit, a_bullet);
-        }
     }
     private void Start() {
         Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
-        if (initialEnemyCollision.Length > 0) {
+        if (initialEnemyCollision.Length > 0)
             OnHitObject(initialEnemyCollision[0]);
-        }
+
         Collider[] initialEnvironmentCollision = Physics.OverlapSphere(transform.position, .1f, m_environmentCollisionMask);
-        if (initialEnvironmentCollision.Length > 0) {
+        if (initialEnvironmentCollision.Length > 0)
             OnHitObject(initialEnvironmentCollision[0]);
-        }
+
         Collider[] initialRicochetCollision = Physics.OverlapSphere(transform.position, .1f, m_ricochetCollisionMask);
-        if (initialRicochetCollision.Length > 0) {
+        if (initialRicochetCollision.Length > 0)
             OnHitObject(initialRicochetCollision[0]);
-        }
     }
 
     //moves the projectile also counts down till this should be destroyedad
@@ -96,9 +90,9 @@ public class Projectile : MonoBehaviour {
         float moveDistance = m_speed * Time.deltaTime;
         CheckCollisions(moveDistance);
         transform.Translate(Vector3.forward * moveDistance);
-        if (m_lifeTime <= 0) {
+        if (m_lifeTime <= 0)
             Destroy(gameObject);
-        }
+
         m_lifeTime -= Time.deltaTime;
 	}
 

@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 07/08/2018
+//Last edited 14/08/2018
 
 public class Gun : MonoBehaviour {
 
@@ -53,25 +53,23 @@ public class Gun : MonoBehaviour {
 
     //will return false if the max clip size is smaller than the attemped assignment
     public bool SetCurrentClip(int a_currentClip) {
-        if (a_currentClip > m_clipSize) {
+        if (a_currentClip > m_clipSize)
             return false;
-        }
-        else {
+
+        else
             m_currentClip = a_currentClip;
             return true;
-        }
     }
 
     //will return false if the max ammo pool is smaller than the attemped assignment
     public bool SetCurrentReserveAmmo(int a_reserveAmmo)
     {
-        if (a_reserveAmmo > m_maxAmmo) {
+        if (a_reserveAmmo > m_maxAmmo)
             return false;
-        }
-        else {
+            
+        else
             m_currentAmmo = a_reserveAmmo;
             return true;
-        }
     }
 
     public int GetCurrentClip() { return m_currentClip; }
@@ -85,28 +83,24 @@ public class Gun : MonoBehaviour {
         m_isReloading = true;
         if (m_currentAmmo < m_clipSize) {
             m_currentClip = m_currentAmmo;
-            if (!m_infiniteAmmo) {
+            if (m_infiniteAmmo == false)
                 m_currentAmmo = 0;
-            }
         }
         else
         {
-            if (!m_infiniteAmmo) {
+            if (m_infiniteAmmo == false)
                 m_currentAmmo -= m_clipSize - m_currentClip;
-            }
             m_currentClip = m_clipSize;
         }
     }
 
     //tells who asks is if the gun is empty
     public bool GetIsEmpty() {
-        if (m_currentClip <= 0) {
+        if (m_currentClip <= 0)
             return true;
-        }
-        else {
+        else
             return false;
         }
-    }
 
     //Randomises the projectiles angle based on the dispersion angle variable
     private Vector3 RandomAngle() {
@@ -122,7 +116,7 @@ public class Gun : MonoBehaviour {
                 m_nextShotTime = Time.time + m_msBetweenShots / 1000;
                 for (int i = 0; i < m_numProjectilesPerShot; i++) {
                     Projectile newProjectile = Instantiate(m_projectile, m_muzzle.position, m_muzzle.rotation * Quaternion.Euler(RandomAngle())) as Projectile;
-                    newProjectile.SetDamage(m_damage);
+                    newProjectile.SetDamage(m_damage); 
                     newProjectile.SetSpeed(m_muzzleVelocity);
                     newProjectile.SetLifeTime(m_bulletLifeTime);
                     newProjectile.SetEntityCollisionLayer(m_entityCollisionMask);
@@ -142,16 +136,13 @@ public class Gun : MonoBehaviour {
     }
     private void Update() {
         if (m_isReloading) {
-            if (Time.time > m_nextShotTime) {
+            if (Time.time > m_nextShotTime)
                 m_isReloading = false;
-            }
         }
-        if (m_currentAmmo > m_maxAmmo) {
+        if (m_currentAmmo > m_maxAmmo)
             m_currentAmmo = m_maxAmmo;
-        }
-        if (m_currentClip > m_clipSize) {
+        if (m_currentClip > m_clipSize)
             m_currentClip = m_clipSize;
-        }
     }
     
 }
