@@ -79,18 +79,19 @@ public class Gun : MonoBehaviour {
 
     //reloads the gun and also prevents shooting for a time based on the reload time in milliseconds variable
     public void Reload() {
-        m_nextShotTime = Time.time + m_reloadTimeInMilliseconds / 1000;
-        m_isReloading = true;
-        if (m_currentAmmo < m_clipSize) {
-            m_currentClip = m_currentAmmo;
-            if (m_infiniteAmmo == false)
-                m_currentAmmo = 0;
-        }
-        else
-        {
-            if (m_infiniteAmmo == false)
-                m_currentAmmo -= m_clipSize - m_currentClip;
-            m_currentClip = m_clipSize;
+        if (m_isReloading == false) {
+            m_nextShotTime = Time.time + m_reloadTimeInMilliseconds / 1000;
+            m_isReloading = true;
+            if (m_currentAmmo < m_clipSize) {
+                m_currentClip = m_currentAmmo;
+                if (m_infiniteAmmo == false)
+                    m_currentAmmo = 0;
+            }
+            else {
+                if (m_infiniteAmmo == false)
+                    m_currentAmmo -= m_clipSize - m_currentClip;
+                m_currentClip = m_clipSize;
+            }
         }
     }
 
