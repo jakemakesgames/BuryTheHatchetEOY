@@ -82,16 +82,25 @@ public class AI : MonoBehaviour, IDamagable
 
     public StateMachine<AI> m_stateMachine;
 
+    //---------------------------------------------------------------------------
+    //                              Gets / Sets           
+    //---------------------------------------------------------------------------
+    public NavMeshAgent Agent { get { return m_agent; } }
+
     public Vector3 PlayerPosition { get { return m_player.transform.position; } }
 
     public float CoverRadius { get { return m_coverRadius; } }
 
     public LayerMask CoverLayer { get { return m_coverLayer; } }
 
+    public float CoverFoundThreshold { get { return m_coverFoundThreshold; } }
+
     public Gun Gun { get { return m_gun; } }
 
     public List<Transform> CoverPoints { get { return m_coverPoints; } }
+    //---------------------------------------------------------------------------
 
+    //---------------------------------------------------------------------------
     void Awake()
     {
         m_player = GameObject.FindGameObjectWithTag("Player");
@@ -122,6 +131,7 @@ public class AI : MonoBehaviour, IDamagable
 
     void Update()
     {
+        Debug.Log("Current State: " + m_state);
         DrawLinePath(m_agent.path);
         m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
         m_gunDistToPlayer = Vector3.Distance(m_weaponController.GetEquippedWeapon().transform.position, m_player.transform.position);
@@ -140,8 +150,6 @@ public class AI : MonoBehaviour, IDamagable
 
         m_stateMachine.Update();
     }
-
-    public NavMeshAgent GetAgent() { return m_agent; }
 
     //Check states and return true if there is a state change
     bool CheckStates()
@@ -165,17 +173,22 @@ public class AI : MonoBehaviour, IDamagable
                 m_state = STATE.FLEE;
         }
         else
+        {
             m_state = STATE.WANDER;
+        }
 
-        if (m_gun.GetIsEmpty())
+        if (m_gun.GetIsEmpty() || m_gun.m_isReloading)
         {
             m_state = STATE.RELOAD;
         }
 
         if (m_gunDistToPlayer < m_attackRadius && !m_gun.GetIsEmpty())
         {
-            if (CanAttack() == false)
-                m_state = STATE.SEEK;
+            if (m_gun.m_isReloading == false)
+            {
+                if (CanAttack() == false)
+                    m_state = STATE.SEEK;
+            }
         }
 
         if (prevState != m_state)
