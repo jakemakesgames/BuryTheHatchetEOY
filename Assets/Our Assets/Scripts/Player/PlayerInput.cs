@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 08/08/2018
+//Last edited 15/08/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -48,16 +48,14 @@ public class PlayerInput : MonoBehaviour {
         Gun equippedGun = m_weaponController.GetEquippedGun();
         if (equippedGun == null) {
             Melee equippedMelee = m_weaponController.GetEquippedMelee();
-            if (equippedMelee == null) {
+            if (equippedMelee == null)
                 return;
-            }
             m_weaponController.Swing();
         }
         else if (equippedGun.m_isAutomatic) {
             if (equippedGun.GetIsEmpty()) {
-                if (Input.GetMouseButtonDown(0)) {
+                if (Input.GetMouseButtonDown(0))
                     m_weaponController.ReloadEquippedGun();
-                }
             }
             else if (Input.GetMouseButton(0)) {
                 if (m_weaponController.Shoot())
@@ -66,9 +64,8 @@ public class PlayerInput : MonoBehaviour {
         }
         else {
             if (Input.GetMouseButtonDown(0)) {
-                if (equippedGun.GetIsEmpty()) {
+                if (equippedGun.GetIsEmpty())
                     m_weaponController.ReloadEquippedGun();
-                }
                 else {
                     if (m_weaponController.Shoot())
                         playerAnimator.SetTrigger("Shoot");
@@ -85,9 +82,8 @@ public class PlayerInput : MonoBehaviour {
         direction.y = 0;
         Vector3 moveVelocity = direction.normalized * m_speed;
         m_velocity = moveVelocity;
-        if (!m_isDashing) {
+        if (!m_isDashing)
             m_nma.velocity = m_velocity * Time.deltaTime;
-        }
     }
 
     //forces the player to look at the mouse position on screen
@@ -105,9 +101,7 @@ public class PlayerInput : MonoBehaviour {
             hand.LookAt(heightCorrectedLookPoint);
             m_weaponController.m_weaponHold = hand;
             if (m_crosshair != null)
-            {
                 m_crosshair.transform.position = heightCorrectedLookPoint;
-            }
         }
     }
 
@@ -135,18 +129,16 @@ public class PlayerInput : MonoBehaviour {
     private void DisplayAmmo() {
         Gun equippedGun = m_weaponController.GetEquippedGun();
 
-        Debug.Log("Player ammo clip " + equippedGun.GetCurrentClip());
-        Debug.Log("Player ammo reserve " + equippedGun.GetCurrentAmmo());
+        //Debug.Log("Player ammo clip " + equippedGun.GetCurrentClip());
+        //Debug.Log("Player ammo reserve " + equippedGun.GetCurrentAmmo());
         if (equippedGun != null) {
-            if (m_clipAmmoDisplay != null) {
+            if (m_clipAmmoDisplay != null)
                 m_clipAmmoDisplay.GetComponent<Text>().text =
                     (equippedGun.GetCurrentClip().ToString() + " / " + equippedGun.m_clipSize.ToString());
-            }
 
-            if (m_totalAmmoDisplay != null) {
+            if (m_totalAmmoDisplay != null)
                 m_totalAmmoDisplay.GetComponent<Text>().text =
                     (equippedGun.GetCurrentAmmo().ToString() + " / " + equippedGun.m_maxAmmo.ToString());
-            }
         }
     }
     
@@ -164,92 +156,45 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
+    //behind the scenes weapon switching
+    private void ChangeWeapon(int a_inumerator) {
+        if (m_player.m_weaponsAvailableToPlayer[a_inumerator]) {
+            if (m_player.m_heldWeapons[a_inumerator] != null) {
+                SetWeaponInfo();
+                if (m_weaponController.GetEquippedWeapon() != null)
+                    m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
+
+                m_equippedWeaponInumerator = a_inumerator;
+                m_weaponController.EquipWeapon(m_player.m_heldWeapons[a_inumerator]);
+                if (!m_player.ToEquipIsMelee(a_inumerator)) {
+                    m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(a_inumerator));
+                    m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(a_inumerator));
+                }
+            }
+        }
+    }
+
     //weapon switching
     private void SwitchWeapon() {
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
             int weaponInumerator = 0;
-            if (m_player.m_weaponsAvailableToPlayer[weaponInumerator]) {
-                if (m_player.m_heldWeapons[weaponInumerator] != null) {
-                    SetWeaponInfo();
-                    if (m_weaponController.GetEquippedWeapon() != null) {
-                        m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                    }
-                    m_equippedWeaponInumerator = weaponInumerator;
-                    m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
-                    if (!m_player.ToEquipIsMelee(weaponInumerator)) {
-                        m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
-                        m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
-                    }
-                }
-            }
+            ChangeWeapon(weaponInumerator);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2)) {
             int weaponInumerator = 1;
-            if (m_player.m_weaponsAvailableToPlayer[weaponInumerator]) {
-                if (m_player.m_heldWeapons[weaponInumerator] != null) {
-                    SetWeaponInfo();
-                    if (m_weaponController.GetEquippedWeapon() != null) {
-                        m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                    }
-                    m_equippedWeaponInumerator = weaponInumerator;
-                    m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
-                    if (!m_player.ToEquipIsMelee(weaponInumerator)) {
-                        m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
-                        m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
-                    }
-                }
-            }
+            ChangeWeapon(weaponInumerator);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3)) {
             int weaponInumerator = 2;
-            if (m_player.m_weaponsAvailableToPlayer[weaponInumerator]) {
-                if (m_player.m_heldWeapons[weaponInumerator] != null) {
-                    SetWeaponInfo();
-                    if (m_weaponController.GetEquippedWeapon() != null) {
-                        m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                    }
-                    m_equippedWeaponInumerator = weaponInumerator;
-                    m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
-                    if (!m_player.ToEquipIsMelee(weaponInumerator)) {
-                        m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
-                        m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
-                    }
-                }
-            }
+            ChangeWeapon(weaponInumerator);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha4)) {
             int weaponInumerator = 3;
-            if (m_player.m_weaponsAvailableToPlayer[weaponInumerator]) {
-                if (m_player.m_heldWeapons[weaponInumerator] != null) {
-                    SetWeaponInfo();
-                    if (m_weaponController.GetEquippedWeapon() != null) {
-                        m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                    }
-                    m_equippedWeaponInumerator = weaponInumerator;
-                    m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
-                    if (!m_player.ToEquipIsMelee(weaponInumerator)) {
-                        m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
-                        m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
-                    }
-                }
-            }
+            ChangeWeapon(weaponInumerator);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha5)) {
             int weaponInumerator = 4;
-            if (m_player.m_weaponsAvailableToPlayer[weaponInumerator]) {
-                if (m_player.m_heldWeapons[weaponInumerator] != null) {
-                    SetWeaponInfo();
-                    if (m_weaponController.GetEquippedWeapon() != null) {
-                        m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                    }
-                    m_equippedWeaponInumerator = weaponInumerator;
-                    m_weaponController.EquipWeapon(m_player.m_heldWeapons[weaponInumerator]);
-                    if (!m_player.ToEquipIsMelee(weaponInumerator)) {
-                        m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(weaponInumerator));
-                        m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(weaponInumerator));
-                    }
-                }
-            }
+            ChangeWeapon(weaponInumerator);
         }
     }
 
