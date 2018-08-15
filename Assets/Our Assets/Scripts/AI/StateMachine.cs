@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Mark Phillips
+//Created 13/08/2018
+//Last edited 15/08/2018
+
 namespace StateMachine
 {
     public interface IState<T>
@@ -42,9 +46,7 @@ namespace StateMachine
         public void Update()
         {
             if (currentState != null)
-            {
                 currentState.Update(owner);
-            }
         }
     }
 }

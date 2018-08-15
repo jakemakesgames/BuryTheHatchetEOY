@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using StateMachine;
 
+//Mark Phillips
+//Created 13/08/2018
+//Last edited 15/08/2018
+
 public class Flee : IState<AI>
 { 
     public void Enter(AI a_owner)

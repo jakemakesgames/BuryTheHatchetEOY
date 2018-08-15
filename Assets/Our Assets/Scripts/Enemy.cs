@@ -30,7 +30,7 @@ public class Enemy : MonoBehaviour, IDamagable {
     [SerializeField] private float m_fleeRadius;
 
     [Tooltip("Cover radius/Green sphere - finds objects on the cover layer.")]
-    [SerializeField] private float m_coverRadius;
+    [SerializeField] float m_coverRadius;
     private float m_enemyRadius;
 
     [Tooltip("Attack radius/Red sphere - shoots at player.")]
