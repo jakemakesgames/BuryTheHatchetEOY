@@ -340,9 +340,8 @@ GameObject:
   - component: {fileID: 33018739635648838}
   - component: {fileID: 136270636679169820}
   - component: {fileID: 23689007587725220}
-  - component: {fileID: 114176171210817450}
+  - component: {fileID: 114565342599661028}
   - component: {fileID: 114588751146640092}
-  - component: {fileID: 114396370414187106}
   - component: {fileID: 195615718544809824}
   - component: {fileID: 120729242200491050}
   m_Layer: 9
@@ -2016,15 +2015,15 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1359657046224042}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4414056363114828}
   - {fileID: 4225623830425188}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4955694713593416
 Transform:
   m_ObjectHideFlags: 1
@@ -2067,7 +2066,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: bb1e7c1ceaa87e54aa5dc983e266fa8a, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2169,7 +2168,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114176171210817450
+--- !u!114 &114565342599661028
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -2177,13 +2176,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1359657046224042}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b241cc1466a81f041853a77890f7a93c, type: 3}
+  m_Script: {fileID: 11500000, guid: 40edeb23f0efd77419777dca414913b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_maxHealth: 5
   m_seekRadius: 20
   m_fleeRadius: 5
   m_coverRadius: 6.1
+  m_deadZone: 0.5
   m_attackRadius: 11
   m_coverFoundThreshold: 3
   m_coverLayer:
@@ -2192,17 +2192,6 @@ MonoBehaviour:
   m_environmentLayer:
     serializedVersion: 2
     m_Bits: 2048
---- !u!114 &114396370414187106
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1359657046224042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a153520934023754eaf7ae57cbeaddf8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114588751146640092
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2224,6 +2213,9 @@ MonoBehaviour:
   m_terrainCollisionMask:
     serializedVersion: 2
     m_Bits: 1024
+  m_ricochetCollisionMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!120 &120729242200491050
 LineRenderer:
   m_ObjectHideFlags: 1
