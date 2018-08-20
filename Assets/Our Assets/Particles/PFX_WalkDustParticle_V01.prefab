@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 198113631147028018}
   - component: {fileID: 199267860478573646}
   m_Layer: 0
-  m_Name: WalkDustParticle
+  m_Name: PFX_WalkDustParticle_V01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

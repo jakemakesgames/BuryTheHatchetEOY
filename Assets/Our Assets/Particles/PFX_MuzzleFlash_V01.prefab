@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 198483792721347606}
   - component: {fileID: 199189054332300158}
   m_Layer: 0
-  m_Name: MuzzleFlash
+  m_Name: PFX_MuzzleFlash_V01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
