@@ -74,7 +74,7 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
-    //calculates a players velocity for the current frame
+    //Calculates the players velocity for the current frame
     private void Move()
     {
         m_movementVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
@@ -86,7 +86,7 @@ public class PlayerInput : MonoBehaviour {
             m_nma.velocity = m_velocity * Time.deltaTime;
     }
 
-    //forces the player to look at the mouse position on screen
+    //Forces the player to look at the mouse position on screen
     private void PlayerLookAt() {
         Ray ray = m_viewCamera.ScreenPointToRay(Input.mousePosition);
         Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
@@ -105,7 +105,7 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
-    //quickly moves the player in the direction they are facing
+    //Quickly moves the player in the direction they are facing
     private void Dash() {
         if (!m_isDashing) {
             if (Input.GetMouseButtonDown(1)) {
@@ -125,12 +125,9 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
-    //gives a ui text object the players ammo for their currently equipped weapon
+    //Gives a ui text object the players ammo for their currently equipped weapon
     private void DisplayAmmo() {
         Gun equippedGun = m_weaponController.GetEquippedGun();
-
-        //Debug.Log("Player ammo clip " + equippedGun.GetCurrentClip());
-        //Debug.Log("Player ammo reserve " + equippedGun.GetCurrentAmmo());
         if (equippedGun != null) {
             if (m_clipAmmoDisplay != null)
                 m_clipAmmoDisplay.GetComponent<Text>().text =
@@ -142,7 +139,7 @@ public class PlayerInput : MonoBehaviour {
         }
     }
     
-    //caches the weapon info of the currently equipped weapon for storing on weapon switch
+    //Caches the weapon info of the currently equipped weapon for storing on weapon switch
     private void SetWeaponInfo() {
         if (m_weaponController.GetEquippedGun() == null) {
             m_ammoInClip = 0;
@@ -156,7 +153,9 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
-    //behind the scenes weapon switching
+    //Checks if the player has access the weapon that the player atempemted to equip
+    //if they do the method then stores the values of the currently equipped weapon
+    //then equipes the player with the new weapon with the stored values for that specific weapon
     private void ChangeWeapon(int a_inumerator) {
         if (m_player.m_weaponsAvailableToPlayer[a_inumerator]) {
             if (m_player.m_heldWeapons[a_inumerator] != null) {
@@ -174,7 +173,8 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
-    //weapon switching
+    //Based on which number the player presses 
+    //equip the weapon stored in that location
     private void SwitchWeapon() {
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
             int weaponInumerator = 0;
@@ -235,12 +235,9 @@ public class PlayerInput : MonoBehaviour {
     {
         float myVelocity = m_velocity.magnitude;
         Vector3 localVel = transform.InverseTransformDirection(m_velocity);
-
-
+        
         playerAnimator.SetFloat("Velocity", myVelocity);
-
-
-        //
+        
         playerAnimator.SetFloat("MovementDirectionRight", localVel.x * transform.right.x);
         playerAnimator.SetFloat("MovementDirectionForward", localVel.z * transform.forward.z);
 

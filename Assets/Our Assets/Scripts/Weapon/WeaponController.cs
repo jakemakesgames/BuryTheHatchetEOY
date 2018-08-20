@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 07/08/2018
+//Last edited 20/08/2018
 
 public class WeaponController : MonoBehaviour {
 
@@ -16,6 +16,24 @@ public class WeaponController : MonoBehaviour {
     public LayerMask m_entityCollisionMask;
     public LayerMask m_terrainCollisionMask;
     public LayerMask m_ricochetCollisionMask;
+    //returns if there is an equipped melee
+    public Melee GetEquippedMelee() { return m_equippedMelee; }
+
+    //Will return a game object of the currently equipped weapon
+    //or null if there isn't any eqiuipped weapon
+    public GameObject GetEquippedWeapon() {
+        if (m_equippedGun != null) {
+            return m_equippedGun.gameObject;
+        }
+        else if (m_equippedMelee != null) {
+            return m_equippedMelee.gameObject;
+        }
+        else
+            return null;
+    }
+    
+    //returns if there is an equipped gun
+    public Gun GetEquippedGun() { return m_equippedGun; }
 
     //destroys any currently equipped weapon and equips a new gun
     public void EquipGun(Gun a_gunToEquip) {
@@ -74,32 +92,19 @@ public class WeaponController : MonoBehaviour {
         }
     }
 
-    //returns if there is an equipped gun
-    public Gun GetEquippedGun() { return m_equippedGun; }
-
-    //returns if there is an equipped melee
-    public Melee GetEquippedMelee() { return m_equippedMelee; }
-    public GameObject GetEquippedWeapon() {
-        if (m_equippedGun != null) {
-            return m_equippedGun.gameObject;
-        }
-        else if (m_equippedMelee != null) {
-            return m_equippedMelee.gameObject;
-        }
-        else
-            return null;
-    }
     public bool Shoot() {
         if (m_equippedGun != null) {
             return m_equippedGun.Shoot();
         }
         return false;
     }
+
     public void Swing() {
         if (m_equippedMelee != null) {
             m_equippedMelee.Swing();
         }
     }
+
     public void Awake() {
         if (m_startingGun != null) {
             EquipGun(m_startingGun);

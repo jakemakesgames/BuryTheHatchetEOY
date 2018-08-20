@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 14/08/2018
+//Last edited 20/08/2018
 
 public class Gun : MonoBehaviour {
 
@@ -110,7 +110,8 @@ public class Gun : MonoBehaviour {
         return direction;
     }
 
-    //creates projectiles will only shoot after reload time
+    //Creates projectiles when called if this gun has ammo left in the current
+    //clip and if the next shot time has passed
     public bool Shoot() {
         if (Time.time > m_nextShotTime) {
             if (m_currentClip > 0) {
@@ -135,6 +136,8 @@ public class Gun : MonoBehaviour {
         m_currentAmmo = m_maxAmmo;
         m_currentClip = m_clipSize;
     }
+    //Keeps track of whether this gun is reloading
+    //and stops the ammo stores from going higher than their respective maximums
     private void Update() {
         if (m_isReloading) {
             if (Time.time > m_nextShotTime)
