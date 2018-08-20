@@ -22,7 +22,8 @@ GameObject:
   - component: {fileID: 33883626897335096}
   - component: {fileID: 23476984505765874}
   - component: {fileID: 65224094076695994}
-  m_Layer: 0
+  - component: {fileID: 208042743055645054}
+  m_Layer: 10
   m_Name: Pillar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82,7 +83,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1428412638370868}
-  m_Mesh: {fileID: 4300000, guid: 7cdfed66a5f37374fabef63ce115aba0, type: 3}
+  m_Mesh: {fileID: 4300002, guid: 7cdfed66a5f37374fabef63ce115aba0, type: 3}
 --- !u!65 &65224094076695994
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -95,3 +96,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.4510396, y: 2, z: 1.4510394}
   m_Center: {x: 0, y: 1, z: 0.00000029802322}
+--- !u!208 &208042743055645054
+NavMeshObstacle:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1428412638370868}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.726, y: 1, z: 0.726}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1, z: 0}
+  m_TimeToStationary: 0.5
