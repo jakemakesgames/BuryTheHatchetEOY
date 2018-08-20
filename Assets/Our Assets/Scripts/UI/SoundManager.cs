@@ -7,11 +7,10 @@ public class SoundManager : MonoBehaviour
 {
     #region Public Variables
 
-    public Slider m_mainSlider;
+    public Slider m_masterSlider;
     public Slider m_musicSlider;
     public Slider m_SFXSlider;
 
-    public AudioSource m_mainVolume;
     public AudioSource m_sfxVolume;
     public AudioSource m_musicVolume;
 
@@ -19,8 +18,9 @@ public class SoundManager : MonoBehaviour
 
     #region Private Regions
 
-    #endregion
+    private float m_masterVolume;
 
+    #endregion
 
     #region Saving Instance
 
@@ -43,12 +43,14 @@ public class SoundManager : MonoBehaviour
 
     private void Start()
     {
-        m_mainVolume.Play();
+        m_musicVolume.Play();
+        m_musicVolume.loop = true;
     }
 
     private void Update()
     {
-        MainVolume();
+        MusicVolume();
+        SFXVolume();
     }
 
     #endregion
@@ -57,25 +59,17 @@ public class SoundManager : MonoBehaviour
 
     public float GetMainVolume()
     {
-        return m_mainSlider.value;
-    }
-
-    public void MainVolume()
-    {
-        m_mainVolume.volume = m_mainSlider.value;
-
-        PlayerPrefs.SetFloat("m_mainVolumeValue", m_mainSlider.value);
-        
+        return m_masterSlider.value;
     }
 
     public void SFXVolume()
     {
-        m_sfxVolume.volume = m_SFXSlider.value;
+        m_sfxVolume.volume = m_SFXSlider.value * m_masterSlider.value;
     }
 
     public void MusicVolume()
     {
-        m_musicVolume.volume = m_musicSlider.value;
+        m_musicVolume.volume = m_musicSlider.value * m_masterSlider.value;
     }
 
     #endregion
