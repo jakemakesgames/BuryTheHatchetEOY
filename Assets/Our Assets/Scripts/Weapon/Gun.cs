@@ -8,6 +8,11 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour {
 
+    [SerializeField] private AudioSource m_reloadSound;
+    [SerializeField] private AudioSource m_shootSound;
+    [SerializeField] private ParticleSystem m_shootParticleSystem;
+    [SerializeField] private ParticleSystem m_smokeParticleSystem;
+
     public Transform m_muzzle;
     public Projectile m_projectile;
 

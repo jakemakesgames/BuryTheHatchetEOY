@@ -24,11 +24,13 @@ public class Player : MonoBehaviour, IDamagable {
 
     private bool m_dead;
     private int m_health;
-    private int m_money = 0;
     private Vector3 m_respawnPoint;
     private List<WeaponInfo> m_heldWeaponsInfo = new List<WeaponInfo>();
     [SerializeField] private int m_maxHealth;
-    [SerializeField] private int m_startingMoney;
+    [SerializeField] private AudioSource m_hitSound;
+    [SerializeField] private AudioSource m_dieSound;
+    [SerializeField] private ParticleSystem m_hitParticleSystem;
+    [SerializeField] private ParticleSystem m_dieParticleSystem;
     [Header("Needs to be the same number as held weapons")] public List<bool> m_weaponsAvailableToPlayer;
     [Header("Needs to be filled with weapon prefabs")] public List<GameObject> m_heldWeapons;
     public Animator m_playerAnimator;
@@ -51,9 +53,6 @@ public class Player : MonoBehaviour, IDamagable {
 
     //Variable control
     public void Heal(int a_healAmount) { m_health += a_healAmount; }
-    public void AddMoney(int a_money) { m_money += a_money; }
-    public void SetMoney(int a_money) { m_money = a_money; }
-    public int GetMoney() { return m_money; }
     public int GetHealth() { return m_health; }
     public int GetMaxHealth() { return m_maxHealth; }
 
@@ -101,7 +100,6 @@ public class Player : MonoBehaviour, IDamagable {
 
     private void Awake () {
         m_health = m_maxHealth;
-        m_money = m_startingMoney;
         m_heldWeaponsInfo.Capacity = m_heldWeapons.Count;
         m_respawnPoint = transform.position;
         for (int i = 0; i < m_heldWeapons.Count; i++) {

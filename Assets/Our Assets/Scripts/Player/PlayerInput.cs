@@ -39,8 +39,15 @@ public class PlayerInput : MonoBehaviour {
     [SerializeField] private GameObject m_crosshair;
     [SerializeField] private GameObject m_camera;
 
-	//Charlie
-	public Animator playerAnimator;
+    [SerializeField] private AudioSource m_clothesRustleSound;
+    [SerializeField] private AudioSource m_walkingSound;
+    [SerializeField] private AudioSource m_rollSound;
+    [SerializeField] private ParticleSystem m_clothesRustleParticleSystem;
+    [SerializeField] private ParticleSystem m_walkingParticleSystem;
+    [SerializeField] private ParticleSystem m_rollParticleSystem;
+
+    //Charlie
+    public Animator playerAnimator;
 
     //calls the equipped weapons attacking method (swing for melee or shoot for gun)
     //via the weapon controller script
