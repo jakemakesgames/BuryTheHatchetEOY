@@ -188,9 +188,9 @@ public class UIManager : MonoBehaviour
                         m_inPausedMenu = true;
                         m_isPaused = true;
 
+                        m_playerHud.SetActive(false);
                         m_bountyInteraction.SetActive(false);
                         m_pauseMenu.SetActive(true);
-                        m_playerHud.SetActive(false);
                         m_combat = false;
 
                         //Sets the game loop speed to 0
@@ -311,7 +311,7 @@ public class UIManager : MonoBehaviour
 
         if (m_soundManager != null)
         {
-            m_soundManager.MainVolume();
+            //m_soundManager.();
         }
 
         #endregion
@@ -383,20 +383,23 @@ public class UIManager : MonoBehaviour
     {
         if (!m_inBounty && !m_inMainMenu && !m_inPausedMenu)
         {
-            if (m_weaponController.GetEquippedGun() != null)
+            if (m_weaponController != null)
             {
-                if (Input.GetMouseButton(0))
+                if (m_weaponController.GetEquippedGun() != null)
                 {
-                    m_numBullets = m_weaponController.GetEquippedGun().GetCurrentClip();
-           
-                    for (int i = 0; i < m_revBullets.Count; i++)
+                    if (Input.GetMouseButton(0))
                     {
-                        m_revBullets[i].SetActive(false);
-                    }
+                        m_numBullets = m_weaponController.GetEquippedGun().GetCurrentClip();
            
-                    for (int i = 0; i < m_numBullets; i++)
-                    {
-                        m_revBullets[i].SetActive(true);
+                        for (int i = 0; i < m_revBullets.Count; i++)
+                        {
+                            m_revBullets[i].SetActive(false);
+                        }
+           
+                        for (int i = 0; i < m_numBullets; i++)
+                        {
+                            m_revBullets[i].SetActive(true);
+                        }
                     }
                 }
             }
@@ -420,6 +423,7 @@ public class UIManager : MonoBehaviour
     {
         Time.timeScale = 0;
 
+        m_isPaused = false;
         m_inMainMenu = true;
         m_startMenu.SetActive(true);
         m_optionsPanel.SetActive(true);
