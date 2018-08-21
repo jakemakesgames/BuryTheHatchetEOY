@@ -128,7 +128,7 @@ public class UIManager : MonoBehaviour
     public void Update()
     {
         CurrentHealth();
-        CurrentGold();
+        //CurrentGold();
 
         if (m_combat)
         {
@@ -414,10 +414,10 @@ public class UIManager : MonoBehaviour
         m_health.fillAmount = m_currHealth / m_maxHealth;
     }
 
-    public void CurrentGold()
-    {
-        m_goldAmount.text = m_player.GetMoney().ToString();
-    }
+    //public void CurrentGold()
+    //{
+        //m_goldAmount.text = m_player.GetMoney().ToString();
+    //}
 
     public void StartMenu()
     {

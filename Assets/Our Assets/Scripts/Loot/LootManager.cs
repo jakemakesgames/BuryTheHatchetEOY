@@ -146,9 +146,6 @@ public class LootManager : MonoBehaviour
             randUnitCirclePos = Random.insideUnitCircle * m_spawnRadius;
             newSpawnPos = new Vector3(randUnitCirclePos.x, 0, randUnitCirclePos.y) + deadEnemy.transform.position;
         }
-
-        GameObject gold = Instantiate(m_goldPrefab, newSpawnPos, randomRotationY);
-        gold.GetComponent<Gold>().SetGoldFlag(m_goldMinFlag);
     }
 
     Quaternion RandomRotationY(Quaternion a_rotation)

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using StateMachine;
+using UnityEngine.AI;
 
 //Mark Phillips
 //Created 13/08/2018
@@ -28,8 +29,8 @@ public class Reload : IState<AI>
     {
         if (IsCoverAvailable())
         {
-            if(m_coverFound == false)
-            { 
+            if (m_coverFound == false)
+            {
                 FindNearestCover();
                 SetPathToCover();
             }
@@ -48,9 +49,11 @@ public class Reload : IState<AI>
                 m_owner.Gun.Reload();
                 m_coverFound = false;
             }
+
         }
         else
         {
+            //m_owner.Agent.SetDestination(m_owner.transform.position);
             m_owner.Gun.Reload();
         }
     }
@@ -70,7 +73,7 @@ public class Reload : IState<AI>
 
     private bool IsCoverAvailable()
     {
-         m_hitColliders = Physics.OverlapSphere(m_owner.transform.position, m_owner.CoverRadius, m_owner.CoverLayer);
+        m_hitColliders = Physics.OverlapSphere(m_owner.transform.position, m_owner.CoverRadius, m_owner.CoverLayer);
 
         if (m_hitColliders.Length == 0)
 
@@ -84,6 +87,17 @@ public class Reload : IState<AI>
     {
         m_owner.Agent.destination = m_targetLocation;
     }
+
+    //private bool IsPathValid()
+    //{
+    //    NavMeshPath navMeshPath = new NavMeshPath();
+    //    m_owner.Agent.CalculatePath(m_targetLocation, navMeshPath);
+    //
+    //    if (navMeshPath.status != NavMeshPathStatus.PathComplete)
+    //        return false;
+    //    else  
+    //        return true;
+    //}
 
     void FindNearestCover()
     {
@@ -108,8 +122,7 @@ public class Reload : IState<AI>
         Vector3 finalPoint = (nearestPoint.position + dirFromPlayer);
         finalPoint = new Vector3(finalPoint.x, nearestPoint.position.y, finalPoint.z);
 
-        m_targetLocation =  finalPoint;
+        m_targetLocation = finalPoint;
         m_coverFound = true;
-        m_owner.Agent.destination = m_targetLocation;
     }
 }
