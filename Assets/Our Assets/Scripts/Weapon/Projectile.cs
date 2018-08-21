@@ -58,7 +58,7 @@ public class Projectile : MonoBehaviour {
     private void GoThroughEntity(float a_distanceToMove) {
         if (m_hasEntered == false) {
             if (m_enterEntityParticle != null) {
-                GameObject GO = Instantiate(m_enterEntityParticle, transform.position, Quaternion.identity);
+                GameObject GO = Instantiate(m_enterEntityParticle, transform.position + transform.forward, transform.rotation);
                 Destroy(GO, m_enterParticleTimer);
             }
             m_hasEntered = true;
@@ -66,7 +66,7 @@ public class Projectile : MonoBehaviour {
         Ray ray = new Ray(transform.position, -(transform.forward));
         if (Physics.Raycast(ray, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
             if (m_exitEntityParticle != null) {
-                GameObject GO = Instantiate(m_exitEntityParticle, transform.position, Quaternion.identity);
+                GameObject GO = Instantiate(m_exitEntityParticle, transform.position - transform.forward, transform.rotation);
                 Destroy(GO, m_exitParticleTimer);
             }
             m_lifeTime = m_bulletKillTime;
@@ -137,9 +137,8 @@ public class Projectile : MonoBehaviour {
             OnHitObject(initialRicochetCollision[0], false);
             return;
         }
-        if (m_travelParticle != null) {
+        if (m_travelParticle != null)
             m_travelParticle = Instantiate(m_travelParticle, transform);
-        }
     }
 
     //Moves the projectile also counts down until this should be destroyed
