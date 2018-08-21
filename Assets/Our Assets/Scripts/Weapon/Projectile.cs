@@ -22,9 +22,13 @@ public class Projectile : MonoBehaviour {
     [Tooltip("Life time of the bullet after it hits an entity")]
     [SerializeField] private float m_bulletKillTime = 1f;
     [SerializeField] private ParticleSystem m_enterEntityParticle;
+    [SerializeField] private float m_enterParticleTimer = 1f;
     [SerializeField] private ParticleSystem m_exitEntityParticle;
+    [SerializeField] private float m_exitParticleTimer = 1f;
     [SerializeField] private ParticleSystem m_environmentParticle;
+    [SerializeField] private float m_environmentParticleTimer = 1f;
     [SerializeField] private ParticleSystem m_ricochetParticle;
+    [SerializeField] private float m_ricochetParticleTimer = 1f;
     [SerializeField] private ParticleSystem m_travelParticle;
 
 
@@ -53,14 +57,18 @@ public class Projectile : MonoBehaviour {
     //Check for when the projectile leaves an entity it has entered to play appropiate effects
     private void GoThroughEntity(float a_distanceToMove) {
         if (m_hasEntered == false) {
-            if(m_enterEntityParticle != null)
-                m_enterEntityParticle.Play();
+            if (m_enterEntityParticle != null) {
+                ParticleSystem pS = Instantiate(m_enterEntityParticle);
+                Destroy(pS, m_enterParticleTimer);
+            }
             m_hasEntered = true;
         }
         Ray ray = new Ray(transform.position, -(transform.forward));
         if (Physics.Raycast(ray, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
-            if (m_exitEntityParticle != null)
-                m_exitEntityParticle.Play();
+            if (m_exitEntityParticle != null) {
+                ParticleSystem pS = Instantiate(m_exitEntityParticle);
+                Destroy(pS, m_exitParticleTimer);
+            }
             m_lifeTime = m_bulletKillTime;
             m_hasEntered = false;
             m_insideEntity = false;
