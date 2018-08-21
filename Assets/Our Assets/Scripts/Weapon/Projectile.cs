@@ -21,15 +21,15 @@ public class Projectile : MonoBehaviour {
 
     [Tooltip("Life time of the bullet after it hits an entity")]
     [SerializeField] private float m_bulletKillTime = 1f;
-    [SerializeField] private ParticleSystem m_enterEntityParticle;
+    [SerializeField] private GameObject m_enterEntityParticle;
     [SerializeField] private float m_enterParticleTimer = 1f;
-    [SerializeField] private ParticleSystem m_exitEntityParticle;
+    [SerializeField] private GameObject m_exitEntityParticle;
     [SerializeField] private float m_exitParticleTimer = 1f;
-    [SerializeField] private ParticleSystem m_environmentParticle;
+    [SerializeField] private GameObject m_environmentParticle;
     [SerializeField] private float m_environmentParticleTimer = 1f;
-    [SerializeField] private ParticleSystem m_ricochetParticle;
+    [SerializeField] private GameObject m_ricochetParticle;
     [SerializeField] private float m_ricochetParticleTimer = 1f;
-    [SerializeField] private ParticleSystem m_travelParticle;
+    [SerializeField] private GameObject m_travelParticle;
 
 
     public void SetSpeed(float a_speed) {
@@ -58,16 +58,16 @@ public class Projectile : MonoBehaviour {
     private void GoThroughEntity(float a_distanceToMove) {
         if (m_hasEntered == false) {
             if (m_enterEntityParticle != null) {
-                ParticleSystem pS = Instantiate(m_enterEntityParticle);
-                Destroy(pS, m_enterParticleTimer);
+                GameObject GO = Instantiate(m_enterEntityParticle, transform.position, Quaternion.identity);
+                Destroy(GO, m_enterParticleTimer);
             }
             m_hasEntered = true;
         }
         Ray ray = new Ray(transform.position, -(transform.forward));
         if (Physics.Raycast(ray, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
             if (m_exitEntityParticle != null) {
-                ParticleSystem pS = Instantiate(m_exitEntityParticle);
-                Destroy(pS, m_exitParticleTimer);
+                GameObject GO = Instantiate(m_exitEntityParticle, transform.position, Quaternion.identity);
+                Destroy(GO, m_exitParticleTimer);
             }
             m_lifeTime = m_bulletKillTime;
             m_hasEntered = false;
