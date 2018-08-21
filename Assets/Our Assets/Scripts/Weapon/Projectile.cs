@@ -15,22 +15,30 @@ public class Projectile : MonoBehaviour {
     private int m_damage = 1;
     private bool m_insideEntity;
     private bool m_hasEntered;
+    private LayerMask m_ricochetCollisionMask;
     private LayerMask m_entityCollisionMask;
     private LayerMask m_environmentCollisionMask;
-    private LayerMask m_ricochetCollisionMask;
+
 
     [Tooltip("Life time of the bullet after it hits an entity")]
     [SerializeField] private float m_bulletKillTime = 1f;
+
+    [Header("Event collision particles")]
     [SerializeField] private GameObject m_enterEntityParticle;
     [SerializeField] private float m_enterParticleTimer = 1f;
+    [SerializeField] private float m_enterParticleDist = 0.1f;
     [SerializeField] private GameObject m_exitEntityParticle;
     [SerializeField] private float m_exitParticleTimer = 1f;
-    [SerializeField] private GameObject m_environmentParticle;
-    [SerializeField] private float m_environmentParticleTimer = 1f;
+    [SerializeField] private float m_exitParticleDist = 0.1f;
     [SerializeField] private GameObject m_ricochetParticle;
     [SerializeField] private float m_ricochetParticleTimer = 1f;
     [SerializeField] private GameObject m_travelParticle;
 
+    [Header("Environmental collision particles")]
+    [SerializeField] private List<LayerMask> m_environmentCollisionMasks;
+    [SerializeField] private List<GameObject> m_environmentParticles;
+    [SerializeField] private List<float> m_environmentParticleTimers;
+    [SerializeField] private List<float> m_environmentParticleDists;
 
     public void SetSpeed(float a_speed) {
         m_speed = a_speed;
@@ -58,7 +66,7 @@ public class Projectile : MonoBehaviour {
     private void GoThroughEntity(float a_distanceToMove) {
         if (m_hasEntered == false) {
             if (m_enterEntityParticle != null) {
-                GameObject GO = Instantiate(m_enterEntityParticle, transform.position + transform.forward, transform.rotation);
+                GameObject GO = Instantiate(m_enterEntityParticle, transform.position + transform.forward * m_enterParticleDist, transform.rotation);
                 Destroy(GO, m_enterParticleTimer);
             }
             m_hasEntered = true;
@@ -66,7 +74,7 @@ public class Projectile : MonoBehaviour {
         Ray ray = new Ray(transform.position, -(transform.forward));
         if (Physics.Raycast(ray, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
             if (m_exitEntityParticle != null) {
-                GameObject GO = Instantiate(m_exitEntityParticle, transform.position - transform.forward, transform.rotation);
+                GameObject GO = Instantiate(m_exitEntityParticle, transform.position - transform.forward * m_exitParticleDist, transform.rotation);
                 Destroy(GO, m_exitParticleTimer);
             }
             m_lifeTime = m_bulletKillTime;
@@ -87,6 +95,16 @@ public class Projectile : MonoBehaviour {
 
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_ricochetCollisionMask))
             OnHitObject(hit, this, false);
+
+        for (int i = 0; i < m_environmentParticles.Count; i++) {
+            if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMasks[i])) {
+                OnHitObject(hit, false);
+                if (m_environmentParticles[i] != null) {
+                    GameObject GO = Instantiate(m_environmentParticles[i], transform.position - transform.forward * m_environmentParticleDists[i], transform.rotation);
+                    Destroy(GO, m_environmentParticleTimers[i]);
+                }
+            }
+        }
     }
 
     //Events for when the projectile collides with objects in the world with appropriate layers
