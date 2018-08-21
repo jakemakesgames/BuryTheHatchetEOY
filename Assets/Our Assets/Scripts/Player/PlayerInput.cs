@@ -48,7 +48,7 @@ public class PlayerInput : MonoBehaviour {
     [SerializeField] private ParticleSystem m_walkingParticleSystem;
     [SerializeField] private ParticleSystem m_rollParticleSystem;
 
-    //Charlie
+    [Header("CHARLIE!")]
     public Animator playerAnimator;
 
     //calls the equipped weapons attacking method (swing for melee or shoot for gun)
