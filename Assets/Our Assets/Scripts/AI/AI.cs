@@ -228,6 +228,8 @@ public class AI : MonoBehaviour, IDamagable
         Vector3 vecBetween = (m_player.transform.position - m_weaponController.m_weaponHold.transform.position);
         RaycastHit hit;
 
+        Debug.DrawRay(m_weaponController.m_weaponHold.transform.position, vecBetween, Color.green);
+
         if (Physics.Raycast(m_weaponController.m_weaponHold.transform.position, vecBetween, out hit, 1000.0f, m_coverLayer))
             return false;
         if (Physics.Raycast(m_weaponController.m_weaponHold.transform.position, vecBetween, out hit, 1000.0f, m_environmentLayer))

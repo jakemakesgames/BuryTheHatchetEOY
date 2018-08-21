@@ -128,7 +128,7 @@ public class UIManager : MonoBehaviour
     public void Update()
     {
         CurrentHealth();
-        CurrentGold();
+        //CurrentGold();
 
         if (m_combat)
         {
@@ -149,6 +149,8 @@ public class UIManager : MonoBehaviour
             //Takes you back to the Start Screen from the Options Menu
             if (Input.GetKeyDown("escape") && m_optionsMenu.activeSelf)
             {
+                m_soundManager.BackSound();
+
                 m_optionsMenu.SetActive(false);
                 m_startMenu.SetActive(true);
 
@@ -158,6 +160,8 @@ public class UIManager : MonoBehaviour
             //Takes you back to the Start Screen from the Controls Menu
             if (Input.GetKeyDown("escape") && m_controlsMenu.activeSelf)
             {
+                m_soundManager.BackSound();
+
                 m_controlsMenu.SetActive(false);
                 m_startMenu.SetActive(true);
 
@@ -184,6 +188,8 @@ public class UIManager : MonoBehaviour
                 {
                     if (!m_inBounty)
                     {
+                        m_soundManager.BackSound();
+
                         //Set any screen that is not the pause screen off
                         m_inPausedMenu = true;
                         m_isPaused = true;
@@ -208,6 +214,8 @@ public class UIManager : MonoBehaviour
                         //Checks if the Pause Menu is active
                         if (m_pauseMenu.activeSelf)
                         {
+                            m_soundManager.BackSound();
+
                             m_isPaused = false;
                             Time.timeScale = 1;
 
@@ -224,6 +232,8 @@ public class UIManager : MonoBehaviour
                         }
                         else
                         {
+                            m_soundManager.BackSound();
+
                             //If the Pause Menu is not active turn it on
                             m_bountyBoard.SetActive(false);
                             m_optionsMenu.SetActive(false);
@@ -414,10 +424,10 @@ public class UIManager : MonoBehaviour
         m_health.fillAmount = m_currHealth / m_maxHealth;
     }
 
-    public void CurrentGold()
-    {
-        m_goldAmount.text = m_player.GetMoney().ToString();
-    }
+    //public void CurrentGold()
+    //{
+        //m_goldAmount.text = m_player.GetMoney().ToString();
+    //}
 
     public void StartMenu()
     {

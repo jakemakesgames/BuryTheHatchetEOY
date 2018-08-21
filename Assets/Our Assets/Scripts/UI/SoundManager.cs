@@ -11,8 +11,9 @@ public class SoundManager : MonoBehaviour
     public Slider m_musicSlider;
     public Slider m_SFXSlider;
 
-    public AudioSource m_sfxVolume;
-    public AudioSource m_musicVolume;
+    public AudioSource m_buttonSound;
+    public AudioSource m_backSound;
+    public AudioSource m_musicSound;
 
     #endregion
 
@@ -43,8 +44,8 @@ public class SoundManager : MonoBehaviour
 
     private void Start()
     {
-        m_musicVolume.Play();
-        m_musicVolume.loop = true;
+        m_musicSound.Play();
+        m_musicSound.loop = true;
     }
 
     private void Update()
@@ -64,12 +65,23 @@ public class SoundManager : MonoBehaviour
 
     public void SFXVolume()
     {
-        m_sfxVolume.volume = m_SFXSlider.value * m_masterSlider.value;
+        m_buttonSound.volume = m_SFXSlider.value * m_masterSlider.value;
+        m_backSound.volume = m_SFXSlider.value * m_masterSlider.value;
     }
 
     public void MusicVolume()
     {
-        m_musicVolume.volume = m_musicSlider.value * m_masterSlider.value;
+        m_musicSound.volume = m_musicSlider.value * m_masterSlider.value;
+    }
+
+    public void ButtonSound()
+    {
+        m_buttonSound.Play();
+    }
+
+    public void BackSound()
+    {
+        m_backSound.Play();
     }
 
     #endregion

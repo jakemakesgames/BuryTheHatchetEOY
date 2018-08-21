@@ -341,9 +341,9 @@ GameObject:
   - component: {fileID: 136270636679169820}
   - component: {fileID: 23689007587725220}
   - component: {fileID: 114565342599661028}
-  - component: {fileID: 114588751146640092}
   - component: {fileID: 195615718544809824}
-  - component: {fileID: 120729242200491050}
+  - component: {fileID: 114443793080989620}
+  - component: {fileID: 120855659218214720}
   m_Layer: 9
   m_Name: Enemy
   m_TagString: Untagged
@@ -2168,6 +2168,31 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114443793080989620
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1359657046224042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9759742c2d3d7e47b2cfe6197efc00b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_weaponHold: {fileID: 4414056363114828}
+  m_startingGun: {fileID: 114602979445381950, guid: a1c393be65c62c84e987b70f8b708bb3,
+    type: 2}
+  m_startingMelee: {fileID: 114496311847859846, guid: 5e68efd63c582db4b9dc21328ce22ea5,
+    type: 2}
+  m_entityCollisionMask:
+    serializedVersion: 2
+    m_Bits: 256
+  m_terrainCollisionMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  m_ricochetCollisionMask:
+    serializedVersion: 2
+    m_Bits: 8192
 --- !u!114 &114565342599661028
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2183,46 +2208,22 @@ MonoBehaviour:
   m_seekRadius: 20
   m_fleeRadius: 5
   m_coverRadius: 6.1
-  m_deadZone: 0.5
+  m_deadZone: 0.1
   m_attackRadius: 11
-  m_coverFoundThreshold: 3
+  m_coverFoundThreshold: 5
   m_coverLayer:
     serializedVersion: 2
     m_Bits: 1024
   m_environmentLayer:
     serializedVersion: 2
     m_Bits: 2048
---- !u!114 &114588751146640092
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1359657046224042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9fe1159607e4974ca8e92f28017f448, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_weaponHold: {fileID: 4414056363114828}
-  m_startingGun: {fileID: 114749405408589246, guid: fa880337db1abf54880a09e8b58ac82c,
-    type: 2}
-  m_startingMelee: {fileID: 0}
-  m_entityCollisionMask:
-    serializedVersion: 2
-    m_Bits: 256
-  m_terrainCollisionMask:
-    serializedVersion: 2
-    m_Bits: 1024
-  m_ricochetCollisionMask:
-    serializedVersion: 2
-    m_Bits: 0
---- !u!120 &120729242200491050
+--- !u!120 &120855659218214720
 LineRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1359657046224042}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2230,7 +2231,7 @@ LineRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 4f9843c79516ed1468b9b5a4f32e67e3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2302,7 +2303,7 @@ LineRenderer:
     alignment: 0
     textureMode: 0
     generateLightingData: 0
-  m_UseWorldSpace: 0
+  m_UseWorldSpace: 1
   m_Loop: 0
 --- !u!136 &136270636679169820
 CapsuleCollider:
