@@ -4,7 +4,7 @@ using UnityEngine.AI;
 
 //Mark Phillips
 //Created 13/08/2018
-//Last edited 15/08/2018
+//Last edited 21/08/2018
 
 public class Reload : IState<AI>
 {
@@ -16,13 +16,11 @@ public class Reload : IState<AI>
 
     public void Enter(AI a_owner)
     {
-        Debug.Log("Entering Reload");
         m_owner = a_owner;
     }
 
     public void Exit(AI a_owner)
     {
-        Debug.Log("Exiting Reload");
     }
 
     public void Update(AI a_owner)

@@ -18,7 +18,6 @@ public class AI : MonoBehaviour, IDamagable
         SEEK,
         FLEE,
         STATIONARY,
-        PEEK,
         RELOAD
     }
 
@@ -73,6 +72,7 @@ public class AI : MonoBehaviour, IDamagable
     LineRenderer m_line;
     private GameObject m_player;
     private List<Transform> m_coverPoints;
+    public Animator enemyAnimator;
 
     private WeaponController m_weaponController;
     private Gun m_gun;
@@ -132,6 +132,7 @@ public class AI : MonoBehaviour, IDamagable
 
     void Update()
     {
+        //To Do: put this in coroutine
         Debug.Log("Current State: " + m_state);
         DrawLinePath(m_agent.path);
         m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
@@ -150,6 +151,8 @@ public class AI : MonoBehaviour, IDamagable
             Attack();
 
         m_stateMachine.Update();
+
+        UpdateAnims();
     }
 
     //Check states and return true if there is a state change
@@ -278,6 +281,17 @@ public class AI : MonoBehaviour, IDamagable
     public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile)
     {
 
+    }
+
+    private void UpdateAnims()
+    {
+        float myVelocity = m_agent.velocity.magnitude;
+        Vector3 localVel = transform.InverseTransformDirection(m_agent.velocity);
+
+        enemyAnimator.SetFloat("Velocity", myVelocity);
+
+        enemyAnimator.SetFloat("MovementDirectionRight", localVel.x);
+        enemyAnimator.SetFloat("MovementDirectionForward", localVel.z);
     }
 
     void DrawLinePath(NavMeshPath path)
