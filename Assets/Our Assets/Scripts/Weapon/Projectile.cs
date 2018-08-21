@@ -53,17 +53,17 @@ public class Projectile : MonoBehaviour {
     //Check for when the projectile leaves an entity it has entered to play appropiate effects
     private void GoThroughEntity(float a_distanceToMove) {
         if (m_hasEntered == false) {
-            m_enterEntityParticle.Play();
+            if(m_enterEntityParticle != null)
+                m_enterEntityParticle.Play();
             m_hasEntered = true;
-            Debug.Log("Has Entered");
         }
         Ray ray = new Ray(transform.position, -(transform.forward));
         if (Physics.Raycast(ray, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
-            m_exitEntityParticle.Play();
+            if (m_exitEntityParticle != null)
+                m_exitEntityParticle.Play();
             m_lifeTime = m_bulletKillTime;
             m_hasEntered = false;
             m_insideEntity = false;
-            Debug.Log("Has Exited");
         }
     }
 
@@ -72,48 +72,49 @@ public class Projectile : MonoBehaviour {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask))
-            OnHitObject(hit);
+            OnHitObject(hit, true);
 
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMask))
-            OnHitObject(hit);
+            OnHitObject(hit, false);
 
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_ricochetCollisionMask))
-            OnHitObject(hit, this);
+            OnHitObject(hit, this, false);
     }
 
     //Events for when the projectile collides with objects in the world with appropriate layers
-    private void OnHitObject(RaycastHit a_hit) {
+    private void OnHitObject(RaycastHit a_hit, bool a_hitEntity) {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
         if (damagableObject != null)
             damagableObject.TakeHit(m_damage, a_hit);
-        if (a_hit.transform.gameObject.layer == m_entityCollisionMask) {
-            m_insideEntity = true;
+        m_insideEntity = a_hitEntity;
+        if (m_insideEntity)
             return;
-        }
         Destroy(gameObject);
-        if (m_travelParticle.isPlaying)
-            m_travelParticle.Stop();
+        if (m_travelParticle != null) {
+            if (m_travelParticle.isPlaying)
+                m_travelParticle.Stop();
+        }
     }
-    private void OnHitObject(Collider a_c) {
+    private void OnHitObject(Collider a_c, bool a_hitEntity) {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
         if (damagableObject != null)
             damagableObject.TakeDamage(m_damage);
-        if (a_c.gameObject.layer == m_entityCollisionMask) {
-            m_insideEntity = true;
+        m_insideEntity = a_hitEntity;
+        if (m_insideEntity)
             return;
-        }
         Destroy(gameObject);
-        if (m_travelParticle.isPlaying)
-            m_travelParticle.Stop();
+        if (m_travelParticle != null) {
+            if (m_travelParticle.isPlaying)
+                m_travelParticle.Stop();
+        }
     }
-    private void OnHitObject(RaycastHit a_hit, Projectile a_bullet) {
+    private void OnHitObject(RaycastHit a_hit, Projectile a_bullet, bool a_hitEntity) {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
         if (damagableObject != null)
             damagableObject.TakeImpact(m_damage, a_hit, a_bullet);
-        if (a_hit.transform.gameObject.layer == m_entityCollisionMask) {
-            m_insideEntity = true;
+        m_insideEntity = a_hitEntity;
+        if (m_insideEntity)
             return;
-        }
     }
 
     private void Start() {
@@ -121,19 +122,19 @@ public class Projectile : MonoBehaviour {
         //If the projectile spawns within a collider, it will activate the appropriate collision response
         Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
         if (initialEnemyCollision.Length > 0) {
-            OnHitObject(initialEnemyCollision[0]);
+            OnHitObject(initialEnemyCollision[0], true);
             return;
         }
 
         Collider[] initialEnvironmentCollision = Physics.OverlapSphere(transform.position, .1f, m_environmentCollisionMask);
         if (initialEnvironmentCollision.Length > 0) {
-            OnHitObject(initialEnvironmentCollision[0]);
+            OnHitObject(initialEnvironmentCollision[0], false);
             return;
         }
 
     Collider[] initialRicochetCollision = Physics.OverlapSphere(transform.position, .1f, m_ricochetCollisionMask);
         if (initialRicochetCollision.Length > 0) {
-            OnHitObject(initialRicochetCollision[0]);
+            OnHitObject(initialRicochetCollision[0], false);
             return;
         }
         if (m_travelParticle != null)
@@ -150,8 +151,10 @@ public class Projectile : MonoBehaviour {
 
         if (m_lifeTime <= 0) {
             Destroy(gameObject);
-            if (m_travelParticle.isPlaying)
-                m_travelParticle.Stop();
+            if (m_travelParticle != null) {
+                if (m_travelParticle.isPlaying)
+                    m_travelParticle.Stop();
+            }
         }
         m_lifeTime -= Time.deltaTime;
 	}

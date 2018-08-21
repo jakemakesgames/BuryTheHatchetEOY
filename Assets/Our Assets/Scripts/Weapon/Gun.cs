@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 20/08/2018
+//Last edited 21/08/2018
 
 public class Gun : MonoBehaviour {
 
@@ -13,7 +13,7 @@ public class Gun : MonoBehaviour {
     [SerializeField] private ParticleSystem m_shootParticleSystem;
     [SerializeField] private ParticleSystem m_smokeParticleSystem;
 
-    public Transform m_muzzle;
+    [SerializeField] private Transform m_muzzle;
     public Projectile m_projectile;
 
     public float m_msBetweenShots = 100;
@@ -81,6 +81,7 @@ public class Gun : MonoBehaviour {
     public int GetCurrentAmmo() { return m_currentAmmo; }
     public int GetTotalAmmo() { return GetCurrentAmmo() + GetCurrentClip(); }
     public int GetMaxAmmo() { return m_maxAmmo + m_clipSize; }
+    public Transform GetMuzzle() { return m_muzzle; }
 
     //reloads the gun and also prevents shooting for a time based on the reload time in milliseconds variable
     public void Reload() {
