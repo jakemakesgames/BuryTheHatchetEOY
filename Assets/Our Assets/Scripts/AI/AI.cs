@@ -18,6 +18,7 @@ public class AI : MonoBehaviour, IDamagable
         SEEK,
         FLEE,
         STATIONARY,
+        PEEK,
         RELOAD
     }
 
@@ -57,14 +58,14 @@ public class AI : MonoBehaviour, IDamagable
     [SerializeField]
     LayerMask m_coverLayer;
 
-    [Tooltip("Set this to the Environment layer for enivironment collision detection")]
+    [Tooltip("Set this to the Environment layer for environment collision detection")]
     [SerializeField]
     LayerMask m_environmentLayer;
 
     float m_health;
     float m_distBetweenPlayer;
     float m_gunDistToPlayer;
-    bool m_isDead;
+    [SerializeField] float m_rayDetectBufferDist;
 
     STATE m_state;
 
@@ -187,7 +188,9 @@ public class AI : MonoBehaviour, IDamagable
             if (m_gun.m_isReloading == false)
             {
                 if (CanAttack() == false)
+                {
                     m_state = STATE.SEEK;
+                }
             }
         }
 
@@ -226,14 +229,22 @@ public class AI : MonoBehaviour, IDamagable
     bool CanAttack()
     {
         Vector3 vecBetween = (m_player.transform.position - m_weaponController.m_weaponHold.transform.position);
+        Vector3 rayPos1 = m_weaponController.m_weaponHold.position - (m_weaponController.m_weaponHold.forward * m_rayDetectBufferDist);
+        Vector3 rayPos2 = rayPos1 + m_weaponController.m_weaponHold.right * 0.1f;
+        rayPos1 -= m_weaponController.m_weaponHold.right * 0.1f;
+
+        Ray ray1 = new Ray(rayPos1, vecBetween);
+        Ray ray2 = new Ray(rayPos2, vecBetween);
         RaycastHit hit;
 
-        Debug.DrawRay(m_weaponController.m_weaponHold.transform.position, vecBetween, Color.green);
+        Debug.DrawRay(rayPos1, vecBetween, Color.green);
+        Debug.DrawRay(rayPos2, vecBetween, Color.green);
 
-        if (Physics.Raycast(m_weaponController.m_weaponHold.transform.position, vecBetween, out hit, 1000.0f, m_coverLayer))
+        if (Physics.Raycast(ray1, out hit, vecBetween.sqrMagnitude + m_rayDetectBufferDist, m_environmentLayer))
             return false;
-        if (Physics.Raycast(m_weaponController.m_weaponHold.transform.position, vecBetween, out hit, 1000.0f, m_environmentLayer))
+        if (Physics.Raycast(ray2, out hit, vecBetween.sqrMagnitude + m_rayDetectBufferDist, m_environmentLayer))
             return false;
+
 
         return true;
     }
@@ -241,7 +252,10 @@ public class AI : MonoBehaviour, IDamagable
     void Attack()
     {
         if (m_gunDistToPlayer < m_attackRadius && !m_gun.GetIsEmpty())
+        {
+            m_weaponController.m_weaponHold.LookAt(PlayerPosition);
             m_gun.Shoot();
+        }
     }
 
     void Die()
@@ -250,7 +264,6 @@ public class AI : MonoBehaviour, IDamagable
             OnDeath(this);
 
         Destroy(gameObject);
-        m_isDead = true;
     }
     public void TakeHit(int a_damage, RaycastHit a_hit)
     {
