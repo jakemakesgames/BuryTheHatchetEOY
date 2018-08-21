@@ -4,9 +4,10 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 20/08/2018
+//Last edited 21/08/2018
 
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(AudioSource))]
 public class Player : MonoBehaviour, IDamagable {
 
     //This is for storing information on the currently uneqipped weapons of the player
@@ -26,9 +27,10 @@ public class Player : MonoBehaviour, IDamagable {
     private int m_health;
     private Vector3 m_respawnPoint;
     private List<WeaponInfo> m_heldWeaponsInfo = new List<WeaponInfo>();
+    private AudioSource m_audioSource;
     [SerializeField] private int m_maxHealth;
-    [SerializeField] private AudioSource m_hitSound;
-    [SerializeField] private AudioSource m_dieSound;
+    [SerializeField] private AudioClip m_hitSound;
+    [SerializeField] private AudioClip m_dieSound;
     [SerializeField] private ParticleSystem m_hitParticleSystem;
     [SerializeField] private ParticleSystem m_dieParticleSystem;
     [Header("Needs to be the same number as held weapons")] public List<bool> m_weaponsAvailableToPlayer;
@@ -45,6 +47,10 @@ public class Player : MonoBehaviour, IDamagable {
         m_health -= a_damage;
         if (m_health <= 0 && !m_dead)
             Die();
+        if(m_hitParticleSystem != null)
+            m_hitParticleSystem.Play();
+        if (m_hitSound != null)
+            m_audioSource.PlayOneShot(m_hitSound);
     }
     public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile) {
         TakeDamage(a_damage);
@@ -94,6 +100,8 @@ public class Player : MonoBehaviour, IDamagable {
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Death");
 
+        if (m_dieSound != null)
+            m_audioSource.PlayOneShot(m_dieSound);
         transform.position = m_respawnPoint;
         m_health = m_maxHealth / 2;
     }

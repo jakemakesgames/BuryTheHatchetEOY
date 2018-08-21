@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 14/08/2018
+//Last edited 21/08/2018
 
 
 public class Projectile : MonoBehaviour {
@@ -13,9 +13,19 @@ public class Projectile : MonoBehaviour {
     private float m_skinWidth = 0.1f;
     private float m_speed = 10;
     private int m_damage = 1;
+    private bool m_insideEntity;
+    private bool m_hasEntered;
     private LayerMask m_entityCollisionMask;
     private LayerMask m_environmentCollisionMask;
     private LayerMask m_ricochetCollisionMask;
+
+    [Tooltip("Life time of the bullet after it hits an entity")]
+    [SerializeField] private float m_bulletKillTime = 1f;
+    [SerializeField] private ParticleSystem m_enterEntityParticle;
+    [SerializeField] private ParticleSystem m_exitEntityParticle;
+    [SerializeField] private ParticleSystem m_environmentParticle;
+    [SerializeField] private ParticleSystem m_ricochetParticle;
+    [SerializeField] private ParticleSystem m_travelParticle;
 
 
     public void SetSpeed(float a_speed) {
@@ -40,7 +50,24 @@ public class Projectile : MonoBehaviour {
         m_lifeTime = a_lifeTime;
     }
 
-    //use ray casts to check for collisions
+    //Check for when the projectile leaves an entity it has entered to play appropiate effects
+    private void GoThroughEntity(float a_distanceToMove) {
+        if (m_hasEntered == false) {
+            m_enterEntityParticle.Play();
+            m_hasEntered = true;
+            Debug.Log("Has Entered");
+        }
+        Ray ray = new Ray(transform.position, -(transform.forward));
+        if (Physics.Raycast(ray, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
+            m_exitEntityParticle.Play();
+            m_lifeTime = m_bulletKillTime;
+            m_hasEntered = false;
+            m_insideEntity = false;
+            Debug.Log("Has Exited");
+        }
+    }
+
+    //Use ray casts to check for collisions
     private void CheckCollisions(float a_distanceToMove) {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
@@ -54,45 +81,78 @@ public class Projectile : MonoBehaviour {
             OnHitObject(hit, this);
     }
 
+    //Events for when the projectile collides with objects in the world with appropriate layers
     private void OnHitObject(RaycastHit a_hit) {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
         if (damagableObject != null)
             damagableObject.TakeHit(m_damage, a_hit);
+        if (a_hit.transform.gameObject.layer == m_entityCollisionMask) {
+            m_insideEntity = true;
+            return;
+        }
         Destroy(gameObject);
+        if (m_travelParticle.isPlaying)
+            m_travelParticle.Stop();
     }
     private void OnHitObject(Collider a_c) {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
         if (damagableObject != null)
             damagableObject.TakeDamage(m_damage);
+        if (a_c.gameObject.layer == m_entityCollisionMask) {
+            m_insideEntity = true;
+            return;
+        }
         Destroy(gameObject);
+        if (m_travelParticle.isPlaying)
+            m_travelParticle.Stop();
     }
     private void OnHitObject(RaycastHit a_hit, Projectile a_bullet) {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
         if (damagableObject != null)
             damagableObject.TakeImpact(m_damage, a_hit, a_bullet);
+        if (a_hit.transform.gameObject.layer == m_entityCollisionMask) {
+            m_insideEntity = true;
+            return;
+        }
     }
+
     private void Start() {
+        m_insideEntity = false;
+        //If the projectile spawns within a collider, it will activate the appropriate collision response
         Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
-        if (initialEnemyCollision.Length > 0)
+        if (initialEnemyCollision.Length > 0) {
             OnHitObject(initialEnemyCollision[0]);
+            return;
+        }
 
         Collider[] initialEnvironmentCollision = Physics.OverlapSphere(transform.position, .1f, m_environmentCollisionMask);
-        if (initialEnvironmentCollision.Length > 0)
+        if (initialEnvironmentCollision.Length > 0) {
             OnHitObject(initialEnvironmentCollision[0]);
+            return;
+        }
 
-        Collider[] initialRicochetCollision = Physics.OverlapSphere(transform.position, .1f, m_ricochetCollisionMask);
-        if (initialRicochetCollision.Length > 0)
+    Collider[] initialRicochetCollision = Physics.OverlapSphere(transform.position, .1f, m_ricochetCollisionMask);
+        if (initialRicochetCollision.Length > 0) {
             OnHitObject(initialRicochetCollision[0]);
+            return;
+        }
+        if (m_travelParticle != null)
+            m_travelParticle.Play();
     }
 
-    //moves the projectile also counts down till this should be destroyedad
+    //Moves the projectile also counts down until this should be destroyed
     public void Update () {
         float moveDistance = m_speed * Time.deltaTime;
         CheckCollisions(moveDistance);
         transform.Translate(Vector3.forward * moveDistance);
-        if (m_lifeTime <= 0)
-            Destroy(gameObject);
+        if (m_insideEntity)
+            GoThroughEntity(moveDistance);
 
+        if (m_lifeTime <= 0) {
+            Destroy(gameObject);
+            if (m_travelParticle.isPlaying)
+                m_travelParticle.Stop();
+        }
         m_lifeTime -= Time.deltaTime;
 	}
 

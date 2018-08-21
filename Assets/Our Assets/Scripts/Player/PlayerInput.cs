@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 15/08/2018
+//Last edited 21/08/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -34,14 +34,16 @@ public class PlayerInput : MonoBehaviour {
     private WeaponController m_weaponController;
     private Player m_player;
 
+    [SerializeField] private GameObject m_camera;
+    [SerializeField] private GameObject m_crosshair;
     [SerializeField] private Text m_clipAmmoDisplay;
     [SerializeField] private Text m_totalAmmoDisplay;
-    [SerializeField] private GameObject m_crosshair;
-    [SerializeField] private GameObject m_camera;
 
+    [Header("Sounds")]
     [SerializeField] private AudioSource m_clothesRustleSound;
     [SerializeField] private AudioSource m_walkingSound;
     [SerializeField] private AudioSource m_rollSound;
+    [Header("Particles")]
     [SerializeField] private ParticleSystem m_clothesRustleParticleSystem;
     [SerializeField] private ParticleSystem m_walkingParticleSystem;
     [SerializeField] private ParticleSystem m_rollParticleSystem;
