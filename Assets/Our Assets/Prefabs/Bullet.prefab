@@ -56,7 +56,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 067833d8e7ebe554aa6e163d1201593c, type: 2}
+  - {fileID: 2100000, guid: 413befd66bdd84d569871d0524b4685a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -94,3 +94,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1e46d460e8e8354094e419d2f5696d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_bulletKillTime: 1
+  m_enterEntityParticle: {fileID: 0}
+  m_enterParticleTimer: 1
+  m_enterParticleDist: 0.1
+  m_exitEntityParticle: {fileID: 0}
+  m_exitParticleTimer: 1
+  m_exitParticleDist: 0.1
+  m_ricochetParticle: {fileID: 0}
+  m_ricochetParticleTimer: 1
+  m_travelParticle: {fileID: 0}
+  m_environmentCollisionMasks: []
+  m_environmentParticles: []
+  m_environmentParticleTimers: []
+  m_environmentParticleDists: []
