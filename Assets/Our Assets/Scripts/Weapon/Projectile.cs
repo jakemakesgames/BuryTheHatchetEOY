@@ -98,10 +98,6 @@ public class Projectile : MonoBehaviour {
         if (m_insideEntity)
             return;
         Destroy(gameObject);
-        if (m_travelParticle != null) {
-            if (m_travelParticle.isPlaying)
-                m_travelParticle.Stop();
-        }
     }
     private void OnHitObject(Collider a_c, bool a_hitEntity) {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
@@ -111,10 +107,6 @@ public class Projectile : MonoBehaviour {
         if (m_insideEntity)
             return;
         Destroy(gameObject);
-        if (m_travelParticle != null) {
-            if (m_travelParticle.isPlaying)
-                m_travelParticle.Stop();
-        }
     }
     private void OnHitObject(RaycastHit a_hit, Projectile a_bullet, bool a_hitEntity) {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
@@ -145,8 +137,9 @@ public class Projectile : MonoBehaviour {
             OnHitObject(initialRicochetCollision[0], false);
             return;
         }
-        if (m_travelParticle != null)
-            m_travelParticle.Play();
+        if (m_travelParticle != null) {
+            m_travelParticle = Instantiate(m_travelParticle, transform);
+        }
     }
 
     //Moves the projectile also counts down until this should be destroyed
@@ -159,10 +152,6 @@ public class Projectile : MonoBehaviour {
 
         if (m_lifeTime <= 0) {
             Destroy(gameObject);
-            if (m_travelParticle != null) {
-                if (m_travelParticle.isPlaying)
-                    m_travelParticle.Stop();
-            }
         }
         m_lifeTime -= Time.deltaTime;
 	}
