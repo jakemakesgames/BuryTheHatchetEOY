@@ -65,7 +65,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1074724821504698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.019, y: -0.065, z: 0.086}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4092289268160408}
@@ -141,13 +141,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b65f9015cd6712f489fd288f8345af39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_reloadSound: {fileID: 0}
+  m_shootSound: {fileID: 0}
+  m_shootParticleSystem: {fileID: 0}
+  m_smokeParticleSystem: {fileID: 0}
   m_muzzle: {fileID: 4092289268160408}
   m_projectile: {fileID: 114829323488259280, guid: 1a01424ec0f630f47b3c002f83639a55,
     type: 2}
-  m_msBetweenShots: 100
-  m_reloadTimeInMilliseconds: 100
-  m_muzzleVelocity: 15
-  m_bulletLifeTime: 15
+  m_msBetweenShots: 580
+  m_reloadTimeInMilliseconds: 2000
+  m_muzzleVelocity: 20
+  m_bulletLifeTime: 1
   m_dispersionAngle: 0
   m_numProjectilesPerShot: 1
   m_burstProjectiles: 1
@@ -157,4 +161,4 @@ MonoBehaviour:
   m_isReloading: 0
   m_isAutomatic: 0
   m_currentAmmo: 100
-  m_currentClip: 6
+  m_currentClip: 5
