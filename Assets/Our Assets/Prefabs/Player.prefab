@@ -2068,10 +2068,10 @@ GameObject:
   - component: {fileID: 33930972553864868}
   - component: {fileID: 136361415522540008}
   - component: {fileID: 23500645848927442}
-  - component: {fileID: 114458206597468066}
   - component: {fileID: 195865846727744702}
   - component: {fileID: 114219781730608420}
   - component: {fileID: 114494286414739098}
+  - component: {fileID: 114465586240957604}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -3946,8 +3946,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1999925407510398}
-  m_LocalRotation: {x: 0, y: -0.7278549, z: 0, w: 0.68573123}
-  m_LocalPosition: {x: 14.57, y: 1.5, z: -9.84}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4781331482718442}
@@ -4123,7 +4123,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5778159e463981f4eb7ae2dc4350093f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_equippedWeaponInumerator: 1
   m_speed: 400
   m_dashTime: 0.1
   m_dashSpeed: 100
@@ -4131,8 +4130,14 @@ MonoBehaviour:
   m_totalAmmoDisplay: {fileID: 0}
   m_crosshair: {fileID: 0}
   m_camera: {fileID: 0}
+  m_clothesRustleSound: {fileID: 0}
+  m_walkingSound: {fileID: 0}
+  m_rollSound: {fileID: 0}
+  m_clothesRustleParticleSystem: {fileID: 0}
+  m_walkingParticleSystem: {fileID: 0}
+  m_rollParticleSystem: {fileID: 0}
   playerAnimator: {fileID: 95662078434291026}
---- !u!114 &114458206597468066
+--- !u!114 &114465586240957604
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -4140,19 +4145,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1999925407510398}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9fe1159607e4974ca8e92f28017f448, type: 3}
+  m_Script: {fileID: 11500000, guid: f9759742c2d3d7e47b2cfe6197efc00b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_weaponHold: {fileID: 4872053998842146}
   m_startingGun: {fileID: 114602979445381950, guid: a1c393be65c62c84e987b70f8b708bb3,
     type: 2}
-  m_startingMelee: {fileID: 0}
+  m_startingMelee: {fileID: 114496311847859846, guid: 5e68efd63c582db4b9dc21328ce22ea5,
+    type: 2}
   m_entityCollisionMask:
     serializedVersion: 2
     m_Bits: 512
   m_terrainCollisionMask:
     serializedVersion: 2
-    m_Bits: 3072
+    m_Bits: 2048
+  m_ricochetCollisionMask:
+    serializedVersion: 2
+    m_Bits: 8192
 --- !u!114 &114494286414739098
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4165,12 +4174,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_maxHealth: 100
-  m_startingMoney: 0
-  m_equippedWeapon: {fileID: 0}
-  m_heldWeapons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  m_hitSound: {fileID: 0}
+  m_dieSound: {fileID: 0}
+  m_hitParticleSystem: {fileID: 0}
+  m_dieParticleSystem: {fileID: 0}
+  m_weaponsAvailableToPlayer: 
+  m_heldWeapons: []
+  m_playerAnimator: {fileID: 0}
 --- !u!136 &136361415522540008
 CapsuleCollider:
   m_ObjectHideFlags: 1
