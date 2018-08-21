@@ -27,6 +27,7 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager m_instance;
 
+    //Creates a Singleton
     private void Awake()
     {
         if (m_instance == null)
@@ -63,22 +64,26 @@ public class SoundManager : MonoBehaviour
         return m_masterSlider.value;
     }
 
+    //Sound Effect Slider Controls
     public void SFXVolume()
     {
         m_buttonSound.volume = m_SFXSlider.value * m_masterSlider.value;
         m_backSound.volume = m_SFXSlider.value * m_masterSlider.value;
     }
 
+    //Music Slider Controls
     public void MusicVolume()
     {
         m_musicSound.volume = m_musicSlider.value * m_masterSlider.value;
     }
 
+    //Button Play Sound
     public void ButtonSound()
     {
         m_buttonSound.Play();
     }
 
+    //Escape Play Sound
     public void BackSound()
     {
         m_backSound.Play();
