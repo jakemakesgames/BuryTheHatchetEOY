@@ -36,7 +36,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1420241587065844}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -93.224266, y: 3.256402, z: -76.760506}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 0}
@@ -56,7 +56,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 067833d8e7ebe554aa6e163d1201593c, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -94,3 +94,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1e46d460e8e8354094e419d2f5696d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_bulletKillTime: 1
+  m_enterEntityParticle: {fileID: 1851904425329750, guid: e6838b17ada575b4eab0be664bf2de76,
+    type: 2}
+  m_enterParticleTimer: 1
+  m_enterParticleDist: 0.1
+  m_exitEntityParticle: {fileID: 1424964935570490, guid: cffac072e86d8f243b09050aac5dae6d,
+    type: 2}
+  m_exitParticleTimer: 1
+  m_exitParticleDist: 0.1
+  m_ricochetParticle: {fileID: 0}
+  m_ricochetParticleTimer: 1
+  m_travelParticle: {fileID: 0}
+  m_environmentCollisionMasks:
+  - serializedVersion: 2
+    m_Bits: 1024
+  m_environmentParticles:
+  - {fileID: 0}
+  m_environmentParticleTimers:
+  - 1
+  m_environmentParticleDists:
+  - 1
