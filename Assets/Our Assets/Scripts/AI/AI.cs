@@ -57,14 +57,14 @@ public class AI : MonoBehaviour, IDamagable
     [SerializeField]
     LayerMask m_coverLayer;
 
-    [Tooltip("Set this to the Environment layer for enivironment collision detection")]
+    [Tooltip("Set this to the Environment layer for environment collision detection")]
     [SerializeField]
     LayerMask m_environmentLayer;
 
     float m_health;
     float m_distBetweenPlayer;
     float m_gunDistToPlayer;
-    bool m_isDead;
+    [SerializeField] float m_rayDetectBufferDist;
 
     STATE m_state;
 
@@ -72,6 +72,7 @@ public class AI : MonoBehaviour, IDamagable
     LineRenderer m_line;
     private GameObject m_player;
     private List<Transform> m_coverPoints;
+    public Animator enemyAnimator;
 
     private WeaponController m_weaponController;
     private Gun m_gun;
@@ -131,6 +132,7 @@ public class AI : MonoBehaviour, IDamagable
 
     void Update()
     {
+        //To Do: put this in coroutine
         Debug.Log("Current State: " + m_state);
         DrawLinePath(m_agent.path);
         m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
@@ -149,6 +151,8 @@ public class AI : MonoBehaviour, IDamagable
             Attack();
 
         m_stateMachine.Update();
+
+        UpdateAnims();
     }
 
     //Check states and return true if there is a state change
@@ -187,7 +191,9 @@ public class AI : MonoBehaviour, IDamagable
             if (m_gun.m_isReloading == false)
             {
                 if (CanAttack() == false)
+                {
                     m_state = STATE.SEEK;
+                }
             }
         }
 
@@ -226,14 +232,22 @@ public class AI : MonoBehaviour, IDamagable
     bool CanAttack()
     {
         Vector3 vecBetween = (m_player.transform.position - m_weaponController.m_weaponHold.transform.position);
+        Vector3 rayPos1 = m_weaponController.m_weaponHold.position - (m_weaponController.m_weaponHold.forward * m_rayDetectBufferDist);
+        Vector3 rayPos2 = rayPos1 + m_weaponController.m_weaponHold.right * 0.1f;
+        rayPos1 -= m_weaponController.m_weaponHold.right * 0.1f;
+
+        Ray ray1 = new Ray(rayPos1, vecBetween);
+        Ray ray2 = new Ray(rayPos2, vecBetween);
         RaycastHit hit;
 
-        Debug.DrawRay(m_weaponController.m_weaponHold.transform.position, vecBetween, Color.green);
+        Debug.DrawRay(rayPos1, vecBetween, Color.green);
+        Debug.DrawRay(rayPos2, vecBetween, Color.green);
 
-        if (Physics.Raycast(m_weaponController.m_weaponHold.transform.position, vecBetween, out hit, 1000.0f, m_coverLayer))
+        if (Physics.Raycast(ray1, out hit, vecBetween.sqrMagnitude + m_rayDetectBufferDist, m_environmentLayer))
             return false;
-        if (Physics.Raycast(m_weaponController.m_weaponHold.transform.position, vecBetween, out hit, 1000.0f, m_environmentLayer))
+        if (Physics.Raycast(ray2, out hit, vecBetween.sqrMagnitude + m_rayDetectBufferDist, m_environmentLayer))
             return false;
+
 
         return true;
     }
@@ -241,7 +255,10 @@ public class AI : MonoBehaviour, IDamagable
     void Attack()
     {
         if (m_gunDistToPlayer < m_attackRadius && !m_gun.GetIsEmpty())
+        {
+            m_weaponController.m_weaponHold.LookAt(PlayerPosition);
             m_gun.Shoot();
+        }
     }
 
     void Die()
@@ -250,7 +267,6 @@ public class AI : MonoBehaviour, IDamagable
             OnDeath(this);
 
         Destroy(gameObject);
-        m_isDead = true;
     }
     public void TakeHit(int a_damage, RaycastHit a_hit)
     {
@@ -265,6 +281,17 @@ public class AI : MonoBehaviour, IDamagable
     public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile)
     {
 
+    }
+
+    private void UpdateAnims()
+    {
+        float myVelocity = m_agent.velocity.magnitude;
+        Vector3 localVel = transform.InverseTransformDirection(m_agent.velocity);
+
+        enemyAnimator.SetFloat("Velocity", myVelocity);
+
+        enemyAnimator.SetFloat("MovementDirectionRight", localVel.x);
+        enemyAnimator.SetFloat("MovementDirectionForward", localVel.z);
     }
 
     void DrawLinePath(NavMeshPath path)

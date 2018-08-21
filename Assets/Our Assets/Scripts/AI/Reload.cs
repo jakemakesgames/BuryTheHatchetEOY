@@ -4,7 +4,7 @@ using UnityEngine.AI;
 
 //Mark Phillips
 //Created 13/08/2018
-//Last edited 15/08/2018
+//Last edited 21/08/2018
 
 public class Reload : IState<AI>
 {
@@ -16,13 +16,11 @@ public class Reload : IState<AI>
 
     public void Enter(AI a_owner)
     {
-        Debug.Log("Entering Reload");
         m_owner = a_owner;
     }
 
     public void Exit(AI a_owner)
     {
-        Debug.Log("Exiting Reload");
     }
 
     public void Update(AI a_owner)
@@ -36,26 +34,18 @@ public class Reload : IState<AI>
             }
 
             if (m_owner.Agent.remainingDistance >= m_owner.CoverFoundThreshold)
-            {
                 FindNearestCover(); // stop finding a new cover position when within threshold
-            }
 
             if (HasDestinationReached() == false)
-            {
                 SetPathToCover();
-            }
             else
             {
-                m_owner.Gun.Reload();
-                m_coverFound = false;
+                ReloadGun();
             }
-
         }
         else
-        {
-            //m_owner.Agent.SetDestination(m_owner.transform.position);
-            m_owner.Gun.Reload();
-        }
+            ReloadGun();
+        
     }
 
     private bool HasDestinationReached()
@@ -88,16 +78,11 @@ public class Reload : IState<AI>
         m_owner.Agent.destination = m_targetLocation;
     }
 
-    //private bool IsPathValid()
-    //{
-    //    NavMeshPath navMeshPath = new NavMeshPath();
-    //    m_owner.Agent.CalculatePath(m_targetLocation, navMeshPath);
-    //
-    //    if (navMeshPath.status != NavMeshPathStatus.PathComplete)
-    //        return false;
-    //    else  
-    //        return true;
-    //}
+    private void ReloadGun()
+    {
+        m_owner.Agent.SetDestination(m_owner.transform.position);
+        m_owner.Gun.Reload();
+    }
 
     void FindNearestCover()
     {

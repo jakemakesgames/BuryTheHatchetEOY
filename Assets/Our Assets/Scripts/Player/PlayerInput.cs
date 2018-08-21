@@ -48,7 +48,7 @@ public class PlayerInput : MonoBehaviour {
     [SerializeField] private ParticleSystem m_walkingParticleSystem;
     [SerializeField] private ParticleSystem m_rollParticleSystem;
 
-    //Charlie
+    [Header("CHARLIE!")]
     public Animator playerAnimator;
 
     //calls the equipped weapons attacking method (swing for melee or shoot for gun)
@@ -247,8 +247,8 @@ public class PlayerInput : MonoBehaviour {
         
         playerAnimator.SetFloat("Velocity", myVelocity);
         
-        playerAnimator.SetFloat("MovementDirectionRight", localVel.x * transform.right.x);
-        playerAnimator.SetFloat("MovementDirectionForward", localVel.z * transform.forward.z);
+        playerAnimator.SetFloat("MovementDirectionRight", localVel.x);
+        playerAnimator.SetFloat("MovementDirectionForward", localVel.z);
 
         //ORIGINAL CODE//////////////////////////////////////////////////////////////////////////////
         //        playerAnimator.SetFloat ("MovementDirectionRight", m_velocity.x * transform.right.x);
