@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+//This script only holds the interaction for the Old Bounty Board
+
 public class Interactable : MonoBehaviour
 {
     #region Variables
@@ -41,6 +43,8 @@ public class Interactable : MonoBehaviour
     #endregion
 
     #region OnTriggerStay
+
+    //While the player stays in the area near the bounty board, a E prompt will appear
     public void OnTriggerStay(Collider other)
     {
         if (other.tag == "Player")
