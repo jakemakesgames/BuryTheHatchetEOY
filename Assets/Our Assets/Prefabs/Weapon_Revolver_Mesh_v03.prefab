@@ -146,7 +146,7 @@ MonoBehaviour:
   m_shootParticleSystem: {fileID: 0}
   m_smokeParticleSystem: {fileID: 0}
   m_muzzle: {fileID: 4092289268160408}
-  m_projectile: {fileID: 114829323488259280, guid: 1a01424ec0f630f47b3c002f83639a55,
+  m_projectile: {fileID: 114829323488259280, guid: a883ad10fa123b4468de6a534da42a33,
     type: 2}
   m_msBetweenShots: 580
   m_reloadTimeInMilliseconds: 2000
