@@ -25,10 +25,12 @@ public class Player : MonoBehaviour, IDamagable {
 
     private bool m_dead;
     private int m_health;
+    private float m_deathFadeOutTimer;
     private Vector3 m_respawnPoint;
     private List<WeaponInfo> m_heldWeaponsInfo = new List<WeaponInfo>();
     private AudioSource m_audioSource;
     [SerializeField] private int m_maxHealth;
+    [SerializeField] private float m_deathFadeOutTime;
     [SerializeField] private AudioClip m_hitSound;
     [SerializeField] private AudioClip m_dieSound;
     [SerializeField] private ParticleSystem m_hitParticleSystem;
@@ -99,11 +101,15 @@ public class Player : MonoBehaviour, IDamagable {
             OnDeath();
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Death");
-
         if (m_dieSound != null)
             m_audioSource.PlayOneShot(m_dieSound);
+        Respawn();
+    }
+
+    public void Respawn() {
         transform.position = m_respawnPoint;
-        m_health = m_maxHealth / 2;
+        gameObject.tag = "Player";
+        m_deathFadeOutTimer = m_deathFadeOutTime;
     }
 
     private void Awake () {
@@ -120,10 +126,18 @@ public class Player : MonoBehaviour, IDamagable {
                 m_heldWeaponsInfo.Add(new WeaponInfo(true, 0, 0));
         }
         m_audioSource = GetComponent<AudioSource>();
+        m_deathFadeOutTimer = m_deathFadeOutTime;
     }
     
     private void Update () {
         if (m_health > m_maxHealth)
             m_health = m_maxHealth;
+        if(m_dead) {
+            m_deathFadeOutTimer -= Time.deltaTime;
+            gameObject.tag = "DeadPlayer";
+            //fade the screen to black
+            if (m_deathFadeOutTimer <= 0)
+                Respawn();
+        }
     }
 }
