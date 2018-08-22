@@ -134,14 +134,14 @@ public class AI : MonoBehaviour, IDamagable
 
     void Update()
     {
-        //To Do: put this in coroutine
-        Debug.Log("Current State: " + m_state);
-        DrawLinePath(m_agent.path);
-        m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
-        m_gunDistToPlayer = Vector3.Distance(m_weaponController.GetEquippedWeapon().transform.position, m_player.transform.position);
-
         if (m_isDead == false)
         {
+            //To Do: put this in coroutine
+            Debug.Log("Current State: " + m_state);
+            DrawLinePath(m_agent.path);
+            m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
+            m_gunDistToPlayer = Vector3.Distance(m_weaponController.GetEquippedWeapon().transform.position, m_player.transform.position);
+
             if (m_health <= 0)
             {
                 Die();
@@ -269,6 +269,7 @@ public class AI : MonoBehaviour, IDamagable
 
     void Die()
     {
+        m_agent.ResetPath();
         enemyAnimator.SetInteger("WhichDeath", Random.Range(0, deathAnimationCount));
         enemyAnimator.SetTrigger("Death");
         RandomPitch();
