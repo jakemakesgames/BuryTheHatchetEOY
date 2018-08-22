@@ -48,7 +48,7 @@ public class LootManager : MonoBehaviour
         m_ammoChance /= 100;
 
         //Get all enemies and subscribe GenerateLoot to their OnDeath delegate
-        AI[] enemies = FindObjectsOfType<AI>();
+        Enemy[] enemies = FindObjectsOfType<Enemy>();
 
         for (int i = 0; i < enemies.Length; i++)
         {
@@ -102,6 +102,7 @@ public class LootManager : MonoBehaviour
         }
 
         lootChance = Random.Range(0f, 1f);
+        Debug.Log(lootChance);
 
         if (lootChance <= healthChance)
         {
@@ -116,7 +117,7 @@ public class LootManager : MonoBehaviour
 
     }
 
-    void GenerateLoot(AI deadEnemy)
+    void GenerateLoot(Enemy deadEnemy)
     {
         CalculateStats();
         GameObject loot;
@@ -125,6 +126,7 @@ public class LootManager : MonoBehaviour
         Vector3 spawnPos = new Vector3(randUnitCirclePos.x, 0, randUnitCirclePos.y) + deadEnemy.transform.position;
         Quaternion randomRotationY = RandomRotationY(deadEnemy.transform.rotation);
 
+  
         //Instantiate loot;
         if (m_lootType == 0)
         {
