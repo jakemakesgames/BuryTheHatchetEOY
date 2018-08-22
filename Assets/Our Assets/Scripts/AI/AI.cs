@@ -10,6 +10,7 @@ using StateMachine;
 
 [RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(AudioSource))]
 public class AI : MonoBehaviour, IDamagable
 {
     enum STATE
@@ -21,49 +22,45 @@ public class AI : MonoBehaviour, IDamagable
         RELOAD
     }
 
-
     [Tooltip("Max health value, currently at 5 (5 hits to die).")]
-    [SerializeField]
-    float m_maxHealth = 5;
+    [SerializeField] float m_maxHealth = 5;
 
     [Tooltip("Seek radius/Blue sphere (large) - distance to seek to player.")]
-    [SerializeField]
-    float m_seekRadius;
+    [SerializeField] float m_seekRadius;
 
     [Tooltip("Flee radius/Blue sphere (small) - distance to flee from player.")]
-    [SerializeField]
-    float m_fleeRadius;
+    [SerializeField] float m_fleeRadius;
 
     [Tooltip("Cover radius/Green sphere - finds objects on the cover layer.")]
-    [SerializeField]
-    float m_coverRadius;
+    [SerializeField] float m_coverRadius;
 
 
     [Tooltip("Accounts for floating point precision - when AI knows to switch to Stationary")]
-    [SerializeField]
-    float m_deadZone;
+    [SerializeField] float m_deadZone;
 
     float m_enemyRadius;
 
     [Tooltip("Attack radius/Red sphere - shoots at player.")]
-    [SerializeField]
-    float m_attackRadius;
+    [SerializeField] float m_attackRadius;
 
     [Tooltip("The distance from enemy to cover point at which to stop calculating a new position.")]
-    [SerializeField]
-    float m_coverFoundThreshold = 3;
+    [SerializeField] float m_coverFoundThreshold = 3;
 
     [Tooltip("Set this to the Cover layer for cover collision detection")]
-    [SerializeField]
-    LayerMask m_coverLayer;
+    [SerializeField] LayerMask m_coverLayer;
 
     [Tooltip("Set this to the Environment layer for environment collision detection")]
-    [SerializeField]
-    LayerMask m_environmentLayer;
+    [SerializeField] LayerMask m_environmentLayer;
+
+    private AudioSource m_audioSource;
+    [Header("Sounds")]
+    [SerializeField] List<AudioClip> m_deathSounds;
+    
 
     float m_health;
     float m_distBetweenPlayer;
     float m_gunDistToPlayer;
+    bool m_isDead = false;
     [SerializeField] float m_rayDetectBufferDist;
 
     STATE m_state;
@@ -72,7 +69,11 @@ public class AI : MonoBehaviour, IDamagable
     LineRenderer m_line;
     private GameObject m_player;
     private List<Transform> m_coverPoints;
-    public Animator enemyAnimator;
+
+    [Header("Animations")]
+    [SerializeField ]private Animator enemyAnimator;
+    [Tooltip("The number of death animations (starting at 0)")]
+    [SerializeField] private int deathAnimationCount;
 
     private WeaponController m_weaponController;
     private Gun m_gun;
@@ -113,6 +114,7 @@ public class AI : MonoBehaviour, IDamagable
     {
         m_line = GetComponent<LineRenderer>();
         m_agent = GetComponent<NavMeshAgent>();
+        m_audioSource = GetComponent<AudioSource>();
         m_stateMachine = new StateMachine<AI>(this);
         m_stateMachine.ChangeState(new Wander());
 
@@ -138,21 +140,24 @@ public class AI : MonoBehaviour, IDamagable
         m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
         m_gunDistToPlayer = Vector3.Distance(m_weaponController.GetEquippedWeapon().transform.position, m_player.transform.position);
 
-        if (m_health <= 0)
+        if (m_isDead == false)
         {
-            Die();
-            return;
+            if (m_health <= 0)
+            {
+                Die();
+                return;
+            }
+
+            if (CheckStates())
+                SwitchState();
+
+            if (CanAttack())
+                Attack();
+
+            m_stateMachine.Update();
+
+            UpdateAnims();
         }
-
-        if (CheckStates())
-            SwitchState();
-
-        if (CanAttack())
-            Attack();
-
-        m_stateMachine.Update();
-
-        UpdateAnims();
     }
 
     //Check states and return true if there is a state change
@@ -254,20 +259,23 @@ public class AI : MonoBehaviour, IDamagable
 
     void Attack()
     {
-        if (m_gunDistToPlayer < m_attackRadius && !m_gun.GetIsEmpty())
+        if (m_gunDistToPlayer < m_attackRadius && m_gun.GetIsEmpty() == false && m_gun.m_isReloading ==  false)
         {
             m_weaponController.m_weaponHold.LookAt(PlayerPosition);
+            enemyAnimator.SetTrigger("Shoot");
             m_gun.Shoot();
         }
     }
 
     void Die()
     {
-        if (OnDeath != null)
-            OnDeath(this);
-
-        Destroy(gameObject);
+        enemyAnimator.SetInteger("WhichDeath", Random.Range(0, deathAnimationCount));
+        enemyAnimator.SetTrigger("Death");
+        RandomPitch();
+        m_audioSource.PlayOneShot(m_deathSounds[Random.Range(0, m_deathSounds.Count)]);
+        m_isDead = true;
     }
+
     public void TakeHit(int a_damage, RaycastHit a_hit)
     {
         TakeDamage(a_damage);
@@ -292,6 +300,11 @@ public class AI : MonoBehaviour, IDamagable
 
         enemyAnimator.SetFloat("MovementDirectionRight", localVel.x);
         enemyAnimator.SetFloat("MovementDirectionForward", localVel.z);
+    }
+
+    private void RandomPitch()
+    {
+        m_audioSource.pitch = Random.Range(0.95f, 1.05f);
     }
 
     void DrawLinePath(NavMeshPath path)

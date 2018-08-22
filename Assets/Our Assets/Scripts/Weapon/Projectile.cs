@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 21/08/2018
+//Last edited 22/08/2018
 
 
 public class Projectile : MonoBehaviour {
@@ -23,22 +23,51 @@ public class Projectile : MonoBehaviour {
     [Tooltip("Life time of the bullet after it hits an entity")]
     [SerializeField] private float m_bulletKillTime = 1f;
 
-    [Header("Event collision particles")]
+    [Header("Preset collision effects")]
+    [Tooltip("The particle that will play when the projectile first hits an entity ie; enemy or player")]
     [SerializeField] private GameObject m_enterEntityParticle;
+    [Tooltip("Life time of the particle system")]
     [SerializeField] private float m_enterParticleTimer = 1f;
+    [Tooltip("Distance along the objects 'z' away from impact to play the particles")]
     [SerializeField] private float m_enterParticleDist = 0.1f;
+    [Tooltip("The sound that will play when the projectile first hits an entity")]
+    [SerializeField] private AudioClip m_enterEntityAudioClip;
+
+    [Tooltip("The particle that will play when the projectile exits an entities wound")]
     [SerializeField] private GameObject m_exitEntityParticle;
+    [Tooltip("Life time of the particle system")]
     [SerializeField] private float m_exitParticleTimer = 1f;
+    [Tooltip("Distance along the objects 'z' away from exit wound to play the particles")]
     [SerializeField] private float m_exitParticleDist = 0.1f;
+    [Tooltip("The sound that will play when the projectile exits the entities wound")]
+    [SerializeField] private AudioClip m_exitEntityAudioClip;
+
+    [Tooltip("The particle that will play when the projectile ricochets off the environment")]
     [SerializeField] private GameObject m_ricochetParticle;
+    [Tooltip("Life time of the particle system")]
     [SerializeField] private float m_ricochetParticleTimer = 1f;
+    [Tooltip("Distance along the objects 'z' away from impact to play the particles")]
+    [SerializeField] private float m_ricochetParticleDist = 0.1f;
+    [Tooltip("The sound that will play when the projectile ricochets off the environment")]
+    [SerializeField] private AudioClip m_ricochetAudioClip;
+
+    [Tooltip("Life time of the bullet after it hits an entity")]
     [SerializeField] private GameObject m_travelParticle;
 
-    [Header("Environmental collision particles")]
+    [Header("Custom Environment effects")]
+    [Tooltip("Audio source prefab")]
+    [SerializeField] private AudioSource m_audioSource;
+    [Tooltip("For each of these lists, the information will control what happens when the projectil hits an object on the specified layer")]
     [SerializeField] private List<LayerMask> m_environmentCollisionMasks;
+    [Tooltip("Particle to play on impact")]
     [SerializeField] private List<GameObject> m_environmentParticles;
+    [Tooltip("Life time of particle system")]
     [SerializeField] private List<float> m_environmentParticleTimers;
+    [Tooltip("Distance along the objects 'z' away from impact to play the particles")]
     [SerializeField] private List<float> m_environmentParticleDists;
+    [Tooltip("Dound to play on impact")]
+    [SerializeField] private List<AudioClip> m_environmentAudioClips;
+
 
     public void SetSpeed(float a_speed) {
         m_speed = a_speed;
@@ -102,6 +131,8 @@ public class Projectile : MonoBehaviour {
                 if (m_environmentParticles[i] != null) {
                     GameObject GO = Instantiate(m_environmentParticles[i], transform.position - transform.forward * m_environmentParticleDists[i], transform.rotation);
                     Destroy(GO, m_environmentParticleTimers[i]);
+                    AudioSource audio = Instantiate(m_audioSource, transform.position, transform.rotation);
+                    audio.PlayOneShot(m_environmentAudioClips[i]);
                 }
             }
         }
