@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 21/08/2018
+//Last edited 22/08/2018
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(AudioSource))]
@@ -119,6 +119,7 @@ public class Player : MonoBehaviour, IDamagable {
             else if (m_heldWeapons[i].GetComponent<Melee>() != null)
                 m_heldWeaponsInfo.Add(new WeaponInfo(true, 0, 0));
         }
+        m_audioSource = GetComponent<AudioSource>();
     }
     
     private void Update () {
