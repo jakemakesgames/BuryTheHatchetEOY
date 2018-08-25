@@ -5,11 +5,8 @@ using UnityEngine;
 //Created 31/07/2018
 //Last edited 25/08/2018
 
+    [RequireComponent(typeof(AudioSource))]
 public class Melee : MonoBehaviour {
-
-    [Tooltip("The points on the weapon which will shoot out" +
-        "a ray each to detect for collision")]
-    [SerializeField] private GameObject[] m_contactPoints;
     [Tooltip("DOES NOT CONTROL SPEED," +
         "Is used to tell they raycasts how far to shoot out from the blade")]
     [SerializeField] private float m_swingSpeed;
@@ -22,37 +19,40 @@ public class Melee : MonoBehaviour {
     [Tooltip("What destroyable objects can be hit by this weapon")]
     [SerializeField] private LayerMask m_destroyableCollisionMask;
     [SerializeField] private Animator m_animator;
+    [Tooltip("The points on the weapon which will shoot out" +
+        "a ray each to detect for collision")]
+    [SerializeField] private GameObject[] m_contactPoints;
+    [Tooltip("The sound made by this weapon when it is swung")]
+    [SerializeField] private AudioClip m_swooshSound;
+    [Tooltip("The sound made when this weapon collides with a living entity")]
+    [SerializeField] private AudioClip m_hitEntitySound;
 
+    private float m_coolDownTimer;
     private float m_skinWidth = 0.1f;
     private bool m_isSwinging = false;
-    private bool m_isIlde = true;
+    private bool m_isIdle = true;
+    private AudioSource m_audioSource;
 
-    public bool IsIlde {
-        get { return m_isIlde; }
-        set { m_isIlde = value; }
+    public bool IsIdle {
+        get { return m_isIdle; }
+        set { m_isIdle = value; }
     }
 
     public void Swing() {
-        if (!m_isSwinging)
-        {
-            //do the swing animaion
-
+        if (!m_isSwinging && m_coolDownTimer <= 0) {
             m_isSwinging = true;
-            IsIlde = false;
+            IsIdle = false;
+            m_audioSource.PlayOneShot(m_swooshSound);
+            m_coolDownTimer = m_coolDown;
         }
     }
 
     //to be called by the animator in the animations last frame
     public void EndSwing() {
         m_isSwinging = false;
-        IsIlde = true;
+        IsIdle = true;
     }
 
-    public void Update() {
-        if (m_isSwinging) {
-            CheckCollisions(m_swingSpeed);
-        }
-    }
 
     public void SetEntityCollisionLayer(LayerMask a_collsionMask) {
         m_entityCollisionMask = a_collsionMask;
@@ -68,6 +68,9 @@ public class Melee : MonoBehaviour {
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
                 OnHitObject(hit);
+                if (m_hitEntitySound != null) {
+                    m_audioSource.PlayOneShot(m_hitEntitySound);
+                }
             }
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_destroyableCollisionMask)) {
                 OnHitObject(hit);
@@ -84,6 +87,19 @@ public class Melee : MonoBehaviour {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
         if (damagableObject != null) {
             damagableObject.TakeDamage(m_damage);
+        }
+    }
+
+    private void Awake() {
+        m_audioSource = GetComponent<AudioSource>();
+    }
+
+    private void Update() {
+        if (m_isSwinging) {
+            CheckCollisions(m_swingSpeed);
+        }
+        else if(m_coolDownTimer > 0) {
+            m_coolDownTimer -= Time.deltaTime;
         }
     }
 }
