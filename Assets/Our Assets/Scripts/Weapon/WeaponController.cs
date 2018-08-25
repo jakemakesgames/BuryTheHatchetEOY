@@ -8,9 +8,13 @@ using UnityEngine;
 
 public class WeaponController : MonoBehaviour {
 
-    [SerializeField] private Transform m_weaponHold;
+    [Tooltip("The position the equipped weapon will be")]
+    [SerializeField] public Transform m_weaponHold;
+    [Tooltip("If anything is here it will be equipped when the game starts")]
     [SerializeField] private Gun m_startingGun;
     private Gun m_equippedGun;
+    [Tooltip("If there is anything here and not in " +
+        "the starting gun it will be equipped when the game starts")]
     [SerializeField] private Melee m_startingMelee;
     private Melee m_equippedMelee;
     [SerializeField] private LayerMask m_entityCollisionMask;
@@ -18,7 +22,7 @@ public class WeaponController : MonoBehaviour {
     [SerializeField] private LayerMask m_terrainCollisionMask;
     [Tooltip("The layer that objects bullets should ricochet off should be assigned")]
     [SerializeField] private LayerMask m_ricochetCollisionMask;
-    [Tooltip("The layer on which object that can be destroyed are to be assigned" +
+    [Tooltip("The layer on which object that can be destroyed are to be assigned " +
         "Currently only works for the melee weapon")]
     [SerializeField] private LayerMask m_destroyableCollisionMask;
 

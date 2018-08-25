@@ -181,7 +181,7 @@ public class Projectile : MonoBehaviour {
             return;
         }
 
-    Collider[] initialRicochetCollision = Physics.OverlapSphere(transform.position, .1f, m_ricochetCollisionMask);
+        Collider[] initialRicochetCollision = Physics.OverlapSphere(transform.position, .1f, m_ricochetCollisionMask);
         if (initialRicochetCollision.Length > 0) {
             OnHitObject(initialRicochetCollision[0], false);
             return;
@@ -203,5 +203,4 @@ public class Projectile : MonoBehaviour {
         }
         m_lifeTime -= Time.deltaTime;
 	}
-
 }

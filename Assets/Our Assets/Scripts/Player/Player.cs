@@ -29,33 +29,36 @@ public class Player : MonoBehaviour, IDamagable {
     private Vector3 m_respawnPoint;
     private List<WeaponInfo> m_heldWeaponsInfo = new List<WeaponInfo>();
     private AudioSource m_audioSource;
-    [SerializeField] private int m_maxHealth;
-    [SerializeField] private float m_deathFadeOutTime;
-    [Tooltip("The audio clip that will play whenever the player gets hit")]
-    [SerializeField] private AudioClip m_hitSound;
-    [Tooltip("The audio clip  that will play once the player has died")]
-    [SerializeField] private AudioClip m_dieSound;
-    [Tooltip("The particles that will play when ever the player gets hit")]
-    [SerializeField] private ParticleSystem m_hitParticleSystem;
-    [Tooltip("The particles that will play once the player has died")]
-    [SerializeField] private ParticleSystem m_dieParticleSystem;
-    [Header("Needs to be the same number as held weapons")]
-    [Tooltip("which weapons assigned in the below" +
-        "list are currently available to the player")]
-    public List<bool> m_weaponsAvailableToPlayer;
-    [Header("Needs to be filled with weapon prefabs")]
-    [Tooltip("All weapons the player will be able to wield" +
-        "throughout the game and which position they'll be stored")]
-    public List<GameObject> m_heldWeapons;
-    public Animator m_playerAnimator;
-    public event System.Action OnDeath;
 
+    #region Inspector Variables
+        [SerializeField] private int m_maxHealth;
+        [SerializeField] private float m_deathFadeOutTime;
+        [Tooltip("The audio clip that will play whenever the player gets hit")]
+        [SerializeField] private AudioClip m_hitSound;
+        [Tooltip("The audio clip  that will play once the player has died")]
+        [SerializeField] private AudioClip m_dieSound;
+        [Tooltip("The particles that will play when ever the player gets hit")]
+        [SerializeField] private ParticleSystem m_hitParticleSystem;
+        [Tooltip("The particles that will play once the player has died")]
+        [SerializeField] private ParticleSystem m_dieParticleSystem;
+        [Header("Needs to be the same number as held weapons")]
+        [Tooltip("which weapons assigned in the below " +
+            "list are currently available to the player")]
+        public List<bool> m_weaponsAvailableToPlayer;
+        [Header("Needs to be filled with weapon prefabs")]
+        [Tooltip("All weapons the player will be able to wield " +
+            "throughout the game and which position they'll be stored")]
+        public List<GameObject> m_heldWeapons;
+        public Animator m_playerAnimator;
+        public event System.Action OnDeath;
+    #endregion
 
     //IDamageble interfaces methods for taking damage
+    #region IDamagable methods
     public void TakeHit(int a_damage, RaycastHit a_hit) {
         TakeDamage(a_damage);
     }
-    public void TakeDamage(int a_damage) {
+        public void TakeDamage(int a_damage) {
         m_health -= a_damage;
         if (m_health <= 0 && !m_dead)
             Die();
@@ -64,10 +67,10 @@ public class Player : MonoBehaviour, IDamagable {
         if (m_hitSound != null)
             m_audioSource.PlayOneShot(m_hitSound);
     }
-    public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile) {
+        public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile) {
         TakeDamage(a_damage);
     }
-
+    #endregion
 
     //Variable control
     public void Heal(int a_healAmount) { m_health += a_healAmount; }
@@ -93,15 +96,17 @@ public class Player : MonoBehaviour, IDamagable {
     }
 
     //Returns information about the weapon which is about to be equipped
-    public bool ToEquipIsMelee(int a_iterator) {
+    #region To Equip Information
+        public bool ToEquipIsMelee(int a_iterator) {
         return m_heldWeaponsInfo[a_iterator].m_isMelee;
     }
-    public int ToEquipCurrentClip(int a_iterator) {
+        public int ToEquipCurrentClip(int a_iterator) {
         return m_heldWeaponsInfo[a_iterator].m_curClip;
     }
-    public int ToEquipCurrentReserve(int a_iterator) {
+        public int ToEquipCurrentReserve(int a_iterator) {
         return m_heldWeaponsInfo[a_iterator].m_curReserve;
     }
+    #endregion
 
     //Calls all subscribed OnDeath methods when the player dies
     //and tells the player it is dead allowing for other 
@@ -124,6 +129,7 @@ public class Player : MonoBehaviour, IDamagable {
         m_dead = false;
     }
 
+    //Sets up health, weapon information and respawn point
     private void Awake () {
         m_health = m_maxHealth;
         m_heldWeaponsInfo.Capacity = m_heldWeapons.Count;

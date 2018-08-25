@@ -13,56 +13,64 @@ using UnityEngine.AI;
 [RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(Player))]
 public class PlayerInput : MonoBehaviour {
-    
-    [Header("Movement variables")]
-    [Tooltip("Movement speed of the player")]
-    [SerializeField] private float m_speed = 10f;
-    [Tooltip("Time spent in the roll")]
-    [SerializeField] private float m_dashTime = 10f;
-    [Tooltip("Movement speed of the player during the roll")]
-    [SerializeField] private float m_dashSpeed = 1000f;
 
-    private int m_equippedWeaponInumerator;
-    private int m_ammoInClip;
-    private int m_ammoInReserve;
-    private float m_nmaSpeed;
-    private float m_dashTimer = 0;
-    private float m_nmaAngledSpeed;
-    private float m_nmaAcceleration;
-    private bool m_isHoldingGun;
-    private bool m_isDashing = false;
-    private NavMeshAgent m_nma;
-    private Vector3 m_velocity;
-	private Vector3 m_movementVector;
-    private Camera m_viewCamera;
-    private WeaponController m_weaponController;
-    private Player m_player;
+    #region Movement variables
+        [Header("Movement variables")]
+        [Tooltip("Movement speed of the player")]
+        [SerializeField] private float m_speed = 10f;
+        [Tooltip("Time spent in the roll")]
+        [SerializeField] private float m_dashTime = 10f;
+        [Tooltip("Movement speed of the player during the roll")]
+        [SerializeField] private float m_dashSpeed = 1000f;
+    #endregion
 
-    [Header("In world game objects")]
-    [Tooltip("The camera used to orient the player when the camera rotates, required for movement to work")]
-    [SerializeField] private GameObject m_camera;
-    [Tooltip("This object will be where ever the player is looking")]
-    [SerializeField] private GameObject m_crosshair;
-    [Tooltip("Will change the text of this object to the amount " +
-        "of ammo left in the currently equipped gun's clip")]
-    [SerializeField] private Text m_clipAmmoDisplay;
-    [Tooltip("will change the text of this object to the amount of ammo" +
-        "the player has left excluding the ammo in the clip")]
-    [SerializeField] private Text m_totalAmmoDisplay;
+    #region private member variables
+        private int m_equippedWeaponInumerator;
+        private int m_ammoInClip;
+        private int m_ammoInReserve;
+        private float m_nmaSpeed;
+        private float m_dashTimer = 0;
+        private float m_nmaAngledSpeed;
+        private float m_nmaAcceleration;
+        private bool m_isHoldingGun;
+        private bool m_isDashing = false;
+        private NavMeshAgent m_nma;
+        private Vector3 m_velocity;
+    	private Vector3 m_movementVector;
+        private Camera m_viewCamera;
+        private WeaponController m_weaponController;
+        private Player m_player;
+    #endregion
 
+    #region In world game objects
+        [Header("In world game objects")]
+        [Tooltip("The camera used to orient the player when the camera rotates, required for movement to work")]
+        [SerializeField] private GameObject m_camera;
+        [Tooltip("This object will be where ever the player is looking")]
+        [SerializeField] private GameObject m_crosshair;
+        [Tooltip("Will change the text of this object to the amount " +
+            "of ammo left in the currently equipped gun's clip")]
+        [SerializeField] private Text m_clipAmmoDisplay;
+        [Tooltip("will change the text of this object to the amount of ammo" +
+            "the player has left excluding the ammo in the clip")]
+        [SerializeField] private Text m_totalAmmoDisplay;
+    #endregion
+
+    #region sounds and particles
     [Header("Sounds")]
-    [Tooltip("One of the sounds that'll player when the player moves")]
-    [SerializeField] private AudioClip m_clothesRustleSound;
-    [Tooltip("The sound that'll play when the player is walking")]
-    [SerializeField] private AudioClip m_walkingSound;
-    [Tooltip("The sound that'll play when the player is rolling")]
-    [SerializeField] private AudioClip m_rollSound;
-    [Header("Particles")]
-    [Tooltip("Paricles that will play when the player is walking")]
-    [SerializeField] private ParticleSystem m_walkingParticleSystem;
-    [Tooltip("Particles that will play when the player rolls")]
-    [SerializeField] private ParticleSystem m_rollParticleSystem;
-    
+        [Tooltip("One of the sounds that'll player when the player moves")]
+        [SerializeField] private AudioClip m_clothesRustleSound;
+        [Tooltip("The sound that'll play when the player is walking")]
+        [SerializeField] private AudioClip m_walkingSound;
+        [Tooltip("The sound that'll play when the player is rolling")]
+        [SerializeField] private AudioClip m_rollSound;
+        [Header("Particles")]
+        [Tooltip("Paricles that will play when the player is walking")]
+        [SerializeField] private ParticleSystem m_walkingParticleSystem;
+        [Tooltip("Particles that will play when the player rolls")]
+        [SerializeField] private ParticleSystem m_rollParticleSystem;
+    #endregion    
+
     public Animator m_playerAnimator;
 
     //calls the equipped weapons attacking method 
@@ -272,6 +280,7 @@ public class PlayerInput : MonoBehaviour {
             UpdateAnims();
         }
     }
+
     //Charlie
     private void UpdateAnims()
     {
