@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 22/08/2018
+//Last edited 25/08/2018
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(AudioSource))]
@@ -31,12 +31,22 @@ public class Player : MonoBehaviour, IDamagable {
     private AudioSource m_audioSource;
     [SerializeField] private int m_maxHealth;
     [SerializeField] private float m_deathFadeOutTime;
+    [Tooltip("The audio clip that will play whenever the player gets hit")]
     [SerializeField] private AudioClip m_hitSound;
+    [Tooltip("The audio clip  that will play once the player has died")]
     [SerializeField] private AudioClip m_dieSound;
+    [Tooltip("The particles that will play when ever the player gets hit")]
     [SerializeField] private ParticleSystem m_hitParticleSystem;
+    [Tooltip("The particles that will play once the player has died")]
     [SerializeField] private ParticleSystem m_dieParticleSystem;
-    [Header("Needs to be the same number as held weapons")] public List<bool> m_weaponsAvailableToPlayer;
-    [Header("Needs to be filled with weapon prefabs")] public List<GameObject> m_heldWeapons;
+    [Header("Needs to be the same number as held weapons")]
+    [Tooltip("which weapons assigned in the below" +
+        "list are currently available to the player")]
+    public List<bool> m_weaponsAvailableToPlayer;
+    [Header("Needs to be filled with weapon prefabs")]
+    [Tooltip("All weapons the player will be able to wield" +
+        "throughout the game and which position they'll be stored")]
+    public List<GameObject> m_heldWeapons;
     public Animator m_playerAnimator;
     public event System.Action OnDeath;
 
@@ -94,22 +104,24 @@ public class Player : MonoBehaviour, IDamagable {
     }
 
     //Calls all subscribed OnDeath methods when the player dies
-    //and respawns the player to an assigned respawn point
+    //and tells the player it is dead allowing for other 
+    //functionality to occur elsewhere
     private void Die() {
-        //m_dead = true;
+        m_dead = true;
         if (OnDeath != null)
             OnDeath();
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Death");
         if (m_dieSound != null)
             m_audioSource.PlayOneShot(m_dieSound);
-        Respawn();
     }
 
+    //Moves the player to the respawn position
     public void Respawn() {
         transform.position = m_respawnPoint;
         gameObject.tag = "Player";
         m_deathFadeOutTimer = m_deathFadeOutTime;
+        m_dead = false;
     }
 
     private void Awake () {
@@ -129,6 +141,8 @@ public class Player : MonoBehaviour, IDamagable {
         m_deathFadeOutTimer = m_deathFadeOutTime;
     }
     
+    //Makes sure health never goes above maximum
+    //and handles fade transitions on death and respawn
     private void Update () {
         if (m_health > m_maxHealth)
             m_health = m_maxHealth;

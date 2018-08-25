@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 21/08/2018
+//Last edited 25/08/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -14,8 +14,12 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Player))]
 public class PlayerInput : MonoBehaviour {
     
+    [Header("Movement variables")]
+    [Tooltip("Movement speed of the player")]
     [SerializeField] private float m_speed = 10f;
+    [Tooltip("Time spent in the roll")]
     [SerializeField] private float m_dashTime = 10f;
+    [Tooltip("Movement speed of the player during the roll")]
     [SerializeField] private float m_dashSpeed = 1000f;
 
     private int m_equippedWeaponInumerator;
@@ -34,25 +38,39 @@ public class PlayerInput : MonoBehaviour {
     private WeaponController m_weaponController;
     private Player m_player;
 
+    [Header("In world game objects")]
+    [Tooltip("The camera used to orient the player when the camera rotates, required for movement to work")]
     [SerializeField] private GameObject m_camera;
+    [Tooltip("This object will be where ever the player is looking")]
     [SerializeField] private GameObject m_crosshair;
+    [Tooltip("Will change the text of this object to the amount " +
+        "of ammo left in the currently equipped gun's clip")]
     [SerializeField] private Text m_clipAmmoDisplay;
+    [Tooltip("will change the text of this object to the amount of ammo" +
+        "the player has left excluding the ammo in the clip")]
     [SerializeField] private Text m_totalAmmoDisplay;
 
     [Header("Sounds")]
-    [SerializeField] private AudioSource m_clothesRustleSound;
-    [SerializeField] private AudioSource m_walkingSound;
-    [SerializeField] private AudioSource m_rollSound;
+    [Tooltip("One of the sounds that'll player when the player moves")]
+    [SerializeField] private AudioClip m_clothesRustleSound;
+    [Tooltip("The sound that'll play when the player is walking")]
+    [SerializeField] private AudioClip m_walkingSound;
+    [Tooltip("The sound that'll play when the player is rolling")]
+    [SerializeField] private AudioClip m_rollSound;
     [Header("Particles")]
-    [SerializeField] private ParticleSystem m_clothesRustleParticleSystem;
+    [Tooltip("Paricles that will play when the player is walking")]
     [SerializeField] private ParticleSystem m_walkingParticleSystem;
+    [Tooltip("Particles that will play when the player rolls")]
     [SerializeField] private ParticleSystem m_rollParticleSystem;
 
     [Header("CHARLIE!")]
+    [Tooltip("Charlie did a thing")]
     public Animator playerAnimator;
 
-    //calls the equipped weapons attacking method (swing for melee or shoot for gun)
+    //calls the equipped weapons attacking method 
+    //(swing for melee or shoot for gun)
     //via the weapon controller script
+    //and also checks if the player wishes to reload
     public void Attack() {
         Gun equippedGun = m_weaponController.GetEquippedGun();
         if (equippedGun == null) {
@@ -61,29 +79,30 @@ public class PlayerInput : MonoBehaviour {
                 return;
             m_weaponController.Swing();
         }
-        else if (equippedGun.m_isAutomatic) {
-            if (equippedGun.GetIsEmpty()) {
-                if (Input.GetMouseButtonDown(0))
-                    m_weaponController.ReloadEquippedGun();
-            }
-            else if (Input.GetMouseButton(0)) {
+        else if (equippedGun.m_isAutomatic && equippedGun.IsIdle) {
+            if (Input.GetMouseButton(0)) {
                 if (m_weaponController.Shoot())
-				    playerAnimator.SetTrigger ("Shoot");
+                    playerAnimator.SetTrigger("Shoot");
+            }
+            else if (Input.GetKeyDown(KeyCode.R)) {
+                m_weaponController.ReloadEquippedGun();
+                playerAnimator.SetTrigger("Reload");
             }
         }
-        else {
+        else if (equippedGun.IsIdle) {
             if (Input.GetMouseButtonDown(0)) {
-                if (equippedGun.GetIsEmpty())
-                    m_weaponController.ReloadEquippedGun();
-                else {
-                    if (m_weaponController.Shoot())
-                        playerAnimator.SetTrigger("Shoot");
-                }
+                if (m_weaponController.Shoot())
+                    playerAnimator.SetTrigger("Shoot");
+            }
+            else if (Input.GetKeyDown(KeyCode.R)) {
+                m_weaponController.ReloadEquippedGun();
+                playerAnimator.SetTrigger("Reload");
             }
         }
     }
 
-    //Calculates the players velocity for the current frame
+
+    //Calculates the players velocity for the next frame
     private void Move()
     {
         m_movementVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
@@ -95,12 +114,11 @@ public class PlayerInput : MonoBehaviour {
             m_nma.velocity = m_velocity * Time.deltaTime;
     }
 
-    //Forces the player to look at the mouse position on screen
+    //Forces the player to look at the mouse position on screen as well as place a crosshair object where the player is looking
     private void PlayerLookAt() {
         Ray ray = m_viewCamera.ScreenPointToRay(Input.mousePosition);
         Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
         float rayDistance;
-
         if (groundPlane.Raycast(ray, out rayDistance)) {
             Transform hand = m_weaponController.m_weaponHold;
             Vector3 pointOnGround = ray.GetPoint(rayDistance);
@@ -182,9 +200,17 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
-    //Based on which number the player presses 
-    //equip the weapon stored in that location
+    //Equip the weapon stored in the location
+    //based on which number the player presses 
     private void SwitchWeapon() {
+        Gun equippedGun = m_weaponController.GetEquippedGun();
+        bool canSwitch = true;
+        if (equippedGun == null) {
+            canSwitch = m_weaponController.GetEquippedMelee().IsIdle;
+        }
+        else {
+            canSwitch = equippedGun.IsIdle;
+        }
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
             int weaponInumerator = 0;
             ChangeWeapon(weaponInumerator);
@@ -207,6 +233,7 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
+    //Get all requied attached components and store them for later use
     private void Awake() {
         m_nma = GetComponent<NavMeshAgent>();
         m_weaponController = GetComponent<WeaponController>();
@@ -217,27 +244,30 @@ public class PlayerInput : MonoBehaviour {
         m_nmaSpeed = m_nma.speed;
     }
 
-    private void Update () {
-        //Switch Weapons
-        SwitchWeapon();
+    private void Update() {
+        //Only run if the game is not paused
+        if (Time.timeScale > 0) {
+            //Switch Weapons
+            SwitchWeapon();
 
-        //Player looking at mouse
-        PlayerLookAt();
+            //Player looking at mouse
+            PlayerLookAt();
 
-        //Player attacking
-        Attack();
+            //Player attacking
+            Attack();
 
-        //Player dashing
-        Dash();
+            //Player dashing
+            Dash();
 
-        //Player movement
-        Move();
+            //Player movement
+            Move();
 
-        //Ammo display
-        DisplayAmmo();
+            //Ammo display
+            DisplayAmmo();
 
-		//Charlie
-		UpdateAnims ();
+            //Charlie
+            UpdateAnims();
+        }
     }
     //Charlie
     private void UpdateAnims()

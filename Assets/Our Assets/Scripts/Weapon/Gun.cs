@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 22/08/2018
+//Last edited 25/08/2018
 
     [RequireComponent(typeof(AudioSource))]
 public class Gun : MonoBehaviour {
@@ -54,15 +54,19 @@ public class Gun : MonoBehaviour {
     private LayerMask m_entityCollisionMask;
     private LayerMask m_environmentCollisionMask;
     private LayerMask m_ricochetCollisionMask;
-
     private AudioSource m_audioSource;
-
     private float m_nextShotTime;
 
     [SerializeField] private int m_currentAmmo;
     [SerializeField] private int m_currentClip;
 
     private bool m_infiniteAmmo = false;
+    private bool m_isIdle = true;
+
+    public bool IsIdle {
+        get { return m_isIdle; }
+        set { m_isIdle = value; }
+    }
 
     public void AddAmmo(int a_ammoToAdd) { m_currentAmmo += a_ammoToAdd; }
     public void SetEntityCollisionLayer(LayerMask a_collsionMask) {
@@ -110,6 +114,7 @@ public class Gun : MonoBehaviour {
         if (m_isReloading == false) {
             m_nextShotTime = Time.time + m_reloadTimeInMilliseconds / 1000;
             m_isReloading = true;
+            IsIdle = false;
             if (m_currentAmmo < m_clipSize) {
                 m_currentClip = m_currentAmmo;
                 if (m_infiniteAmmo == false)
@@ -154,6 +159,7 @@ public class Gun : MonoBehaviour {
                     newProjectile.SetEntityCollisionLayer(m_entityCollisionMask);
                     newProjectile.SetTerrainCollisionLayer(m_environmentCollisionMask);
                     newProjectile.SetRicochetCollisionLayer(m_ricochetCollisionMask);
+                    IsIdle = false;
                 }
                 if (m_shootParticleSystem != null) {
                     GameObject GO = Instantiate(m_shootParticleSystem, m_muzzle.position, transform.rotation);
@@ -182,9 +188,10 @@ public class Gun : MonoBehaviour {
     //Keeps track of whether this gun is reloading
     //and stops the ammo stores from going higher than their respective maximums
     private void Update() {
-        if (m_isReloading) {
-            if (Time.time > m_nextShotTime)
+        if (Time.time > m_nextShotTime) {
+            if (m_isReloading) 
                 m_isReloading = false;
+            IsIdle = true;
         }
         if (m_currentAmmo > m_maxAmmo)
             m_currentAmmo = m_maxAmmo;

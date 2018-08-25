@@ -3,49 +3,62 @@ using System.Collections.Generic;
 using UnityEngine;
 //Michael Corben
 //Created 31/07/2018
-//Last edited 01/08/2018
+//Last edited 25/08/2018
 
 public class Melee : MonoBehaviour {
 
+    [Tooltip("The points on the weapon which will shoot out" +
+        "a ray each to detect for collision")]
     [SerializeField] private GameObject[] m_contactPoints;
-    [SerializeField] private GameObject m_positionOne;
-    [SerializeField] private GameObject m_positionTwo;
+    [Tooltip("DOES NOT CONTROL SPEED," +
+        "Is used to tell they raycasts how far to shoot out from the blade")]
     [SerializeField] private float m_swingSpeed;
+    [Tooltip("Controls how long after  a swing has ended before the" +
+        "weapon can swing again")]
     [SerializeField] private float m_coolDown;
     [SerializeField] private int m_damage;
+    [Tooltip("What entites can be hit by this weapon")]
     [SerializeField] private LayerMask m_entityCollisionMask;
-    [SerializeField] private LayerMask m_environmentCollisionMask;
-    [SerializeField] private Animation m_axeSwingAnimation;
+    [Tooltip("What destroyable objects can be hit by this weapon")]
+    [SerializeField] private LayerMask m_destroyableCollisionMask;
     [SerializeField] private Animator m_animator;
 
     private float m_skinWidth = 0.1f;
     private bool m_isSwinging = false;
-    
+    private bool m_isIlde = true;
+
+    public bool IsIlde {
+        get { return m_isIlde; }
+        set { m_isIlde = value; }
+    }
+
     public void Swing() {
         if (!m_isSwinging)
         {
             //do the swing animaion
 
             m_isSwinging = true;
+            IsIlde = false;
         }
     }
 
     //to be called by the animator in the animations last frame
     public void EndSwing() {
         m_isSwinging = false;
+        IsIlde = true;
     }
 
     public void Update() {
         if (m_isSwinging) {
-            CheckCollisions(1f);
+            CheckCollisions(m_swingSpeed);
         }
     }
 
     public void SetEntityCollisionLayer(LayerMask a_collsionMask) {
         m_entityCollisionMask = a_collsionMask;
     }
-    public void SetEnvironmentCollisionLayer(LayerMask a_collsionMask) {
-        m_environmentCollisionMask = a_collsionMask;
+    public void SetDestroyableCollisionLayer(LayerMask a_collsionMask) {
+        m_destroyableCollisionMask = a_collsionMask;
     }
 
     //use ray casts to check for collisions
@@ -56,8 +69,7 @@ public class Melee : MonoBehaviour {
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
                 OnHitObject(hit);
             }
-            if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMask))
-            {
+            if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_destroyableCollisionMask)) {
                 OnHitObject(hit);
             }
         }
