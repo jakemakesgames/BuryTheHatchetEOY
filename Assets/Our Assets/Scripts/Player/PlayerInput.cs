@@ -101,7 +101,7 @@ public class PlayerInput : MonoBehaviour {
                 if (m_weaponController.Shoot())
                     m_playerAnimator.SetTrigger("Shoot");
             }
-            else if (Input.GetKeyDown(KeyCode.R)) {
+            else if (Input.GetKeyDown(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
                 m_weaponController.ReloadEquippedGun();
                 m_playerAnimator.SetTrigger("Reload");
             }
@@ -249,7 +249,6 @@ public class PlayerInput : MonoBehaviour {
         m_nma = GetComponent<NavMeshAgent>();
         m_weaponController = GetComponent<WeaponController>();
         m_player = GetComponent<Player>();
-        m_viewCamera = Camera.main;
         m_nmaAcceleration = m_nma.acceleration;
         m_nmaAngledSpeed = m_nma.angularSpeed;
         m_nmaSpeed = m_nma.speed;

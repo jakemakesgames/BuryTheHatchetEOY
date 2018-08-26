@@ -62,10 +62,15 @@ public class Gun : MonoBehaviour {
 
     private bool m_infiniteAmmo = false;
     private bool m_isIdle = true;
+    private bool m_isFull = true;
 
     public bool IsIdle {
         get { return m_isIdle; }
         set { m_isIdle = value; }
+    }
+    public bool IsFull {
+        get { return m_isFull; }
+        set { m_isFull = value; }
     }
 
     public void AddAmmo(int a_ammoToAdd) { m_currentAmmo += a_ammoToAdd; }
@@ -124,6 +129,7 @@ public class Gun : MonoBehaviour {
                 if (m_infiniteAmmo == false)
                     m_currentAmmo -= m_clipSize - m_currentClip;
                 m_currentClip = m_clipSize;
+                IsFull = true;
             }
             if (m_audioSource != null)
                     m_audioSource.PlayOneShot(m_reloadSound);
@@ -174,6 +180,7 @@ public class Gun : MonoBehaviour {
                         m_audioSource.PlayOneShot(m_shootSound);
                 }
                 m_currentClip--;
+                IsFull = false;
                 return true;
             }
         }
