@@ -343,6 +343,7 @@ GameObject:
   - component: {fileID: 195615718544809824}
   - component: {fileID: 114443793080989620}
   - component: {fileID: 82266969450966294}
+  - component: {fileID: 65063596801668952}
   - component: {fileID: 120855659218214720}
   m_Layer: 9
   m_Name: Enemy
@@ -841,6 +842,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4225623830425188}
   - component: {fileID: 95119956735516542}
+  - component: {fileID: 114772371187742212}
   m_Layer: 0
   m_Name: Character_Player_Mesh_v02
   m_TagString: Untagged
@@ -2093,6 +2095,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1359657046224042}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &65063596801668952
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1359657046224042}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.5, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!82 &82266969450966294
 AudioSource:
   m_ObjectHideFlags: 1
@@ -2233,9 +2247,10 @@ MonoBehaviour:
   m_seekRadius: 20
   m_fleeRadius: 5
   m_coverRadius: 6.1
-  m_deadZone: 0.1
   m_attackRadius: 11
+  m_deadZone: 0.1
   m_coverFoundThreshold: 3
+  m_rayDetectBufferDist: 0.3
   m_coverLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -2244,10 +2259,20 @@ MonoBehaviour:
     m_Bits: 3072
   m_deathSounds:
   - {fileID: 8300000, guid: b05fd4b13e6775b41afdc221f5d39481, type: 3}
-  m_rayDetectBufferDist: 0.3
   m_enemyAnimator: {fileID: 0}
   deathAnimationCount: 2
   m_walkingParticleSystem: {fileID: 198444529627929482}
+--- !u!114 &114772371187742212
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1729894597842894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff1559aefaaaf6448aaf671397dc8709, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!120 &120855659218214720
 LineRenderer:
   m_ObjectHideFlags: 1
