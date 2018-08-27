@@ -57,7 +57,7 @@ public class PlayerInput : MonoBehaviour {
     #endregion
 
     #region sounds and particles
-        private AudioSource m_audioSource;
+        private List<AudioSource> m_audioSources;
         [Header("Sounds")]
         [Tooltip("One of the sounds that'll player when the player moves")]
         [SerializeField] private AudioClip m_clothesRustleSound;
@@ -123,13 +123,19 @@ public class PlayerInput : MonoBehaviour {
         if (!m_isRolling)
             m_nma.velocity = m_velocity * Time.deltaTime;
         if (m_movementVector.sqrMagnitude > 0) {
-            if (m_audioSource.isPlaying == false) {
-                m_audioSource.PlayOneShot(m_walkingSound, 0.3f); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
-                m_audioSource.PlayOneShot(m_clothesRustleSound, 0.3f);
-                ParticleSystem wps = Instantiate(m_walkingParticleSystem, new Vector3(transform.position.x, 0, transform.position.z), transform.rotation);
-                Destroy(wps, m_walkingParticleLifeTime);
+            if (m_audioSources[0].isPlaying == false) {
+                m_audioSources[0].Play(); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
+                m_audioSources[1].Play();
+                m_audioSources[1].loop = true;
+                m_walkingParticleSystem.Play();
             }
         }
+        else if(m_audioSources[0].isPlaying || m_audioSources[1].loop) {
+            m_audioSources[0].Stop();
+            m_audioSources[1].loop = false;
+            m_walkingParticleSystem.Stop();
+        }
+            
     }
 
     //Forces the player to look at the mouse position on screen as well as place a crosshair object where the player is looking
@@ -158,9 +164,8 @@ public class PlayerInput : MonoBehaviour {
                 m_isRolling = true;
                 m_rollTimer = Time.time + m_rollTime;
                 m_nma.velocity = transform.forward * m_dashSpeed;
-                m_audioSource.PlayOneShot(m_rollSound, 0.3f); /*NEED TO IMPLAMENT VOLUME CONTROL AND RANDOM PITCHING*/
-                ParticleSystem rps = Instantiate(m_rollParticleSystem, new Vector3(transform.position.x, 0, transform.position.z), transform.rotation);
-                Destroy(rps, m_rollParticleLifeTime);
+                m_audioSources[2].Play(); /*NEED TO IMPLAMENT VOLUME CONTROL AND RANDOM PITCHING*/
+                m_rollParticleSystem.Play();
             }
         }
         else {
@@ -169,6 +174,8 @@ public class PlayerInput : MonoBehaviour {
                 m_nma.angularSpeed = m_nmaAngledSpeed;
                 m_nma.acceleration = m_nmaAcceleration;
                 m_isRolling = false;
+                m_audioSources[2].Stop();
+                m_rollParticleSystem.Stop();
             }
         }
     }
@@ -264,7 +271,17 @@ public class PlayerInput : MonoBehaviour {
         m_nma = GetComponent<NavMeshAgent>();
         m_weaponController = GetComponent<WeaponController>();
         m_player = GetComponent<Player>();
-        m_audioSource = GetComponent<AudioSource>();
+
+        m_audioSources[0] = Instantiate(GetComponent<AudioSource>(), transform);
+        m_audioSources[0].clip = m_walkingSound;
+        m_audioSources[1] = Instantiate(GetComponent<AudioSource>(), transform);
+        m_audioSources[1].clip = m_clothesRustleSound;
+        m_audioSources[2] = Instantiate(GetComponent<AudioSource>(), transform);
+        m_audioSources[2].clip = m_rollSound;
+
+        m_walkingParticleSystem.Stop();
+        m_rollParticleSystem.Stop();
+
         m_playerAnimator = GetComponentInChildren<Animator>();
         m_viewCamera = m_camera;
         m_nmaAcceleration = m_nma.acceleration;
