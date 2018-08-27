@@ -3947,7 +3947,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1999925407510398}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -82.28, y: 1.184, z: -65.41}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4781331482718442}
@@ -4126,17 +4126,16 @@ MonoBehaviour:
   m_speed: 400
   m_dashTime: 0.1
   m_dashSpeed: 100
+  m_camera: {fileID: 0}
+  m_crosshair: {fileID: 0}
   m_clipAmmoDisplay: {fileID: 0}
   m_totalAmmoDisplay: {fileID: 0}
-  m_crosshair: {fileID: 0}
-  m_camera: {fileID: 0}
   m_clothesRustleSound: {fileID: 0}
   m_walkingSound: {fileID: 0}
   m_rollSound: {fileID: 0}
-  m_clothesRustleParticleSystem: {fileID: 0}
   m_walkingParticleSystem: {fileID: 0}
   m_rollParticleSystem: {fileID: 0}
-  playerAnimator: {fileID: 95662078434291026}
+  m_playerAnimator: {fileID: 95662078434291026}
 --- !u!114 &114465586240957604
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4158,10 +4157,13 @@ MonoBehaviour:
     m_Bits: 512
   m_terrainCollisionMask:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 3072
   m_ricochetCollisionMask:
     serializedVersion: 2
     m_Bits: 8192
+  m_destroyableCollisionMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &114494286414739098
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4174,6 +4176,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_maxHealth: 100
+  m_deathFadeOutTime: 0
   m_hitSound: {fileID: 0}
   m_dieSound: {fileID: 0}
   m_hitParticleSystem: {fileID: 0}

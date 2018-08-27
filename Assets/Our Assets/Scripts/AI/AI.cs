@@ -69,11 +69,16 @@ public class AI : MonoBehaviour, IDamagable
     LineRenderer m_line;
     private GameObject m_player;
     private List<Transform> m_coverPoints;
+   [SerializeField] private Transform m_leftFootTransform;
+   [SerializeField] private Transform m_rightFootTransform;
 
     [Header("Animations")]
-    [SerializeField ]private Animator enemyAnimator;
+    [SerializeField] Animator m_enemyAnimator;
     [Tooltip("The number of death animations (starting at 0)")]
-    [SerializeField] private int deathAnimationCount;
+    [SerializeField] int deathAnimationCount;
+
+    [Tooltip("Paricles that will play when the enemy is walking")]
+    [SerializeField] ParticleSystem m_walkingParticleSystem;
 
     private WeaponController m_weaponController;
     private Gun m_gun;
@@ -115,6 +120,7 @@ public class AI : MonoBehaviour, IDamagable
         m_line = GetComponent<LineRenderer>();
         m_agent = GetComponent<NavMeshAgent>();
         m_audioSource = GetComponent<AudioSource>();
+        m_enemyAnimator = GetComponentInChildren<Animator>();
         m_stateMachine = new StateMachine<AI>(this);
         m_stateMachine.ChangeState(new Wander());
 
@@ -157,6 +163,7 @@ public class AI : MonoBehaviour, IDamagable
             m_stateMachine.Update();
 
             UpdateAnims();
+            UpdateParticles();
         }
     }
 
@@ -262,7 +269,7 @@ public class AI : MonoBehaviour, IDamagable
         if (m_gunDistToPlayer < m_attackRadius && m_gun.GetIsEmpty() == false && m_gun.m_isReloading ==  false)
         {
             m_weaponController.m_weaponHold.LookAt(PlayerPosition);
-            enemyAnimator.SetTrigger("Shoot");
+            m_enemyAnimator.SetTrigger("Shoot");
             m_gun.Shoot();
         }
     }
@@ -270,8 +277,8 @@ public class AI : MonoBehaviour, IDamagable
     void Die()
     {
         m_agent.ResetPath();
-        enemyAnimator.SetInteger("WhichDeath", Random.Range(0, deathAnimationCount));
-        enemyAnimator.SetTrigger("Death");
+        m_enemyAnimator.SetInteger("WhichDeath", Random.Range(0, deathAnimationCount));
+        m_enemyAnimator.SetTrigger("Death");
         RandomPitch();
         m_audioSource.PlayOneShot(m_deathSounds[Random.Range(0, m_deathSounds.Count)]);
         m_isDead = true;
@@ -297,10 +304,20 @@ public class AI : MonoBehaviour, IDamagable
         float myVelocity = m_agent.velocity.magnitude;
         Vector3 localVel = transform.InverseTransformDirection(m_agent.velocity);
 
-        enemyAnimator.SetFloat("Velocity", myVelocity);
+        m_enemyAnimator.SetFloat("Velocity", myVelocity);
 
-        enemyAnimator.SetFloat("MovementDirectionRight", localVel.x);
-        enemyAnimator.SetFloat("MovementDirectionForward", localVel.z);
+        m_enemyAnimator.SetFloat("MovementDirectionRight", localVel.x);
+        m_enemyAnimator.SetFloat("MovementDirectionForward", localVel.z);
+    }
+
+    private void UpdateParticles()
+    {
+        if (m_agent.velocity.magnitude > 0.0f)
+        {
+            Vector3 posBetweenfeet = m_leftFootTransform.position + (m_leftFootTransform.position - m_rightFootTransform.position) / 2;
+            ParticleSystem dust = Instantiate(m_walkingParticleSystem) as ParticleSystem;
+            dust.Play();
+        }
     }
 
     private void RandomPitch()
