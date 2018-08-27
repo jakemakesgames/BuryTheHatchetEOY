@@ -21,15 +21,18 @@ public class PlayerInput : MonoBehaviour {
         [Tooltip("Time spent in the roll")]
         [SerializeField] private float m_rollTime = 10f;
         [Tooltip("Movement speed of the player during the roll")]
-        [SerializeField] private float m_dashSpeed = 1000f;
+        [SerializeField] private float m_rollSpeed = 1000f;
+        [Tooltip("Time in seconds before the player can roll after rolling")]
+        [SerializeField] private float m_rollCoolDown = 2f;
     #endregion
 
     #region private member variables
-        private int m_equippedWeaponInumerator;
+    private int m_equippedWeaponInumerator;
         private int m_ammoInClip;
         private int m_ammoInReserve;
         private float m_nmaSpeed;
         private float m_rollTimer = 0;
+        private float m_rollCollDownTimer = 0;
         private float m_nmaAngledSpeed;
         private float m_nmaAcceleration;
         private bool m_isHoldingGun;
@@ -170,16 +173,17 @@ public class PlayerInput : MonoBehaviour {
 
     //Quickly moves the player in the direction they are facing
     private void Roll() {
-        if (!m_isRolling) {
+        if (!m_isRolling && m_rollCollDownTimer < Time.time) {
             if (Input.GetMouseButtonDown(1)) {
 				m_playerAnimator.SetTrigger ("Roll");
                 m_isRolling = true;
                 m_rollTimer = Time.time + m_rollTime;
-                m_nma.velocity = transform.forward * m_dashSpeed;
+                m_nma.velocity = transform.forward * m_rollSpeed;
                 if(m_rollSpeaker != null && m_rollSound != null)
                     m_rollSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL AND RANDOM PITCHING*/
                 if(m_rollParticleSystem != null)
                     m_rollParticleSystem.Play();
+                m_rollCollDownTimer = Time.time + m_rollCoolDown;
             }
         }
         else {
