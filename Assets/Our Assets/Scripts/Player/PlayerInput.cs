@@ -127,20 +127,29 @@ public class PlayerInput : MonoBehaviour {
         if (!m_isRolling)
             m_nma.velocity = m_velocity * Time.deltaTime;
         if (m_movementVector.sqrMagnitude > 0) {
-            if (m_walkSpeaker.isPlaying == false) {
-                m_walkSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
-                m_clothesSpeaker.Play();
-                m_clothesSpeaker.loop = true;
-                m_walkingParticleSystem.Play();
+            if (m_walkSpeaker.isPlaying == false)
+            {
+                if (m_walkSpeaker != null && m_walkingSound != null)
+                    m_walkSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
+                if(m_clothesSpeaker != null && m_clothesSpeaker != null) {
+                    m_clothesSpeaker.Play();
+                    m_clothesSpeaker.loop = true;
+                }
+                if (m_walkingParticleSystem != null)
+                    m_walkingParticleSystem.Play();
             }
             else {
 
             }
         }
-        else if(m_walkSpeaker.isPlaying || m_clothesSpeaker.loop) {
-            m_walkSpeaker.Stop();
-            m_clothesSpeaker.loop = false;
-            m_walkingParticleSystem.Stop();
+        else if(m_walkSpeaker.isPlaying || m_clothesSpeaker.loop)
+        {
+            if (m_walkSpeaker != null && m_walkingSound != null)
+                m_walkSpeaker.Stop();
+            if (m_clothesSpeaker != null && m_clothesSpeaker != null)
+                m_clothesSpeaker.loop = false;
+            if (m_walkingParticleSystem != null)
+                m_walkingParticleSystem.Stop();
         }
             
     }
@@ -172,8 +181,10 @@ public class PlayerInput : MonoBehaviour {
                 m_isRolling = true;
                 m_rollTimer = Time.time + m_rollTime;
                 m_nma.velocity = transform.forward * m_dashSpeed;
-                m_rollSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL AND RANDOM PITCHING*/
-                m_rollParticleSystem.Play();
+                if(m_rollSpeaker != null && m_rollSound != null)
+                    m_rollSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL AND RANDOM PITCHING*/
+                if(m_rollParticleSystem != null)
+                    m_rollParticleSystem.Play();
             }
         }
         else {
@@ -182,8 +193,10 @@ public class PlayerInput : MonoBehaviour {
                 m_nma.angularSpeed = m_nmaAngledSpeed;
                 m_nma.acceleration = m_nmaAcceleration;
                 m_isRolling = false;
-                m_rollSpeaker.Stop();
-                m_rollParticleSystem.Stop();
+                if (m_rollSpeaker != null && m_rollSound != null)
+                    m_rollSpeaker.Stop();
+                if (m_rollParticleSystem != null)
+                    m_rollParticleSystem.Stop();
             }
         }
     }
@@ -282,12 +295,19 @@ public class PlayerInput : MonoBehaviour {
         m_audioSource = GetComponent<AudioSource>();
 
         //Create the speakers for the individual sounds
-        //m_walkSpeaker = Instantiate(m_audioSource, transform);
-        //m_walkSpeaker.clip = m_walkingSound;
-        //m_clothesSpeaker = Instantiate(m_audioSource, transform);
-        //m_clothesSpeaker.clip = m_clothesRustleSound;
-        //m_rollSpeaker = Instantiate(m_audioSource, transform);
-        //m_rollSpeaker.clip = m_rollSound;
+
+        if (m_walkSpeaker != null)
+        { }
+        if (m_walkSpeaker != null)
+            m_walkSpeaker.clip = m_walkingSound;
+        if (m_clothesSpeaker != null)
+        { }
+        if (m_clothesSpeaker != null)
+            m_clothesSpeaker.clip = m_clothesRustleSound;
+        if (m_rollSpeaker != null)
+        { }
+        if (m_rollSpeaker != null)
+            m_rollSpeaker.clip = m_rollSound;
 
         m_walkingParticleSystem.Stop();
         m_rollParticleSystem.Stop();
