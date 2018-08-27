@@ -32,7 +32,7 @@ public class PlayerInput : MonoBehaviour {
         private int m_ammoInReserve;
         private float m_nmaSpeed;
         private float m_rollTimer = 0;
-        private float m_rollCollDownTimer = 0;
+        private float m_rollCoolDownTimer = 0;
         private float m_nmaAngledSpeed;
         private float m_nmaAcceleration;
         private bool m_isHoldingGun;
@@ -76,6 +76,10 @@ public class PlayerInput : MonoBehaviour {
         [SerializeField] private ParticleSystem m_walkingParticleSystem;
         [Tooltip("Particles that will play when the player rolls")]
         [SerializeField] private ParticleSystem m_rollParticleSystem;
+        [Header("Volumes")]
+        [SerializeField] [Range(0, 1)] private float m_walkVol = 0.5f;
+        [SerializeField] [Range(0, 1)] private float m_clothesVol = 0.5f;
+        [SerializeField] [Range(0, 1)] private float m_rollVol = 0.5f;
     #endregion    
 
     [Header("CHARLIE!")]
@@ -173,7 +177,7 @@ public class PlayerInput : MonoBehaviour {
 
     //Quickly moves the player in the direction they are facing
     private void Roll() {
-        if (!m_isRolling && m_rollCollDownTimer < Time.time) {
+        if (!m_isRolling && m_rollCoolDownTimer < Time.time) {
             if (Input.GetMouseButtonDown(1)) {
 				m_playerAnimator.SetTrigger ("Roll");
                 m_isRolling = true;
@@ -183,7 +187,7 @@ public class PlayerInput : MonoBehaviour {
                     m_rollSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL AND RANDOM PITCHING*/
                 if(m_rollParticleSystem != null)
                     m_rollParticleSystem.Play();
-                m_rollCollDownTimer = Time.time + m_rollCoolDown;
+                m_rollCoolDownTimer = Time.time + m_rollCoolDown;
             }
         }
         else {
@@ -296,14 +300,17 @@ public class PlayerInput : MonoBehaviour {
         //Create the speakers for the individual sounds
         
         m_walkSpeaker = gameObject.AddComponent<AudioSource>();
+        m_walkSpeaker.volume = m_walkVol;
         if (m_walkSpeaker != null)
             m_walkSpeaker.clip = m_walkingSound;
 
         m_clothesSpeaker = gameObject.AddComponent<AudioSource>();
+        m_clothesSpeaker.volume = m_clothesVol;
         if (m_clothesSpeaker != null)
             m_clothesSpeaker.clip = m_clothesRustleSound;
 
         m_rollSpeaker = gameObject.AddComponent<AudioSource>();
+        m_rollSpeaker.volume = m_rollVol;
         if (m_rollSpeaker != null)
             m_rollSpeaker.clip = m_rollSound;
 
