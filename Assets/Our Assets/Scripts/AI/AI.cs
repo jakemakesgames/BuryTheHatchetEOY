@@ -10,6 +10,7 @@ using StateMachine;
 
 [RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(AudioSource))]
 public class AI : MonoBehaviour, IDamagable
 {
@@ -22,61 +23,65 @@ public class AI : MonoBehaviour, IDamagable
         RELOAD
     }
 
+    #region Inspector Variables
     [Tooltip("Max health value, currently at 5 (5 hits to die).")]
-    [SerializeField] float m_maxHealth = 5;
+    [SerializeField] private float m_maxHealth = 5;
 
+    [Header("AI State Radii")]
     [Tooltip("Seek radius/Blue sphere (large) - distance to seek to player.")]
-    [SerializeField] float m_seekRadius;
-
+    [SerializeField] private float m_seekRadius;
     [Tooltip("Flee radius/Blue sphere (small) - distance to flee from player.")]
-    [SerializeField] float m_fleeRadius;
-
+    [SerializeField] private float m_fleeRadius;
     [Tooltip("Cover radius/Green sphere - finds objects on the cover layer.")]
-    [SerializeField] float m_coverRadius;
-
-
-    [Tooltip("Accounts for floating point precision - when AI knows to switch to Stationary")]
-    [SerializeField] float m_deadZone;
-
-    float m_enemyRadius;
-
+    [SerializeField] private float m_coverRadius;
     [Tooltip("Attack radius/Red sphere - shoots at player.")]
-    [SerializeField] float m_attackRadius;
-
+    [SerializeField] private float m_attackRadius;
+    [Tooltip("Accounts for floating point precision - when AI knows to switch to Stationary")]
+    [SerializeField] private float m_deadZone;
     [Tooltip("The distance from enemy to cover point at which to stop calculating a new position.")]
-    [SerializeField] float m_coverFoundThreshold = 3;
+    [SerializeField] private float m_coverFoundThreshold = 3;
+    [Tooltip("IDK")]
+    [SerializeField] private float m_rayDetectBufferDist;
 
+    [Header("Collison Mask Layers")]
     [Tooltip("Set this to the Cover layer for cover collision detection")]
-    [SerializeField] LayerMask m_coverLayer;
-
+    [SerializeField] private LayerMask m_coverLayer;
     [Tooltip("Set this to the Environment layer for environment collision detection")]
-    [SerializeField] LayerMask m_environmentLayer;
+    [SerializeField] private LayerMask m_environmentLayer;
+
+    [Header("Sounds")]
+    [SerializeField] private List<AudioClip> m_deathSounds;
+
+    [Header("Animation")]
+    [SerializeField] private Animator m_enemyAnimator;
+    [Tooltip("The number of death animations (starting at 0)")]
+    [SerializeField] private int deathAnimationCount;
+
+    [Header("Particles")]
+    [Tooltip("Paricles that will play when the enemy is walking")]
+    [SerializeField] private ParticleSystem m_walkingParticleSystem;
+    #endregion
+
+
+    private float m_enemyRadius;
 
     private AudioSource m_audioSource;
-    [Header("Sounds")]
-    [SerializeField] List<AudioClip> m_deathSounds;
-    
 
-    float m_health;
-    float m_distBetweenPlayer;
-    float m_gunDistToPlayer;
-    bool m_isDead = false;
-    [SerializeField] float m_rayDetectBufferDist;
 
-    STATE m_state;
+    private float m_health;
+    private float m_distBetweenPlayer;
+    private float m_gunDistToPlayer;
+    private bool m_isDead = false;
+
+
+    private STATE m_state;
 
     private NavMeshAgent m_agent;
-    LineRenderer m_line;
+    private LineRenderer m_line;
     private GameObject m_player;
     private List<Transform> m_coverPoints;
 
-    [Header("Animations")]
-    [SerializeField] Animator m_enemyAnimator;
-    [Tooltip("The number of death animations (starting at 0)")]
-    [SerializeField] int deathAnimationCount;
-
-    [Tooltip("Paricles that will play when the enemy is walking")]
-    [SerializeField] ParticleSystem m_walkingParticleSystem;
+  
 
 
     private WeaponController m_weaponController;
@@ -86,27 +91,18 @@ public class AI : MonoBehaviour, IDamagable
     public delegate void Dead(AI enemy);
     public Dead OnDeath;
 
-    public StateMachine<AI> m_stateMachine;
+    private StateMachine<AI> m_stateMachine;
 
-    //---------------------------------------------------------------------------
-    //                              Gets / Sets           
-    //---------------------------------------------------------------------------
+    #region Properties 
     public NavMeshAgent Agent { get { return m_agent; } }
-
     public Vector3 PlayerPosition { get { return m_player.transform.position; } }
-
     public float CoverRadius { get { return m_coverRadius; } }
-
     public LayerMask CoverLayer { get { return m_coverLayer; } }
-
     public float CoverFoundThreshold { get { return m_coverFoundThreshold; } }
-
     public Gun Gun { get { return m_gun; } }
-
     public List<Transform> CoverPoints { get { return m_coverPoints; } }
-    //---------------------------------------------------------------------------
+    #endregion
 
-    //---------------------------------------------------------------------------
     void Awake()
     {
         m_player = GameObject.FindGameObjectWithTag("Player");
@@ -163,6 +159,7 @@ public class AI : MonoBehaviour, IDamagable
 
             UpdateAnims();
             UpdateParticles();
+        
         }
     }
 
@@ -276,10 +273,14 @@ public class AI : MonoBehaviour, IDamagable
     void Die()
     {
         m_agent.ResetPath();
-        m_enemyAnimator.SetInteger("WhichDeath", Random.Range(0, deathAnimationCount));
+        m_walkingParticleSystem.Stop();
+        int randomAnim = Random.Range(0, deathAnimationCount);
+        m_enemyAnimator.SetInteger("WhichDeath", 0);
         m_enemyAnimator.SetTrigger("Death");
         RandomPitch();
         m_audioSource.PlayOneShot(m_deathSounds[Random.Range(0, m_deathSounds.Count)]);
+        GetComponent<NavMeshAgent>().enabled = false;
+        gameObject.AddComponent<Rigidbody>();
         m_isDead = true;
     }
 
