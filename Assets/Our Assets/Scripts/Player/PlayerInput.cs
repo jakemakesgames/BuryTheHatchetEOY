@@ -19,7 +19,7 @@ public class PlayerInput : MonoBehaviour {
         [Tooltip("Movement speed of the player")]
         [SerializeField] private float m_speed = 10f;
         [Tooltip("Time spent in the roll")]
-        [SerializeField] private float m_dashTime = 10f;
+        [SerializeField] private float m_rollTime = 10f;
         [Tooltip("Movement speed of the player during the roll")]
         [SerializeField] private float m_dashSpeed = 1000f;
     #endregion
@@ -29,11 +29,11 @@ public class PlayerInput : MonoBehaviour {
         private int m_ammoInClip;
         private int m_ammoInReserve;
         private float m_nmaSpeed;
-        private float m_dashTimer = 0;
+        private float m_rollTimer = 0;
         private float m_nmaAngledSpeed;
         private float m_nmaAcceleration;
         private bool m_isHoldingGun;
-        private bool m_isDashing = false;
+        private bool m_isRolling = false;
         private NavMeshAgent m_nma;
         private Vector3 m_velocity;
     	private Vector3 m_movementVector;
@@ -57,7 +57,8 @@ public class PlayerInput : MonoBehaviour {
     #endregion
 
     #region sounds and particles
-    [Header("Sounds")]
+        private AudioSource m_audioSource;
+        [Header("Sounds")]
         [Tooltip("One of the sounds that'll player when the player moves")]
         [SerializeField] private AudioClip m_clothesRustleSound;
         [Tooltip("The sound that'll play when the player is walking")]
@@ -67,8 +68,12 @@ public class PlayerInput : MonoBehaviour {
         [Header("Particles")]
         [Tooltip("Paricles that will play when the player is walking")]
         [SerializeField] private ParticleSystem m_walkingParticleSystem;
+        [Tooltip("The time that these particles will exist for before destroying themselves")]
+        [SerializeField] private float m_walkingParticleLifeTime = 3f;
         [Tooltip("Particles that will play when the player rolls")]
         [SerializeField] private ParticleSystem m_rollParticleSystem;
+        [Tooltip("The time that these particles will exist for before destroying themselves")]
+        [SerializeField] private float m_rollParticleLifeTime = 3f;
     #endregion    
 
     public Animator m_playerAnimator;
@@ -109,15 +114,22 @@ public class PlayerInput : MonoBehaviour {
     }
     
     //Calculates the players velocity for the next frame
-    private void Move()
-    {
+    private void Move() {
         m_movementVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
 		Vector3 direction = m_camera.transform.rotation * m_movementVector;
         direction.y = 0;
         Vector3 moveVelocity = direction.normalized * m_speed;
         m_velocity = moveVelocity;
-        if (!m_isDashing)
+        if (!m_isRolling)
             m_nma.velocity = m_velocity * Time.deltaTime;
+        if (m_movementVector.sqrMagnitude > 0) {
+            if (m_audioSource.isPlaying == false) {
+                m_audioSource.PlayOneShot(m_walkingSound, 0.3f); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
+                m_audioSource.PlayOneShot(m_clothesRustleSound, 0.3f);
+                ParticleSystem wps = Instantiate(m_walkingParticleSystem, new Vector3(transform.position.x, 0, transform.position.z), transform.rotation);
+                Destroy(wps, m_walkingParticleLifeTime);
+            }
+        }
     }
 
     //Forces the player to look at the mouse position on screen as well as place a crosshair object where the player is looking
@@ -139,21 +151,24 @@ public class PlayerInput : MonoBehaviour {
     }
 
     //Quickly moves the player in the direction they are facing
-    private void Dash() {
-        if (!m_isDashing) {
+    private void Roll() {
+        if (!m_isRolling) {
             if (Input.GetMouseButtonDown(1)) {
 				m_playerAnimator.SetTrigger ("Roll");
-                m_isDashing = true;
-                m_dashTimer = Time.time + m_dashTime;
+                m_isRolling = true;
+                m_rollTimer = Time.time + m_rollTime;
                 m_nma.velocity = transform.forward * m_dashSpeed;
+                m_audioSource.PlayOneShot(m_rollSound, 0.3f); /*NEED TO IMPLAMENT VOLUME CONTROL AND RANDOM PITCHING*/
+                ParticleSystem rps = Instantiate(m_rollParticleSystem, new Vector3(transform.position.x, 0, transform.position.z), transform.rotation);
+                Destroy(rps, m_rollParticleLifeTime);
             }
         }
         else {
-            if (m_dashTimer <= Time.time) {
+            if (m_rollTimer <= Time.time) {
                 m_nma.speed = m_nmaSpeed;
                 m_nma.angularSpeed = m_nmaAngledSpeed;
                 m_nma.acceleration = m_nmaAcceleration;
-                m_isDashing = false;
+                m_isRolling = false;
             }
         }
     }
@@ -258,7 +273,7 @@ public class PlayerInput : MonoBehaviour {
 
     private void Update() {
         //Only run if the game is not paused
-        if (Time.timeScale > 0) {
+        if (Time.timeScale > 0 && m_player.Dead == false) {
             //Switch Weapons
             SwitchWeapon();
 
@@ -269,7 +284,7 @@ public class PlayerInput : MonoBehaviour {
             Attack();
 
             //Player dashing
-            Dash();
+            Roll();
 
             //Player movement
             Move();
