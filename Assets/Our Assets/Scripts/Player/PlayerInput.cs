@@ -126,32 +126,31 @@ public class PlayerInput : MonoBehaviour {
         m_velocity = moveVelocity;
         if (!m_isRolling)
             m_nma.velocity = m_velocity * Time.deltaTime;
-        if (m_movementVector.sqrMagnitude > 0) {
-            if (m_walkSpeaker.isPlaying == false)
-            {
-                if (m_walkSpeaker != null && m_walkingSound != null)
-                    m_walkSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
-                if(m_clothesSpeaker != null && m_clothesSpeaker != null) {
-                    m_clothesSpeaker.Play();
-                    m_clothesSpeaker.loop = true;
+        if ((m_walkSpeaker == null || m_clothesSpeaker == null || m_walkingParticleSystem == null) == false) {
+            if (m_movementVector.sqrMagnitude > 0) {
+                if (m_walkSpeaker.isPlaying == false) {
+                    if (m_walkSpeaker != null && m_walkingSound != null) 
+                        m_walkSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
+                    if (m_clothesSpeaker != null && m_clothesSpeaker != null) {
+                        m_clothesSpeaker.Play();
+                        m_clothesSpeaker.loop = true;
+                    }
+                    if (m_walkingParticleSystem != null)
+                        m_walkingParticleSystem.Play();
                 }
-                if (m_walkingParticleSystem != null)
-                    m_walkingParticleSystem.Play();
-            }
-            else {
+                else {
 
+                }
             }
-        }
-        else if(m_walkSpeaker.isPlaying || m_clothesSpeaker.loop)
-        {
-            if (m_walkSpeaker != null && m_walkingSound != null)
-                m_walkSpeaker.Stop();
-            if (m_clothesSpeaker != null && m_clothesSpeaker != null)
-                m_clothesSpeaker.loop = false;
-            if (m_walkingParticleSystem != null)
-                m_walkingParticleSystem.Stop();
-        }
-            
+            else if (m_walkSpeaker.isPlaying || m_clothesSpeaker.loop) {
+                if (m_walkSpeaker != null && m_walkingSound != null)
+                    m_walkSpeaker.Stop();
+                if (m_clothesSpeaker != null && m_clothesSpeaker != null)
+                    m_clothesSpeaker.loop = false;
+                if (m_walkingParticleSystem != null)
+                    m_walkingParticleSystem.Stop();
+            }
+        }   
     }
 
     //Forces the player to look at the mouse position on screen
