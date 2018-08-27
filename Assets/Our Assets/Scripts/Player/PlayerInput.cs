@@ -45,7 +45,7 @@ public class PlayerInput : MonoBehaviour {
     #region In world game objects
         [Header("In world game objects")]
         [Tooltip("The camera used to orient the player when the camera rotates, required for movement to work")]
-        [SerializeField] private GameObject m_camera;
+        [SerializeField] private Camera m_camera;
         [Tooltip("This object will be where ever the player is looking")]
         [SerializeField] private GameObject m_crosshair;
         [Tooltip("Will change the text of this object to the amount " +
@@ -249,6 +249,7 @@ public class PlayerInput : MonoBehaviour {
         m_nma = GetComponent<NavMeshAgent>();
         m_weaponController = GetComponent<WeaponController>();
         m_player = GetComponent<Player>();
+        m_viewCamera = m_camera;
         m_nmaAcceleration = m_nma.acceleration;
         m_nmaAngledSpeed = m_nma.angularSpeed;
         m_nmaSpeed = m_nma.speed;
