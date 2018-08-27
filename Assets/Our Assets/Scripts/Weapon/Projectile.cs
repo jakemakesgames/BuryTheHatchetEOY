@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 22/08/2018
+//Last edited 27/08/2018
 
 
 public class Projectile : MonoBehaviour {
@@ -145,22 +145,26 @@ public class Projectile : MonoBehaviour {
         if (damagableObject != null)
             damagableObject.TakeHit(m_damage, a_hit);
         m_insideEntity = a_hitEntity;
-        //if (m_insideEntity == false)
-            Destroy(gameObject);
+        if (m_insideEntity)
+            return;
+        Destroy(gameObject);
     }
     private void OnHitObject(Collider a_c, bool a_hitEntity) {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
         if (damagableObject != null)
             damagableObject.TakeDamage(m_damage);
         m_insideEntity = a_hitEntity;
-        //if (m_insideEntity == false)
-            Destroy(gameObject);
+        if (m_insideEntity)
+            return;
+        Destroy(gameObject);
     }
     private void OnHitObject(RaycastHit a_hit, Projectile a_bullet, bool a_hitEntity) {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
         if (damagableObject != null)
             damagableObject.TakeImpact(m_damage, a_hit, a_bullet);
         m_insideEntity = a_hitEntity;
+        if (m_insideEntity)
+            return;
     }
 
     private void Start() {
@@ -194,6 +198,7 @@ public class Projectile : MonoBehaviour {
         transform.Translate(Vector3.forward * moveDistance);
         if (m_insideEntity)
             GoThroughEntity(moveDistance);
+
         if (m_lifeTime <= 0) {
             Destroy(gameObject);
         }
