@@ -279,14 +279,15 @@ public class PlayerInput : MonoBehaviour {
         m_nma = GetComponent<NavMeshAgent>();
         m_weaponController = GetComponent<WeaponController>();
         m_player = GetComponent<Player>();
+        m_audioSource = GetComponent<AudioSource>();
 
         //Create the speakers for the individual sounds
-        m_walkSpeaker = Instantiate(m_audioSource, transform);
-        m_walkSpeaker.clip = m_walkingSound;
-        m_clothesSpeaker = Instantiate(m_audioSource, transform);
-        m_clothesSpeaker.clip = m_clothesRustleSound;
-        m_rollSpeaker = Instantiate(m_audioSource, transform);
-        m_rollSpeaker.clip = m_rollSound;
+        //m_walkSpeaker = Instantiate(m_audioSource, transform);
+        //m_walkSpeaker.clip = m_walkingSound;
+        //m_clothesSpeaker = Instantiate(m_audioSource, transform);
+        //m_clothesSpeaker.clip = m_clothesRustleSound;
+        //m_rollSpeaker = Instantiate(m_audioSource, transform);
+        //m_rollSpeaker.clip = m_rollSound;
 
         m_walkingParticleSystem.Stop();
         m_rollParticleSystem.Stop();
