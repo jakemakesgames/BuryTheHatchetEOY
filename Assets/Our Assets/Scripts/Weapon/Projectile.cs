@@ -145,7 +145,7 @@ public class Projectile : MonoBehaviour {
         if (damagableObject != null)
             damagableObject.TakeHit(m_damage, a_hit);
         m_insideEntity = a_hitEntity;
-        if (m_insideEntity == false)
+        //if (m_insideEntity == false)
             Destroy(gameObject);
     }
     private void OnHitObject(Collider a_c, bool a_hitEntity) {
@@ -153,7 +153,7 @@ public class Projectile : MonoBehaviour {
         if (damagableObject != null)
             damagableObject.TakeDamage(m_damage);
         m_insideEntity = a_hitEntity;
-        if (m_insideEntity == false)
+        //if (m_insideEntity == false)
             Destroy(gameObject);
     }
     private void OnHitObject(RaycastHit a_hit, Projectile a_bullet, bool a_hitEntity) {
@@ -194,7 +194,6 @@ public class Projectile : MonoBehaviour {
         transform.Translate(Vector3.forward * moveDistance);
         if (m_insideEntity)
             GoThroughEntity(moveDistance);
-
         if (m_lifeTime <= 0) {
             Destroy(gameObject);
         }
