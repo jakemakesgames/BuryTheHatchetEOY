@@ -71,12 +71,8 @@ public class PlayerInput : MonoBehaviour {
         [Header("Particles")]
         [Tooltip("Paricles that will play when the player is walking")]
         [SerializeField] private ParticleSystem m_walkingParticleSystem;
-        [Tooltip("The time that these particles will exist for before destroying themselves")]
-        [SerializeField] private float m_walkingParticleLifeTime = 3f;
         [Tooltip("Particles that will play when the player rolls")]
         [SerializeField] private ParticleSystem m_rollParticleSystem;
-        [Tooltip("The time that these particles will exist for before destroying themselves")]
-        [SerializeField] private float m_rollParticleLifeTime = 3f;
     #endregion    
 
     [Header("CHARLIE!")]
@@ -294,17 +290,16 @@ public class PlayerInput : MonoBehaviour {
         m_audioSource = GetComponent<AudioSource>();
 
         //Create the speakers for the individual sounds
-
-        if (m_walkSpeaker != null)
-        { }
+        
+        m_walkSpeaker = gameObject.AddComponent<AudioSource>();
         if (m_walkSpeaker != null)
             m_walkSpeaker.clip = m_walkingSound;
-        if (m_clothesSpeaker != null)
-        { }
+
+        m_clothesSpeaker = gameObject.AddComponent<AudioSource>();
         if (m_clothesSpeaker != null)
             m_clothesSpeaker.clip = m_clothesRustleSound;
-        if (m_rollSpeaker != null)
-        { }
+
+        m_rollSpeaker = gameObject.AddComponent<AudioSource>();
         if (m_rollSpeaker != null)
             m_rollSpeaker.clip = m_rollSound;
 
