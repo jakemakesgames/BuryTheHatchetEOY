@@ -69,8 +69,6 @@ public class AI : MonoBehaviour, IDamagable
     LineRenderer m_line;
     private GameObject m_player;
     private List<Transform> m_coverPoints;
-   [SerializeField] private Transform m_leftFootTransform;
-   [SerializeField] private Transform m_rightFootTransform;
 
     [Header("Animations")]
     [SerializeField] Animator m_enemyAnimator;
@@ -79,6 +77,7 @@ public class AI : MonoBehaviour, IDamagable
 
     [Tooltip("Paricles that will play when the enemy is walking")]
     [SerializeField] ParticleSystem m_walkingParticleSystem;
+
 
     private WeaponController m_weaponController;
     private Gun m_gun;
@@ -312,11 +311,14 @@ public class AI : MonoBehaviour, IDamagable
 
     private void UpdateParticles()
     {
-        if (m_agent.velocity.magnitude > 0.0f)
+        if (m_agent.velocity.sqrMagnitude > 0f)
         {
-            Vector3 posBetweenfeet = m_leftFootTransform.position + (m_leftFootTransform.position - m_rightFootTransform.position) / 2;
-            ParticleSystem dust = Instantiate(m_walkingParticleSystem) as ParticleSystem;
-            dust.Play();
+            if(m_walkingParticleSystem.isPlaying == false)
+            m_walkingParticleSystem.Play();
+        }
+        else
+        {
+            m_walkingParticleSystem.Stop();
         }
     }
 
