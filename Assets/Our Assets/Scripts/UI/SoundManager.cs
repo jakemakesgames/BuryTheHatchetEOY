@@ -48,8 +48,11 @@ public class SoundManager : MonoBehaviour
     //Plays the background music on Start Up
     private void Start()
     {
-        m_musicSound.Play();
-        m_musicSound.loop = true;
+        if (m_musicSound != null)
+        {
+            m_musicSound.Play();
+            m_musicSound.loop = true;
+        }
     }
 
     private void Update()
@@ -70,26 +73,38 @@ public class SoundManager : MonoBehaviour
     //Allows the sliders to change the volume of the SFX
     public void SFXVolume()
     {
-        m_buttonSound.volume = m_SFXSlider.value * m_masterSlider.value;
-        m_backSound.volume = m_SFXSlider.value * m_masterSlider.value;
+        if (m_buttonSound != null)
+        {
+            m_buttonSound.volume = m_SFXSlider.value * m_masterSlider.value;
+            m_backSound.volume = m_SFXSlider.value * m_masterSlider.value;
+        }
     }
 
     //Allows the sliders to change the volume of the Music
     public void MusicVolume()
     {
-        m_musicSound.volume = m_musicSlider.value * m_masterSlider.value;
+        if (m_musicSound != null)
+        {
+            m_musicSound.volume = m_musicSlider.value * m_masterSlider.value;
+        }
     }
 
     //Plays the Button Sound
     public void ButtonSound()
     {
-        m_buttonSound.Play();
+        if (m_buttonSound != null)
+        {
+            m_buttonSound.Play();
+        }
     }
 
     //Plays a sound when the "Escape" key is pressed in the GUI
     public void BackSound()
     {
-        m_backSound.Play();
+        if (m_backSound !=null)
+        {
+            m_backSound.Play();
+        }
     }
 
     #endregion
