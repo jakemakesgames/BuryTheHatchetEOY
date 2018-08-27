@@ -119,7 +119,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 3
+  m_Time: 0.3
   m_Parameters:
     serializedVersion: 2
     widthMultiplier: 0.3
@@ -192,13 +192,21 @@ MonoBehaviour:
   m_enterEntityParticle: {fileID: 0}
   m_enterParticleTimer: 1
   m_enterParticleDist: 0.1
-  m_exitEntityParticle: {fileID: 0}
+  m_enterEntityAudioClip: {fileID: 0}
+  m_exitEntityParticle: {fileID: 1424964935570490, guid: cffac072e86d8f243b09050aac5dae6d,
+    type: 2}
   m_exitParticleTimer: 1
   m_exitParticleDist: 0.1
-  m_ricochetParticle: {fileID: 0}
+  m_exitEntityAudioClip: {fileID: 0}
+  m_ricochetParticle: {fileID: 1851904425329750, guid: e6838b17ada575b4eab0be664bf2de76,
+    type: 2}
   m_ricochetParticleTimer: 1
+  m_ricochetParticleDist: 0.1
+  m_ricochetAudioClip: {fileID: 0}
   m_travelParticle: {fileID: 0}
+  m_audioSource: {fileID: 0}
   m_environmentCollisionMasks: []
   m_environmentParticles: []
   m_environmentParticleTimers: []
   m_environmentParticleDists: []
+  m_environmentAudioClips: []

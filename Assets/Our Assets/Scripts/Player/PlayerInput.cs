@@ -21,15 +21,18 @@ public class PlayerInput : MonoBehaviour {
         [Tooltip("Time spent in the roll")]
         [SerializeField] private float m_rollTime = 10f;
         [Tooltip("Movement speed of the player during the roll")]
-        [SerializeField] private float m_dashSpeed = 1000f;
+        [SerializeField] private float m_rollSpeed = 1000f;
+        [Tooltip("Time in seconds before the player can roll after rolling")]
+        [SerializeField] private float m_rollCoolDown = 2f;
     #endregion
 
     #region private member variables
-        private int m_equippedWeaponInumerator;
+    private int m_equippedWeaponInumerator;
         private int m_ammoInClip;
         private int m_ammoInReserve;
         private float m_nmaSpeed;
         private float m_rollTimer = 0;
+        private float m_rollCollDownTimer = 0;
         private float m_nmaAngledSpeed;
         private float m_nmaAcceleration;
         private bool m_isHoldingGun;
@@ -71,12 +74,8 @@ public class PlayerInput : MonoBehaviour {
         [Header("Particles")]
         [Tooltip("Paricles that will play when the player is walking")]
         [SerializeField] private ParticleSystem m_walkingParticleSystem;
-        [Tooltip("The time that these particles will exist for before destroying themselves")]
-        [SerializeField] private float m_walkingParticleLifeTime = 3f;
         [Tooltip("Particles that will play when the player rolls")]
         [SerializeField] private ParticleSystem m_rollParticleSystem;
-        [Tooltip("The time that these particles will exist for before destroying themselves")]
-        [SerializeField] private float m_rollParticleLifeTime = 3f;
     #endregion    
 
     [Header("CHARLIE!")]
@@ -174,16 +173,17 @@ public class PlayerInput : MonoBehaviour {
 
     //Quickly moves the player in the direction they are facing
     private void Roll() {
-        if (!m_isRolling) {
+        if (!m_isRolling && m_rollCollDownTimer < Time.time) {
             if (Input.GetMouseButtonDown(1)) {
 				m_playerAnimator.SetTrigger ("Roll");
                 m_isRolling = true;
                 m_rollTimer = Time.time + m_rollTime;
-                m_nma.velocity = transform.forward * m_dashSpeed;
+                m_nma.velocity = transform.forward * m_rollSpeed;
                 if(m_rollSpeaker != null && m_rollSound != null)
                     m_rollSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL AND RANDOM PITCHING*/
                 if(m_rollParticleSystem != null)
                     m_rollParticleSystem.Play();
+                m_rollCollDownTimer = Time.time + m_rollCoolDown;
             }
         }
         else {
@@ -294,17 +294,16 @@ public class PlayerInput : MonoBehaviour {
         m_audioSource = GetComponent<AudioSource>();
 
         //Create the speakers for the individual sounds
-
-        if (m_walkSpeaker != null)
-        { }
+        
+        m_walkSpeaker = gameObject.AddComponent<AudioSource>();
         if (m_walkSpeaker != null)
             m_walkSpeaker.clip = m_walkingSound;
-        if (m_clothesSpeaker != null)
-        { }
+
+        m_clothesSpeaker = gameObject.AddComponent<AudioSource>();
         if (m_clothesSpeaker != null)
             m_clothesSpeaker.clip = m_clothesRustleSound;
-        if (m_rollSpeaker != null)
-        { }
+
+        m_rollSpeaker = gameObject.AddComponent<AudioSource>();
         if (m_rollSpeaker != null)
             m_rollSpeaker.clip = m_rollSound;
 
