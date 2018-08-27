@@ -13,22 +13,22 @@ public class UIManager : MonoBehaviour
 
     #region Public Variables
 
-    public GameObject m_startMenu;
-    public GameObject m_controlsMenu;
-    public GameObject m_optionsMenu;
-    public GameObject m_optionsPanel;
+    [SerializeField] GameObject m_startMenu;
+    [SerializeField] GameObject m_controlsMenu;
+    [SerializeField] GameObject m_optionsMenu;
+    [SerializeField] GameObject m_optionsPanel;
 
 
-    public GameObject m_pauseMenu;
-    public GameObject m_bountyPoster;
-    public GameObject m_bountyBoard;
-    public GameObject m_bountyInteraction;
+    [SerializeField] GameObject m_pauseMenu;
+    [SerializeField] GameObject m_bountyPoster;
+    //[SerializeField] GameObject m_bountyBoard;
+    //[SerializeField] GameObject m_bountyInteraction;
 
-    public GameObject m_playerHud;
-    public Text m_goldAmount;
-    public Image m_health;
+    [SerializeField] GameObject m_playerHud;
+    [SerializeField] Image m_health;
 
-    public List<GameObject> m_revBullets;
+    [SerializeField] List<GameObject> m_revBullets;
+
     //*! Singleton attempt
     public static UIManager m_Instance;
 
@@ -78,46 +78,6 @@ public class UIManager : MonoBehaviour
 
     #endregion
 
-    #region Private Functions
-
-    private void Awake()
-    {
-        if (m_Instance == null)
-        {
-            m_Instance = this;
-        }
-        else if (m_Instance != this)
-        {
-            Destroy(gameObject);
-        }
-
-        DontDestroyOnLoad(gameObject);
-    }
-
-    private void Start()
-    {
-        //Sets Only the Start Menu to active 
-        m_inMainMenu = true;
-        m_startMenu.SetActive(true);
-
-        m_controlsMenu.SetActive(false);
-        m_pauseMenu.SetActive(false);
-        m_bountyPoster.SetActive(false);
-        m_bountyBoard.SetActive(false);
-        m_bountyInteraction.SetActive(false);
-        m_optionsMenu.SetActive(false);
-        m_playerHud.SetActive(false);
-        m_combat = false;
-
-
-
-        Time.timeScale = 0;
-        m_soundManager = SoundManager.m_instance;
-        m_weaponController = m_player.GetComponent<WeaponController>();
-    }
-
-    #endregion
-
     #region Public Functions
 
     public void Quit()
@@ -141,8 +101,6 @@ public class UIManager : MonoBehaviour
         if (m_inMainMenu)
         {
             //Set the Bounty Screens to false
-            m_bountyBoard.SetActive(false);
-            m_bountyInteraction.SetActive(false);
             m_playerHud.SetActive(false);
             m_combat = false;
 
@@ -195,7 +153,6 @@ public class UIManager : MonoBehaviour
                         m_isPaused = true;
 
                         m_playerHud.SetActive(false);
-                        m_bountyInteraction.SetActive(false);
                         m_pauseMenu.SetActive(true);
                         m_combat = false;
 
@@ -225,7 +182,6 @@ public class UIManager : MonoBehaviour
 
                             //Turn all other screens off
                             m_pauseMenu.SetActive(false);
-                            m_bountyBoard.SetActive(false);
     
                             m_inPausedMenu = false;
                             Debug.Log("Game Unpaused");
@@ -235,7 +191,6 @@ public class UIManager : MonoBehaviour
                             m_soundManager.BackSound();
 
                             //If the Pause Menu is not active turn it on
-                            m_bountyBoard.SetActive(false);
                             m_optionsMenu.SetActive(false);
                             m_pauseMenu.SetActive(true);
 
@@ -244,84 +199,6 @@ public class UIManager : MonoBehaviour
                     }
                 }
             }
-        }
-
-        #endregion
-
-        #region Bounty Screen Controls
-
-        if (!m_inMainMenu)
-        {
-            //Brings up the Bounty Poster when you obtain it from the Bounty Board
-            if (Input.GetKeyDown("b") && !m_isPaused && m_hasBounty)
-            {
-                if (!m_inPausedMenu)
-                {
-
-                    //Pauses the game and displays the Bounty Poster
-                    m_inBounty = true;
-
-                    m_isPaused = true;
-
-                    //Player Hud and Firing turned off
-                    m_playerHud.SetActive(false);
-                    m_combat = false;
-
-                    m_pauseMenu.SetActive(false);
-                    m_bountyPoster.SetActive(true);
-                    Time.timeScale = 0;
-
-                    Debug.Log("Looking at Bounty");
-                }
-            }
-
-            //Closes the Bounty Poster
-            else if (Input.GetKeyDown("b") && m_isPaused)
-            {
-                if (!m_inPausedMenu)
-                {
-                    //Resumes the game
-                    m_inBounty = false;
-                    m_isPaused = false;
-                    m_bountyPoster.SetActive(false);
-                    m_bountyBoard.SetActive(false);
-
-                    //Player Hud and Firing to True
-                    m_playerHud.SetActive(true);
-                    m_combat = true;
-
-                    Time.timeScale = 1;
-
-                    Debug.Log("Puts Bounty Away");
-                }
-            }
-            else if (Input.GetKeyDown("escape") && m_isPaused)
-            {
-                if (!m_inPausedMenu)
-                {
-                    //Resumes the game
-                    m_inBounty = false;
-                    m_isPaused = false;
-                    m_bountyPoster.SetActive(false);
-
-                    //Player Hud and Firing True
-                    m_playerHud.SetActive(true);
-                    m_combat = true;
-
-                    Time.timeScale = 1;
-
-                    Debug.Log("Game is UnPaused");
-                }
-            }
-        }
-
-            #endregion
-
-        #region Sound Controls
-
-        if (m_soundManager != null)
-        {
-            //m_soundManager.();
         }
 
         #endregion
@@ -441,12 +318,49 @@ public class UIManager : MonoBehaviour
         m_controlsMenu.SetActive(false);
         m_pauseMenu.SetActive(false);
         m_bountyPoster.SetActive(false);
-        m_bountyBoard.SetActive(false);
-        m_bountyInteraction.SetActive(false);
         m_optionsMenu.SetActive(false);
         m_playerHud.SetActive(false);
         m_combat = false;
     }
 
     #endregion
+
+    #region Private Functions
+
+    private void Awake()
+    {
+        if (m_Instance == null)
+        {
+            m_Instance = this;
+        }
+        else if (m_Instance != this)
+        {
+            Destroy(gameObject);
+        }
+
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
+        //Sets Only the Start Menu to active 
+        m_inMainMenu = true;
+        m_startMenu.SetActive(true);
+
+        m_controlsMenu.SetActive(false);
+        m_pauseMenu.SetActive(false);
+        m_bountyPoster.SetActive(false);
+        m_optionsMenu.SetActive(false);
+        m_playerHud.SetActive(false);
+        m_combat = false;
+
+
+
+        Time.timeScale = 0;
+        m_soundManager = SoundManager.m_instance;
+        m_weaponController = m_player.GetComponent<WeaponController>();
+    }
+
+    #endregion
+
 }
