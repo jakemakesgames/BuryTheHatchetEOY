@@ -10,7 +10,10 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+   
 
+    
+    #region LIAM
     #region Public Variables
 
     [SerializeField] GameObject m_startMenu;
@@ -303,11 +306,6 @@ public class UIManager : MonoBehaviour
         m_health.fillAmount = m_currHealth / m_maxHealth;
     }
 
-    //public void CurrentGold()
-    //{
-        //m_goldAmount.text = m_player.GetMoney().ToString();
-    //}
-
     public void StartMenu()
     {
         //Pauses the game and sets the main menu screen to true
@@ -347,23 +345,25 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         //Sets Only the Start Menu to active 
-        m_inMainMenu = true;
-        m_startMenu.SetActive(true);
+        m_inMainMenu = false;
+        m_startMenu.SetActive(false);
 
         m_controlsMenu.SetActive(false);
         m_pauseMenu.SetActive(false);
         m_bountyPoster.SetActive(false);
         m_optionsMenu.SetActive(false);
-        m_playerHud.SetActive(false);
+        m_playerHud.SetActive(true);
         m_combat = false;
 
 
 
-        Time.timeScale = 0;
-        m_soundManager = SoundManager.m_instance;
+        Time.timeScale = 1;
+        m_soundManager = GetComponent<SoundManager>();
         m_weaponController = m_player.GetComponent<WeaponController>();
     }
 
     #endregion
 
+    #endregion
+    
 }

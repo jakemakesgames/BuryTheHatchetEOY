@@ -132,6 +132,7 @@ public class Player : MonoBehaviour, IDamagable {
         transform.position = m_respawnPoint;
         m_deathFadeOutTimer = m_deathFadeOutTime;
         Dead = false;
+        m_health = m_maxHealth;
     }
 
     //Sets up health, weapon information and respawn point

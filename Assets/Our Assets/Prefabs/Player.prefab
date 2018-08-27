@@ -2072,6 +2072,7 @@ GameObject:
   - component: {fileID: 114219781730608420}
   - component: {fileID: 114494286414739098}
   - component: {fileID: 114465586240957604}
+  - component: {fileID: 54431941288767638}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -3947,7 +3948,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1999925407510398}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -83.03, y: 1.31, z: -76.66}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4781331482718442}
@@ -4078,6 +4079,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1999925407510398}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &54431941288767638
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1999925407510398}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!95 &95297771156888396
 Animator:
   serializedVersion: 3
@@ -4123,18 +4139,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5778159e463981f4eb7ae2dc4350093f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_speed: 400
-  m_dashTime: 0.1
-  m_dashSpeed: 100
+  m_speed: 200
+  m_rollTime: 0.4
+  m_rollSpeed: 35
+  m_rollCoolDown: 2
   m_camera: {fileID: 0}
   m_crosshair: {fileID: 0}
   m_clipAmmoDisplay: {fileID: 0}
   m_totalAmmoDisplay: {fileID: 0}
   m_clothesRustleSound: {fileID: 0}
-  m_walkingSound: {fileID: 0}
-  m_rollSound: {fileID: 0}
-  m_walkingParticleSystem: {fileID: 0}
-  m_rollParticleSystem: {fileID: 0}
+  m_walkingSound: {fileID: 8300000, guid: 86f3ad864f850db46b5e300e3ce3f797, type: 3}
+  m_rollSound: {fileID: 8300000, guid: eacf843f7882bcd47a5cb7f84a0f4265, type: 3}
+  m_walkingParticleSystem: {fileID: 198113631147028018, guid: d0e94ad31ea49a34ea8d52238797bef2,
+    type: 2}
+  m_rollParticleSystem: {fileID: 198113631147028018, guid: d0e94ad31ea49a34ea8d52238797bef2,
+    type: 2}
   m_playerAnimator: {fileID: 95662078434291026}
 --- !u!114 &114465586240957604
 MonoBehaviour:
@@ -4177,8 +4196,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_maxHealth: 100
   m_deathFadeOutTime: 0
-  m_hitSound: {fileID: 0}
-  m_dieSound: {fileID: 0}
+  m_hitSound: {fileID: 8300000, guid: e6b9cd8f36cb14b4192566dc2b535388, type: 3}
+  m_dieSound: {fileID: 8300000, guid: 835a496fb1033314d9c484560525613c, type: 3}
   m_hitParticleSystem: {fileID: 0}
   m_dieParticleSystem: {fileID: 0}
   m_weaponsAvailableToPlayer: 
