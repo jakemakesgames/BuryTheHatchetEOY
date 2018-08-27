@@ -309,8 +309,10 @@ public class PlayerInput : MonoBehaviour {
         if (m_rollSpeaker != null)
             m_rollSpeaker.clip = m_rollSound;
 
-        m_walkingParticleSystem.Stop();
-        m_rollParticleSystem.Stop();
+        if (m_walkingParticleSystem != null)
+            m_walkingParticleSystem.Stop();
+        if(m_rollParticleSystem != null)
+            m_rollParticleSystem.Stop();
 
         m_playerAnimator = GetComponentInChildren<Animator>();
         m_viewCamera = m_camera;
