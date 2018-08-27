@@ -7,7 +7,6 @@ using UnityEngine;
 //Last edited 25/08/2018
 
 [RequireComponent(typeof(PlayerInput))]
-[RequireComponent(typeof(AudioSource))]
 public class Player : MonoBehaviour, IDamagable {
 
     //This is for storing information on the currently uneqipped weapons of the player
@@ -148,7 +147,7 @@ public class Player : MonoBehaviour, IDamagable {
             else if (m_heldWeapons[i].GetComponent<Melee>() != null)
                 m_heldWeaponsInfo.Add(new WeaponInfo(true, 0, 0));
         }
-        m_audioSource = GetComponent<AudioSource>();
+        m_audioSource = Instantiate(m_audioSource, transform);
         m_playerAnimator = GetComponentInChildren<Animator>();
         m_deathFadeOutTimer = m_deathFadeOutTime;
     }

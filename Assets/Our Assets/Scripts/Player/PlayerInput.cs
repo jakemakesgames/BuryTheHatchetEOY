@@ -40,6 +40,7 @@ public class PlayerInput : MonoBehaviour {
         private Camera m_viewCamera;
         private WeaponController m_weaponController;
         private Player m_player;
+        private AudioSource m_audioSource;
     #endregion
 
     #region In world game objects
@@ -280,11 +281,11 @@ public class PlayerInput : MonoBehaviour {
         m_player = GetComponent<Player>();
 
         //Create the speakers for the individual sounds
-        m_walkSpeaker = Instantiate(GetComponent<AudioSource>(), transform);
+        m_walkSpeaker = Instantiate(m_audioSource, transform);
         m_walkSpeaker.clip = m_walkingSound;
-        m_clothesSpeaker = Instantiate(GetComponent<AudioSource>(), transform);
+        m_clothesSpeaker = Instantiate(m_audioSource, transform);
         m_clothesSpeaker.clip = m_clothesRustleSound;
-        m_rollSpeaker = Instantiate(GetComponent<AudioSource>(), transform);
+        m_rollSpeaker = Instantiate(m_audioSource, transform);
         m_rollSpeaker.clip = m_rollSound;
 
         m_walkingParticleSystem.Stop();
