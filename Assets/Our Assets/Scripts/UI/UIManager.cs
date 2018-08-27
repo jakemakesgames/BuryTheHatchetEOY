@@ -88,7 +88,6 @@ public class UIManager : MonoBehaviour
     public void Update()
     {
         CurrentHealth();
-        //CurrentGold();
 
         if (m_combat)
         {
@@ -206,6 +205,7 @@ public class UIManager : MonoBehaviour
 
     public void Unpause()
     {
+        //Unpauses the game and turns off the Pause Screen
         if (m_isPaused)
         {
             m_isPaused = false;
@@ -240,6 +240,7 @@ public class UIManager : MonoBehaviour
 
     public void Back()
     {
+        //For the Back Button
         if (!m_inMainMenu)
         {
             if (m_isPaused)
@@ -295,6 +296,7 @@ public class UIManager : MonoBehaviour
 
     public void CurrentHealth()
     {
+        //Grabs the health of the player and fills the bottle based on the players current health
         m_currHealth = m_player.GetHealth();
         m_maxHealth = m_player.GetMaxHealth();
 
@@ -308,6 +310,7 @@ public class UIManager : MonoBehaviour
 
     public void StartMenu()
     {
+        //Pauses the game and sets the main menu screen to true
         Time.timeScale = 0;
 
         m_isPaused = false;
