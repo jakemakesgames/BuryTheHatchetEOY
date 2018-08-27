@@ -5,7 +5,6 @@ using UnityEngine.AI;
 
 
 [RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(NavMeshAgent))]
 public class Boss : MonoBehaviour, IDamagable
 {
     #region Serialized Variables
@@ -17,7 +16,6 @@ public class Boss : MonoBehaviour, IDamagable
     [SerializeField] Transform m_rightSide;
 
     //Public Variables
-    [SerializeField] float m_walkSpeed = 0;
     [SerializeField] int m_cooldownTime = 0;
     [SerializeField] int m_overheating = 0;
     [SerializeField] int m_bossHealth = 0;
@@ -35,8 +33,6 @@ public class Boss : MonoBehaviour, IDamagable
     void Start ()
     {
         m_bossAgent = GetComponent<NavMeshAgent>();
-
-        m_barrelsDestroyed = false;
 	}
 	
 	// Update is called once per frame
@@ -49,19 +45,15 @@ public class Boss : MonoBehaviour, IDamagable
 
     public void Movement()
     {
-        while (!m_barrelsDestroyed)
+        if (!m_barrelsDestroyed)
         {
             //Minecarts acceleration towards the edge of the Rail Track
             m_bossAgent.SetDestination(m_leftSide.position);
 
-            if (m_bossAgent.remainingDistance <= 0)
-            {
-                m_bossAgent.SetDestination(m_rightSide.position);
-            }
-            else if (m_bossAgent.remainingDistance <= 0)
-            {
-                m_bossAgent.SetDestination(m_leftSide.position);
-            }
+            //if (m_bossAgent.remainingDistance <= 0)
+            //{
+            //    m_bossAgent.SetDestination(m_rightSide.position);
+            //}
         }
     }
 
