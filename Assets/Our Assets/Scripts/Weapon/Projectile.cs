@@ -116,9 +116,10 @@ public class Projectile : MonoBehaviour {
     private void CheckCollisions(float a_distanceToMove) {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask))
-            OnHitObject(hit, true);
-
+        if (m_insideEntity == false) {
+            if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask))
+                OnHitObject(hit, true);
+        }
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMask))
             OnHitObject(hit, false);
 
@@ -144,26 +145,22 @@ public class Projectile : MonoBehaviour {
         if (damagableObject != null)
             damagableObject.TakeHit(m_damage, a_hit);
         m_insideEntity = a_hitEntity;
-        if (m_insideEntity)
-            return;
-        Destroy(gameObject);
+        if (m_insideEntity == false)
+            Destroy(gameObject);
     }
     private void OnHitObject(Collider a_c, bool a_hitEntity) {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
         if (damagableObject != null)
             damagableObject.TakeDamage(m_damage);
         m_insideEntity = a_hitEntity;
-        if (m_insideEntity)
-            return;
-        Destroy(gameObject);
+        if (m_insideEntity == false)
+            Destroy(gameObject);
     }
     private void OnHitObject(RaycastHit a_hit, Projectile a_bullet, bool a_hitEntity) {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
         if (damagableObject != null)
             damagableObject.TakeImpact(m_damage, a_hit, a_bullet);
         m_insideEntity = a_hitEntity;
-        if (m_insideEntity)
-            return;
     }
 
     private void Start() {
