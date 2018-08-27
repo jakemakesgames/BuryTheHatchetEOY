@@ -57,7 +57,9 @@ public class PlayerInput : MonoBehaviour {
     #endregion
 
     #region sounds and particles
-        private List<AudioSource> m_audioSources;
+        private AudioSource m_walkSpeaker;
+        private AudioSource m_clothesSpeaker;
+        private AudioSource m_rollSpeaker;
         [Header("Sounds")]
         [Tooltip("One of the sounds that'll player when the player moves")]
         [SerializeField] private AudioClip m_clothesRustleSound;
@@ -76,6 +78,7 @@ public class PlayerInput : MonoBehaviour {
         [SerializeField] private float m_rollParticleLifeTime = 3f;
     #endregion    
 
+    [Header("CHARLIE!")]
     public Animator m_playerAnimator;
 
     //calls the equipped weapons attacking method 
@@ -123,22 +126,26 @@ public class PlayerInput : MonoBehaviour {
         if (!m_isRolling)
             m_nma.velocity = m_velocity * Time.deltaTime;
         if (m_movementVector.sqrMagnitude > 0) {
-            if (m_audioSources[0].isPlaying == false) {
-                m_audioSources[0].Play(); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
-                m_audioSources[1].Play();
-                m_audioSources[1].loop = true;
+            if (m_walkSpeaker.isPlaying == false) {
+                m_walkSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
+                m_clothesSpeaker.Play();
+                m_clothesSpeaker.loop = true;
                 m_walkingParticleSystem.Play();
             }
+            else {
+
+            }
         }
-        else if(m_audioSources[0].isPlaying || m_audioSources[1].loop) {
-            m_audioSources[0].Stop();
-            m_audioSources[1].loop = false;
+        else if(m_walkSpeaker.isPlaying || m_clothesSpeaker.loop) {
+            m_walkSpeaker.Stop();
+            m_clothesSpeaker.loop = false;
             m_walkingParticleSystem.Stop();
         }
             
     }
 
-    //Forces the player to look at the mouse position on screen as well as place a crosshair object where the player is looking
+    //Forces the player to look at the mouse position on screen
+    //as well as place a crosshair object where the player is looking
     private void PlayerLookAt() {
         Ray ray = m_viewCamera.ScreenPointToRay(Input.mousePosition);
         Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
@@ -164,7 +171,7 @@ public class PlayerInput : MonoBehaviour {
                 m_isRolling = true;
                 m_rollTimer = Time.time + m_rollTime;
                 m_nma.velocity = transform.forward * m_dashSpeed;
-                m_audioSources[2].Play(); /*NEED TO IMPLAMENT VOLUME CONTROL AND RANDOM PITCHING*/
+                m_rollSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL AND RANDOM PITCHING*/
                 m_rollParticleSystem.Play();
             }
         }
@@ -174,7 +181,7 @@ public class PlayerInput : MonoBehaviour {
                 m_nma.angularSpeed = m_nmaAngledSpeed;
                 m_nma.acceleration = m_nmaAcceleration;
                 m_isRolling = false;
-                m_audioSources[2].Stop();
+                m_rollSpeaker.Stop();
                 m_rollParticleSystem.Stop();
             }
         }
@@ -209,7 +216,7 @@ public class PlayerInput : MonoBehaviour {
     }
 
     //Checks if the player has access the weapon that the player atempemted to equip
-    //if they do the method then stores the values of the currently equipped weapon
+    //if they do, the method then stores the values of the currently equipped weapon
     //then equipes the player with the new weapon with the stored values for that specific weapon
     private void ChangeWeapon(int a_inumerator) {
         if (m_player.m_weaponsAvailableToPlayer[a_inumerator]) {
@@ -272,12 +279,13 @@ public class PlayerInput : MonoBehaviour {
         m_weaponController = GetComponent<WeaponController>();
         m_player = GetComponent<Player>();
 
-        m_audioSources[0] = Instantiate(GetComponent<AudioSource>(), transform);
-        m_audioSources[0].clip = m_walkingSound;
-        m_audioSources[1] = Instantiate(GetComponent<AudioSource>(), transform);
-        m_audioSources[1].clip = m_clothesRustleSound;
-        m_audioSources[2] = Instantiate(GetComponent<AudioSource>(), transform);
-        m_audioSources[2].clip = m_rollSound;
+        //Create the speakers for the individual sounds
+        m_walkSpeaker = Instantiate(GetComponent<AudioSource>(), transform);
+        m_walkSpeaker.clip = m_walkingSound;
+        m_clothesSpeaker = Instantiate(GetComponent<AudioSource>(), transform);
+        m_clothesSpeaker.clip = m_clothesRustleSound;
+        m_rollSpeaker = Instantiate(GetComponent<AudioSource>(), transform);
+        m_rollSpeaker.clip = m_rollSound;
 
         m_walkingParticleSystem.Stop();
         m_rollParticleSystem.Stop();

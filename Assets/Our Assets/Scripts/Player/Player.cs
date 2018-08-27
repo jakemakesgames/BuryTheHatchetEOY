@@ -130,7 +130,6 @@ public class Player : MonoBehaviour, IDamagable {
     //Moves the player to the respawn position
     public void Respawn() {
         transform.position = m_respawnPoint;
-        gameObject.tag = "Player";
         m_deathFadeOutTimer = m_deathFadeOutTime;
         Dead = false;
     }
@@ -161,7 +160,6 @@ public class Player : MonoBehaviour, IDamagable {
             m_health = m_maxHealth;
         if(Dead) {
             m_deathFadeOutTimer -= Time.deltaTime;
-            gameObject.tag = "DeadPlayer";
             //fade the screen to black
             if (m_deathFadeOutTimer <= 0)
                 Respawn();
