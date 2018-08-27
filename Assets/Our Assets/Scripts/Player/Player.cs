@@ -50,7 +50,13 @@ public class Player : MonoBehaviour, IDamagable {
             "throughout the game and which position they'll be stored")]
         public List<GameObject> m_heldWeapons;
         public Animator m_playerAnimator;
-        public event System.Action OnDeath;
+
+    public bool Dead {
+        get { return m_dead; }
+        set { m_dead = value; }
+    }
+
+    public event System.Action OnDeath;
     #endregion
 
     //IDamageble interfaces methods for taking damage
@@ -60,12 +66,12 @@ public class Player : MonoBehaviour, IDamagable {
     }
         public void TakeDamage(int a_damage) {
         m_health -= a_damage;
-        if (m_health <= 0 && !m_dead)
+        if (m_health <= 0 && !Dead)
             Die();
         if(m_hitParticleSystem != null)
             m_hitParticleSystem.Play();
         if (m_hitSound != null)
-            m_audioSource.PlayOneShot(m_hitSound);
+            m_audioSource.PlayOneShot(m_hitSound, 0.3f);
     }
         public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile) {
         TakeDamage(a_damage);
@@ -112,13 +118,13 @@ public class Player : MonoBehaviour, IDamagable {
     //and tells the player it is dead allowing for other 
     //functionality to occur elsewhere
     private void Die() {
-        m_dead = true;
+        Dead = true;
         if (OnDeath != null)
             OnDeath();
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Death");
         if (m_dieSound != null)
-            m_audioSource.PlayOneShot(m_dieSound);
+            m_audioSource.PlayOneShot(m_dieSound, 0.3f);
     }
 
     //Moves the player to the respawn position
@@ -126,7 +132,7 @@ public class Player : MonoBehaviour, IDamagable {
         transform.position = m_respawnPoint;
         gameObject.tag = "Player";
         m_deathFadeOutTimer = m_deathFadeOutTime;
-        m_dead = false;
+        Dead = false;
     }
 
     //Sets up health, weapon information and respawn point
@@ -153,7 +159,7 @@ public class Player : MonoBehaviour, IDamagable {
     private void Update () {
         if (m_health > m_maxHealth)
             m_health = m_maxHealth;
-        if(m_dead) {
+        if(Dead) {
             m_deathFadeOutTimer -= Time.deltaTime;
             gameObject.tag = "DeadPlayer";
             //fade the screen to black

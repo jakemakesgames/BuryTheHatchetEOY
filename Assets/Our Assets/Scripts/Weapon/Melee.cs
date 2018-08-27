@@ -51,7 +51,7 @@ public class Melee : MonoBehaviour {
         if (!m_isSwinging && m_coolDownTimer <= 0) {
             m_isSwinging = true;
             IsIdle = false;
-            m_audioSource.PlayOneShot(m_swooshSound);
+            m_audioSource.PlayOneShot(m_swooshSound, 0.3f);
             m_coolDownTimer = m_coolDown;
 
             //If the weapon starts swinging within a collider,
@@ -94,7 +94,7 @@ public class Melee : MonoBehaviour {
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
                 OnHitObject(hit);
                 if (m_hitEntitySound != null) {
-                    m_audioSource.PlayOneShot(m_hitEntitySound);
+                    m_audioSource.PlayOneShot(m_hitEntitySound, 0.3f);
                 }
             }
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_destroyableCollisionMask)) {

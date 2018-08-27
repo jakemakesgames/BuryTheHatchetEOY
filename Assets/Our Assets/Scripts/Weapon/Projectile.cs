@@ -132,7 +132,7 @@ public class Projectile : MonoBehaviour {
                     GameObject GO = Instantiate(m_environmentParticles[i], transform.position - transform.forward * m_environmentParticleDists[i], transform.rotation);
                     Destroy(GO, m_environmentParticleTimers[i]);
                     AudioSource audio = Instantiate(m_audioSource, transform.position, transform.rotation);
-                    audio.PlayOneShot(m_environmentAudioClips[i]);
+                    audio.PlayOneShot(m_environmentAudioClips[i], 0.3f);
                 }
             }
         }

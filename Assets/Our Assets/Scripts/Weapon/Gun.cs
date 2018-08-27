@@ -132,7 +132,7 @@ public class Gun : MonoBehaviour {
                 IsFull = true;
             }
             if (m_audioSource != null)
-                    m_audioSource.PlayOneShot(m_reloadSound);
+                    m_audioSource.PlayOneShot(m_reloadSound, 0.3f);
         }
     }
 
@@ -177,7 +177,7 @@ public class Gun : MonoBehaviour {
                 }
                 if (m_audioSource != null) {
                     if (m_audioSource.isPlaying == false)
-                        m_audioSource.PlayOneShot(m_shootSound);
+                        m_audioSource.PlayOneShot(m_shootSound, 0.3f);
                 }
                 m_currentClip--;
                 IsFull = false;
