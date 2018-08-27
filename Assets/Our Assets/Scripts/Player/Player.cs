@@ -144,6 +144,7 @@ public class Player : MonoBehaviour, IDamagable {
                 m_heldWeaponsInfo.Add(new WeaponInfo(true, 0, 0));
         }
         m_audioSource = GetComponent<AudioSource>();
+        m_playerAnimator = GetComponentInChildren<Animator>();
         m_deathFadeOutTimer = m_deathFadeOutTime;
     }
     
