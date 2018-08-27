@@ -264,6 +264,7 @@ public class PlayerInput : MonoBehaviour {
         m_nma = GetComponent<NavMeshAgent>();
         m_weaponController = GetComponent<WeaponController>();
         m_player = GetComponent<Player>();
+        m_audioSource = GetComponent<AudioSource>();
         m_playerAnimator = GetComponentInChildren<Animator>();
         m_viewCamera = m_camera;
         m_nmaAcceleration = m_nma.acceleration;
