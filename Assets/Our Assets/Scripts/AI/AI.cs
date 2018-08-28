@@ -239,6 +239,7 @@ public class AI : MonoBehaviour, IDamagable
     //Check if there is nothing blocking the gun
     bool CanAttack()
     {
+       
         Vector3 vecBetween = (m_player.transform.position - m_weaponController.m_weaponHold.transform.position);
         Vector3 rayPos1 = m_weaponController.m_weaponHold.position - (m_weaponController.m_weaponHold.forward * m_rayDetectBufferDist);
         Vector3 rayPos2 = rayPos1 + m_weaponController.m_weaponHold.right * 0.1f;
@@ -255,7 +256,7 @@ public class AI : MonoBehaviour, IDamagable
             return false;
         if (Physics.Raycast(ray2, out hit, vecBetween.sqrMagnitude + m_rayDetectBufferDist, m_environmentLayer))
             return false;
-
+        
 
         return true;
     }
@@ -275,7 +276,7 @@ public class AI : MonoBehaviour, IDamagable
         m_agent.ResetPath();
         m_walkingParticleSystem.Stop();
         int randomAnim = Random.Range(0, deathAnimationCount);
-        m_enemyAnimator.SetInteger("WhichDeath", 0);
+        m_enemyAnimator.SetInteger("WhichDeath", randomAnim);
         m_enemyAnimator.SetTrigger("Death");
         RandomPitch();
         m_audioSource.PlayOneShot(m_deathSounds[Random.Range(0, m_deathSounds.Count)]);
@@ -302,7 +303,7 @@ public class AI : MonoBehaviour, IDamagable
     private void UpdateAnims()
     {
         float myVelocity = m_agent.velocity.magnitude;
-        Vector3 localVel = transform.InverseTransformDirection(m_agent.velocity);
+        Vector3 localVel = transform.InverseTransformDirection(m_agent.velocity.normalized);
 
         m_enemyAnimator.SetFloat("Velocity", myVelocity);
 
@@ -312,7 +313,7 @@ public class AI : MonoBehaviour, IDamagable
 
     private void UpdateParticles()
     {
-        if (m_agent.velocity.sqrMagnitude > 0f)
+        if (m_agent.velocity != Vector3.zero)
         {
             if(m_walkingParticleSystem.isPlaying == false)
             m_walkingParticleSystem.Play();

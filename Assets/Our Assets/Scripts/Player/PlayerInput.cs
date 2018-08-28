@@ -356,12 +356,16 @@ public class PlayerInput : MonoBehaviour {
     private void UpdateAnims()
     {
         float myVelocity = m_velocity.magnitude;
-        Vector3 localVel = transform.InverseTransformDirection(m_velocity);
+
+        Debug.Log(myVelocity);
+        Vector3 localVel = transform.InverseTransformDirection(m_velocity.normalized);
         
         m_playerAnimator.SetFloat("Velocity", myVelocity);
         
         m_playerAnimator.SetFloat("MovementDirectionRight", localVel.x);
         m_playerAnimator.SetFloat("MovementDirectionForward", localVel.z);
+
+       // Debug.Log(m_playerAnimator.GetFloat("MovementDirectionRight")/100);
 
         //ORIGINAL CODE//////////////////////////////////////////////////////////////////////////////
         //        playerAnimator.SetFloat ("MovementDirectionRight", m_velocity.x * transform.right.x);
