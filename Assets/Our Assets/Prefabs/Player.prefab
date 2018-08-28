@@ -4284,8 +4284,10 @@ MonoBehaviour:
   m_dieSound: {fileID: 8300000, guid: 835a496fb1033314d9c484560525613c, type: 3}
   m_hitParticleSystem: {fileID: 0}
   m_dieParticleSystem: {fileID: 0}
-  m_weaponsAvailableToPlayer: 
-  m_heldWeapons: []
+  m_weaponsAvailableToPlayer: 0101
+  m_heldWeapons:
+  - {fileID: 1074724821504698, guid: a1c393be65c62c84e987b70f8b708bb3, type: 2}
+  - {fileID: 1838402518302384, guid: 5e68efd63c582db4b9dc21328ce22ea5, type: 2}
   m_playerAnimator: {fileID: 0}
 --- !u!136 &136361415522540008
 CapsuleCollider:

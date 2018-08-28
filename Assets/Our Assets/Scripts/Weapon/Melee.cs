@@ -31,10 +31,14 @@ public class Melee : MonoBehaviour {
         [SerializeField] private AudioClip m_swooshSound;
         [Tooltip("The sound made when this weapon collides with a living entity")]
         [SerializeField] private AudioClip m_hitEntitySound;
+        [Tooltip("Particle when this hits and entity")]
+        [SerializeField] private GameObject m_hitEntityParticle;
+        [Tooltip("Time in seconds the particle system exists")]
+        [SerializeField] private float m_hitEntityParticleTime = 2;
     #endregion
 
     #region private member variables
-        private float m_coolDownTimer;
+    private float m_coolDownTimer;
         private float m_skinWidth = 0.1f;
         private bool m_isSwinging = false;
         private bool m_isIdle = true;
@@ -91,10 +95,15 @@ public class Melee : MonoBehaviour {
         for (int i = 0; i < m_contactPoints.Length; i++) {
             Ray ray = new Ray(m_contactPoints[i].transform.position, m_contactPoints[i].transform.forward);
             RaycastHit hit;
+            Debug.DrawRay(m_contactPoints[i].transform.position, m_contactPoints[i].transform.forward);
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
                 OnHitObject(hit);
                 if (m_hitEntitySound != null) {
                     m_audioSource.PlayOneShot(m_hitEntitySound, 0.3f);
+                }
+                if (m_hitEntityParticle != null) {
+                    GameObject GO = Instantiate(m_hitEntityParticle, transform.position - transform.forward, transform.rotation);
+                    Destroy(GO, m_hitEntityParticleTime);
                 }
             }
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_destroyableCollisionMask)) {
