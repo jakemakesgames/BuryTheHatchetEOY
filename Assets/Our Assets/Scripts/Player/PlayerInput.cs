@@ -40,6 +40,7 @@ public class PlayerInput : MonoBehaviour {
         private NavMeshAgent m_nma;
         private Vector3 m_velocity;
     	private Vector3 m_movementVector;
+        private Vector3 m_preMoveVector;
         private Camera m_viewCamera;
         private WeaponController m_weaponController;
         private Player m_player;
@@ -356,31 +357,34 @@ public class PlayerInput : MonoBehaviour {
     private void UpdateAnims()
     {
         float myVelocity = m_velocity.magnitude;
-
+        
         Debug.Log(myVelocity);
         Vector3 localVel = transform.InverseTransformDirection(m_velocity.normalized);
-        
+        if (m_preMoveVector.sqrMagnitude <= m_velocity.sqrMagnitude) {
+            localVel /= 2f;
+        }
         m_playerAnimator.SetFloat("Velocity", myVelocity);
         
         m_playerAnimator.SetFloat("MovementDirectionRight", localVel.x);
         m_playerAnimator.SetFloat("MovementDirectionForward", localVel.z);
-
-       // Debug.Log(m_playerAnimator.GetFloat("MovementDirectionRight")/100);
-
+        /*
+        // Debug.Log(m_playerAnimator.GetFloat("MovementDirectionRight")/100);
+        //
         //ORIGINAL CODE//////////////////////////////////////////////////////////////////////////////
         //        playerAnimator.SetFloat ("MovementDirectionRight", m_velocity.x * transform.right.x);
         //        playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
         //////////////////////////////////////////////////////////////////////////////////////////////
-
-
+        //
+        //
         //        if (m_velocity.x * transform.right.x == 0){
         //            playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
         //        }
-
-
+        //
+        //
         //playerAnimator.SetFloat ("MovementDirectionForward", m_movementVector.x * transform.forward.x);
-
+        //
         //playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.z * transform.right.z);
-
+        */    
+        m_preMoveVector = m_movementVector;
     }
 }
