@@ -303,7 +303,7 @@ public class AI : MonoBehaviour, IDamagable
     private void UpdateAnims()
     {
         float myVelocity = m_agent.velocity.magnitude;
-        Vector3 localVel = transform.InverseTransformDirection(m_agent.velocity);
+        Vector3 localVel = transform.InverseTransformDirection(m_agent.velocity.normalized);
 
         m_enemyAnimator.SetFloat("Velocity", myVelocity);
 
