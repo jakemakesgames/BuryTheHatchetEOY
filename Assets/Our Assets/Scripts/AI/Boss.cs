@@ -23,13 +23,20 @@ public class Boss : MonoBehaviour, IDamagable
     [SerializeField] float m_overheatValue = 0;
     [SerializeField] bool m_isOverheated = false;
     [SerializeField] int m_bossHealth = 0;
+    [SerializeField] float m_bossSpeed = 0;
 
     #endregion
 
     #region Private Variables
 
+    private float m_distanceToTarget;
     private float m_cooldownTimer;
     private float m_overheating;
+    private Vector3 m_startPos;
+    private Vector3 m_endPos;
+    private float m_lerpTime = 4;
+    private float m_currLerpTime = 0;
+    private float m_lerpPerc;
     private WeaponController m_weaponController;
     private NavMeshAgent m_bossAgent;
     private bool m_barrelsDestroyed = false;
@@ -40,9 +47,13 @@ public class Boss : MonoBehaviour, IDamagable
     void Start ()
     {
         m_bossAgent = GetComponent<NavMeshAgent>();
+        m_bossAgent.GetComponent<NavMeshAgent>().enabled = false;
         m_weaponController = GetComponent<WeaponController>();
 
-        m_bossAgent.SetDestination(m_rightSide.position);
+        m_startPos = m_rightSide.transform.position;
+        m_endPos = m_leftSide.transform.position;
+
+        m_boss.transform.position = Vector3.MoveTowards(m_boss.transform.position, m_rightSide.position, m_distanceToTarget);
     }
 	
 	// Update is called once per frame
@@ -59,18 +70,31 @@ public class Boss : MonoBehaviour, IDamagable
         //While the barrel hasnt been destroyed
         if (!m_barrelsDestroyed)
         {
+            //m_bossAgent.GetComponent<NavMeshAgent>().enabled = false;
+
             //Prevents the boss from rotating
-            m_bossAgent.angularSpeed = 0;
+            //m_bossAgent.angularSpeed = 0;
+
+            m_distanceToTarget = m_bossSpeed * Time.deltaTime;
 
             m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
 
-            if (m_bossAgent.transform.position.z >= m_rightSide.position.z)
+            m_currLerpTime += Time.deltaTime;
+            if (m_currLerpTime >= m_lerpTime)
             {
-                m_bossAgent.SetDestination(m_leftSide.position);
+                m_currLerpTime = m_lerpTime;
             }
-            else if (m_bossAgent.transform.position.z <= m_leftSide.position.z)
+            m_lerpPerc = m_currLerpTime / m_lerpTime;
+
+            m_boss.transform.position = Vector3.Lerp(m_startPos, m_endPos, m_lerpPerc);
+
+            if (m_boss.transform.position.z >= m_rightSide.position.z)
             {
-                m_bossAgent.SetDestination(m_rightSide.position);
+                m_boss.transform.position = Vector3.Lerp(m_startPos, m_endPos, m_lerpPerc);
+            }
+            else if (m_boss.transform.position.z <= m_leftSide.position.z)
+            {
+                m_boss.transform.position = Vector3.Lerp(m_endPos, m_startPos, m_lerpPerc);
             }
         }
     }

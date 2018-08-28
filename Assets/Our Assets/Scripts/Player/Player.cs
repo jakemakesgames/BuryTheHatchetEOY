@@ -126,7 +126,7 @@ public class Player : MonoBehaviour, IDamagable {
             m_playerAnimator.SetTrigger("Death");
         if (m_dieSound != null)
             m_audioSource.PlayOneShot(m_dieSound, 0.3f);
-        SceneManager.LoadScene(0);
+        //SceneManager.LoadScene(0);
     }
 
     //Moves the player to the respawn position
