@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
@@ -125,6 +126,7 @@ public class Player : MonoBehaviour, IDamagable {
             m_playerAnimator.SetTrigger("Death");
         if (m_dieSound != null)
             m_audioSource.PlayOneShot(m_dieSound, 0.3f);
+        SceneManager.LoadScene(0);
     }
 
     //Moves the player to the respawn position
