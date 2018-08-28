@@ -123,8 +123,13 @@ public class Projectile : MonoBehaviour {
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMask))
             OnHitObject(hit, false);
 
-        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_ricochetCollisionMask))
+        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_ricochetCollisionMask)) {
+            if (m_ricochetParticle != null) {
+                GameObject GO = Instantiate(m_ricochetParticle, transform.position - transform.forward * m_ricochetParticleDist, transform.rotation);
+                Destroy(GO, m_ricochetParticleTimer);
+            }
             OnHitObject(hit, this, false);
+        }
 
         for (int i = 0; i < m_environmentParticles.Count; i++) {
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMasks[i])) {
