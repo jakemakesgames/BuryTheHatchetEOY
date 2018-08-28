@@ -45,7 +45,7 @@ public class UIManager : MonoBehaviour
     bool m_inPausedMenu;
     bool m_soldOut;
     bool m_inMainMenu;
-    bool m_combat;
+    bool m_inCombat;
 
     private float m_currHealth;
     private float m_maxHealth;
@@ -92,7 +92,7 @@ public class UIManager : MonoBehaviour
     {
         CurrentHealth();
 
-        if (m_combat)
+        if (m_inCombat)
         {
             ClipDisplay();
         }
@@ -104,7 +104,7 @@ public class UIManager : MonoBehaviour
         {
             //Set the Bounty Screens to false
             m_playerHud.SetActive(false);
-            m_combat = false;
+            m_inCombat = false;
 
             //Takes you back to the Start Screen from the Options Menu
             if (Input.GetKeyDown("escape") && m_optionsMenu.activeSelf)
@@ -156,7 +156,7 @@ public class UIManager : MonoBehaviour
 
                         m_playerHud.SetActive(false);
                         m_pauseMenu.SetActive(true);
-                        m_combat = false;
+                        m_inCombat = false;
 
                         //Sets the game loop speed to 0
                         Time.timeScale = 0;
@@ -180,7 +180,7 @@ public class UIManager : MonoBehaviour
 
                             //Player HUD and Firing
                             m_playerHud.SetActive(true);
-                            m_combat = true;
+                            m_inCombat = true;
 
                             //Turn all other screens off
                             m_pauseMenu.SetActive(false);
@@ -216,7 +216,7 @@ public class UIManager : MonoBehaviour
             m_inBounty = false;
             m_bountyPoster.SetActive(false);
             m_playerHud.SetActive(true);
-            m_combat = true;
+            m_inCombat = true;
 
             //Sets the game loop speed to 0
             Time.timeScale = 1;
@@ -232,7 +232,7 @@ public class UIManager : MonoBehaviour
 
         //Player Hud and Firing True
         m_playerHud.SetActive(true);
-        m_combat = true;
+        m_inCombat = true;
         Time.timeScale = 1;
     }
 
@@ -321,7 +321,7 @@ public class UIManager : MonoBehaviour
         m_bountyPoster.SetActive(false);
         m_optionsMenu.SetActive(false);
         m_playerHud.SetActive(false);
-        m_combat = false;
+        m_inCombat = false;
     }
 
     #endregion
@@ -353,7 +353,7 @@ public class UIManager : MonoBehaviour
         m_bountyPoster.SetActive(false);
         m_optionsMenu.SetActive(false);
         m_playerHud.SetActive(true);
-        m_combat = false;
+        m_inCombat = false;
 
 
 
