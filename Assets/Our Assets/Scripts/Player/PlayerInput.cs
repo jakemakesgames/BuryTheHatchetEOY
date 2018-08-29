@@ -86,19 +86,24 @@ public class PlayerInput : MonoBehaviour {
     [Header("CHARLIE!")]
     public Animator m_playerAnimator;
 
+    #region Player action methods
     //calls the equipped weapons attacking method 
     //(swing for melee or shoot for gun)
     //via the weapon controller script
     //and also checks if the player wishes to reload
     public void Attack() {
+        //Get's the currently equipped weapon and executes the appropriate attack action
+        //and animation
         Gun equippedGun = m_weaponController.GetEquippedGun();
         if (equippedGun == null) {
             Melee equippedMelee = m_weaponController.GetEquippedMelee();
             if (equippedMelee == null)
                 return;
+
             m_weaponController.Swing();
             m_playerAnimator.SetTrigger("Swing");
         }
+
         else if (equippedGun.m_isAutomatic && equippedGun.IsIdle) {
             if (Input.GetMouseButton(0)) {
                 if (m_weaponController.Shoot())
@@ -123,18 +128,23 @@ public class PlayerInput : MonoBehaviour {
     
     //Calculates the players velocity for the next frame
     private void Move() {
+        //Calculating velocity
         m_movementVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
 		Vector3 direction = m_camera.transform.rotation * m_movementVector;
         direction.y = 0;
-        Vector3 moveVelocity = direction.normalized * m_speed;
+        Vector3 moveVelocity = direction.normalized * m_speed * Time.deltaTime;
         m_velocity = moveVelocity;
+
+        //Sound and Particle effects
         if (!m_isRolling)
-            m_nma.velocity = m_velocity * Time.deltaTime;
+            m_nma.velocity = m_velocity;
+
         if ((m_walkSpeaker == null || m_clothesSpeaker == null || m_walkingParticleSystem == null) == false) {
             if (m_movementVector.sqrMagnitude > 0) {
                 if (m_walkSpeaker.isPlaying == false) {
                     if (m_walkSpeaker != null && m_walkingSound != null) 
                         m_walkSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
+
                     if (m_clothesSpeaker != null && m_clothesSpeaker != null) {
                         m_clothesSpeaker.Play();
                         m_clothesSpeaker.loop = true;
@@ -149,8 +159,10 @@ public class PlayerInput : MonoBehaviour {
             else if (m_walkSpeaker.isPlaying || m_clothesSpeaker.loop) {
                 if (m_walkSpeaker != null && m_walkingSound != null)
                     m_walkSpeaker.Stop();
+
                 if (m_clothesSpeaker != null && m_clothesSpeaker != null)
                     m_clothesSpeaker.loop = false;
+
                 if (m_walkingParticleSystem != null)
                     m_walkingParticleSystem.Stop();
             }
@@ -160,17 +172,24 @@ public class PlayerInput : MonoBehaviour {
     //Forces the player to look at the mouse position on screen
     //as well as place a crosshair object where the player is looking
     private void PlayerLookAt() {
+        //Cast a ray from the given camera through the mouse to the created ground plane
         Ray ray = m_viewCamera.ScreenPointToRay(Input.mousePosition);
         Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
         float rayDistance;
+        //adjust the height of the position found by the ray to the height of the players 'hand'
         if (groundPlane.Raycast(ray, out rayDistance)) {
             Transform hand = m_weaponController.WeaponHold;
+
             Vector3 pointOnGround = ray.GetPoint(rayDistance);
             Vector3 heightCorrectedLookPoint = new Vector3(pointOnGround.x, transform.position.y, pointOnGround.z);
+
+            ///TODO :: correct the look point to be along the line 
+            ///rather than just height adjusted as the camera is not topdown
             transform.LookAt(heightCorrectedLookPoint);
             heightCorrectedLookPoint = new Vector3(pointOnGround.x, hand.position.y, pointOnGround.z);
             hand.LookAt(heightCorrectedLookPoint);
             m_weaponController.WeaponHold = hand;
+            //place the crosshiar game object at this 'height corrected look point'
             if (m_crosshair != null)
                 m_crosshair.transform.position = heightCorrectedLookPoint;
         }
@@ -182,12 +201,16 @@ public class PlayerInput : MonoBehaviour {
             if (Input.GetMouseButtonDown(1)) {
 				m_playerAnimator.SetTrigger ("Roll");
                 m_isRolling = true;
+
                 m_rollTimer = Time.time + m_rollTime;
+
                 m_nma.velocity = transform.forward * m_rollSpeed;
                 if(m_rollSpeaker != null && m_rollSound != null)
                     m_rollSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL AND RANDOM PITCHING*/
+
                 if(m_rollParticleSystem != null)
                     m_rollParticleSystem.Play();
+
                 m_rollCoolDownTimer = Time.time + m_rollCoolDown;
             }
         }
@@ -196,15 +219,20 @@ public class PlayerInput : MonoBehaviour {
                 m_nma.speed = m_nmaSpeed;
                 m_nma.angularSpeed = m_nmaAngledSpeed;
                 m_nma.acceleration = m_nmaAcceleration;
+
                 m_isRolling = false;
+
                 if (m_rollSpeaker != null && m_rollSound != null)
                     m_rollSpeaker.Stop();
+
                 if (m_rollParticleSystem != null)
                     m_rollParticleSystem.Stop();
             }
         }
     }
+    #endregion
 
+    #region Weapon methods
     //Gives a ui text object the players ammo for their currently equipped weapon
     private void DisplayAmmo() {
         Gun equippedGun = m_weaponController.GetEquippedGun();
@@ -240,11 +268,13 @@ public class PlayerInput : MonoBehaviour {
         if (m_player.m_weaponsAvailableToPlayer[a_inumerator]) {
             if (m_player.m_heldWeapons[a_inumerator] != null) {
                 SetWeaponInfo();
+
                 if (m_weaponController.GetEquippedWeapon() != null)
                     m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
 
                 m_equippedWeaponInumerator = a_inumerator;
                 m_weaponController.EquipWeapon(m_player.m_heldWeapons[a_inumerator]);
+
                 if (!m_player.ToEquipIsMelee(a_inumerator)) {
                     m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(a_inumerator));
                     m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(a_inumerator));
@@ -290,7 +320,7 @@ public class PlayerInput : MonoBehaviour {
     public void ResetMelee() {
         m_weaponController.GetEquippedMelee().EndSwing();
     }
-    
+#endregion 
     //Get all requied attached components and store them for later use
     private void Awake() {
         m_nma = GetComponent<NavMeshAgent>();
@@ -360,30 +390,31 @@ public class PlayerInput : MonoBehaviour {
         
         Debug.Log(myVelocity);
         Vector3 localVel = transform.InverseTransformDirection(m_velocity.normalized);
-        if (m_preMoveVector.sqrMagnitude <= m_velocity.sqrMagnitude) {
-            localVel /= 2f;
+        if (m_preMoveVector != m_velocity) {
+            localVel = m_preMoveVector + m_velocity;
+            localVel.Normalize();
         }
         m_playerAnimator.SetFloat("Velocity", myVelocity);
         
         m_playerAnimator.SetFloat("MovementDirectionRight", localVel.x);
         m_playerAnimator.SetFloat("MovementDirectionForward", localVel.z);
         /*
-        // Debug.Log(m_playerAnimator.GetFloat("MovementDirectionRight")/100);
-        //
-        //ORIGINAL CODE//////////////////////////////////////////////////////////////////////////////
-        //        playerAnimator.SetFloat ("MovementDirectionRight", m_velocity.x * transform.right.x);
-        //        playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
-        //////////////////////////////////////////////////////////////////////////////////////////////
-        //
-        //
-        //        if (m_velocity.x * transform.right.x == 0){
-        //            playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
-        //        }
-        //
-        //
-        //playerAnimator.SetFloat ("MovementDirectionForward", m_movementVector.x * transform.forward.x);
-        //
-        //playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.z * transform.right.z);
+        Debug.Log(m_playerAnimator.GetFloat("MovementDirectionRight")/100);
+        
+        ORIGINAL CODE//////////////////////////////////////////////////////////////////////////////
+                playerAnimator.SetFloat ("MovementDirectionRight", m_velocity.x * transform.right.x);
+                playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        
+        
+                if (m_velocity.x * transform.right.x == 0){
+                    playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
+                }
+        
+        
+        playerAnimator.SetFloat ("MovementDirectionForward", m_movementVector.x * transform.forward.x);
+        
+        playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.z * transform.right.z);
         */    
         m_preMoveVector = m_movementVector;
     }
