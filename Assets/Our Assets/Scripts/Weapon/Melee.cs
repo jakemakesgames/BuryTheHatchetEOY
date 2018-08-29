@@ -92,9 +92,11 @@ public class Melee : MonoBehaviour {
     //use ray casts to check for collisions
     private void CheckCollisions(float a_distanceToMove) {
         for (int i = 0; i < m_contactPoints.Length; i++) {
-            Ray ray = new Ray(m_contactPoints[i].transform.position, m_contactPoints[i].transform.forward);
+            Vector3 tempPos = m_contactPoints[i].transform.position;
+            Vector3 tempForward = m_contactPoints[i].transform.forward;
+            Ray ray = new Ray(tempPos, tempForward);
             RaycastHit hit;
-            Debug.DrawRay(m_contactPoints[i].transform.position, m_contactPoints[i].transform.forward);
+            Debug.DrawLine(tempPos, tempPos + tempForward * a_distanceToMove);
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
                 OnHitObject(hit);
                 Debug.Log("Hit Enemy With Hatchet");
