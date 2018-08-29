@@ -5,7 +5,7 @@ using UnityEngine;
 //Created 29/08/2018
 //Last edited 29/08/2018
 
-public class DestrctibleObject : MonoBehaviour, IDamagable {
+public class DestructibleObject : MonoBehaviour, IDamagable {
 
     #region Inspector variables
     [Tooltip("Amount of damage taken required for this object to be destroyed")]
@@ -18,7 +18,11 @@ public class DestrctibleObject : MonoBehaviour, IDamagable {
     [SerializeField] private ParticleSystem m_hitParticle;
     [Tooltip("The particle that'll play when thsi object is destroyed")]
     [SerializeField] private GameObject m_destructionParticle;
+    [Tooltip("The mesh of this object when at this spot's number of health")]
+    [SerializeField] private List<Mesh> m_healthStages;
     #endregion
+
+    private MeshFilter m_meshFilter;
 
     #region IDamagable methods
     public void TakeDamage(int a_damage) {
@@ -34,6 +38,11 @@ public class DestrctibleObject : MonoBehaviour, IDamagable {
     }
     #endregion
 
+    private void Awake()
+    {
+        m_meshFilter = gameObject.GetComponent<MeshFilter>();
+    }
+
     //Called when this takes a hit, plays a particle and checks if this should be destroyed.
     private void OnHit() {
         if (m_health <= 0) {
@@ -42,6 +51,8 @@ public class DestrctibleObject : MonoBehaviour, IDamagable {
             Destroy(gameObject);
         }
         else 
-            m_hitParticle.Play();        
+            m_hitParticle.Play();
+        if (m_healthStages[m_health - 1] != null)
+            m_meshFilter.mesh = m_healthStages[m_health - 1];
     }
 }
