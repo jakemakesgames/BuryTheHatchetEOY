@@ -18,6 +18,10 @@ public class PlayerInput : MonoBehaviour {
         [Header("Movement variables")]
         [Tooltip("Movement speed of the player")]
         [SerializeField] private float m_speed = 10f;
+        [Tooltip("Percent speed increace per sceond")]
+        [SerializeField] private float m_accelerationRate = 0.1f;
+        [Tooltip("Percent speed decrease per sceond")]
+        [SerializeField] private float m_deccelerationRate = 0.99f;
         [Tooltip("Time spent in the roll")]
         [SerializeField] private float m_rollTime = 10f;
         [Tooltip("Movement speed of the player during the roll")]
@@ -39,7 +43,8 @@ public class PlayerInput : MonoBehaviour {
         private bool m_isRolling = false;
         private NavMeshAgent m_nma;
         private Vector3 m_velocity;
-    	private Vector3 m_movementVector;
+        private Vector3 m_acceleration;
+        private Vector3 m_movementVector;
         private Vector3 m_preMoveVector;
         private Camera m_viewCamera;
         private WeaponController m_weaponController;
@@ -129,16 +134,23 @@ public class PlayerInput : MonoBehaviour {
     //Calculates the players velocity for the next frame
     private void Move() {
         //Calculating velocity
-        m_movementVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-		Vector3 direction = m_camera.transform.rotation * m_movementVector;
+        m_acceleration = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        m_acceleration *= m_accelerationRate;
+        m_movementVector = Vector3.Lerp(m_movementVector, m_acceleration, m_deccelerationRate);
+        if (m_movementVector.x > 1)
+            m_movementVector.x = 1;
+        if (m_movementVector.z > 1)
+            m_movementVector.z = 1;
+
+        Vector3 direction = m_camera.transform.rotation * m_movementVector;
         direction.y = 0;
         Vector3 moveVelocity = direction.normalized * m_speed * Time.deltaTime;
         m_velocity = moveVelocity;
 
-        //Sound and Particle effects
         if (!m_isRolling)
             m_nma.velocity = m_velocity;
 
+        //Sound and Particle effects
         if ((m_walkSpeaker == null || m_clothesSpeaker == null || m_walkingParticleSystem == null) == false) {
             if (m_movementVector.sqrMagnitude > 0) {
                 if (m_walkSpeaker.isPlaying == false) {
@@ -166,7 +178,7 @@ public class PlayerInput : MonoBehaviour {
                 if (m_walkingParticleSystem != null)
                     m_walkingParticleSystem.Stop();
             }
-        }   
+        }
     }
 
     //Forces the player to look at the mouse position on screen
