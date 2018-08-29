@@ -6,7 +6,7 @@ using StateMachine;
 
 //Mark Phillips
 //Created 13/08/2018
-//Last edited 15/08/2018
+//Last edited 29/08/2018
 
 [RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(NavMeshAgent))]
@@ -40,8 +40,10 @@ public class AI : MonoBehaviour, IDamagable
     [SerializeField] private float m_deadZone;
     [Tooltip("The distance from enemy to cover point at which to stop calculating a new position.")]
     [SerializeField] private float m_coverFoundThreshold = 3;
-    [Tooltip("IDK")]
+    [Tooltip("Distance behind the enemy's hand to ensure the ray casts do not start in a collider")]
     [SerializeField] private float m_rayDetectBufferDist;
+    [Tooltip("World height of body when dead")]
+    [SerializeField] private float m_bodyDropHeight;
 
     [Header("Collison Mask Layers")]
     [Tooltip("Set this to the Cover layer for cover collision detection")]
@@ -62,17 +64,17 @@ public class AI : MonoBehaviour, IDamagable
     [SerializeField] private ParticleSystem m_walkingParticleSystem;
     #endregion
 
-
-    private float m_enemyRadius;
+   // private float m_enemyRadius;
 
     private AudioSource m_audioSource;
-
 
     private float m_health;
     private float m_distBetweenPlayer;
     private float m_gunDistToPlayer;
+    private float m_counter = 0;
     private bool m_isDead = false;
-
+    private bool m_hasDropped = false;
+    private bool m_hasDroppedTrigger = false;
 
     private STATE m_state;
 
@@ -80,8 +82,6 @@ public class AI : MonoBehaviour, IDamagable
     private LineRenderer m_line;
     private GameObject m_player;
     private List<Transform> m_coverPoints;
-
-  
 
 
     private WeaponController m_weaponController;
@@ -101,6 +101,7 @@ public class AI : MonoBehaviour, IDamagable
     public float CoverFoundThreshold { get { return m_coverFoundThreshold; } }
     public Gun Gun { get { return m_gun; } }
     public List<Transform> CoverPoints { get { return m_coverPoints; } }
+    public bool HasDroppedTrigger { set { m_hasDroppedTrigger = value; } }
     #endregion
 
     void Awake()
@@ -159,7 +160,14 @@ public class AI : MonoBehaviour, IDamagable
 
             UpdateAnims();
             UpdateParticles();
-        
+
+        }
+        else
+        {
+            if (m_hasDroppedTrigger)
+            {
+                DropDead();
+            }
         }
     }
 
@@ -276,13 +284,30 @@ public class AI : MonoBehaviour, IDamagable
         m_agent.ResetPath();
         m_walkingParticleSystem.Stop();
         int randomAnim = Random.Range(0, deathAnimationCount);
-        m_enemyAnimator.SetInteger("WhichDeath", randomAnim);
+        m_enemyAnimator.SetInteger("WhichDeath", 2);
         m_enemyAnimator.SetTrigger("Death");
         RandomPitch();
         m_audioSource.PlayOneShot(m_deathSounds[Random.Range(0, m_deathSounds.Count)]);
         GetComponent<NavMeshAgent>().enabled = false;
-        gameObject.AddComponent<Rigidbody>();
+        //Rigidbody rb = gameObject.AddComponent<Rigidbody>();
+        //rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
         m_isDead = true;
+    }
+
+    void DropDead()
+    {
+        if (m_hasDropped == false)
+        {
+            m_counter += Time.deltaTime;
+            Vector3 target = new Vector3(transform.position.x, m_bodyDropHeight, transform.position.z);
+
+            transform.position = Vector3.Lerp(transform.position, target, m_counter);
+
+            if (transform.position.y == m_bodyDropHeight)
+            {
+                m_hasDropped = true;
+            }
+        }
     }
 
     public void TakeHit(int a_damage, RaycastHit a_hit)

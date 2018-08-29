@@ -24,12 +24,14 @@ public class Player : MonoBehaviour, IDamagable {
         }
     }
 
+    #region Member variables
     private bool m_dead;
     private int m_health;
     private float m_deathFadeOutTimer;
     private Vector3 m_respawnPoint;
     private List<WeaponInfo> m_heldWeaponsInfo = new List<WeaponInfo>();
     private AudioSource m_audioSource;
+    #endregion
 
     #region Inspector Variables
         [SerializeField] private int m_maxHealth;
@@ -79,10 +81,11 @@ public class Player : MonoBehaviour, IDamagable {
     }
     #endregion
 
-    //Variable control
+    #region Health manipulation
     public void Heal(int a_healAmount) { m_health += a_healAmount; }
     public int GetHealth() { return m_health; }
     public int GetMaxHealth() { return m_maxHealth; }
+    #endregion
 
     //Returns false if a successful assignment couldn't occur
     //Sets information for a weapon the player is unequipping
@@ -115,6 +118,7 @@ public class Player : MonoBehaviour, IDamagable {
     }
     #endregion
 
+    #region Player death handling
     //Calls all subscribed OnDeath methods when the player dies
     //and tells the player it is dead allowing for other 
     //functionality to occur elsewhere
@@ -136,6 +140,7 @@ public class Player : MonoBehaviour, IDamagable {
         Dead = false;
         m_health = m_maxHealth;
     }
+    #endregion
 
     //Sets up health, weapon information and respawn point
     private void Awake () {
