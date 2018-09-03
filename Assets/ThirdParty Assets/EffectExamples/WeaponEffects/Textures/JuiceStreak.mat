@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: BloodSplat2
+  m_Name: JuiceStreak
   m_Shader: {fileID: 203, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: _ALPHABLEND_ON _EMISSION _NORMALMAP
   m_LightmapFlags: 1
@@ -39,7 +39,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 3f4abfb4beaba874db09889251c0f146, type: 3}
+        m_Texture: {fileID: 2800000, guid: 07a10375da67ac9429e4694a4e70a774, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -80,4 +80,4 @@ Material:
     - _Color: {r: 0.41176468, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0.1397059, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19117647, g: 0.19117647, b: 0.19117647, a: 1}
-    - _TintColor: {r: 0.2205882, g: 0, b: 0, a: 0.5}
+    - _TintColor: {r: 0.3868572, g: 0.66176474, b: 0.35034603, a: 0.5}
