@@ -115,22 +115,22 @@ public class PlayerInput : MonoBehaviour {
 
         else if (equippedGun.m_isAutomatic && equippedGun.IsIdle) {
             if (Input.GetMouseButton(0)) {
-                if (m_weaponController.Shoot())
+                if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
                     m_playerAnimator.SetTrigger("Shoot");
             }
-            else if (Input.GetKeyDown(KeyCode.R)) {
-                m_weaponController.ReloadEquippedGun();
-                m_playerAnimator.SetTrigger("Reload");
+            else if (Input.GetKey(KeyCode.R)) {
+                if (m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
+                    m_playerAnimator.SetBool("Reloading", true);
             }
         }
         else if (equippedGun.IsIdle) {
             m_playerAnimator.SetBool("Reloading", false);
             if (Input.GetMouseButtonDown(0)) {
-                if (m_weaponController.Shoot())
+                if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
                     m_playerAnimator.SetTrigger("Shoot");
             }
-            else if (Input.GetKeyDown(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
-                if(m_weaponController.ReloadEquippedGun())
+            else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
+                if(m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
                     m_playerAnimator.SetBool("Reloading", true);
             }
         }

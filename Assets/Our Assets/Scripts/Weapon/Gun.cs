@@ -55,7 +55,7 @@ public class Gun : MonoBehaviour {
     public bool m_isAutomatic = false;
     #endregion
 
-    #region Private variables
+    #region Private member variables
     private AudioSource m_audioSource;
 
     private LayerMask m_entityCollisionMask;
