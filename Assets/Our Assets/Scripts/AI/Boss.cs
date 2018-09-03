@@ -16,7 +16,6 @@ public class Boss : MonoBehaviour, IDamagable
     [SerializeField] GameObject m_bossGun;
     [SerializeField] Transform m_leftSide;
     [SerializeField] Transform m_rightSide;
-    [SerializeField] Transform m_startPosition;
     [SerializeField] Transform m_targetPlayer;
 
     //Public Variables
@@ -34,15 +33,14 @@ public class Boss : MonoBehaviour, IDamagable
     private float m_cooldownTimer;
     private float m_overheating;
 
+    #region Lerp attempt
     private float m_startTime;
-    private float m_currDuration;
-    private float m_distToDest;
+    private float m_journeyLength;
+    private float m_disTrav;
     private float m_journeyFrac;
-    private float m_distToStartDest;
-    private float m_startJourneyFrac;
-    private bool m_toLeft = false;
-    private bool m_toRight = false;
-    private bool m_startMove = true;
+
+    private bool m_reverseCart;
+    #endregion
 
     private WeaponController m_weaponController;
     private NavMeshAgent m_bossAgent;
@@ -57,12 +55,15 @@ public class Boss : MonoBehaviour, IDamagable
         m_bossAgent.GetComponent<NavMeshAgent>().enabled = false;
         m_weaponController = GetComponent<WeaponController>();
 
-        //Gets the time we start
+        #region
+        ///Lerp Attempt
+        //Gets the starting time
         m_startTime = Time.time;
-        //Gets the distance between the two objects
-        m_distToStartDest = Vector3.Distance(m_startPosition.position, m_leftSide.position);
 
-        m_distToDest = Vector3.Distance(m_leftSide.position, m_rightSide.position);
+        //Gets the distance between the two objects
+        m_journeyLength = Vector3.Distance(m_leftSide.position, m_rightSide.position);
+        #endregion
+
     }
 	
 	// Update is called once per frame
@@ -79,40 +80,43 @@ public class Boss : MonoBehaviour, IDamagable
         //While the barrel hasnt been destroyed
         if (!m_barrelsDestroyed)
         {
-            //m_bossAgent.GetComponent<NavMeshAgent>().enabled = false;
-
-            //Prevents the boss from rotating
-            //m_bossAgent.angularSpeed = 0;
-
-
             m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
 
-            
-            m_currDuration = (m_startTime + Time.time) * m_cartSpeed;
-            m_startJourneyFrac = m_currDuration / m_distToStartDest;
-            m_journeyFrac = m_currDuration / m_distToDest;
+            #region Lerp
+            ///Lerp Attempt
+            //
+            m_disTrav = (Time.time - m_startTime) * m_cartSpeed;
+            m_journeyFrac = m_disTrav / m_journeyLength;
 
-            if (m_startMove)
+            if (m_reverseCart)
             {
-                m_boss.transform.position = Vector3.Lerp(m_startPosition.position, m_leftSide.position, m_startJourneyFrac);
-                m_currDuration = 0;
-                m_toLeft = true;
-            }
-
-            //travels from right side to left side based on time
-            if (m_boss.transform.position.z <= m_leftSide.position.z && m_toLeft)
-            {
-                m_boss.transform.position = Vector3.Lerp(m_leftSide.position, m_rightSide.position, m_journeyFrac);
-                m_startMove = false;
-                m_toLeft = false;
-                m_toRight = true;
-            }
-            else if (m_boss.transform.position.z == m_rightSide.position.z && m_toRight)
-            {
+                //Lerps from the right position to the left position
                 m_boss.transform.position = Vector3.Lerp(m_rightSide.position, m_leftSide.position, m_journeyFrac);
-                m_toLeft = true;
-                m_toRight = false;
             }
+            else
+            {
+                //Lerps from the left position to right right position
+                m_boss.transform.position = Vector3.Lerp(m_leftSide.position, m_rightSide.position, m_journeyFrac);
+            }
+
+            //Checks if the boss has reached one of the two objects
+            if ((Vector3.Distance(m_boss.transform.position, m_rightSide.position) == 0.0f || 
+                Vector3.Distance(m_boss.transform.position, m_leftSide.position) == 0.0f))
+            {
+                if (m_reverseCart)
+                {
+                    //Heads to the right side
+                    m_reverseCart = false;
+                }
+                else
+                {
+                    //Heads to the left side
+                    m_reverseCart = true;
+                }
+
+                m_startTime = Time.time;
+            }
+            #endregion
         }
     }
 
