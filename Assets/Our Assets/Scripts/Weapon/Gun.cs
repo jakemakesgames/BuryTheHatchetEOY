@@ -4,18 +4,21 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 25/08/2018
+//Last edited 03/09/2018
 
     [RequireComponent(typeof(AudioSource))]
 public class Gun : MonoBehaviour {
 
+    #region Inspector variables
     [Tooltip("The sound that will play when the gun reloads")]
     [SerializeField] private AudioClip m_reloadSound;
+
     [Tooltip("The sound that will play when the gun shoots")]
     [SerializeField] private AudioClip m_shootSound;
     [Tooltip("The particle that will play when the gun shoots")]
     [SerializeField] private GameObject m_shootParticleSystem;
     [SerializeField] private float m_shootParticleLifeTime = 1f;
+
     [Tooltip("The particle that will play after the gun shoots")]
     [SerializeField] private GameObject m_smokeParticleSystem;
     [SerializeField] private float m_smokeParticleLifeTime = 1f;
@@ -23,11 +26,11 @@ public class Gun : MonoBehaviour {
     [Tooltip("The position projectiles spawn when the gun shoots")]
     [SerializeField] private Transform m_muzzle;
     [Tooltip("The projectile to be shot from this gun")]
-    public Projectile m_projectile;
+    [SerializeField] private Projectile m_projectile;
 
-    [Tooltip("Time between shots in millie seconds")]
-    public float m_msBetweenShots = 100;
-    public float m_reloadTimeInMilliseconds = 100;
+    [Tooltip("Time between shots in seconds")]
+    public float m_secondsBetweenShots = 0.1f;
+    public float m_reloadTimeInSeconds = 0.1f;
     [Tooltip("Speed of the projectile when the gun shoots it")]
     public float m_muzzleVelocity = 15;
     [Tooltip("How long in seconds the projectile will exist in the world")]
@@ -50,19 +53,39 @@ public class Gun : MonoBehaviour {
     public bool m_isReloading = false;
     [Tooltip("Determines if mouse press or hold mouse down to shoot")]
     public bool m_isAutomatic = false;
+    #endregion
+
+    #region Private variables
+    private AudioSource m_audioSource;
 
     private LayerMask m_entityCollisionMask;
     private LayerMask m_environmentCollisionMask;
     private LayerMask m_ricochetCollisionMask;
-    private AudioSource m_audioSource;
-    private float m_nextShotTime;
+    
+    private float m_timeUntilNextAction;
 
-    [SerializeField] private int m_currentAmmo;
-    [SerializeField] private int m_currentClip;
+    private int m_currentAmmo;
+    private int m_currentClip;
 
     private bool m_infiniteAmmo = false;
     private bool m_isIdle = true;
     private bool m_isFull = true;
+    private bool m_setToReloadOne = false;
+    #endregion
+
+    #region properties
+    public LayerMask EntityCollisionMask {
+        get { return m_entityCollisionMask; } 
+        set { m_entityCollisionMask = value; }
+    }
+    public LayerMask EnvironmentCollisionMask {
+        get { return m_environmentCollisionMask; }
+        set { m_environmentCollisionMask = value; }
+    }
+    public LayerMask RicochetCollisionMask {
+        get { return m_ricochetCollisionMask; } 
+        set { m_ricochetCollisionMask = value; }
+    }
 
     public bool IsIdle {
         get { return m_isIdle; }
@@ -72,16 +95,36 @@ public class Gun : MonoBehaviour {
         get { return m_isFull; }
         set { m_isFull = value; }
     }
+    public bool SetToReloadOne {
+        get { return m_setToReloadOne; }
+        set { m_setToReloadOne = value; }
+    }
 
-    public void AddAmmo(int a_ammoToAdd) { m_currentAmmo += a_ammoToAdd; }
+    public int CurrentClip {
+        get { return m_currentClip; } 
+        set { m_currentClip = value; }
+    }
+
+    public float TimeUntilNextAction {
+        get { return m_timeUntilNextAction; } 
+        set { m_timeUntilNextAction = value; }
+    }
+    public int CurrentAmmo { 
+        get { return m_currentAmmo; }
+        set { m_currentAmmo = value; }
+    }
+    #endregion
+
+    #region setters, getters and other variable control
+    public void AddAmmo(int a_ammoToAdd) { CurrentAmmo += a_ammoToAdd; }
     public void SetEntityCollisionLayer(LayerMask a_collsionMask) {
-        m_entityCollisionMask = a_collsionMask;
+        EntityCollisionMask = a_collsionMask;
     }
     public void SetEnvironmentCollisionLayer(LayerMask a_collsionMask) {
-        m_environmentCollisionMask = a_collsionMask;
+        EnvironmentCollisionMask = a_collsionMask;
     }
     public void SetRicochetCollisionLayer(LayerMask a_collsionMask) {
-        m_ricochetCollisionMask = a_collsionMask;
+        RicochetCollisionMask = a_collsionMask;
     }
     public void SetInfiniteAmmo(bool a_infiniteAmmo) {
         m_infiniteAmmo = a_infiniteAmmo;
@@ -93,7 +136,7 @@ public class Gun : MonoBehaviour {
             return false;
 
         else
-            m_currentClip = a_currentClip;
+            CurrentClip = a_currentClip;
             return true;
     }
 
@@ -104,46 +147,81 @@ public class Gun : MonoBehaviour {
             return false;
             
         else
-            m_currentAmmo = a_reserveAmmo;
+            CurrentAmmo = a_reserveAmmo;
             return true;
     }
 
-    public int GetCurrentClip() { return m_currentClip; }
-    public int GetCurrentAmmo() { return m_currentAmmo; }
+    public int GetCurrentClip() { return CurrentClip; }
+    public int GetCurrentAmmo() { return CurrentAmmo; }
     public int GetTotalAmmo() { return GetCurrentAmmo() + GetCurrentClip(); }
     public int GetMaxAmmo() { return m_maxAmmo + m_clipSize; }
     public Transform GetMuzzle() { return m_muzzle; }
+    #endregion
 
-    //reloads the gun and also prevents shooting for a time based on the reload time in milliseconds variable
-    public void Reload() {
+    #region ammo control
+    //reloads the gun and also prevents shooting for a time based on the reload time in seconds variable
+    //returns true if the gun can reload or false if it cannot
+    public bool Reload() {
+        if (CurrentClip == m_clipSize)
+        {
+            return false;
+        }
         if (m_isReloading == false) {
-            m_nextShotTime = Time.time + m_reloadTimeInMilliseconds / 1000;
+            TimeUntilNextAction = Time.time + m_reloadTimeInSeconds;
             m_isReloading = true;
             IsIdle = false;
-            if (m_currentAmmo < m_clipSize) {
-                m_currentClip = m_currentAmmo;
+            if (CurrentAmmo < m_clipSize) {
+                CurrentClip = CurrentAmmo;
                 if (m_infiniteAmmo == false)
-                    m_currentAmmo = 0;
+                    CurrentAmmo = 0;
             }
             else {
                 if (m_infiniteAmmo == false)
-                    m_currentAmmo -= m_clipSize - m_currentClip;
-                m_currentClip = m_clipSize;
+                    CurrentAmmo -= m_clipSize - CurrentClip;
+                CurrentClip = m_clipSize;
                 IsFull = true;
             }
             if (m_audioSource != null)
                     m_audioSource.PlayOneShot(m_reloadSound, 0.3f);
+            return true;
         }
+        return false;
+    }
+
+    //returns true if the gun can reload or false if it cannot
+    public bool ReloadOne() {
+        if (CurrentClip <= m_clipSize && CurrentAmmo > 0) {
+            if (IsIdle) {
+                if (m_isReloading == false)
+                    m_isReloading = true;
+
+                TimeUntilNextAction = Time.time + m_reloadTimeInSeconds;
+                m_setToReloadOne = true;
+                IsIdle = false;
+                if (m_audioSource != null)
+                    m_audioSource.PlayOneShot(m_reloadSound, 0.3f);
+            }
+            else if (SetToReloadOne) {
+                CurrentClip++;
+                CurrentAmmo--;
+                if (CurrentClip == m_clipSize)
+                    IsFull = true;
+            }
+            return true;
+        }
+        return false;
     }
 
     //tells who asks is if the gun is empty
     public bool GetIsEmpty() {
-        if (m_currentClip <= 0)
+        if (CurrentClip <= 0)
             return true;
         else
             return false;
         }
+    #endregion
 
+    #region shoot
     //Randomises the projectiles angle based on the dispersion angle variable
     private Vector3 RandomAngle() {
         Vector3 direction = m_muzzle.forward + Random.insideUnitSphere * m_dispersionAngle;
@@ -154,19 +232,21 @@ public class Gun : MonoBehaviour {
     //Creates projectiles when called if this gun has ammo left in the current
     //clip and if the next shot time has passed
     public bool Shoot() {
-        if (Time.time > m_nextShotTime) {
-            if (m_currentClip > 0) {
-                m_nextShotTime = Time.time + m_msBetweenShots / 1000;
+        if (Time.time > TimeUntilNextAction) {
+            if (CurrentClip > 0) {
+                TimeUntilNextAction = Time.time + m_secondsBetweenShots;
                 for (int i = 0; i < m_numProjectilesPerShot; i++) {
+                    //Projectile setup
                     Projectile newProjectile = Instantiate(m_projectile, m_muzzle.position, m_muzzle.rotation * Quaternion.Euler(RandomAngle())) as Projectile;
                     newProjectile.SetDamage(m_damage); 
                     newProjectile.SetSpeed(m_muzzleVelocity);
                     newProjectile.SetLifeTime(m_projectileLifeTime);
-                    newProjectile.SetEntityCollisionLayer(m_entityCollisionMask);
-                    newProjectile.SetTerrainCollisionLayer(m_environmentCollisionMask);
-                    newProjectile.SetRicochetCollisionLayer(m_ricochetCollisionMask);
+                    newProjectile.SetEntityCollisionLayer(EntityCollisionMask);
+                    newProjectile.SetTerrainCollisionLayer(EnvironmentCollisionMask);
+                    newProjectile.SetRicochetCollisionLayer(RicochetCollisionMask);
                     IsIdle = false;
                 }
+                //Play particles and sounds
                 if (m_shootParticleSystem != null) {
                     GameObject GO = Instantiate(m_shootParticleSystem, m_muzzle.position, transform.rotation);
                     Destroy(GO, m_shootParticleLifeTime);
@@ -179,31 +259,34 @@ public class Gun : MonoBehaviour {
                     if (m_audioSource.isPlaying == false)
                         m_audioSource.PlayOneShot(m_shootSound, 0.3f);
                 }
-                m_currentClip--;
+                CurrentClip--;
                 IsFull = false;
                 return true;
             }
         }
         return false;
     }
+    #endregion
 
     private void Awake() {
-        m_currentAmmo = m_maxAmmo;
-        m_currentClip = m_clipSize;
+        CurrentAmmo = m_maxAmmo;
+        CurrentClip = m_clipSize;
         m_audioSource = GetComponent<AudioSource>();
     }
     //Keeps track of whether this gun is reloading
     //and stops the ammo stores from going higher than their respective maximums
     private void Update() {
-        if (Time.time > m_nextShotTime) {
+        if (Time.time > TimeUntilNextAction) {
             if (m_isReloading) 
                 m_isReloading = false;
+            if (SetToReloadOne)
+                ReloadOne();
             IsIdle = true;
         }
-        if (m_currentAmmo > m_maxAmmo)
-            m_currentAmmo = m_maxAmmo;
-        if (m_currentClip > m_clipSize)
-            m_currentClip = m_clipSize;
+        if (CurrentAmmo > m_maxAmmo)
+            CurrentAmmo = m_maxAmmo;
+        if (CurrentClip > m_clipSize)
+            CurrentClip = m_clipSize;
     }
     
 }
