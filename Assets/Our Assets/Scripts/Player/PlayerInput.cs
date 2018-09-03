@@ -70,7 +70,7 @@ public class PlayerInput : MonoBehaviour {
     #endregion    
 
     #region private member variables
-    private int m_equippedWeaponInumerator;
+        private int m_equippedWeaponInumerator;
         private int m_ammoInClip;
         private int m_ammoInReserve;
         private float m_nmaSpeed;
@@ -124,13 +124,14 @@ public class PlayerInput : MonoBehaviour {
             }
         }
         else if (equippedGun.IsIdle) {
+            m_playerAnimator.SetBool("Reloading", false);
             if (Input.GetMouseButtonDown(0)) {
                 if (m_weaponController.Shoot())
                     m_playerAnimator.SetTrigger("Shoot");
             }
             else if (Input.GetKeyDown(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
                 if(m_weaponController.ReloadEquippedGun())
-                    m_playerAnimator.SetTrigger("Reload");
+                    m_playerAnimator.SetBool("Reloading", true);
             }
         }
     }
@@ -251,7 +252,7 @@ public class PlayerInput : MonoBehaviour {
     private IEnumerator CheckEnemyDistance() {
         while (true) {
             Collider[] enemies = Physics.OverlapSphere(transform.position, m_inCombatRadius, m_weaponController.EntityCollisionMask);
-            m_inCombat = (enemies[0] != null);
+            m_inCombat = (enemies.Length > 0);
             m_playerAnimator.SetBool("WeaponActive", m_inCombat);
             yield return new WaitForSeconds(0.25f);
         }
@@ -300,6 +301,7 @@ public class PlayerInput : MonoBehaviour {
 
                 m_equippedWeaponInumerator = a_inumerator;
                 m_weaponController.EquipWeapon(m_player.m_heldWeapons[a_inumerator]);
+                m_playerAnimator.SetInteger("whichWeapon", a_inumerator + 1);
 
                 if (!m_player.ToEquipIsMelee(a_inumerator)) {
                     m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(a_inumerator));
@@ -346,7 +348,8 @@ public class PlayerInput : MonoBehaviour {
     public void ResetMelee() {
         m_weaponController.GetEquippedMelee().EndSwing();
     }
-#endregion 
+    #endregion 
+
     //Charlie
     private void UpdateAnims()
     {
