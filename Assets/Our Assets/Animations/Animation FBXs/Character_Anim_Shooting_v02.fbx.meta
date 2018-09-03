@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 352628f2d00483c42a2c726e34e41eb9
-timeCreated: 1535508551
+guid: 517e9773bc85b514b9acd58228465e22
+timeCreated: 1535936982
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -137,7 +137,7 @@ ModelImporter:
     400126: mixamorig:Spine
     400128: mixamorig:Spine1
     400130: mixamorig:Spine2
-    7400000: Character_Anim_Search_v01
+    7400000: Character_Anim_Shooting_v02
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -167,10 +167,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Character_Anim_Search_v01
-      takeName: mixamo.com
-      firstFrame: 0
-      lastFrame: 432
+      name: Character_Anim_Shooting_v02
+      takeName: Shoot
+      firstFrame: 18
+      lastFrame: 30
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
