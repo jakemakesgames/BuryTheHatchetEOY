@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using StateMachine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 
 //Mark Phillips
 //Created 13/08/2018
@@ -11,7 +12,7 @@ public class Reload : IState<AI>
     AI m_owner;
     Vector3 m_targetLocation;
     Collider[] m_hitColliders;
-    bool m_coverFound = false;
+    bool m_initialCoverFound = false;
 
 
     public void Enter(AI a_owner)
@@ -27,7 +28,7 @@ public class Reload : IState<AI>
     {
         if (IsCoverAvailable())
         {
-            if (m_coverFound == false)
+            if (m_initialCoverFound == false)
             {
                 FindNearestCover();
                 SetPathToCover();
@@ -80,26 +81,46 @@ public class Reload : IState<AI>
 
     private void ReloadGun()
     {
-        m_owner.Agent.SetDestination(m_owner.transform.position);
-        m_owner.Gun.Reload();
+        if (m_owner.Gun.ReloadOne())
+        {
+            m_owner.Agent.SetDestination(m_owner.transform.position);
+            m_owner.FinishedReload = false;
+            //Set anim bool
+        }
+        else
+        {
+            m_owner.FinishedReload = true;
+        }
     }
 
     void FindNearestCover()
     {
-        Transform nearestPoint = m_hitColliders[0].transform;
+        List<Collider> cols = new List<Collider>();
+        cols.AddRange(m_hitColliders);
+
+        Transform nearestPoint = m_owner.transform;
         float nearestDistance = float.MaxValue;
         float distance;
+        float distToPlayer = (m_owner.transform.position - m_owner.PlayerPosition).sqrMagnitude;
 
-        for (int i = 0; i < m_hitColliders.Length; i++)
+
+
+        cols.Sort((a, b) => (m_owner.transform.position - a.transform.position).sqrMagnitude.CompareTo((m_owner.transform.position - b.transform.position).sqrMagnitude));
+
+
+        for (int i = 0; i < cols.Count; i++)
         {
-            distance = (m_owner.transform.position - m_hitColliders[i].transform.position).sqrMagnitude;
-
-            if (distance < nearestDistance)
+            if ((m_owner.transform.position - cols[i].transform.position).sqrMagnitude < distToPlayer) //If dist from me to cover is less than dist to player
             {
-                nearestDistance = distance;
-                nearestPoint = m_hitColliders[i].transform;
+                if ((m_owner.transform.position - cols[i].transform.position).sqrMagnitude < (cols[i].transform.position - m_owner.PlayerPosition).sqrMagnitude) //If dist from me to cover is less than dist from cover to player
+                {
+                    nearestPoint = cols[i].transform;
+                    break;
+                }
             }
         }
+
+        
 
         Vector3 dirFromPlayer = nearestPoint.position;
         dirFromPlayer = ((nearestPoint.position - m_owner.PlayerPosition).normalized);
@@ -108,6 +129,6 @@ public class Reload : IState<AI>
         finalPoint = new Vector3(finalPoint.x, nearestPoint.position.y, finalPoint.z);
 
         m_targetLocation = finalPoint;
-        m_coverFound = true;
+        m_initialCoverFound = true;
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 25/08/2018
+//Last edited 03/09/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -14,7 +14,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Player))]
 public class PlayerInput : MonoBehaviour {
 
-    #region Movement variables
+    #region Movement/ animation variables
         [Header("Movement variables")]
         [Tooltip("Movement speed of the player")]
         [SerializeField] private float m_speed = 10f;
@@ -28,28 +28,9 @@ public class PlayerInput : MonoBehaviour {
         [SerializeField] private float m_rollSpeed = 1000f;
         [Tooltip("Time in seconds before the player can roll after rolling")]
         [SerializeField] private float m_rollCoolDown = 2f;
-    #endregion
-
-    #region private member variables
-    private int m_equippedWeaponInumerator;
-        private int m_ammoInClip;
-        private int m_ammoInReserve;
-        private float m_nmaSpeed;
-        private float m_rollTimer = 0;
-        private float m_rollCoolDownTimer = 0;
-        private float m_nmaAngledSpeed;
-        private float m_nmaAcceleration;
-        private bool m_isHoldingGun;
-        private bool m_isRolling = false;
-        private NavMeshAgent m_nma;
-        private Vector3 m_velocity;
-        private Vector3 m_acceleration;
-        private Vector3 m_movementVector;
-        private Vector3 m_preMoveVector;
-        private Camera m_viewCamera;
-        private WeaponController m_weaponController;
-        private Player m_player;
-        private AudioSource m_audioSource;
+        [Tooltip("If an enemy is within this distance from the player " +
+            "consider the player in combat")]
+        [SerializeField] private float m_inCombatRadius = 10f;
     #endregion
 
     #region In world game objects
@@ -88,6 +69,29 @@ public class PlayerInput : MonoBehaviour {
         [SerializeField] [Range(0, 1)] private float m_rollVol = 0.5f;
     #endregion    
 
+    #region private member variables
+        private int m_equippedWeaponInumerator;
+        private int m_ammoInClip;
+        private int m_ammoInReserve;
+        private float m_nmaSpeed;
+        private float m_rollTimer = 0;
+        private float m_rollCoolDownTimer = 0;
+        private float m_nmaAngledSpeed;
+        private float m_nmaAcceleration;
+        private bool m_isHoldingGun;
+        private bool m_isRolling = false;
+        private bool m_inCombat = false;
+        private NavMeshAgent m_nma;
+        private Vector3 m_velocity;
+        private Vector3 m_acceleration;
+        private Vector3 m_movementVector;
+        private Vector3 m_preMoveVector;
+        private Camera m_viewCamera;
+        private WeaponController m_weaponController;
+        private Player m_player;
+        private AudioSource m_audioSource;
+    #endregion
+
     [Header("CHARLIE!")]
     public Animator m_playerAnimator;
 
@@ -111,22 +115,23 @@ public class PlayerInput : MonoBehaviour {
 
         else if (equippedGun.m_isAutomatic && equippedGun.IsIdle) {
             if (Input.GetMouseButton(0)) {
-                if (m_weaponController.Shoot())
+                if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
                     m_playerAnimator.SetTrigger("Shoot");
             }
-            else if (Input.GetKeyDown(KeyCode.R)) {
-                m_weaponController.ReloadEquippedGun();
-                m_playerAnimator.SetTrigger("Reload");
+            else if (Input.GetKey(KeyCode.R)) {
+                if (m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
+                    m_playerAnimator.SetBool("Reloading", true);
             }
         }
         else if (equippedGun.IsIdle) {
+            m_playerAnimator.SetBool("Reloading", false);
             if (Input.GetMouseButtonDown(0)) {
-                if (m_weaponController.Shoot())
+                if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
                     m_playerAnimator.SetTrigger("Shoot");
             }
-            else if (Input.GetKeyDown(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
-                m_weaponController.ReloadEquippedGun();
-                m_playerAnimator.SetTrigger("Reload");
+            else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
+                if(m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
+                    m_playerAnimator.SetBool("Reloading", true);
             }
         }
     }
@@ -242,6 +247,16 @@ public class PlayerInput : MonoBehaviour {
             }
         }
     }
+
+    //Coroutine used to detect if the player has entered combat range
+    private IEnumerator CheckEnemyDistance() {
+        while (true) {
+            Collider[] enemies = Physics.OverlapSphere(transform.position, m_inCombatRadius, m_weaponController.EntityCollisionMask);
+            m_inCombat = (enemies.Length > 0);
+            m_playerAnimator.SetBool("WeaponActive", m_inCombat);
+            yield return new WaitForSeconds(0.25f);
+        }
+    }
     #endregion
 
     #region Weapon methods
@@ -286,6 +301,7 @@ public class PlayerInput : MonoBehaviour {
 
                 m_equippedWeaponInumerator = a_inumerator;
                 m_weaponController.EquipWeapon(m_player.m_heldWeapons[a_inumerator]);
+                m_playerAnimator.SetInteger("whichWeapon", a_inumerator + 1);
 
                 if (!m_player.ToEquipIsMelee(a_inumerator)) {
                     m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(a_inumerator));
@@ -332,68 +348,7 @@ public class PlayerInput : MonoBehaviour {
     public void ResetMelee() {
         m_weaponController.GetEquippedMelee().EndSwing();
     }
-#endregion 
-    //Get all requied attached components and store them for later use
-    private void Awake() {
-        m_nma = GetComponent<NavMeshAgent>();
-        m_weaponController = GetComponent<WeaponController>();
-        m_player = GetComponent<Player>();
-        m_audioSource = GetComponent<AudioSource>();
-
-        //Create the speakers for the individual sounds
-        
-        m_walkSpeaker = gameObject.AddComponent<AudioSource>();
-        m_walkSpeaker.volume = m_walkVol;
-        if (m_walkSpeaker != null)
-            m_walkSpeaker.clip = m_walkingSound;
-
-        m_clothesSpeaker = gameObject.AddComponent<AudioSource>();
-        m_clothesSpeaker.volume = m_clothesVol;
-        if (m_clothesSpeaker != null)
-            m_clothesSpeaker.clip = m_clothesRustleSound;
-
-        m_rollSpeaker = gameObject.AddComponent<AudioSource>();
-        m_rollSpeaker.volume = m_rollVol;
-        if (m_rollSpeaker != null)
-            m_rollSpeaker.clip = m_rollSound;
-
-        if (m_walkingParticleSystem != null)
-            m_walkingParticleSystem.Stop();
-        if(m_rollParticleSystem != null)
-            m_rollParticleSystem.Stop();
-
-        m_playerAnimator = GetComponentInChildren<Animator>();
-        m_viewCamera = m_camera;
-        m_nmaAcceleration = m_nma.acceleration;
-        m_nmaAngledSpeed = m_nma.angularSpeed;
-        m_nmaSpeed = m_nma.speed;
-    }
-
-    private void Update() {
-        //Only run if the game is not paused
-        if (Time.timeScale > 0 && m_player.Dead == false) {
-            //Switch Weapons
-            SwitchWeapon();
-
-            //Player looking at mouse
-            PlayerLookAt();
-
-            //Player attacking
-            Attack();
-
-            //Player dashing
-            Roll();
-
-            //Player movement
-            Move();
-
-            //Ammo display
-            DisplayAmmo();
-
-            //Charlie
-            UpdateAnims();
-        }
-    }
+    #endregion 
 
     //Charlie
     private void UpdateAnims()
@@ -430,4 +385,69 @@ public class PlayerInput : MonoBehaviour {
         */    
         m_preMoveVector = m_movementVector;
     }
+
+    //Get all requied attached components and store them for later use
+    private void Awake() {
+        m_nma = GetComponent<NavMeshAgent>();
+        m_weaponController = GetComponent<WeaponController>();
+        m_player = GetComponent<Player>();
+        m_audioSource = GetComponent<AudioSource>();
+
+        //Create the speakers for the individual sounds
+        
+        m_walkSpeaker = gameObject.AddComponent<AudioSource>();
+        m_walkSpeaker.volume = m_walkVol;
+        if (m_walkSpeaker != null)
+            m_walkSpeaker.clip = m_walkingSound;
+
+        m_clothesSpeaker = gameObject.AddComponent<AudioSource>();
+        m_clothesSpeaker.volume = m_clothesVol;
+        if (m_clothesSpeaker != null)
+            m_clothesSpeaker.clip = m_clothesRustleSound;
+
+        m_rollSpeaker = gameObject.AddComponent<AudioSource>();
+        m_rollSpeaker.volume = m_rollVol;
+        if (m_rollSpeaker != null)
+            m_rollSpeaker.clip = m_rollSound;
+
+        if (m_walkingParticleSystem != null)
+            m_walkingParticleSystem.Stop();
+        if(m_rollParticleSystem != null)
+            m_rollParticleSystem.Stop();
+
+        m_playerAnimator = GetComponentInChildren<Animator>();
+        m_viewCamera = m_camera;
+        m_nmaAcceleration = m_nma.acceleration;
+        m_nmaAngledSpeed = m_nma.angularSpeed;
+        m_nmaSpeed = m_nma.speed;
+
+        StartCoroutine(CheckEnemyDistance());
+    }
+
+    private void Update() {
+        //Only run if the game is not paused
+        if (Time.timeScale > 0 && m_player.Dead == false) {
+            //Switch Weapons
+            SwitchWeapon();
+
+            //Player looking at mouse
+            PlayerLookAt();
+
+            //Player attacking
+            Attack();
+
+            //Player dashing
+            Roll();
+
+            //Player movement
+            Move();
+
+            //Ammo display
+            DisplayAmmo();
+
+            //Charlie
+            UpdateAnims();
+        }
+    }
+
 }

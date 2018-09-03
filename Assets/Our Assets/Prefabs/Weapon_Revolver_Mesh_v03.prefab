@@ -233,8 +233,8 @@ MonoBehaviour:
   m_muzzle: {fileID: 4092289268160408}
   m_projectile: {fileID: 114829323488259280, guid: a883ad10fa123b4468de6a534da42a33,
     type: 2}
-  m_msBetweenShots: 580
-  m_reloadTimeInMilliseconds: 2000
+  m_secondsBetweenShots: 1
+  m_reloadTimeInSeconds: 1
   m_muzzleVelocity: 20
   m_projectileLifeTime: 15
   m_dispersionAngle: 0
@@ -245,5 +245,3 @@ MonoBehaviour:
   m_damage: 1
   m_isReloading: 0
   m_isAutomatic: 0
-  m_currentAmmo: 100
-  m_currentClip: 5

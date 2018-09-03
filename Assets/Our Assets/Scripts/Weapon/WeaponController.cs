@@ -10,6 +10,7 @@ public class WeaponController : MonoBehaviour {
 
     [Tooltip("The position the equipped weapon will be")]
     [SerializeField] public Transform m_weaponHold;
+
     [Tooltip("If anything is here it will be equipped when the game starts")]
     [SerializeField] private Gun m_startingGun;
     private Gun m_equippedGun;
@@ -17,6 +18,7 @@ public class WeaponController : MonoBehaviour {
         "the starting gun it will be equipped when the game starts")]
     [SerializeField] private Melee m_startingMelee;
     private Melee m_equippedMelee;
+
     [SerializeField] private LayerMask m_entityCollisionMask;
     [Tooltip("The layer on which object that can be destroyed are to be assigned")]
     [SerializeField] private LayerMask m_terrainCollisionMask;
@@ -38,6 +40,11 @@ public class WeaponController : MonoBehaviour {
     public Melee EquippedMelee {
         get { return m_equippedMelee; }
         set { m_equippedMelee = value; }
+    }
+
+    public LayerMask EntityCollisionMask {
+        get { return m_entityCollisionMask; }
+        set { m_entityCollisionMask = value; }
     }
 
 
@@ -68,7 +75,7 @@ public class WeaponController : MonoBehaviour {
         }
         EquippedGun = Instantiate(a_gunToEquip, WeaponHold) as Gun;
         EquippedGun.transform.parent = WeaponHold;
-        EquippedGun.SetEntityCollisionLayer(m_entityCollisionMask);
+        EquippedGun.SetEntityCollisionLayer(EntityCollisionMask);
         EquippedGun.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
         EquippedGun.SetRicochetCollisionLayer(m_ricochetCollisionMask);
     }
@@ -97,22 +104,23 @@ public class WeaponController : MonoBehaviour {
         if (a_weaponToEquip.GetComponent<Melee>() != null) {
             EquippedMelee = Instantiate(a_weaponToEquip.GetComponent<Melee>(), WeaponHold) as Melee;
             EquippedMelee.transform.parent = WeaponHold;
-            EquippedMelee.SetEntityCollisionLayer(m_entityCollisionMask);
+            EquippedMelee.SetEntityCollisionLayer(EntityCollisionMask);
             EquippedMelee.SetDestroyableCollisionLayer(m_destroyableCollisionMask);
         }
         else if (a_weaponToEquip.GetComponent<Gun>() != null) {
             EquippedGun = Instantiate(a_weaponToEquip.GetComponent<Gun>(), WeaponHold) as Gun;
             EquippedGun.transform.parent = WeaponHold;
-            EquippedGun.SetEntityCollisionLayer(m_entityCollisionMask);
+            EquippedGun.SetEntityCollisionLayer(EntityCollisionMask);
             EquippedGun.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
         }
     }
 
-    //reloads the equipped gun
-    public void ReloadEquippedGun() {
+    //Reloads the equipped gun, returns false if the action failed
+    public bool ReloadEquippedGun() {
         if (EquippedGun != null) {
-            EquippedGun.Reload();
+            return EquippedGun.ReloadOne();
         }
+        return false;
     }
 
     public bool Shoot() {
@@ -131,14 +139,14 @@ public class WeaponController : MonoBehaviour {
     public void Awake() {
         if (m_startingGun != null) {
             EquipGun(m_startingGun);
-            EquippedGun.SetEntityCollisionLayer(m_entityCollisionMask);
+            EquippedGun.SetEntityCollisionLayer(EntityCollisionMask);
             EquippedGun.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
             EquippedGun.SetRicochetCollisionLayer(m_ricochetCollisionMask);
         }
         else if (m_startingMelee != null)
         {
             EquipMelee(m_startingMelee);
-            EquippedMelee.SetEntityCollisionLayer(m_entityCollisionMask);
+            EquippedMelee.SetEntityCollisionLayer(EntityCollisionMask);
             EquippedMelee.SetDestroyableCollisionLayer(m_destroyableCollisionMask);
         }
     }

@@ -19,6 +19,9 @@ public class Projectile : MonoBehaviour {
     private LayerMask m_entityCollisionMask;
     private LayerMask m_environmentCollisionMask;
 
+    [Header("Required for sound")]
+    [Tooltip("The prefab for the speakers that'll spawn on events")]
+    [SerializeField] private SpawnedSpeaker m_spawnedSpeaker;
 
     [Tooltip("Life time of the bullet after it hits an entity")]
     [SerializeField] private float m_bulletKillTime = 1f;
@@ -68,7 +71,7 @@ public class Projectile : MonoBehaviour {
     [Tooltip("Dound to play on impact")]
     [SerializeField] private List<AudioClip> m_environmentAudioClips;
 
-
+    #region setters
     public void SetSpeed(float a_speed) {
         m_speed = a_speed;
     }
@@ -90,6 +93,7 @@ public class Projectile : MonoBehaviour {
     public void SetLifeTime(float a_lifeTime) {
         m_lifeTime = a_lifeTime;
     }
+    #endregion
 
     //Check for when the projectile leaves an entity it has entered to play appropiate effects
     private void GoThroughEntity(float a_distanceToMove) {
@@ -128,17 +132,25 @@ public class Projectile : MonoBehaviour {
                 GameObject GO = Instantiate(m_ricochetParticle, transform.position - transform.forward * m_ricochetParticleDist, transform.rotation);
                 Destroy(GO, m_ricochetParticleTimer);
             }
+            if (m_ricochetAudioClip != null && m_spawnedSpeaker != null) {
+                SpawnedSpeaker SS = Instantiate(m_spawnedSpeaker, transform) as SpawnedSpeaker;
+                SS.AudioSource.clip = m_ricochetAudioClip;
+                SS.AudioSource.Play();
+            }
             OnHitObject(hit, this, false);
         }
 
-        for (int i = 0; i < m_environmentParticles.Count; i++) {
+        for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMasks[i])) {
                 OnHitObject(hit, false);
                 if (m_environmentParticles[i] != null) {
                     GameObject GO = Instantiate(m_environmentParticles[i], transform.position - transform.forward * m_environmentParticleDists[i], transform.rotation);
                     Destroy(GO, m_environmentParticleTimers[i]);
-                    AudioSource audio = Instantiate(m_audioSource, transform.position, transform.rotation);
-                    audio.PlayOneShot(m_environmentAudioClips[i], 0.3f);
+                }
+                if (m_environmentAudioClips[i] != null) {
+                    SpawnedSpeaker audio = Instantiate(m_spawnedSpeaker, transform.position, transform.rotation) as SpawnedSpeaker;
+                    audio.AudioSource.clip = m_environmentAudioClips[i];
+                    audio.AudioSource.Play();
                 }
             }
         }
