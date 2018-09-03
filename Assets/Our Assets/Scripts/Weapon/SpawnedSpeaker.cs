@@ -11,18 +11,23 @@ public class SpawnedSpeaker : MonoBehaviour {
     private AudioSource m_audioSource;
     private bool m_soundStarted = false;
 
+    public AudioSource AudioSource {
+        get { return m_audioSource; } 
+        set { m_audioSource = value; }
+    }
+
     private void Start() {
-        m_audioSource = GetComponent<AudioSource>();
+        AudioSource = GetComponent<AudioSource>();
     }
 
     //When the sound finishes playing destroy this object
     private void Update() {
         if (m_soundStarted == false) {
-            if (m_audioSource.isPlaying)
+            if (AudioSource.isPlaying)
                 m_soundStarted = true;
         }
         else {
-            if (m_audioSource.isPlaying == false)
+            if (AudioSource.isPlaying == false)
                 Destroy(gameObject);
         }
 
