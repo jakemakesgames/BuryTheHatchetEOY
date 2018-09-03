@@ -75,6 +75,7 @@ public class AI : MonoBehaviour, IDamagable
     private bool m_isDead = false;
     private bool m_hasDropped = false;
     private bool m_hasDroppedTrigger = false;
+    private bool m_finishedReload = true;
 
     private STATE m_state;
 
@@ -102,6 +103,7 @@ public class AI : MonoBehaviour, IDamagable
     public Gun Gun { get { return m_gun; } }
     public List<Transform> CoverPoints { get { return m_coverPoints; } }
     public bool HasDroppedTrigger { set { m_hasDroppedTrigger = value; } }
+    public bool FinishedReload { set { m_finishedReload = value; } }
     #endregion
 
     void Awake()
@@ -197,14 +199,14 @@ public class AI : MonoBehaviour, IDamagable
             m_state = STATE.WANDER;
         }
 
-        if (m_gun.GetIsEmpty() || m_gun.m_isReloading)
+        if (m_gun.GetIsEmpty() || m_finishedReload == false)
         {
             m_state = STATE.RELOAD;
         }
 
-        if (m_gunDistToPlayer < m_attackRadius && !m_gun.GetIsEmpty())
+        if (m_gunDistToPlayer < m_attackRadius && m_gun.GetIsEmpty() == false)
         {
-            if (m_gun.m_isReloading == false)
+            if (m_finishedReload)
             {
                 if (CanAttack() == false)
                 {
@@ -260,9 +262,9 @@ public class AI : MonoBehaviour, IDamagable
         Debug.DrawRay(rayPos1, vecBetween, Color.green);
         Debug.DrawRay(rayPos2, vecBetween, Color.green);
 
-        if (Physics.Raycast(ray1, out hit, vecBetween.sqrMagnitude + m_rayDetectBufferDist, m_environmentLayer))
+        if (Physics.Raycast(ray1, out hit, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer))
             return false;
-        if (Physics.Raycast(ray2, out hit, vecBetween.sqrMagnitude + m_rayDetectBufferDist, m_environmentLayer))
+        if (Physics.Raycast(ray2, out hit, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer))
             return false;
         
 
@@ -271,11 +273,14 @@ public class AI : MonoBehaviour, IDamagable
 
     void Attack()
     {
-        if (m_gunDistToPlayer < m_attackRadius && m_gun.GetIsEmpty() == false && m_gun.m_isReloading ==  false)
+        if (m_gunDistToPlayer < m_attackRadius && m_finishedReload)
         {
             m_weaponController.m_weaponHold.LookAt(PlayerPosition);
-            m_enemyAnimator.SetTrigger("Shoot");
-            m_gun.Shoot();
+            if (Gun.Shoot())
+            {
+                m_enemyAnimator.SetTrigger("Shoot");
+            }
+           
         }
     }
 
