@@ -202,7 +202,7 @@ MonoBehaviour:
     type: 2}
   m_ricochetParticleTimer: 1
   m_ricochetParticleDist: 0.1
-  m_ricochetAudioClip: {fileID: 0}
+  m_ricochetAudioClip: {fileID: 8300000, guid: f554038ee51f48a42906315d63431842, type: 3}
   m_travelParticle: {fileID: 0}
   m_audioSource: {fileID: 0}
   m_environmentCollisionMasks: []
