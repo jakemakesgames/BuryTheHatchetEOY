@@ -16,6 +16,7 @@ public class Boss : MonoBehaviour, IDamagable
     [SerializeField] GameObject m_bossGun;
     [SerializeField] Transform m_leftSide;
     [SerializeField] Transform m_rightSide;
+    [SerializeField] Transform m_startPosition;
     [SerializeField] Transform m_targetPlayer;
 
     //Public Variables
@@ -23,6 +24,8 @@ public class Boss : MonoBehaviour, IDamagable
     [SerializeField] float m_overheatValue = 0;
     [SerializeField] bool m_isOverheated = false;
     [SerializeField] int m_bossHealth = 0;
+    [SerializeField] float m_bossSpeed = 0;
+    [SerializeField] float m_cartSpeed;
 
     #endregion
 
@@ -30,6 +33,17 @@ public class Boss : MonoBehaviour, IDamagable
 
     private float m_cooldownTimer;
     private float m_overheating;
+
+    private float m_startTime;
+    private float m_currDuration;
+    private float m_distToDest;
+    private float m_journeyFrac;
+    private float m_distToStartDest;
+    private float m_startJourneyFrac;
+    private bool m_toLeft = false;
+    private bool m_toRight = false;
+    private bool m_startMove = true;
+
     private WeaponController m_weaponController;
     private NavMeshAgent m_bossAgent;
     private bool m_barrelsDestroyed = false;
@@ -40,9 +54,15 @@ public class Boss : MonoBehaviour, IDamagable
     void Start ()
     {
         m_bossAgent = GetComponent<NavMeshAgent>();
+        m_bossAgent.GetComponent<NavMeshAgent>().enabled = false;
         m_weaponController = GetComponent<WeaponController>();
 
-        m_bossAgent.SetDestination(m_rightSide.position);
+        //Gets the time we start
+        m_startTime = Time.time;
+        //Gets the distance between the two objects
+        m_distToStartDest = Vector3.Distance(m_startPosition.position, m_leftSide.position);
+
+        m_distToDest = Vector3.Distance(m_leftSide.position, m_rightSide.position);
     }
 	
 	// Update is called once per frame
@@ -59,18 +79,39 @@ public class Boss : MonoBehaviour, IDamagable
         //While the barrel hasnt been destroyed
         if (!m_barrelsDestroyed)
         {
+            //m_bossAgent.GetComponent<NavMeshAgent>().enabled = false;
+
             //Prevents the boss from rotating
-            m_bossAgent.angularSpeed = 0;
+            //m_bossAgent.angularSpeed = 0;
+
 
             m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
 
-            if (m_bossAgent.transform.position.z >= m_rightSide.position.z)
+            
+            m_currDuration = (m_startTime + Time.time) * m_cartSpeed;
+            m_startJourneyFrac = m_currDuration / m_distToStartDest;
+            m_journeyFrac = m_currDuration / m_distToDest;
+
+            if (m_startMove)
             {
-                m_bossAgent.SetDestination(m_leftSide.position);
+                m_boss.transform.position = Vector3.Lerp(m_startPosition.position, m_leftSide.position, m_startJourneyFrac);
+                m_currDuration = 0;
+                m_toLeft = true;
             }
-            else if (m_bossAgent.transform.position.z <= m_leftSide.position.z)
+
+            //travels from right side to left side based on time
+            if (m_boss.transform.position.z <= m_leftSide.position.z && m_toLeft)
             {
-                m_bossAgent.SetDestination(m_rightSide.position);
+                m_boss.transform.position = Vector3.Lerp(m_leftSide.position, m_rightSide.position, m_journeyFrac);
+                m_startMove = false;
+                m_toLeft = false;
+                m_toRight = true;
+            }
+            else if (m_boss.transform.position.z == m_rightSide.position.z && m_toRight)
+            {
+                m_boss.transform.position = Vector3.Lerp(m_rightSide.position, m_leftSide.position, m_journeyFrac);
+                m_toLeft = true;
+                m_toRight = false;
             }
         }
     }

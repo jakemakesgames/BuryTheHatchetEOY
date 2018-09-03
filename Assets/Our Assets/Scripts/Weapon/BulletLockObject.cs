@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//Michael Corben
+//Created 28/08/2018
+//Last edited 28/08/2018
 
 public class BulletLockObject : MonoBehaviour, IDamagable {
 

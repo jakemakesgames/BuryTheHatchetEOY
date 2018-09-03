@@ -197,8 +197,8 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.4975477
-        functionName: ChangeToDeathCollider
+      - time: 0.5781447
+        functionName: HasDropTrigger
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
