@@ -190,7 +190,7 @@ public class Gun : MonoBehaviour {
 
     //returns true if the gun can reload or false if it cannot
     public bool ReloadOne() {
-        if (CurrentClip <= m_clipSize && CurrentAmmo > 0) {
+        if (CurrentClip < m_clipSize && CurrentAmmo > 0) {
             if (IsIdle) {
                 if (m_isReloading == false)
                     m_isReloading = true;
