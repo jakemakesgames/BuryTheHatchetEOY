@@ -44,6 +44,10 @@ public class Player : MonoBehaviour, IDamagable {
         [SerializeField] private ParticleSystem m_hitParticleSystem;
         [Tooltip("The particles that will play once the player has died")]
         [SerializeField] private ParticleSystem m_dieParticleSystem;
+
+        [Tooltip("Button would you press to equip the starting weapon")]
+        [SerializeField] private int m_startingWeaponLocation = 2;
+
         [Header("Needs to be the same number as held weapons")]
         [Tooltip("which weapons assigned in the below " +
             "list are currently available to the player")]
@@ -159,6 +163,7 @@ public class Player : MonoBehaviour, IDamagable {
         m_audioSource = GetComponent<AudioSource>();
         m_playerAnimator = GetComponentInChildren<Animator>();
         m_deathFadeOutTimer = m_deathFadeOutTime;
+        m_playerAnimator.SetInteger("whichWeapon", m_startingWeaponLocation);
     }
     
     //Makes sure health never goes above maximum

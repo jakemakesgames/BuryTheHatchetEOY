@@ -206,6 +206,7 @@ public class Gun : MonoBehaviour {
                 CurrentAmmo--;
                 if (CurrentClip == m_clipSize)
                     IsFull = true;
+                SetToReloadOne = false;
             }
             return true;
         }
