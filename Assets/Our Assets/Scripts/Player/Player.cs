@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 25/08/2018
+//Last edited 03/09/2018
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(AudioSource))]
@@ -68,20 +68,20 @@ public class Player : MonoBehaviour, IDamagable {
 
     //IDamageble interfaces methods for taking damage
     #region IDamagable methods
-    public void TakeHit(int a_damage, RaycastHit a_hit) {
-        TakeDamage(a_damage);
-    }
-        public void TakeDamage(int a_damage) {
+    public void TakeDamage(int a_damage) {
         m_health -= a_damage;
         if (m_health <= 0 && !Dead)
             Die();
         if(m_hitParticleSystem != null)
             m_hitParticleSystem.Play();
         if (m_hitSound != null)
-            m_audioSource.PlayOneShot(m_hitSound, 0.3f);
+            m_audioSource.PlayOneShot(m_hitSound);
     }
-        public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile) {
+    public void TakeHit(int a_damage, RaycastHit a_hit) {
         TakeDamage(a_damage);
+    }
+    public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile) {
+    TakeDamage(a_damage);
     }
     #endregion
 
@@ -133,7 +133,7 @@ public class Player : MonoBehaviour, IDamagable {
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Death");
         if (m_dieSound != null)
-            m_audioSource.PlayOneShot(m_dieSound, 0.3f);
+            m_audioSource.PlayOneShot(m_dieSound);
         //SceneManager.LoadScene(0);
     }
 
