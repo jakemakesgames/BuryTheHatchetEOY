@@ -211,6 +211,11 @@ public class Boss : MonoBehaviour, IDamagable
     public void TakeDamage(int a_damage)
     {
         m_bossHealth -= a_damage;
+
+        if (m_bossHealth <= 0)
+        {
+            Death();
+        }
     }
 
     public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile)
@@ -219,4 +224,10 @@ public class Boss : MonoBehaviour, IDamagable
     }
 
     #endregion
+
+    private void Death()
+    {
+        Destroy(m_boss);
+    }
+    
 }
