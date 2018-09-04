@@ -231,21 +231,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48470036add5ec146beec8980f6c1808, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_rayHitDistance: 0.1
+  m_coolDown: 0.1
+  m_initCollSphereSize: 0.1
+  m_damage: 1
+  m_entityCollisionMask:
+    serializedVersion: 2
+    m_Bits: 512
+  m_destroyableCollisionMask:
+    serializedVersion: 2
+    m_Bits: 2048
   m_contactPoints:
   - {fileID: 1927772228223558}
   - {fileID: 1798277580677940}
   - {fileID: 1348618654984710}
   - {fileID: 1068492119140878}
-  m_positionOne: {fileID: 0}
-  m_positionTwo: {fileID: 0}
-  m_swingSpeed: 0
-  m_coolDown: 0
-  m_damage: 0
-  m_entityCollisionMask:
-    serializedVersion: 2
-    m_Bits: 512
-  m_environmentCollisionMask:
-    serializedVersion: 2
-    m_Bits: 3072
-  m_axeSwingAnimation: {fileID: 0}
-  m_animator: {fileID: 0}
+  m_swooshSound: {fileID: 0}
+  m_hitEntitySound: {fileID: 0}
+  m_hitEntityParticle: {fileID: 0}
+  m_hitEntityParticleTime: 2

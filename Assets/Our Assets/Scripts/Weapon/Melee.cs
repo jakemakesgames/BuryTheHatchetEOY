@@ -10,7 +10,7 @@ public class Melee : MonoBehaviour {
 
     #region inspector variables
         [Tooltip("Is used to tell they raycasts how far to shoot out from the blade")]
-        [SerializeField] private float m_rayHitDistance;
+        [SerializeField] private float m_rayHitDistance = 1f;
         [Tooltip("Controls how long after a swing has ended before the " +
             "weapon can swing again")]
         [SerializeField] private float m_coolDown;
@@ -22,7 +22,6 @@ public class Melee : MonoBehaviour {
         [SerializeField] private LayerMask m_entityCollisionMask;
         [Tooltip("What destroyable objects can be hit by this weapon")]
         [SerializeField] private LayerMask m_destroyableCollisionMask;
-        [SerializeField] private Animator m_animator;
         [Tooltip("The points on the weapon which will shoot out " +
             "a ray each to detect for collision")]
         [SerializeField] private GameObject[] m_contactPoints;
@@ -97,10 +96,10 @@ public class Melee : MonoBehaviour {
             Vector3 tempForward = m_contactPoints[i].transform.forward;
             Ray ray = new Ray(tempPos, tempForward);
             RaycastHit hit;
-            Debug.DrawLine(tempPos, tempPos + tempForward * a_distanceToMove);
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
                 OnHitObject(hit);
-                //To avoid the same entity getting hit multiple times by the weapon through a single swing
+                //Stores the last hit entity to avoid the same entity getting
+                //hit multiple times by the weapon through a single swing
                 if (hit.transform.gameObject != m_lastHit.transform.gameObject) {
                     Debug.Log("Hit Enemy With Hatchet");
                     if (m_hitEntitySound != null)
@@ -150,6 +149,18 @@ public class Melee : MonoBehaviour {
             if (m_coolDownTimer <= Time.time) {
                 IsIdle = true;
             }
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        for (int i = 0; i < m_contactPoints.Length; i++) {
+            Vector3 tempPos = m_contactPoints[i].transform.position;
+            Vector3 tempForward = m_contactPoints[i].transform.forward;
+            tempForward *= m_rayHitDistance;
+            tempForward += tempPos;
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawLine(tempPos, tempForward);
         }
     }
 }
