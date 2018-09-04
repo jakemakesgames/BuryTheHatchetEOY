@@ -279,7 +279,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1196401783029544}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.81, z: -0.41418472}
+  m_LocalPosition: {x: 0, y: 1.81, z: -0.408}
   m_LocalScale: {x: 1, y: 1, z: 0.11876722}
   m_Children: []
   m_Father: {fileID: 4793425087712940}
@@ -362,7 +362,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1723223975744292}
   m_LocalRotation: {x: -0, y: 0.72268, z: -0, w: 0.6911829}
-  m_LocalPosition: {x: -3.2058887, y: 4.0387287, z: 3.7868233}
+  m_LocalPosition: {x: -3.69, y: 4.0387287, z: -6.97}
   m_LocalScale: {x: 1, y: 2.177333, z: 0.88473034}
   m_Children:
   - {fileID: 4891000656528164}
@@ -829,6 +829,7 @@ MonoBehaviour:
   m_bossRotateSpeed: 100
   m_enragedHealth: 2
   m_distanceToBoss: 5
+  m_bossFightDist: 15
 --- !u!114 &114656223924954346
 MonoBehaviour:
   m_ObjectHideFlags: 1
