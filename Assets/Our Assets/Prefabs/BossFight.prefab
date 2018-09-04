@@ -279,7 +279,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1196401783029544}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.81, z: -0.408}
+  m_LocalPosition: {x: 0, y: 1.81, z: -0.4}
   m_LocalScale: {x: 1, y: 1, z: 0.11876722}
   m_Children: []
   m_Father: {fileID: 4793425087712940}
@@ -362,7 +362,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1723223975744292}
   m_LocalRotation: {x: -0, y: 0.72268, z: -0, w: 0.6911829}
-  m_LocalPosition: {x: -3.69, y: 4.0387287, z: -6.97}
+  m_LocalPosition: {x: -3.19, y: 4.0387287, z: 4.31}
   m_LocalScale: {x: 1, y: 2.177333, z: 0.88473034}
   m_Children:
   - {fileID: 4891000656528164}
@@ -811,7 +811,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_boss: {fileID: 1723223975744292}
   m_minecart: {fileID: 1521176088106790}
-  m_bossGun: {fileID: 1490230383725274}
+  m_bossGun: {fileID: 1448446719359390}
+  m_bossGunPos: {fileID: 4891000656528164}
   m_leftSide: {fileID: 4403526231130982}
   m_rightSide: {fileID: 4856107609299256}
   m_phaseTwo: {fileID: 4985637912137232}
