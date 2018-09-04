@@ -761,23 +761,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b65f9015cd6712f489fd288f8345af39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_reloadSound: {fileID: 0}
+  m_shootSound: {fileID: 0}
+  m_shootParticleSystem: {fileID: 0}
+  m_shootParticleLifeTime: 1
+  m_smokeParticleSystem: {fileID: 0}
+  m_smokeParticleLifeTime: 1
   m_muzzle: {fileID: 4691381705358626}
-  m_projectile: {fileID: 114829323488259280, guid: 1a01424ec0f630f47b3c002f83639a55,
+  m_projectile: {fileID: 114829323488259280, guid: a883ad10fa123b4468de6a534da42a33,
     type: 2}
-  m_msBetweenShots: 20
-  m_reloadTimeInMilliseconds: 4000
-  m_muzzleVelocity: 20
-  m_bulletLifeTime: 1
+  m_secondsBetweenShots: 0.01
+  m_reloadTimeInSeconds: 0.1
+  m_muzzleVelocity: 100
+  m_projectileLifeTime: 15
   m_dispersionAngle: 20
   m_numProjectilesPerShot: 1
   m_burstProjectiles: 1
-  m_maxAmmo: 1000
-  m_clipSize: 1000
+  m_maxAmmo: 0
+  m_clipSize: 10000
   m_damage: 1
   m_isReloading: 0
   m_isAutomatic: 1
-  m_currentAmmo: 0
-  m_currentClip: 0
 --- !u!136 &136069399690303366
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -1118,6 +1118,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4767941544280596}
   - component: {fileID: 95662078434291026}
+  - component: {fileID: 114866576982165912}
   m_Layer: 8
   m_Name: Character_Player_Mesh_v02
   m_TagString: Untagged
@@ -2074,6 +2075,7 @@ GameObject:
   - component: {fileID: 114465586240957604}
   - component: {fileID: 82176517839988444}
   - component: {fileID: 54966100474570036}
+  - component: {fileID: 82440845419890174}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -3949,7 +3951,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1999925407510398}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -82.28, y: 1.184, z: -79.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4781331482718442}
@@ -4175,6 +4177,86 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!82 &82440845419890174
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1999925407510398}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!95 &95297771156888396
 Animator:
   serializedVersion: 3
@@ -4221,9 +4303,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_speed: 200
+  m_accelerationRate: 0.1
+  m_deccelerationRate: 0.99
   m_rollTime: 0.4
-  m_rollSpeed: 35
+  m_rollSpeedMin: 50
+  m_rollSpeedMax: 1
   m_rollCoolDown: 2
+  m_inCombatRadius: 10
   m_camera: {fileID: 0}
   m_crosshair: {fileID: 0}
   m_clipAmmoDisplay: {fileID: 0}
@@ -4284,11 +4370,24 @@ MonoBehaviour:
   m_dieSound: {fileID: 8300000, guid: 835a496fb1033314d9c484560525613c, type: 3}
   m_hitParticleSystem: {fileID: 0}
   m_dieParticleSystem: {fileID: 0}
+  m_startingWeaponLocation: 2
   m_weaponsAvailableToPlayer: 0101
   m_heldWeapons:
-  - {fileID: 1074724821504698, guid: a1c393be65c62c84e987b70f8b708bb3, type: 2}
   - {fileID: 1838402518302384, guid: 5e68efd63c582db4b9dc21328ce22ea5, type: 2}
-  m_playerAnimator: {fileID: 0}
+  - {fileID: 1074724821504698, guid: a1c393be65c62c84e987b70f8b708bb3, type: 2}
+  m_playerAnimator: {fileID: 95662078434291026}
+--- !u!114 &114866576982165912
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1545496481614292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d4f28a5001a8d64b960b18f9cf70556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_player: {fileID: 114219781730608420}
 --- !u!136 &136361415522540008
 CapsuleCollider:
   m_ObjectHideFlags: 1

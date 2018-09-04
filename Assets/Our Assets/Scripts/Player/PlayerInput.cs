@@ -25,7 +25,9 @@ public class PlayerInput : MonoBehaviour {
         [Tooltip("Time spent in the roll")]
         [SerializeField] private float m_rollTime = 10f;
         [Tooltip("Movement speed of the player during the roll")]
-        [SerializeField] private float m_rollSpeed = 1000f;
+        [SerializeField] private float m_rollSpeedMin = 5f;
+        [Tooltip("Movement speed of the player during the roll")]
+        [SerializeField] private float m_rollSpeedMax = 50f;
         [Tooltip("Time in seconds before the player can roll after rolling")]
         [SerializeField] private float m_rollCoolDown = 2f;
         [Tooltip("If an enemy is within this distance from the player " +
@@ -106,11 +108,19 @@ public class PlayerInput : MonoBehaviour {
         Gun equippedGun = m_weaponController.GetEquippedGun();
         if (equippedGun == null) {
             Melee equippedMelee = m_weaponController.GetEquippedMelee();
-            if (equippedMelee == null)
+            if (equippedMelee == null) {
                 return;
-
-            m_weaponController.Swing();
-            m_playerAnimator.SetTrigger("Swing");
+            }
+            if (equippedMelee.IsIdle) {
+                if (Input.GetMouseButtonDown(0)) {
+                    m_weaponController.Swing();
+                    m_playerAnimator.SetTrigger("HatchetSwingTrigger");
+                }
+            }
+            else
+            {
+                Debug.Log("axe not idle");
+            }
         }
 
         else if (equippedGun.m_isAutomatic && equippedGun.IsIdle) {
@@ -204,7 +214,8 @@ public class PlayerInput : MonoBehaviour {
             ///rather than just height adjusted as the camera is not topdown
             transform.LookAt(heightCorrectedLookPoint);
             heightCorrectedLookPoint = new Vector3(pointOnGround.x, hand.position.y, pointOnGround.z);
-            hand.LookAt(heightCorrectedLookPoint);
+            if(m_weaponController.EquippedGun != null)
+                hand.LookAt(heightCorrectedLookPoint);
             m_weaponController.WeaponHold = hand;
             //place the crosshiar game object at this 'height corrected look point'
             if (m_crosshair != null)
@@ -214,38 +225,44 @@ public class PlayerInput : MonoBehaviour {
 
     //Quickly moves the player in the direction they are facing
     private void Roll() {
-        if (!m_isRolling && m_rollCoolDownTimer < Time.time) {
+        if (m_isRolling == false/* && m_rollCoolDownTimer < Time.time*/) {
             if (Input.GetMouseButtonDown(1)) {
-				m_playerAnimator.SetTrigger ("Roll");
+                m_playerAnimator.SetTrigger("Roll");
                 m_isRolling = true;
 
-                m_rollTimer = Time.time + m_rollTime;
+                //m_rollTimer = Time.time + m_rollTime;
+                if (m_nma.velocity != Vector3.zero) {
+                    Vector3 newVel = m_nma.velocity.normalized;
+                    m_nma.velocity = m_rollSpeedMin * newVel;
+                    transform.forward = newVel;
+                }
+                else
+                    m_nma.velocity = transform.forward * m_rollSpeedMin;
 
-                m_nma.velocity = transform.forward * m_rollSpeed;
                 if(m_rollSpeaker != null && m_rollSound != null)
                     m_rollSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL AND RANDOM PITCHING*/
 
                 if(m_rollParticleSystem != null)
                     m_rollParticleSystem.Play();
 
-                m_rollCoolDownTimer = Time.time + m_rollCoolDown;
+                //m_rollCoolDownTimer = Time.time + m_rollCoolDown;
             }
         }
-        else {
-            if (m_rollTimer <= Time.time) {
-                m_nma.speed = m_nmaSpeed;
-                m_nma.angularSpeed = m_nmaAngledSpeed;
-                m_nma.acceleration = m_nmaAcceleration;
-
-                m_isRolling = false;
-
-                if (m_rollSpeaker != null && m_rollSound != null)
-                    m_rollSpeaker.Stop();
-
-                if (m_rollParticleSystem != null)
-                    m_rollParticleSystem.Stop();
-            }
-        }
+        /*else {
+              if (m_rollTimer <= Time.time) {
+                  m_nma.speed = m_nmaSpeed;
+                  m_nma.angularSpeed = m_nmaAngledSpeed;
+                  m_nma.acceleration = m_nmaAcceleration;
+          
+                  m_isRolling = false;
+          
+                  if (m_rollSpeaker != null && m_rollSound != null)
+                      m_rollSpeaker.Stop();
+          
+                  if (m_rollParticleSystem != null)
+                      m_rollParticleSystem.Stop();
+              }
+          }*/
     }
 
     //Coroutine used to detect if the player has entered combat range
@@ -344,18 +361,36 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
+    #endregion
+
+    #region animation event functions
+    //To be called as an animation event at the end of the roll animation.
+    //Resets the player to a non-rolling state
+    public void EndRoll() {
+        m_nma.speed = m_nmaSpeed;
+        m_nma.angularSpeed = m_nmaAngledSpeed;
+        m_nma.acceleration = m_nmaAcceleration;
+
+        m_isRolling = false;
+
+        if (m_rollSpeaker != null && m_rollSound != null)
+            m_rollSpeaker.Stop();
+
+        if (m_rollParticleSystem != null)
+            m_rollParticleSystem.Stop();
+    }
     //To be called by the animator after the melee weapon swing animation has finished playing
-    public void ResetMelee() {
+    public void EndSwing() {
         m_weaponController.GetEquippedMelee().EndSwing();
     }
-    #endregion 
+    #endregion
 
     //Charlie
     private void UpdateAnims()
     {
         float myVelocity = m_velocity.magnitude;
         
-        Debug.Log(myVelocity);
+        //Debug.Log(myVelocity);
         Vector3 localVel = transform.InverseTransformDirection(m_velocity.normalized);
         if (m_preMoveVector != m_velocity) {
             localVel = m_preMoveVector + m_velocity;
@@ -427,15 +462,16 @@ public class PlayerInput : MonoBehaviour {
     private void Update() {
         //Only run if the game is not paused
         if (Time.timeScale > 0 && m_player.Dead == false) {
-            //Switch Weapons
-            SwitchWeapon();
+            if (m_isRolling == false) {
+                //Switch Weapons
+                SwitchWeapon();
 
-            //Player looking at mouse
-            PlayerLookAt();
+                //Player looking at mouse
+                PlayerLookAt();
 
-            //Player attacking
-            Attack();
-
+                //Player attacking
+                Attack();
+            }
             //Player dashing
             Roll();
 
