@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-
+[RequireComponent(typeof(DestructibleObject))]
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(WeaponController))]
 public class Boss : MonoBehaviour, IDamagable
@@ -16,7 +16,11 @@ public class Boss : MonoBehaviour, IDamagable
     [SerializeField] GameObject m_bossGun;
     [SerializeField] Transform m_leftSide;
     [SerializeField] Transform m_rightSide;
+    [SerializeField] Transform m_phaseTwo;
     [SerializeField] Transform m_targetPlayer;
+    [SerializeField] GameObject m_barrelOne;
+    [SerializeField] GameObject m_barrelTwo;
+    [SerializeField] GameObject m_railTrack;
 
     //Public Variables
     [SerializeField] float m_cooldownTime = 0;
@@ -25,6 +29,7 @@ public class Boss : MonoBehaviour, IDamagable
     [SerializeField] int m_bossHealth = 0;
     [SerializeField] float m_bossSpeed = 0;
     [SerializeField] float m_cartSpeed;
+    [SerializeField] int m_enragedHealth;
 
     #endregion
 
@@ -32,6 +37,7 @@ public class Boss : MonoBehaviour, IDamagable
 
     private float m_cooldownTimer;
     private float m_overheating;
+    private bool m_enraged;
 
     #region Lerp attempt
     private float m_startTime;
@@ -44,6 +50,7 @@ public class Boss : MonoBehaviour, IDamagable
 
     private WeaponController m_weaponController;
     private NavMeshAgent m_bossAgent;
+    private DestructibleObject m_barrels;
     private bool m_barrelsDestroyed = false;
 
     #endregion
@@ -54,6 +61,7 @@ public class Boss : MonoBehaviour, IDamagable
         m_bossAgent = GetComponent<NavMeshAgent>();
         m_bossAgent.GetComponent<NavMeshAgent>().enabled = false;
         m_weaponController = GetComponent<WeaponController>();
+        m_barrels = GetComponent<DestructibleObject>();
 
         #region
         ///Lerp Attempt
@@ -77,9 +85,13 @@ public class Boss : MonoBehaviour, IDamagable
 
     public void Movement()
     {
+
+        //m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
+
         //While the barrel hasnt been destroyed
         if (!m_barrelsDestroyed)
         {
+
             m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
 
             #region Lerp
@@ -117,6 +129,27 @@ public class Boss : MonoBehaviour, IDamagable
                 m_startTime = Time.time;
             }
             #endregion
+
+            if (m_barrelOne == false && m_barrelTwo == false)
+            {
+                m_barrelsDestroyed = true;
+                m_bossAgent.GetComponent<NavMeshAgent>().enabled = true;
+                m_railTrack.SetActive(false);
+                m_minecart.SetActive(false);
+                m_boss.transform.position = m_phaseTwo.position;
+            }
+        }
+        else if (m_barrelsDestroyed)
+        {
+
+            //m_bossAgent.GetComponent<NavMeshAgent>().enabled = true;
+            m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
+            m_bossAgent.SetDestination(m_targetPlayer.position);
+
+            if (m_bossHealth <= m_enragedHealth)
+            {
+                m_enraged = true;
+            }
         }
     }
 
@@ -125,45 +158,64 @@ public class Boss : MonoBehaviour, IDamagable
         //Machine Gun overheating
         if (!m_isOverheated)
         {
-            m_weaponController.Shoot();
+            if (m_enraged == false)
+            {
+                m_weaponController.Shoot();
 
-            //Machine Gun overheated
-            if (m_overheating >= m_overheatValue)
-            {
-                m_isOverheated = true;
-                m_cooldownTimer = m_cooldownTime;
+                //Machine Gun overheated
+                if (m_overheating >= m_overheatValue)
+                {
+                    m_isOverheated = true;
+                    m_cooldownTimer = m_cooldownTime;
+                }
+                //Machine Gun overheating
+                else
+                {
+                    m_overheating += Time.deltaTime;
+                }   
             }
-            //Machine Gun overheating
-            else
+            else if (m_enraged == true)
             {
-                m_overheating += Time.deltaTime;
+                m_weaponController.Shoot();
             }
         }
         //Machien gun overheated
         else if (m_isOverheated)
         {
-            //Machine Gun cools down fully
-            if (m_cooldownTimer <= 0)
+            if (m_enraged == false)
+            {
+                //Machine Gun cools down fully
+                if (m_cooldownTimer <= 0)
+                {
+                    m_isOverheated = false;
+                    m_overheating = 0;
+                }
+                //Timer on cooling down the Machine Gun
+                else
+                {
+                    m_cooldownTimer -= Time.deltaTime;
+                }
+            }
+            else if (m_enraged == true)
             {
                 m_isOverheated = false;
-                m_overheating = 0;
-            }
-            //Timer on cooling down the Machine Gun
-            else
-            {
-                m_cooldownTimer -= Time.deltaTime;
             }
         }
     }
 
     public void TakeHit(int a_damage, RaycastHit a_hit)
     {
-        
+        TakeDamage(a_damage);
     }
 
     public void TakeDamage(int a_damage)
     {
         m_bossHealth -= a_damage;
+
+        if (m_bossHealth <= 0)
+        {
+            Death();
+        }
     }
 
     public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile)
@@ -172,4 +224,10 @@ public class Boss : MonoBehaviour, IDamagable
     }
 
     #endregion
+
+    private void Death()
+    {
+        Destroy(m_boss);
+    }
+    
 }
