@@ -14,6 +14,7 @@ public class Boss : MonoBehaviour, IDamagable
     [SerializeField] GameObject m_boss;
     [SerializeField] GameObject m_minecart;
     [SerializeField] GameObject m_bossGun;
+    [SerializeField] Transform m_bossGunPos;
     [SerializeField] Transform m_leftSide;
     [SerializeField] Transform m_rightSide;
     [SerializeField] Transform m_phaseTwo;
@@ -29,7 +30,11 @@ public class Boss : MonoBehaviour, IDamagable
     [SerializeField] int m_bossHealth = 0;
     [SerializeField] float m_bossSpeed = 0;
     [SerializeField] float m_cartSpeed;
+    [SerializeField] float m_gunRotateSpeed;
+    [SerializeField] float m_bossRotateSpeed;
     [SerializeField] int m_enragedHealth;
+    [SerializeField] float m_distanceToBoss;
+    [SerializeField] float m_bossFightDist;
 
     #endregion
 
@@ -38,25 +43,28 @@ public class Boss : MonoBehaviour, IDamagable
     private float m_cooldownTimer;
     private float m_overheating;
     private bool m_enraged;
+    private bool m_barrelsDestroyed = false;
+    private float m_distance;
+    private bool m_startFight;
 
     #region Lerp attempt
     private float m_startTime;
     private float m_journeyLength;
     private float m_disTrav;
     private float m_journeyFrac;
-
-    private bool m_reverseCart;
+    private bool m_movingLeft = true;
     #endregion
 
     private WeaponController m_weaponController;
     private NavMeshAgent m_bossAgent;
     private DestructibleObject m_barrels;
-    private bool m_barrelsDestroyed = false;
+    private Quaternion m_rotation;
+    private Vector3 m_targetDir;
 
     #endregion
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         m_bossAgent = GetComponent<NavMeshAgent>();
         m_bossAgent.GetComponent<NavMeshAgent>().enabled = false;
@@ -65,34 +73,41 @@ public class Boss : MonoBehaviour, IDamagable
 
         #region
         ///Lerp Attempt
-        //Gets the starting time
-        m_startTime = Time.time;
+
+        m_boss.transform.position = m_rightSide.transform.position;
 
         //Gets the distance between the two objects
         m_journeyLength = Vector3.Distance(m_leftSide.position, m_rightSide.position);
         #endregion
 
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update()
     {
-        Movement();
-        Overheat();
-	}
+        StartBossFight();
+
+        if (m_startFight)
+        {
+            Movement();
+            Overheat();
+        }
+    }
 
     #region Public Functions
 
     public void Movement()
     {
-
-        //m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
+        m_weaponController.GetEquippedGun().transform.position = m_bossGunPos.transform.position;
 
         //While the barrel hasnt been destroyed
         if (!m_barrelsDestroyed)
         {
+            m_targetDir = m_targetPlayer.position - m_weaponController.GetEquippedGun().transform.position;
 
-            m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
+            m_rotation = Quaternion.LookRotation(m_targetDir);
+            m_weaponController.GetEquippedGun().transform.rotation = Quaternion.Lerp(m_weaponController.GetEquippedGun().transform.rotation,
+                m_rotation, m_gunRotateSpeed * Time.deltaTime);
 
             #region Lerp
             ///Lerp Attempt
@@ -100,32 +115,19 @@ public class Boss : MonoBehaviour, IDamagable
             m_disTrav = (Time.time - m_startTime) * m_cartSpeed;
             m_journeyFrac = m_disTrav / m_journeyLength;
 
-            if (m_reverseCart)
-            {
-                //Lerps from the right position to the left position
-                m_boss.transform.position = Vector3.Lerp(m_rightSide.position, m_leftSide.position, m_journeyFrac);
-            }
-            else
-            {
-                //Lerps from the left position to right right position
-                m_boss.transform.position = Vector3.Lerp(m_leftSide.position, m_rightSide.position, m_journeyFrac);
-            }
 
-            //Checks if the boss has reached one of the two objects
-            if ((Vector3.Distance(m_boss.transform.position, m_rightSide.position) == 0.0f || 
-                Vector3.Distance(m_boss.transform.position, m_leftSide.position) == 0.0f))
-            {
-                if (m_reverseCart)
-                {
-                    //Heads to the right side
-                    m_reverseCart = false;
-                }
-                else
-                {
-                    //Heads to the left side
-                    m_reverseCart = true;
-                }
+            //m_startPos = transform.position;
 
+
+            Vector3 targetPos = m_movingLeft ? m_leftSide.position : m_rightSide.position;
+            Vector3 fromPos = m_movingLeft ? m_rightSide.position : m_leftSide.position;
+
+            m_boss.transform.position = Vector3.Lerp(fromPos, targetPos, m_journeyFrac);
+
+
+            if (Vector3.Distance(m_boss.transform.position, targetPos) < 0.01f)
+            {
+                m_movingLeft = !m_movingLeft;
                 m_startTime = Time.time;
             }
             #endregion
@@ -141,10 +143,37 @@ public class Boss : MonoBehaviour, IDamagable
         }
         else if (m_barrelsDestroyed)
         {
+            #region Boss Rotation
 
-            //m_bossAgent.GetComponent<NavMeshAgent>().enabled = true;
-            m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
-            m_bossAgent.SetDestination(m_targetPlayer.position);
+            m_targetDir = m_targetPlayer.position - m_boss.transform.position;
+
+            m_rotation = Quaternion.LookRotation(m_targetDir);
+            m_boss.transform.rotation = Quaternion.Lerp(m_boss.transform.rotation, m_rotation, m_bossRotateSpeed * Time.deltaTime);
+
+            #endregion
+
+            #region Gun Rotation
+
+            //Gets the direction
+            m_targetDir = m_targetPlayer.position - m_weaponController.GetEquippedGun().transform.position;
+            m_rotation = Quaternion.LookRotation(m_targetDir);
+            //Lerps between the guns current rotation to the target rotation
+            m_weaponController.GetEquippedGun().transform.rotation = Quaternion.Lerp(m_weaponController.GetEquippedGun().transform.rotation,
+                m_rotation, m_gunRotateSpeed * Time.deltaTime);
+
+            #endregion
+
+            m_distance = Vector3.Distance(m_boss.transform.position, m_targetPlayer.position);
+
+            if (m_distance > m_distanceToBoss)
+            {
+                m_bossAgent.isStopped = false;
+                m_bossAgent.SetDestination(m_targetPlayer.position);
+            }
+            else
+            {
+                m_bossAgent.isStopped = true;
+            }
 
             if (m_bossHealth <= m_enragedHealth)
             {
@@ -172,7 +201,7 @@ public class Boss : MonoBehaviour, IDamagable
                 else
                 {
                     m_overheating += Time.deltaTime;
-                }   
+                }
             }
             else if (m_enraged == true)
             {
@@ -220,7 +249,7 @@ public class Boss : MonoBehaviour, IDamagable
 
     public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile)
     {
-        
+
     }
 
     #endregion
@@ -228,6 +257,28 @@ public class Boss : MonoBehaviour, IDamagable
     private void Death()
     {
         Destroy(m_boss);
+        Destroy(m_bossGun);
     }
-    
+
+    private void StartBossFight()
+    {
+        if (m_startFight == false)
+        {
+            if ((m_boss.transform.position - m_targetPlayer.position).magnitude <= m_bossFightDist)
+            {
+                m_startFight = true;
+
+                //Gets the starting time
+                m_startTime = Time.time;
+            }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(m_targetPlayer.position, m_distanceToBoss);
+
+        Gizmos.DrawWireSphere(m_boss.transform.position, m_bossFightDist);
+    }
 }
