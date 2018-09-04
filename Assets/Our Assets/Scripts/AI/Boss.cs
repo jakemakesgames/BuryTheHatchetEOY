@@ -29,6 +29,7 @@ public class Boss : MonoBehaviour, IDamagable
     [SerializeField] int m_bossHealth = 0;
     [SerializeField] float m_bossSpeed = 0;
     [SerializeField] float m_cartSpeed;
+    [SerializeField] int m_enragedHealth;
 
     #endregion
 
@@ -36,6 +37,7 @@ public class Boss : MonoBehaviour, IDamagable
 
     private float m_cooldownTimer;
     private float m_overheating;
+    private bool m_enraged;
 
     #region Lerp attempt
     private float m_startTime;
@@ -143,6 +145,11 @@ public class Boss : MonoBehaviour, IDamagable
             //m_bossAgent.GetComponent<NavMeshAgent>().enabled = true;
             m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
             m_bossAgent.SetDestination(m_targetPlayer.position);
+
+            if (m_bossHealth <= m_enragedHealth)
+            {
+                m_enraged = true;
+            }
         }
     }
 
@@ -151,40 +158,54 @@ public class Boss : MonoBehaviour, IDamagable
         //Machine Gun overheating
         if (!m_isOverheated)
         {
-            m_weaponController.Shoot();
+            if (m_enraged == false)
+            {
+                m_weaponController.Shoot();
 
-            //Machine Gun overheated
-            if (m_overheating >= m_overheatValue)
-            {
-                m_isOverheated = true;
-                m_cooldownTimer = m_cooldownTime;
+                //Machine Gun overheated
+                if (m_overheating >= m_overheatValue)
+                {
+                    m_isOverheated = true;
+                    m_cooldownTimer = m_cooldownTime;
+                }
+                //Machine Gun overheating
+                else
+                {
+                    m_overheating += Time.deltaTime;
+                }   
             }
-            //Machine Gun overheating
-            else
+            else if (m_enraged == true)
             {
-                m_overheating += Time.deltaTime;
+                m_weaponController.Shoot();
             }
         }
         //Machien gun overheated
         else if (m_isOverheated)
         {
-            //Machine Gun cools down fully
-            if (m_cooldownTimer <= 0)
+            if (m_enraged == false)
+            {
+                //Machine Gun cools down fully
+                if (m_cooldownTimer <= 0)
+                {
+                    m_isOverheated = false;
+                    m_overheating = 0;
+                }
+                //Timer on cooling down the Machine Gun
+                else
+                {
+                    m_cooldownTimer -= Time.deltaTime;
+                }
+            }
+            else if (m_enraged == true)
             {
                 m_isOverheated = false;
-                m_overheating = 0;
-            }
-            //Timer on cooling down the Machine Gun
-            else
-            {
-                m_cooldownTimer -= Time.deltaTime;
             }
         }
     }
 
     public void TakeHit(int a_damage, RaycastHit a_hit)
     {
-        
+        TakeDamage(a_damage);
     }
 
     public void TakeDamage(int a_damage)
