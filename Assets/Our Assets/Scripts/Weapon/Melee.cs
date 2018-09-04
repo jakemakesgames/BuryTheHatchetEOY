@@ -37,11 +37,12 @@ public class Melee : MonoBehaviour {
     #endregion
 
     #region private member variables
-    private float m_coolDownTimer;
+        private float m_coolDownTimer;
         private float m_skinWidth = 0.1f;
         private bool m_isSwinging = false;
         private bool m_isIdle = true;
         private AudioSource m_audioSource;
+        private RaycastHit m_lastHit;
     #endregion
 
     public bool IsIdle {
@@ -79,7 +80,7 @@ public class Melee : MonoBehaviour {
     //and to therefore stop casting rays
     public void EndSwing() {
         m_isSwinging = false;
-        IsIdle = true;
+        m_coolDownTimer = Time.time + m_coolDown;
     }
     
     public void SetEntityCollisionLayer(LayerMask a_collsionMask) {
@@ -99,13 +100,19 @@ public class Melee : MonoBehaviour {
             Debug.DrawLine(tempPos, tempPos + tempForward * a_distanceToMove);
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
                 OnHitObject(hit);
-                Debug.Log("Hit Enemy With Hatchet");
-                if (m_hitEntitySound != null) {
-                    m_audioSource.PlayOneShot(m_hitEntitySound, 0.3f);
-                }
-                if (m_hitEntityParticle != null) {
-                    GameObject GO = Instantiate(m_hitEntityParticle, transform.position - transform.forward, transform.rotation);
-                    Destroy(GO, m_hitEntityParticleTime);
+                //To avoid the same entity getting hit multiple times by the weapon through a single swing
+                if (hit.transform.gameObject != m_lastHit.transform.gameObject) {
+                    Debug.Log("Hit Enemy With Hatchet");
+                    if (m_hitEntitySound != null)
+                    {
+                        m_audioSource.PlayOneShot(m_hitEntitySound, 0.3f);
+                    }
+                    if (m_hitEntityParticle != null)
+                    {
+                        GameObject GO = Instantiate(m_hitEntityParticle, transform.position - transform.forward, transform.rotation);
+                        Destroy(GO, m_hitEntityParticleTime);
+                    }
+                    m_lastHit = hit;
                 }
             }
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_destroyableCollisionMask)) {
@@ -139,8 +146,10 @@ public class Melee : MonoBehaviour {
         if (m_isSwinging) {
             CheckCollisions(m_rayHitDistance);
         }
-        else if(m_coolDownTimer > 0) {
-            m_coolDownTimer -= Time.deltaTime;
+        else if (IsIdle == false) {
+            if (m_coolDownTimer <= Time.time) {
+                IsIdle = true;
+            }
         }
     }
 }
