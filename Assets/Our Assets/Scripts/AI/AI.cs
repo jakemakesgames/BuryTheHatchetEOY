@@ -16,73 +16,96 @@ public class AI : MonoBehaviour, IDamagable
 {
     enum STATE
     {
-        WANDER,
         SEEK,
-        FLEE,
         STATIONARY,
+        FINDCOVER,
         RELOAD
     }
 
     #region Inspector Variables
     [Tooltip("Max health value, currently at 5 (5 hits to die).")]
-    [SerializeField] private float m_maxHealth = 5;
+    [SerializeField]
+    private float m_maxHealth = 5;
 
     [Header("AI State Radii")]
-    [Tooltip("Seek radius/Blue sphere (large) - distance to seek to player.")]
-    [SerializeField] private float m_seekRadius;
+    [Tooltip("Seek radius/green sphere - distance to seek to player.")]
+    [SerializeField]
+    private float m_seekFromCoverRadius;
+    [Tooltip("Seek radius/green sphere - distance to seek to player.")]
+    [SerializeField]
+    private float m_alertRadius;
     [Tooltip("Flee radius/Blue sphere (small) - distance to flee from player.")]
-    [SerializeField] private float m_fleeRadius;
+    [SerializeField]
+    private float m_fleeRadius;
     [Tooltip("Cover radius/Green sphere - finds objects on the cover layer.")]
-    [SerializeField] private float m_coverRadius;
+    [SerializeField]
+    private float m_coverRadius;
     [Tooltip("Attack radius/Red sphere - shoots at player.")]
-    [SerializeField] private float m_attackRadius;
+    [SerializeField]
+    private float m_attackRadius;
     [Tooltip("Accounts for floating point precision - when AI knows to switch to Stationary")]
-    [SerializeField] private float m_deadZone;
+    [SerializeField]
+    private float m_deadZone;
     [Tooltip("The distance from enemy to cover point at which to stop calculating a new position.")]
-    [SerializeField] private float m_coverFoundThreshold = 3;
+    [SerializeField]
+    private float m_coverFoundThreshold = 3;
     [Tooltip("Distance behind the enemy's hand to ensure the ray casts do not start in a collider")]
-    [SerializeField] private float m_rayDetectBufferDist;
+    [SerializeField]
+    private float m_rayDetectBufferDist;
     [Tooltip("World height of body when dead")]
-    [SerializeField] private float m_bodyDropHeight;
+    [SerializeField]
+    private float m_bodyDropHeight;
 
     [Header("Collison Mask Layers")]
     [Tooltip("Set this to the Cover layer for cover collision detection")]
-    [SerializeField] private LayerMask m_coverLayer;
+    [SerializeField]
+    private LayerMask m_coverLayer;
     [Tooltip("Set this to the Environment layer for environment collision detection")]
-    [SerializeField] private LayerMask m_environmentLayer;
+    [SerializeField]
+    private LayerMask m_environmentLayer;
 
     [Header("Sounds")]
-    [SerializeField] private List<AudioClip> m_deathSounds;
+    [SerializeField]
+    private List<AudioClip> m_deathSounds;
 
     [Header("Animation")]
-    [SerializeField] private Animator m_enemyAnimator;
+    [SerializeField]
+    private Animator m_enemyAnimator;
     [Tooltip("The number of death animations (starting at 0)")]
-    [SerializeField] private int deathAnimationCount;
+    [SerializeField]
+    private int deathAnimationCount;
 
     [Header("Particles")]
     [Tooltip("Paricles that will play when the enemy is walking")]
-    [SerializeField] private ParticleSystem m_walkingParticleSystem;
+    [SerializeField]
+    private ParticleSystem m_walkingParticleSystem;
     #endregion
 
-   // private float m_enemyRadius;
+    // private float m_enemyRadius;
 
     private AudioSource m_audioSource;
 
     private float m_health;
     private float m_distBetweenPlayer;
     private float m_gunDistToPlayer;
+    private float m_distBetweenCover;
     private float m_counter = 0;
     private bool m_isDead = false;
     private bool m_hasDropped = false;
     private bool m_hasDroppedTrigger = false;
     private bool m_finishedReload = true;
+    private bool m_atCover = false;
+    private bool m_movingToCover = false;
 
     private STATE m_state;
 
+    private Vector3 m_coverPos;
+    private Transform m_currCoverObj;
     private NavMeshAgent m_agent;
     private LineRenderer m_line;
     private GameObject m_player;
     private List<Transform> m_coverPoints;
+    RaycastHit m_hit;
 
 
     private WeaponController m_weaponController;
@@ -104,6 +127,10 @@ public class AI : MonoBehaviour, IDamagable
     public List<Transform> CoverPoints { get { return m_coverPoints; } }
     public bool HasDroppedTrigger { set { m_hasDroppedTrigger = value; } }
     public bool FinishedReload { set { m_finishedReload = value; } }
+    public Vector3 CoverPos { get { return m_coverPos; } set { m_coverPos = value; } }
+    public bool AtCover { get { return m_atCover; } set { m_atCover = value; } }
+    public Transform CurrCoverObj { get { return m_currCoverObj; } set { m_currCoverObj = value; } }
+    public bool MovingToCover { get { return m_movingToCover; } set { m_movingToCover = value; } }
     #endregion
 
     void Awake()
@@ -120,7 +147,8 @@ public class AI : MonoBehaviour, IDamagable
         m_audioSource = GetComponent<AudioSource>();
         m_enemyAnimator = GetComponentInChildren<Animator>();
         m_stateMachine = new StateMachine<AI>(this);
-        m_stateMachine.ChangeState(new Wander());
+        m_stateMachine.ChangeState(new FindCover());
+        m_state = STATE.FINDCOVER;
 
         if (m_weaponController.GetEquippedGun() != null)
         {
@@ -144,6 +172,7 @@ public class AI : MonoBehaviour, IDamagable
             Debug.Log("Current State: " + m_state);
             DrawLinePath(m_agent.path);
             m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
+            m_distBetweenCover = Vector3.Distance(transform.position, CoverPos);
             m_gunDistToPlayer = Vector3.Distance(m_weaponController.GetEquippedWeapon().transform.position, m_player.transform.position);
 
             if (m_health <= 0)
@@ -152,11 +181,11 @@ public class AI : MonoBehaviour, IDamagable
                 return;
             }
 
+            if (ClearShot(m_rayDetectBufferDist))
+                Attack();
+
             if (CheckStates())
                 SwitchState();
-
-            if (CanAttack())
-                Attack();
 
             m_stateMachine.Update();
 
@@ -178,39 +207,49 @@ public class AI : MonoBehaviour, IDamagable
     {
         STATE prevState = m_state;
 
-        if (m_distBetweenPlayer < m_seekRadius)
+        //does this work?
+        if (m_distBetweenCover < m_seekFromCoverRadius)
         {
             transform.LookAt(PlayerPosition);
 
-            if (m_distBetweenPlayer > m_fleeRadius)
-                //If player is within seek and outside flee radius
-                m_state = STATE.SEEK;
+            //if (m_distBetweenPlayer > m_fleeRadius)
+            //If player is within seek and outside flee radius
+            m_state = STATE.SEEK;
 
-            else if (m_distBetweenPlayer <= m_fleeRadius + m_deadZone && m_distBetweenPlayer >= m_fleeRadius - m_deadZone)
+            if (m_distBetweenCover <= m_seekFromCoverRadius + m_deadZone && m_distBetweenCover >= m_seekFromCoverRadius - m_deadZone)
                 //If player is within seek and we're at max flee distance (deadzone for floating point precision)
                 m_state = STATE.STATIONARY;
 
-            else if (m_distBetweenPlayer < m_fleeRadius)
-                //If player is within flee
-                m_state = STATE.FLEE;
+            //else if (m_distBetweenPlayer < m_fleeRadius)
+            //    //If player is within flee
+            //    m_state = STATE.FLEE;
         }
         else
         {
-            m_state = STATE.WANDER;
+            m_state = STATE.FINDCOVER;
         }
 
-        if (m_gun.GetIsEmpty() || m_finishedReload == false)
+        if (m_gun.GetIsEmpty())
         {
-            m_state = STATE.RELOAD;
+            m_state = STATE.FINDCOVER;
+        }
+
+        if (AtCover)
+        {
+            if (m_finishedReload == false || m_gun.GetIsEmpty())
+                m_state = STATE.RELOAD;
         }
 
         if (m_gunDistToPlayer < m_attackRadius && m_gun.GetIsEmpty() == false)
         {
             if (m_finishedReload)
             {
-                if (CanAttack() == false)
+                if (CurrCoverObj != null)
                 {
-                    m_state = STATE.SEEK;
+                    if (ClearShot(-CurrCoverObj.GetComponent<BoxCollider>().size.x) == false)
+                    {
+                        m_state = STATE.FINDCOVER;
+                    }
                 }
             }
         }
@@ -226,20 +265,17 @@ public class AI : MonoBehaviour, IDamagable
     {
         switch (m_state)
         {
-            case STATE.WANDER:
-                m_stateMachine.ChangeState(new Wander());
-                break;
             case STATE.SEEK:
                 m_stateMachine.ChangeState(new Seek());
                 break;
-            case STATE.FLEE:
-                m_stateMachine.ChangeState(new Flee());
-                break;
-            case STATE.RELOAD:
-                m_stateMachine.ChangeState(new Reload());
+            case STATE.FINDCOVER:
+                m_stateMachine.ChangeState(new FindCover());
                 break;
             case STATE.STATIONARY:
                 m_stateMachine.ChangeState(new Stationary());
+                break;
+            case STATE.RELOAD:
+                m_stateMachine.ChangeState(new Reload());
                 break;
             default:
                 return;
@@ -247,9 +283,8 @@ public class AI : MonoBehaviour, IDamagable
     }
 
     //Check if there is nothing blocking the gun
-    bool CanAttack()
+    bool ClearShot(float a_bufferDist)
     {
-       
         Vector3 vecBetween = (m_player.transform.position - m_weaponController.m_weaponHold.transform.position);
         Vector3 rayPos1 = m_weaponController.m_weaponHold.position - (m_weaponController.m_weaponHold.forward * m_rayDetectBufferDist);
         Vector3 rayPos2 = rayPos1 + m_weaponController.m_weaponHold.right * 0.1f;
@@ -257,18 +292,27 @@ public class AI : MonoBehaviour, IDamagable
 
         Ray ray1 = new Ray(rayPos1, vecBetween);
         Ray ray2 = new Ray(rayPos2, vecBetween);
-        RaycastHit hit;
 
         Debug.DrawRay(rayPos1, vecBetween, Color.green);
         Debug.DrawRay(rayPos2, vecBetween, Color.green);
 
-        if (Physics.Raycast(ray1, out hit, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer))
+        if (Physics.Raycast(ray1, out m_hit, vecBetween.magnitude + a_bufferDist, m_environmentLayer))
             return false;
-        if (Physics.Raycast(ray2, out hit, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer))
+
+        if (Physics.Raycast(ray2, out m_hit, vecBetween.magnitude + a_bufferDist, m_environmentLayer))
             return false;
-        
+
 
         return true;
+    }
+
+    bool AmIBlocked()
+    {
+        if (m_hit.transform == CurrCoverObj)
+            return false;
+
+        else
+            return true;
     }
 
     void Attack()
@@ -280,7 +324,7 @@ public class AI : MonoBehaviour, IDamagable
             {
                 m_enemyAnimator.SetTrigger("Shoot");
             }
-           
+
         }
     }
 
@@ -345,8 +389,8 @@ public class AI : MonoBehaviour, IDamagable
     {
         if (m_agent.velocity != Vector3.zero)
         {
-            if(m_walkingParticleSystem.isPlaying == false)
-            m_walkingParticleSystem.Play();
+            if (m_walkingParticleSystem.isPlaying == false)
+                m_walkingParticleSystem.Play();
         }
         else
         {
@@ -376,8 +420,8 @@ public class AI : MonoBehaviour, IDamagable
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, m_seekRadius);
-        Gizmos.DrawWireSphere(transform.position, m_fleeRadius);
+        Gizmos.DrawWireSphere(CoverPos, m_seekFromCoverRadius);
+        //Gizmos.DrawWireSphere(transform.position, m_fleeRadius);
         Gizmos.color = Color.red;
         if (m_weaponController != null)
         {
