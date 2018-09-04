@@ -32,6 +32,7 @@ public class Boss : MonoBehaviour, IDamagable
     [SerializeField] float m_gunRotateSpeed;
     [SerializeField] float m_bossRotateSpeed;
     [SerializeField] int m_enragedHealth;
+    [SerializeField] float m_distanceToBoss;
 
     #endregion
 
@@ -40,6 +41,8 @@ public class Boss : MonoBehaviour, IDamagable
     private float m_cooldownTimer;
     private float m_overheating;
     private bool m_enraged;
+    private bool m_barrelsDestroyed = false;
+    private float m_distance;
 
     #region Lerp attempt
     private float m_startTime;
@@ -53,7 +56,6 @@ public class Boss : MonoBehaviour, IDamagable
     private WeaponController m_weaponController;
     private NavMeshAgent m_bossAgent;
     private DestructibleObject m_barrels;
-    private bool m_barrelsDestroyed = false;
     private Quaternion m_rotation;
     private Vector3 m_targetDir;
 
@@ -170,6 +172,18 @@ public class Boss : MonoBehaviour, IDamagable
 
             #endregion
 
+            m_distance = Vector3.Distance(m_boss.transform.position, m_targetPlayer.position);
+
+            if (m_distance > m_distanceToBoss)
+            {
+                m_bossAgent.isStopped = false;
+                m_bossAgent.SetDestination(m_targetPlayer.position);
+            }
+            else
+            {
+                m_bossAgent.isStopped = true;
+            }
+
             if (m_bossHealth <= m_enragedHealth)
             {
                 m_enraged = true;
@@ -253,5 +267,11 @@ public class Boss : MonoBehaviour, IDamagable
     {
         Destroy(m_boss);
     }
-    
+
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(m_targetPlayer.position, m_distanceToBoss);
+    }
 }
