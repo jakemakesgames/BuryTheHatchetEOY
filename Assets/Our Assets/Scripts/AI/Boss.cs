@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-
+[RequireComponent(typeof(DestructibleObject))]
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(WeaponController))]
 public class Boss : MonoBehaviour, IDamagable
@@ -16,7 +16,11 @@ public class Boss : MonoBehaviour, IDamagable
     [SerializeField] GameObject m_bossGun;
     [SerializeField] Transform m_leftSide;
     [SerializeField] Transform m_rightSide;
+    [SerializeField] Transform m_phaseTwo;
     [SerializeField] Transform m_targetPlayer;
+    [SerializeField] GameObject m_barrelOne;
+    [SerializeField] GameObject m_barrelTwo;
+    [SerializeField] GameObject m_railTrack;
 
     //Public Variables
     [SerializeField] float m_cooldownTime = 0;
@@ -44,6 +48,7 @@ public class Boss : MonoBehaviour, IDamagable
 
     private WeaponController m_weaponController;
     private NavMeshAgent m_bossAgent;
+    private DestructibleObject m_barrels;
     private bool m_barrelsDestroyed = false;
 
     #endregion
@@ -54,6 +59,7 @@ public class Boss : MonoBehaviour, IDamagable
         m_bossAgent = GetComponent<NavMeshAgent>();
         m_bossAgent.GetComponent<NavMeshAgent>().enabled = false;
         m_weaponController = GetComponent<WeaponController>();
+        m_barrels = GetComponent<DestructibleObject>();
 
         #region
         ///Lerp Attempt
@@ -77,9 +83,13 @@ public class Boss : MonoBehaviour, IDamagable
 
     public void Movement()
     {
+
+        //m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
+
         //While the barrel hasnt been destroyed
         if (!m_barrelsDestroyed)
         {
+
             m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
 
             #region Lerp
@@ -117,6 +127,22 @@ public class Boss : MonoBehaviour, IDamagable
                 m_startTime = Time.time;
             }
             #endregion
+
+            if (m_barrelOne == false && m_barrelTwo == false)
+            {
+                m_barrelsDestroyed = true;
+                m_bossAgent.GetComponent<NavMeshAgent>().enabled = true;
+                m_railTrack.SetActive(false);
+                m_minecart.SetActive(false);
+                m_boss.transform.position = m_phaseTwo.position;
+            }
+        }
+        else if (m_barrelsDestroyed)
+        {
+
+            //m_bossAgent.GetComponent<NavMeshAgent>().enabled = true;
+            m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
+            m_bossAgent.SetDestination(m_targetPlayer.position);
         }
     }
 
