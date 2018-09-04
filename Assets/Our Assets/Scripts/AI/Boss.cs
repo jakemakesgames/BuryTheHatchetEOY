@@ -29,6 +29,8 @@ public class Boss : MonoBehaviour, IDamagable
     [SerializeField] int m_bossHealth = 0;
     [SerializeField] float m_bossSpeed = 0;
     [SerializeField] float m_cartSpeed;
+    [SerializeField] float m_gunRotateSpeed;
+    [SerializeField] float m_bossRotateSpeed;
     [SerializeField] int m_enragedHealth;
 
     #endregion
@@ -52,6 +54,8 @@ public class Boss : MonoBehaviour, IDamagable
     private NavMeshAgent m_bossAgent;
     private DestructibleObject m_barrels;
     private bool m_barrelsDestroyed = false;
+    private Quaternion m_rotation;
+    private Vector3 m_targetDir;
 
     #endregion
 
@@ -85,20 +89,25 @@ public class Boss : MonoBehaviour, IDamagable
 
     public void Movement()
     {
-
-        //m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
+        //m_weaponController.GetEquippedGun().transform.position = m_bossGun.transform.position;
+        m_weaponController.GetEquippedGun().transform.position = m_bossGun.transform.position;
 
         //While the barrel hasnt been destroyed
         if (!m_barrelsDestroyed)
         {
+            m_targetDir = m_targetPlayer.position - m_weaponController.GetEquippedGun().transform.position;
 
-            m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
+            m_rotation = Quaternion.LookRotation(m_targetDir);
+            m_weaponController.GetEquippedGun().transform.rotation = Quaternion.Lerp(m_weaponController.GetEquippedGun().transform.rotation,
+                m_rotation, m_gunRotateSpeed * Time.deltaTime);
 
             #region Lerp
             ///Lerp Attempt
             //
             m_disTrav = (Time.time - m_startTime) * m_cartSpeed;
             m_journeyFrac = m_disTrav / m_journeyLength;
+
+            
 
             if (m_reverseCart)
             {
@@ -141,10 +150,25 @@ public class Boss : MonoBehaviour, IDamagable
         }
         else if (m_barrelsDestroyed)
         {
+            #region Boss Rotation
 
-            //m_bossAgent.GetComponent<NavMeshAgent>().enabled = true;
-            m_weaponController.GetEquippedGun().transform.LookAt(m_targetPlayer);
-            m_bossAgent.SetDestination(m_targetPlayer.position);
+            m_targetDir = m_targetPlayer.position - m_boss.transform.position;
+
+            m_rotation = Quaternion.LookRotation(m_targetDir);
+            m_boss.transform.rotation = Quaternion.Lerp(m_boss.transform.rotation, m_rotation, m_bossRotateSpeed * Time.deltaTime);
+
+            #endregion
+
+            #region Gun Rotation
+
+            //Gets the direction
+            m_targetDir = m_targetPlayer.position - m_weaponController.GetEquippedGun().transform.position;
+            m_rotation = Quaternion.LookRotation(m_targetDir);
+            //Lerps between the guns current rotation to the target rotation
+            m_weaponController.GetEquippedGun().transform.rotation = Quaternion.Lerp(m_weaponController.GetEquippedGun().transform.rotation,
+                m_rotation, m_gunRotateSpeed * Time.deltaTime);
+
+            #endregion
 
             if (m_bossHealth <= m_enragedHealth)
             {
