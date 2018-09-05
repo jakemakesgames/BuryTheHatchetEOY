@@ -22,6 +22,7 @@ public class FindCover : IState<AI>
 
     public void Exit(AI a_owner)
     {
+
     }
 
     public void Update(AI a_owner)
