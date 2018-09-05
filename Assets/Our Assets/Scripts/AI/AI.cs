@@ -22,6 +22,14 @@ public class AI : MonoBehaviour, IDamagable
         RELOAD
     }
 
+    enum DETECTION
+    {
+        CLEAR,
+        BEHINDCOVER,
+        BLOCKED,
+        NONE
+    }
+
     #region Inspector Variables
     [Tooltip("Max health value, currently at 5 (5 hits to die).")]
     [SerializeField]
@@ -181,7 +189,7 @@ public class AI : MonoBehaviour, IDamagable
                 return;
             }
 
-            if (ClearShot(m_rayDetectBufferDist))
+            if (ClearShot() == DETECTION.CLEAR)
                 Attack();
 
             if (CheckStates())
@@ -212,19 +220,15 @@ public class AI : MonoBehaviour, IDamagable
         {
             transform.LookAt(PlayerPosition);
 
-            //if (m_distBetweenPlayer > m_fleeRadius)
-            //If player is within seek and outside flee radius
+            if(ClearShot() == DETECTION.BEHINDCOVER)
             m_state = STATE.SEEK;
 
             if (m_distBetweenCover <= m_seekFromCoverRadius + m_deadZone && m_distBetweenCover >= m_seekFromCoverRadius - m_deadZone)
-                //If player is within seek and we're at max flee distance (deadzone for floating point precision)
+                //If player is within cover and we're at max seek from cover distance (deadzone for floating point precision)
                 m_state = STATE.STATIONARY;
 
-            //else if (m_distBetweenPlayer < m_fleeRadius)
-            //    //If player is within flee
-            //    m_state = STATE.FLEE;
         }
-        else
+        if(m_distBetweenPlayer > m_attackRadius)
         {
             m_state = STATE.FINDCOVER;
         }
@@ -237,19 +241,22 @@ public class AI : MonoBehaviour, IDamagable
         if (AtCover)
         {
             if (m_finishedReload == false || m_gun.GetIsEmpty())
+            {
                 m_state = STATE.RELOAD;
+            }
+            else
+            {
+                AtCover = false;
+            }
         }
 
         if (m_gunDistToPlayer < m_attackRadius && m_gun.GetIsEmpty() == false)
         {
             if (m_finishedReload)
             {
-                if (CurrCoverObj != null)
+                if (ClearShot() == DETECTION.BLOCKED)
                 {
-                    if (ClearShot(-CurrCoverObj.GetComponent<BoxCollider>().size.x) == false)
-                    {
-                        m_state = STATE.FINDCOVER;
-                    }
+                    m_state = STATE.FINDCOVER;
                 }
             }
         }
@@ -283,7 +290,7 @@ public class AI : MonoBehaviour, IDamagable
     }
 
     //Check if there is nothing blocking the gun
-    bool ClearShot(float a_bufferDist)
+    DETECTION ClearShot()
     {
         Vector3 vecBetween = (m_player.transform.position - m_weaponController.m_weaponHold.transform.position);
         Vector3 rayPos1 = m_weaponController.m_weaponHold.position - (m_weaponController.m_weaponHold.forward * m_rayDetectBufferDist);
@@ -296,14 +303,37 @@ public class AI : MonoBehaviour, IDamagable
         Debug.DrawRay(rayPos1, vecBetween, Color.green);
         Debug.DrawRay(rayPos2, vecBetween, Color.green);
 
-        if (Physics.Raycast(ray1, out m_hit, vecBetween.magnitude + a_bufferDist, m_environmentLayer))
-            return false;
+        RaycastHit[] hits;
+        hits = Physics.RaycastAll(ray1, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer);
 
-        if (Physics.Raycast(ray2, out m_hit, vecBetween.magnitude + a_bufferDist, m_environmentLayer))
-            return false;
+        if (hits.Length == 0)
+        {
+            return DETECTION.CLEAR;
+        }
+        else if (hits.Length == 1)
+        {
+            if (hits[0].transform == CurrCoverObj)
+            {
+                return DETECTION.BEHINDCOVER;
+            }
+            else
+            {
+                return DETECTION.BLOCKED;
+            }
+        }
+        else
+        {
+            return DETECTION.BLOCKED;
+        }
 
-
-        return true;
+        //if (Physics.Raycast(ray1, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer))
+        //    return false;
+        //
+        //if (Physics.Raycast(ray2, out m_hit, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer))
+        //    return false;
+        //
+        //
+        //return true;
     }
 
     bool AmIBlocked()
