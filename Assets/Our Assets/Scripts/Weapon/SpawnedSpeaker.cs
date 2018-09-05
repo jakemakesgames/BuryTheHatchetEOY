@@ -16,7 +16,7 @@ public class SpawnedSpeaker : MonoBehaviour {
         set { m_audioSource = value; }
     }
 
-    private void Start() {
+    private void Awake() {
         AudioSource = GetComponent<AudioSource>();
     }
 

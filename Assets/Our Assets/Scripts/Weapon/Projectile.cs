@@ -58,8 +58,6 @@ public class Projectile : MonoBehaviour {
     [SerializeField] private GameObject m_travelParticle;
 
     [Header("Custom Environment effects")]
-    [Tooltip("Audio source prefab")]
-    [SerializeField] private AudioSource m_audioSource;
     [Tooltip("For each of these lists, the information will control what happens when the projectil hits an object on the specified layer")]
     [SerializeField] private List<LayerMask> m_environmentCollisionMasks;
     [Tooltip("Particle to play on impact")]
@@ -120,13 +118,6 @@ public class Projectile : MonoBehaviour {
     private void CheckCollisions(float a_distanceToMove) {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
-        if (m_insideEntity == false) {
-            if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask))
-                OnHitObject(hit, true);
-        }
-        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMask))
-            OnHitObject(hit, false);
-
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_ricochetCollisionMask)) {
             if (m_ricochetParticle != null) {
                 GameObject GO = Instantiate(m_ricochetParticle, transform.position - transform.forward * m_ricochetParticleDist, transform.rotation);
@@ -139,6 +130,13 @@ public class Projectile : MonoBehaviour {
             }
             OnHitObject(hit, this, false);
         }
+        if (m_insideEntity == false) {
+            if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask))
+                OnHitObject(hit, true);
+        }
+        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMask))
+            OnHitObject(hit, false);
+
 
         for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMasks[i])) {
