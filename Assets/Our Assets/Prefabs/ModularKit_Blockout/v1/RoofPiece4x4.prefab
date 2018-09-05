@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33658985360879046}
   - component: {fileID: 23815979116021244}
   - component: {fileID: 65459808241789008}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: RoofPiece4x4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1931606217003240}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 15, y: 0, z: 7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

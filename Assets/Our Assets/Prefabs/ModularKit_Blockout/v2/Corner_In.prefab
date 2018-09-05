@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23715919737405074}
   - component: {fileID: 65909135630322334}
   - component: {fileID: 208492936686133266}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Corner_In
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,13 +36,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1697450131161040}
-  m_LocalRotation: {x: -0, y: 0.70710576, z: -0, w: 0.70710784}
-  m_LocalPosition: {x: -92, y: 0.25, z: -83}
+  m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.00000035762784}
+  m_LocalPosition: {x: -5, y: 0, z: 18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 179.99998, z: 0}
 --- !u!23 &23715919737405074
 MeshRenderer:
   m_ObjectHideFlags: 1
