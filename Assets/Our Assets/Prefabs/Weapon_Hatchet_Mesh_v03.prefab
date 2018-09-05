@@ -246,7 +246,7 @@ MonoBehaviour:
   - {fileID: 1798277580677940}
   - {fileID: 1348618654984710}
   - {fileID: 1068492119140878}
-  m_swooshSound: {fileID: 0}
+  m_swooshSound: {fileID: 8300000, guid: 22886b0739e258344923537fd294f948, type: 3}
   m_hitEntitySound: {fileID: 0}
   m_hitEntityParticle: {fileID: 0}
   m_hitEntityParticleTime: 2

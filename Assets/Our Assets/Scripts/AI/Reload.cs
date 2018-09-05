@@ -28,7 +28,7 @@ public class Reload : IState<AI>
         else
         {
             a_owner.FinishedReload = true;
-            a_owner.AtCover = false;
+            //a_owner.AtCover = false;
         }
     }
 }

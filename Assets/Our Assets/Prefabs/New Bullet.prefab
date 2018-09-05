@@ -188,6 +188,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1e46d460e8e8354094e419d2f5696d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_spawnedSpeaker: {fileID: 114005507828310976, guid: 340a271c05336a54cac8faeda9c5652e,
+    type: 2}
   m_bulletKillTime: 1
   m_enterEntityParticle: {fileID: 0}
   m_enterParticleTimer: 1
@@ -202,11 +204,17 @@ MonoBehaviour:
     type: 2}
   m_ricochetParticleTimer: 1
   m_ricochetParticleDist: 0.1
-  m_ricochetAudioClip: {fileID: 8300000, guid: f554038ee51f48a42906315d63431842, type: 3}
+  m_ricochetAudioClip: {fileID: 8300000, guid: 49dbf62746fbf9c4a8081ba96d46703e, type: 3}
   m_travelParticle: {fileID: 0}
   m_audioSource: {fileID: 0}
-  m_environmentCollisionMasks: []
-  m_environmentParticles: []
-  m_environmentParticleTimers: []
-  m_environmentParticleDists: []
-  m_environmentAudioClips: []
+  m_environmentCollisionMasks:
+  - serializedVersion: 2
+    m_Bits: 2048
+  m_environmentParticles:
+  - {fileID: 1474140810270196, guid: 2042d629f72f21942b9dec3a0e32975a, type: 2}
+  m_environmentParticleTimers:
+  - 3
+  m_environmentParticleDists:
+  - -0.2
+  m_environmentAudioClips:
+  - {fileID: 8300000, guid: bdd66acbc7ba36d4ebe8071d7bed7ea8, type: 3}
