@@ -22,6 +22,8 @@ GameObject:
   - component: {fileID: 33190479112315010}
   - component: {fileID: 23105362507528422}
   - component: {fileID: 65549835885538178}
+  - component: {fileID: 65695786616411398}
+  - component: {fileID: 65827499792105170}
   m_Layer: 11
   m_Name: InteriorFacingWall
   m_TagString: Untagged
@@ -93,5 +95,29 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 2, z: 1}
-  m_Center: {x: -0.5, y: 1, z: 0.5}
+  m_Size: {x: 0.6283753, y: 2, z: 0.68135417}
+  m_Center: {x: -0.31418765, y: 1, z: 0.34067708}
+--- !u!65 &65695786616411398
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1370405366190690}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.9775853, y: 2.002172, z: 0.9770762}
+  m_Center: {x: 0.011207342, y: 0.998914, z: -0.5114619}
+--- !u!65 &65827499792105170
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1370405366190690}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.9765799, y: 2.002172, z: 2}
+  m_Center: {x: 0.51171005, y: 0.998914, z: 0}

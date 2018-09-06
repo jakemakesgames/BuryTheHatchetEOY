@@ -23,6 +23,8 @@ GameObject:
   - component: {fileID: 23715919737405074}
   - component: {fileID: 65909135630322334}
   - component: {fileID: 208492936686133266}
+  - component: {fileID: 65025008128330414}
+  - component: {fileID: 65942050402728566}
   m_Layer: 11
   m_Name: Corner_In
   m_TagString: Untagged
@@ -84,6 +86,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1697450131161040}
   m_Mesh: {fileID: 4300000, guid: 40349950ee715c148bf2f44a44a94431, type: 3}
+--- !u!65 &65025008128330414
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1697450131161040}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4, y: 4.0043445, z: 1.9372504}
+  m_Center: {x: -2, y: 1.9978278, z: 0.9686252}
 --- !u!65 &65909135630322334
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -94,8 +108,20 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 4, y: 4.0043445, z: 4}
-  m_Center: {x: -2, y: 1.9978278, z: 2}
+  m_Size: {x: 1.1750336, y: 4.0043445, z: 1.335227}
+  m_Center: {x: -2.570238, y: 1.9978278, z: 2.699155}
+--- !u!65 &65942050402728566
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1697450131161040}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.8984678, y: 4.0043445, z: 2.0236397}
+  m_Center: {x: -0.9492339, y: 1.9978278, z: 2.9881802}
 --- !u!208 &208492936686133266
 NavMeshObstacle:
   m_ObjectHideFlags: 1

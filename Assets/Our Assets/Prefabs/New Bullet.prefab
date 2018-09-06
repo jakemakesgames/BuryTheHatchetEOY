@@ -206,15 +206,32 @@ MonoBehaviour:
   m_ricochetParticleDist: 0.1
   m_ricochetAudioClip: {fileID: 8300000, guid: 49dbf62746fbf9c4a8081ba96d46703e, type: 3}
   m_travelParticle: {fileID: 0}
-  m_audioSource: {fileID: 0}
   m_environmentCollisionMasks:
   - serializedVersion: 2
     m_Bits: 2048
+  - serializedVersion: 2
+    m_Bits: 16384
+  - serializedVersion: 2
+    m_Bits: 1024
+  - serializedVersion: 2
+    m_Bits: 32768
   m_environmentParticles:
   - {fileID: 1474140810270196, guid: 2042d629f72f21942b9dec3a0e32975a, type: 2}
+  - {fileID: 1474207008557910, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc, type: 2}
+  - {fileID: 1474140810270196, guid: 2042d629f72f21942b9dec3a0e32975a, type: 2}
+  - {fileID: 1474207008557910, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc, type: 2}
   m_environmentParticleTimers:
   - 3
+  - 3
+  - 3
+  - 3
   m_environmentParticleDists:
+  - -0.1
+  - -0.2
+  - -0.2
   - -0.2
   m_environmentAudioClips:
+  - {fileID: 8300000, guid: bdd66acbc7ba36d4ebe8071d7bed7ea8, type: 3}
+  - {fileID: 8300000, guid: bdd66acbc7ba36d4ebe8071d7bed7ea8, type: 3}
+  - {fileID: 8300000, guid: bdd66acbc7ba36d4ebe8071d7bed7ea8, type: 3}
   - {fileID: 8300000, guid: bdd66acbc7ba36d4ebe8071d7bed7ea8, type: 3}

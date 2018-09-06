@@ -7557,9 +7557,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_speed: 400
   m_accelerationRate: 0.1
-  m_deccelerationRate: 0.99
+  m_decelerationRate: 0.99
   m_rollSpeedStart: 20
   m_rollCoolDownTime: 1
+  m_rollAccelerationRate: 2
   m_inCombatRadius: 10
   m_camera: {fileID: 0}
   m_crosshair: {fileID: 0}
