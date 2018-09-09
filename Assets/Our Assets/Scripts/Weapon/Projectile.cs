@@ -54,8 +54,11 @@ public class Projectile : MonoBehaviour {
     [Tooltip("The sound that will play when the projectile ricochets off the environment")]
     [SerializeField] private AudioClip m_ricochetAudioClip;
 
-    [Tooltip("Life time of the bullet after it hits an entity")]
-    [SerializeField] private GameObject m_travelParticle;
+    [Header("Trail renderer")]
+    [Tooltip("The trail renderer prefab which will follow along the projectile as it travels")]
+    [SerializeField] private GameObject m_trailRenderer;
+    [Tooltip("Life time of the trail renderer after the bullet is destroyed")]
+    [SerializeField] private float m_trailRendererLifeTime = 5f;
 
     [Header("Custom Environment effects")]
     [Tooltip("For each of these lists, the information will control what happens when the projectil hits an object on the specified layer")]
@@ -163,6 +166,7 @@ public class Projectile : MonoBehaviour {
         if (m_insideEntity)
             return;
         Destroy(gameObject);
+        Destroy(m_trailRenderer, m_trailRendererLifeTime);
     }
     private void OnHitObject(Collider a_c, bool a_hitEntity) {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
@@ -172,6 +176,7 @@ public class Projectile : MonoBehaviour {
         if (m_insideEntity)
             return;
         Destroy(gameObject);
+        Destroy(m_trailRenderer, m_trailRendererLifeTime);
     }
     private void OnHitObject(RaycastHit a_hit, Projectile a_bullet, bool a_hitEntity) {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
@@ -202,8 +207,8 @@ public class Projectile : MonoBehaviour {
             OnHitObject(initialRicochetCollision[0], false);
             return;
         }
-        if (m_travelParticle != null)
-            m_travelParticle = Instantiate(m_travelParticle, transform);
+        if (m_trailRenderer != null)
+            m_trailRenderer = Instantiate(m_trailRenderer);
     }
 
     //Moves the projectile also counts down until this should be destroyed
@@ -218,5 +223,10 @@ public class Projectile : MonoBehaviour {
             Destroy(gameObject);
         }
         m_lifeTime -= Time.deltaTime;
-	}
+        if (m_trailRenderer != null) {
+            m_trailRenderer.transform.position = transform.position;
+            m_trailRenderer.transform.rotation = transform.rotation;
+        }
+
+    }
 }
