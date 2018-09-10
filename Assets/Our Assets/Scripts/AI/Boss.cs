@@ -11,35 +11,46 @@ public class Boss : MonoBehaviour, IDamagable
     #region Serialized Variables
 
     //Public Game Objects
-    [SerializeField] GameObject m_boss;
-    [SerializeField] GameObject m_minecart;
-    [SerializeField] GameObject m_bossGun;
-    [SerializeField] Transform m_bossGunPos;
-    [SerializeField] Transform m_leftSide;
-    [SerializeField] Transform m_rightSide;
-    [SerializeField] Transform m_phaseTwo;
-    [SerializeField] Transform m_targetPlayer;
+    [Tooltip ("Phase One GameObjects")] 
     [SerializeField] GameObject m_barrelOne;
     [SerializeField] GameObject m_barrelTwo;
     [SerializeField] GameObject m_railTrack;
+    [SerializeField] GameObject m_minecart;
+    [SerializeField] Transform m_leftSide;
+    [SerializeField] Transform m_rightSide;
+
+    [Tooltip("The Boss's variables")]
+    [SerializeField] GameObject m_boss;
+    [SerializeField] GameObject m_bossGun;
+    [SerializeField] Transform m_bossGunPos;
+    [SerializeField] Transform m_targetPlayer;
+
+    [Tooltip("Phase Two variable")]
+    [SerializeField] Transform m_phaseTwo;
 
     //Public Variables
+    [Tooltip("Machine Gun variables: cooldown time, overheat time and rotate speed")]
     [SerializeField] float m_cooldownTime = 0;
     [SerializeField] float m_overheatValue = 0;
     [SerializeField] bool m_isOverheated = false;
-    [SerializeField] int m_bossHealth = 0;
+    [SerializeField] float m_gunRotateSpeed;
+
+    [Tooltip("Bosses variables: Movement, health, distance and enraged health")]
     [SerializeField] float m_bossSpeed = 0;
     [SerializeField] float m_cartSpeed;
-    [SerializeField] float m_gunRotateSpeed;
+    [SerializeField] int m_bossHealth = 0;
     [SerializeField] float m_bossRotateSpeed;
     [SerializeField] int m_enragedHealth;
     [SerializeField] float m_distanceToBoss;
+
+
     [SerializeField] float m_bossFightDist;
 
     #endregion
 
     #region Private Variables
 
+    [Tooltip("Machine Gun variables")]
     private float m_cooldownTimer;
     private float m_overheating;
     private bool m_enraged;
@@ -47,12 +58,14 @@ public class Boss : MonoBehaviour, IDamagable
     private float m_distance;
     private bool m_startFight;
 
-    #region Lerp attempt
+    #region Lerp
+
     private float m_startTime;
     private float m_journeyLength;
     private float m_disTrav;
     private float m_journeyFrac;
     private bool m_movingLeft = true;
+
     #endregion
 
     private WeaponController m_weaponController;
@@ -73,10 +86,11 @@ public class Boss : MonoBehaviour, IDamagable
 
         #region
         ///Lerp Attempt
-
+        
+        //Starts the boss on the right side of the tracks
         m_boss.transform.position = m_rightSide.transform.position;
 
-        //Gets the distance between the two objects
+        //Gets the distance between the left side and right side of the tracks
         m_journeyLength = Vector3.Distance(m_leftSide.position, m_rightSide.position);
         #endregion
 
@@ -85,6 +99,7 @@ public class Boss : MonoBehaviour, IDamagable
     // Update is called once per frame
     void Update()
     {
+        //Checks if the player is in range of the Boss
         StartBossFight();
 
         if (m_startFight)
@@ -98,33 +113,35 @@ public class Boss : MonoBehaviour, IDamagable
 
     public void Movement()
     {
+        //Sets the Boss's machine guns position to its hand
         m_weaponController.GetEquippedGun().transform.position = m_bossGunPos.transform.position;
 
         //While the barrel hasnt been destroyed
         if (!m_barrelsDestroyed)
         {
+            //Aims at the player
             m_targetDir = m_targetPlayer.position - m_weaponController.GetEquippedGun().transform.position;
 
+            //Rotation of the boss looking towards the player
             m_rotation = Quaternion.LookRotation(m_targetDir);
+
+            //Rotation of the Boss's weapon towards the Player
             m_weaponController.GetEquippedGun().transform.rotation = Quaternion.Lerp(m_weaponController.GetEquippedGun().transform.rotation,
                 m_rotation, m_gunRotateSpeed * Time.deltaTime);
 
             #region Lerp
             ///Lerp Attempt
-            //
             m_disTrav = (Time.time - m_startTime) * m_cartSpeed;
             m_journeyFrac = m_disTrav / m_journeyLength;
 
-
-            //m_startPos = transform.position;
-
-
+            //Changes the Boss's new Lerp target position
             Vector3 targetPos = m_movingLeft ? m_leftSide.position : m_rightSide.position;
             Vector3 fromPos = m_movingLeft ? m_rightSide.position : m_leftSide.position;
 
+            //Lerps the boss from left to right and right to left
             m_boss.transform.position = Vector3.Lerp(fromPos, targetPos, m_journeyFrac);
 
-
+            //Resets the time when the boss reaches the target position and changes the bool
             if (Vector3.Distance(m_boss.transform.position, targetPos) < 0.01f)
             {
                 m_movingLeft = !m_movingLeft;
@@ -132,6 +149,7 @@ public class Boss : MonoBehaviour, IDamagable
             }
             #endregion
 
+            //When the barrels are destroyed we begin initiation of Phase Two
             if (m_barrelOne == false && m_barrelTwo == false)
             {
                 m_barrelsDestroyed = true;
@@ -145,8 +163,10 @@ public class Boss : MonoBehaviour, IDamagable
         {
             #region Boss Rotation
 
+            //Re-Target the player
             m_targetDir = m_targetPlayer.position - m_boss.transform.position;
 
+            //Initialise the boss's rotation
             m_rotation = Quaternion.LookRotation(m_targetDir);
             m_boss.transform.rotation = Quaternion.Lerp(m_boss.transform.rotation, m_rotation, m_bossRotateSpeed * Time.deltaTime);
 
@@ -163,18 +183,22 @@ public class Boss : MonoBehaviour, IDamagable
 
             #endregion
 
+            //Gets the distance between the Boss and the Player
             m_distance = Vector3.Distance(m_boss.transform.position, m_targetPlayer.position);
 
+            //When the Boss is further away from the player keep chasing
             if (m_distance > m_distanceToBoss)
             {
                 m_bossAgent.isStopped = false;
                 m_bossAgent.SetDestination(m_targetPlayer.position);
             }
+            //If the Boss reaches the Player it stops
             else
             {
                 m_bossAgent.isStopped = true;
             }
 
+            //Sets it to be enraged
             if (m_bossHealth <= m_enragedHealth)
             {
                 m_enraged = true;

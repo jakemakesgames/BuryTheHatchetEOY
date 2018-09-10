@@ -20,17 +20,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject m_controlsMenu;
     [SerializeField] GameObject m_optionsMenu;
     [SerializeField] GameObject m_optionsPanel;
-
-
     [SerializeField] GameObject m_pauseMenu;
     [SerializeField] GameObject m_bountyPoster;
-    //[SerializeField] GameObject m_bountyBoard;
-    //[SerializeField] GameObject m_bountyInteraction;
-
     [SerializeField] GameObject m_playerHud;
+    [SerializeField] Player m_player;
     [SerializeField] Image m_health;
 
     [SerializeField] List<GameObject> m_revBullets;
+    [SerializeField] SoundManager m_soundManager;
 
     //*! Singleton attempt
     public static UIManager m_Instance;
@@ -51,10 +48,8 @@ public class UIManager : MonoBehaviour
     private float m_maxHealth;
 
     private int m_numBullets;
-    WeaponController m_weaponController;
-    [SerializeField] Player m_player;
-    Interactable m_interactable;
-    SoundManager m_soundManager;
+    private WeaponController m_weaponController;
+    private Interactable m_interactable;
 
     #endregion
 
@@ -148,7 +143,7 @@ public class UIManager : MonoBehaviour
                 {
                     if (!m_inBounty)
                     {
-                        m_soundManager.BackSound();
+                        //m_soundManager.BackSound();
 
                         //Set any screen that is not the pause screen off
                         m_inPausedMenu = true;
@@ -358,7 +353,6 @@ public class UIManager : MonoBehaviour
 
 
         Time.timeScale = 1;
-        m_soundManager = GetComponent<SoundManager>();
         m_weaponController = m_player.GetComponent<WeaponController>();
     }
 
