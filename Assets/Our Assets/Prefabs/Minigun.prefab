@@ -779,7 +779,7 @@ MonoBehaviour:
   m_burstProjectiles: 1
   m_maxAmmo: 0
   m_clipSize: 10000
-  m_damage: 1
+  m_damage: 2
   m_isReloading: 0
   m_isAutomatic: 1
 --- !u!136 &136069399690303366
