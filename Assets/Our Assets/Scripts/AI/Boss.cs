@@ -11,46 +11,63 @@ public class Boss : MonoBehaviour, IDamagable
     #region Serialized Variables
 
     //Public Game Objects
-    [Tooltip ("Phase One GameObjects")] 
+    [Header ("Phase One GameObjects")]
+    [Tooltip("The first barrel for the initial phase of the boss fight")]
     [SerializeField] GameObject m_barrelOne;
+    [Tooltip("The second barrel for the initial phase of the boss fight")]
     [SerializeField] GameObject m_barrelTwo;
+    [Tooltip("The track the boss rides on")]
     [SerializeField] GameObject m_railTrack;
+    [Tooltip("Whats the boss sits in duting the first phase")]
     [SerializeField] GameObject m_minecart;
+    [Tooltip("Left destination")]
     [SerializeField] Transform m_leftSide;
+    [Tooltip("Right destination")]
     [SerializeField] Transform m_rightSide;
 
-    [Tooltip("The Boss's variables")]
+    [Header("The Boss's GameObjects")]
+    [Tooltip("The boss")]
     [SerializeField] GameObject m_boss;
+    [Tooltip("The boss's machine gun")]
     [SerializeField] GameObject m_bossGun;
+    [Tooltip("Boss's machine gun position")]
     [SerializeField] Transform m_bossGunPos;
+    [Tooltip("Targets the Player")]
     [SerializeField] Transform m_targetPlayer;
-
-    [Tooltip("Phase Two variable")]
+    [Tooltip("Teleport area for the boss when phase two starts")]
     [SerializeField] Transform m_phaseTwo;
 
     //Public Variables
-    [Tooltip("Machine Gun variables: cooldown time, overheat time and rotate speed")]
+    [Header("Machine Gun variables")]
+    [Tooltip("The time it takes for the machine gun to cool down")]
     [SerializeField] float m_cooldownTime = 0;
+    [Tooltip("How long the boss can shoot for before it overheats")]
     [SerializeField] float m_overheatValue = 0;
+    [Tooltip("SHows if the machine gun is overheated")]
     [SerializeField] bool m_isOverheated = false;
+    [Tooltip("Rotational speed of the machine gun")]
     [SerializeField] float m_gunRotateSpeed;
 
-    [Tooltip("Bosses variables: Movement, health, distance and enraged health")]
+    [Header("Bosses variables")]
+    [Tooltip("Boss's movement speed")]
     [SerializeField] float m_bossSpeed = 0;
+    [Tooltip("Minecart speed")]
     [SerializeField] float m_cartSpeed;
+    [Tooltip("Boss's health")]
     [SerializeField] int m_bossHealth = 0;
+    [Tooltip("Boss's rotation")]
     [SerializeField] float m_bossRotateSpeed;
+    [Tooltip("Boss's enraged health")]
     [SerializeField] int m_enragedHealth;
+    [Tooltip("Distance the boss will stop moving to the player")]
     [SerializeField] float m_distanceToBoss;
-
-
+    [Tooltip("How far the player has to be from the boss to initialise the fight")]
     [SerializeField] float m_bossFightDist;
 
     #endregion
 
     #region Private Variables
 
-    [Tooltip("Machine Gun variables")]
     private float m_cooldownTimer;
     private float m_overheating;
     private bool m_enraged;

@@ -112,7 +112,7 @@ public class SoundManager : MonoBehaviour
 
     public void CampFire()
     {
-        m_campFire.minDistance = 1;
+        //m_campFire.minDistance = 1;
     }
 
     #endregion
