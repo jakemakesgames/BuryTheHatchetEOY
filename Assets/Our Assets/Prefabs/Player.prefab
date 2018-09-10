@@ -4922,7 +4922,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa9b54cf6b5d4249a506d25978f87e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_maxHealth: 5
+  m_maxHealth: 50
   m_deathFadeOutTime: 2
   m_hitSound: {fileID: 8300000, guid: e6b9cd8f36cb14b4192566dc2b535388, type: 3}
   m_dieSound: {fileID: 8300000, guid: 835a496fb1033314d9c484560525613c, type: 3}
