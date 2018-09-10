@@ -31,6 +31,7 @@ public class Player : MonoBehaviour, IDamagable {
     private Vector3 m_respawnPoint;
     private List<WeaponInfo> m_heldWeaponsInfo = new List<WeaponInfo>();
     private AudioSource m_audioSource;
+    private PlayerInput m_input;
     #endregion
 
     #region Inspector Variables
@@ -69,6 +70,8 @@ public class Player : MonoBehaviour, IDamagable {
     //IDamageble interfaces methods for taking damage
     #region IDamagable methods
     public void TakeDamage(int a_damage) {
+        if (m_input.IsInvincible)
+            return;
         m_health -= a_damage;
         if (m_health <= 0 && !Dead)
             Die();
@@ -110,6 +113,7 @@ public class Player : MonoBehaviour, IDamagable {
     }
 
     //Returns information about the weapon which is about to be equipped
+
     #region To Equip Information
         public bool ToEquipIsMelee(int a_iterator) {
         return m_heldWeaponsInfo[a_iterator].m_isMelee;
@@ -162,6 +166,7 @@ public class Player : MonoBehaviour, IDamagable {
         }
         m_audioSource = GetComponent<AudioSource>();
         m_playerAnimator = GetComponentInChildren<Animator>();
+        m_input = GetComponent<PlayerInput>();
         m_deathFadeOutTimer = m_deathFadeOutTime;
         m_playerAnimator.SetInteger("whichWeapon", m_startingWeaponLocation);
     }
