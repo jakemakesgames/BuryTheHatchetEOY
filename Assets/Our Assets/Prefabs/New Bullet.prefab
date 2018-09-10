@@ -91,7 +91,7 @@ TrailRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1420241587065844}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -205,7 +205,9 @@ MonoBehaviour:
   m_ricochetParticleTimer: 1
   m_ricochetParticleDist: 0.1
   m_ricochetAudioClip: {fileID: 8300000, guid: 49dbf62746fbf9c4a8081ba96d46703e, type: 3}
-  m_travelParticle: {fileID: 0}
+  m_trailRenderer: {fileID: 1086740018613484, guid: ebedbca908894044193cc19438b112cf,
+    type: 2}
+  m_trailRendererLifeTime: 5
   m_environmentCollisionMasks:
   - serializedVersion: 2
     m_Bits: 2048

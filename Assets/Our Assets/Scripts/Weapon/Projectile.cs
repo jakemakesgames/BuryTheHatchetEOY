@@ -208,7 +208,7 @@ public class Projectile : MonoBehaviour {
             return;
         }
         if (m_trailRenderer != null)
-            m_trailRenderer = Instantiate(m_trailRenderer);
+            m_trailRenderer = Instantiate(m_trailRenderer , transform.position, transform.rotation);
     }
 
     //Moves the projectile also counts down until this should be destroyed
