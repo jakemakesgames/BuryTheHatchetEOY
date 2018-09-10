@@ -29,11 +29,14 @@ public class PlayerInput : MonoBehaviour {
         [Tooltip("Unit speed decrease per sceond when rolling")]
         [Range(1.1f, 5)]
         [SerializeField] private float m_rollAccelerationRate = 2f;
+        [Tooltip("The Time in seconds the player is invincible after starting to roll")]
+        [SerializeField] private float m_invicibilityTime = 1f;
         [Tooltip("If an enemy is within this distance from the player " +
             "consider the player in combat")]
         [SerializeField] private float m_inCombatRadius = 10f;
+        [SerializeField] private AnimationCurve animCurve;
     #endregion
-
+    
     #region In world game objects
         [Header("In world game objects")]
         [Tooltip("The camera used to orient the player when the camera rotates, required for movement to work")]
@@ -82,11 +85,13 @@ public class PlayerInput : MonoBehaviour {
         private float m_nmaAcceleration;
         private float m_rollStartTime;
         private float m_rollTimePassed;
+        private float m_invicibilityTimer = 0;
         private bool m_isHoldingGun;
         private bool m_isRolling = false;
         private bool m_canRoll = true;
         private bool m_rollAccelerating = true;
         private bool m_inCombat = false;
+        private bool m_isInvincible = false;
         private NavMeshAgent m_nma;
         private Vector3 m_velocity;
         private Vector3 m_acceleration;
@@ -101,6 +106,11 @@ public class PlayerInput : MonoBehaviour {
 
     [Header("CHARLIE!")]
     public Animator m_playerAnimator;
+
+    public bool IsInvincible {
+        get { return m_isInvincible; } 
+        set { m_isInvincible = value; }
+    }
 
     #region Player action methods
     //calls the equipped weapons attacking method 
@@ -203,13 +213,15 @@ public class PlayerInput : MonoBehaviour {
             }
         }
         else {
-            m_rollTimePassed = Time.time - m_rollStartTime;
+            m_rollTimePassed = (Time.time - m_rollStartTime) * 5;
             //time passed = t
             //acceleration rate = a
             if (m_rollAccelerating) {
                 //Accelerate along a parabola starting at 0 ending at 1
                 //velocity = -1 * (t - a)^2 + a^2
                 m_rollVelocity = transform.forward * (-1 * Mathf.Pow(m_rollTimePassed - m_rollAccelerationRate, 2) + Mathf.Pow(m_rollAccelerationRate, 2));
+                //float power = (m_rollTimePassed - m_rollAccelerationRate) + 2;
+                //m_rollVelocity = transform.forward * ((Mathf.Pow(m_rollAccelerationRate, power)));
                 if (m_rollTimePassed - m_rollAccelerationRate >= 0)
                     m_rollAccelerating = false;
             }
@@ -217,7 +229,8 @@ public class PlayerInput : MonoBehaviour {
                 //Decelerate along an exponential graph starting at 1 and tending toward 0
                 //velocity = -1 * (a^( -( t - a ) + 2)
                 float power = -(m_rollTimePassed - m_rollAccelerationRate) + 2;
-                m_rollVelocity = transform.forward * (-1 * (Mathf.Pow(m_rollAccelerationRate, power)));
+                m_rollVelocity = transform.forward * ((Mathf.Pow(m_rollAccelerationRate, power)));
+                Debug.Log("Decelerating");
             }
             //moveVelocity = m_rollVelocity;
             //moveVelocity *= m_rollDeceleration;
@@ -263,10 +276,12 @@ public class PlayerInput : MonoBehaviour {
         if (m_isRolling == false) {
             if (Input.GetMouseButtonDown(1)) {
                 m_rollStartTime = Time.time;
+                m_invicibilityTimer = m_rollStartTime;
                 m_playerAnimator.SetTrigger("Roll");
                 m_isRolling = true;
                 m_canRoll = false;
                 m_rollAccelerating = true;
+                IsInvincible = true;
                 if (m_nma.velocity != Vector3.zero) {
                     Vector3 newForward = m_nma.velocity.normalized;
                     m_rollVelocity = m_rollSpeedStart * newForward;
@@ -504,9 +519,7 @@ public class PlayerInput : MonoBehaviour {
                 Roll();
             //Player movement
             Move();
-
-
-            
+                        
             //Ammo display
             DisplayAmmo();
 
