@@ -38,8 +38,10 @@ public class PlayerInput : MonoBehaviour {
         [Header("In world game objects")]
         [Tooltip("The camera used to orient the player when the camera rotates, required for movement to work")]
         [SerializeField] private Camera m_camera;
+        [Tooltip("The reference to the canvas for the player and the crosshair")]
+        [SerializeField] private Canvas m_canvas;
         [Tooltip("This object will be where ever the player is looking")]
-        [SerializeField] private GameObject m_crosshair;
+        [SerializeField] private Image m_crosshair;
         [Tooltip("Will change the text of this object to the amount " +
             "of ammo left in the currently equipped gun's clip")]
         [SerializeField] private Text m_clipAmmoDisplay;
@@ -230,27 +232,29 @@ public class PlayerInput : MonoBehaviour {
     //Forces the player to look at the mouse position on screen
     //as well as place a crosshair object where the player is looking
     private void PlayerLookAt() {
+        Transform hand = m_weaponController.WeaponHold;
         //Cast a ray from the given camera through the mouse to the created ground plane
         Ray ray = m_viewCamera.ScreenPointToRay(Input.mousePosition);
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+        Plane groundPlane = new Plane(Vector3.up, hand.position);
         float rayDistance;
-        //adjust the height of the position found by the ray to the height of the players 'hand'
+        //Cast the ray from the camera to the generated ground plane which will be created at the players hand position
         if (groundPlane.Raycast(ray, out rayDistance)) {
-            Transform hand = m_weaponController.WeaponHold;
 
             Vector3 pointOnGround = ray.GetPoint(rayDistance);
+
             Vector3 heightCorrectedLookPoint = new Vector3(pointOnGround.x, transform.position.y, pointOnGround.z);
 
-            ///TODO :: correct the look point to be along the line 
-            ///rather than just height adjusted as the camera is not topdown
             transform.LookAt(heightCorrectedLookPoint);
-            heightCorrectedLookPoint = new Vector3(pointOnGround.x, hand.position.y, pointOnGround.z);
             if(m_weaponController.EquippedGun != null)
-                hand.LookAt(heightCorrectedLookPoint);
+                hand.LookAt(pointOnGround);
             m_weaponController.WeaponHold = hand;
-            //place the crosshiar game object at this 'height corrected look point'
-            if (m_crosshair != null)
-                m_crosshair.transform.position = heightCorrectedLookPoint;
+            //place the crosshiar at the mouse position
+            if (m_crosshair != null && m_canvas != null) {
+                Vector2 pos;
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    m_canvas.transform as RectTransform, Input.mousePosition, m_camera, out pos);
+                m_crosshair.transform.position = m_canvas.transform.TransformPoint(pos);
+            }
         }
     }
 
