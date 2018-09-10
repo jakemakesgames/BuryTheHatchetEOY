@@ -2262,7 +2262,8 @@ MonoBehaviour:
   m_environmentLayer:
     serializedVersion: 2
     m_Bits: 3072
-  m_deathSounds: []
+  m_deathSounds:
+  - {fileID: 8300000, guid: b05fd4b13e6775b41afdc221f5d39481, type: 3}
   m_enemyAnimator: {fileID: 0}
   deathAnimationCount: 2
   m_walkingParticleSystem: {fileID: 198113631147028018, guid: d0e94ad31ea49a34ea8d52238797bef2,

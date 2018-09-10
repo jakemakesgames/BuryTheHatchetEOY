@@ -63,6 +63,10 @@ public class AI : MonoBehaviour, IDamagable
     [Tooltip("World height of body when dead")]
     [SerializeField]
     private float m_bodyDropHeight;
+    [Tooltip("Transform for gun's raycast")]
+    [SerializeField]
+    private Transform m_gunRayTransform;
+
 
     [Header("Collison Mask Layers")]
     [Tooltip("Set this to the Cover layer for cover collision detection")]
@@ -292,10 +296,10 @@ public class AI : MonoBehaviour, IDamagable
     //Check if there is nothing blocking the gun
     DETECTION ClearShot()
     {
-        Vector3 vecBetween = (m_player.transform.position - m_weaponController.m_weaponHold.transform.position);
-        Vector3 rayPos1 = m_weaponController.m_weaponHold.position - (m_weaponController.m_weaponHold.forward * m_rayDetectBufferDist);
-        Vector3 rayPos2 = rayPos1 + m_weaponController.m_weaponHold.right * 0.1f;
-        rayPos1 -= m_weaponController.m_weaponHold.right * 0.1f;
+        Vector3 vecBetween = (m_player.transform.position - m_gunRayTransform.position);
+        Vector3 rayPos1 = m_gunRayTransform.position - (m_gunRayTransform.forward * m_rayDetectBufferDist);
+        Vector3 rayPos2 = rayPos1 + m_gunRayTransform.right * 0.1f;
+        rayPos1 -= m_gunRayTransform.right * 0.1f;
 
         Ray ray1 = new Ray(rayPos1, vecBetween);
         Ray ray2 = new Ray(rayPos2, vecBetween);
@@ -303,16 +307,18 @@ public class AI : MonoBehaviour, IDamagable
         Debug.DrawRay(rayPos1, vecBetween, Color.green);
         Debug.DrawRay(rayPos2, vecBetween, Color.green);
 
-        RaycastHit[] hits;
-        hits = Physics.RaycastAll(ray1, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer);
+        RaycastHit[] hits1;
+        hits1 = Physics.RaycastAll(ray1, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer);
+        RaycastHit[] hits2;
+        hits2 = Physics.RaycastAll(ray2, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer);
 
-        if (hits.Length == 0)
+        if (hits1.Length == 0 || hits2.Length == 0)
         {
             return DETECTION.CLEAR;
         }
-        else if (hits.Length == 1)
+        else if (hits1.Length == 1 || hits2.Length == 1)
         {
-            if (hits[0].transform == CurrCoverObj)
+            if (hits1[0].transform == CurrCoverObj || hits2[0].transform == CurrCoverObj)
             {
                 return DETECTION.BEHINDCOVER;
             }
@@ -366,10 +372,11 @@ public class AI : MonoBehaviour, IDamagable
         m_enemyAnimator.SetInteger("WhichDeath", 2);
         m_enemyAnimator.SetTrigger("Death");
         RandomPitch();
-        m_audioSource.PlayOneShot(m_deathSounds[Random.Range(0, m_deathSounds.Count)]);
+        if (m_deathSounds.Count != 0)
+        {
+            m_audioSource.PlayOneShot(m_deathSounds[Random.Range(0, m_deathSounds.Count)]);
+        }
         GetComponent<NavMeshAgent>().enabled = false;
-        //Rigidbody rb = gameObject.AddComponent<Rigidbody>();
-        //rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
         m_isDead = true;
     }
 
