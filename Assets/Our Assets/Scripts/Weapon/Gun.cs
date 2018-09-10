@@ -10,11 +10,18 @@ using UnityEngine;
 public class Gun : MonoBehaviour {
 
     #region Inspector variables
+    [Header("projectiles parent object, MUST BE AT 0,0,0")]
+    [Tooltip("Parent object for scene clarity")]
+    [SerializeField] private GameObject m_parent;
+
+    [Header("Audio")]
     [Tooltip("The sound that will play when the gun reloads")]
     [SerializeField] private AudioClip m_reloadSound;
 
     [Tooltip("The sound that will play when the gun shoots")]
     [SerializeField] private AudioClip m_shootSound;
+
+    [Header("VFX")]
     [Tooltip("The particle that will play when the gun shoots")]
     [SerializeField] private GameObject m_shootParticleSystem;
     [SerializeField] private float m_shootParticleLifeTime = 1f;
@@ -23,6 +30,7 @@ public class Gun : MonoBehaviour {
     [SerializeField] private GameObject m_smokeParticleSystem;
     [SerializeField] private float m_smokeParticleLifeTime = 1f;
 
+    [Header("Other requirements")]
     [Tooltip("The position projectiles spawn when the gun shoots")]
     [SerializeField] private Transform m_muzzle;
     [Tooltip("The projectile to be shot from this gun")]
@@ -239,7 +247,12 @@ public class Gun : MonoBehaviour {
                 TimeUntilNextAction = Time.time + m_secondsBetweenShots;
                 for (int i = 0; i < m_numProjectilesPerShot; i++) {
                     //Projectile setup
-                    Projectile newProjectile = Instantiate(m_projectile, m_muzzle.position, m_muzzle.rotation * Quaternion.Euler(RandomAngle())) as Projectile;
+                    Projectile newProjectile;
+                    if (m_parent != null)
+                        newProjectile = Instantiate(m_projectile, m_muzzle.position, m_muzzle.rotation * Quaternion.Euler(RandomAngle()), m_parent.transform) as Projectile;
+                    else
+                        newProjectile = Instantiate(m_projectile, m_muzzle.position, m_muzzle.rotation * Quaternion.Euler(RandomAngle())) as Projectile;
+
                     newProjectile.SetDamage(m_damage); 
                     newProjectile.SetSpeed(m_muzzleVelocity);
                     newProjectile.SetLifeTime(m_projectileLifeTime);
@@ -274,6 +287,8 @@ public class Gun : MonoBehaviour {
         CurrentAmmo = m_maxAmmo;
         CurrentClip = m_clipSize;
         m_audioSource = GetComponent<AudioSource>();
+        if (m_parent != null)
+            m_parent = Instantiate(m_parent, Vector3.zero, Quaternion.identity);
     }
     //Keeps track of whether this gun is reloading
     //and stops the ammo stores from going higher than their respective maximums
