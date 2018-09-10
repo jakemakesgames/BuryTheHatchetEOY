@@ -16,6 +16,9 @@ public class SoundManager : MonoBehaviour
     public AudioSource m_buttonSound;
     public AudioSource m_backSound;
     public AudioSource m_musicSound;
+    //public AudioSource m_campFire;
+
+    //[SerializeField] Transform m_campFireMD;
 
     #endregion
 
@@ -101,12 +104,16 @@ public class SoundManager : MonoBehaviour
     //Plays a sound when the "Escape" key is pressed in the GUI
     public void BackSound()
     {
-        if (m_backSound !=null)
+        if (m_backSound != null)
         {
             m_backSound.Play();
         }
     }
 
-    #endregion
+    public void CampFire()
+    {
+        m_campFire.minDistance = 1;
+    }
 
+    #endregion
 }
