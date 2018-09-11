@@ -158,7 +158,7 @@ Prefab:
     - target: {fileID: 224293286178774478, guid: ae9d5bd1a4e055d458234d4e6f82f242,
         type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 224293286178774478, guid: ae9d5bd1a4e055d458234d4e6f82f242,
         type: 2}
@@ -322,8 +322,82 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &863787118 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114793736763828642, guid: ae9d5bd1a4e055d458234d4e6f82f242,
+    type: 2}
+  m_PrefabInternal: {fileID: 503965266}
+  m_Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+--- !u!1001 &916198374
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 439.2974
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 308.99402
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -0.5444336
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114641214375648774, guid: f50ce05a22160ba47874c1bcda59f286,
+        type: 2}
+      propertyPath: m_masterSlider
+      value: 
+      objectReference: {fileID: 1104059887}
+    - target: {fileID: 114641214375648774, guid: f50ce05a22160ba47874c1bcda59f286,
+        type: 2}
+      propertyPath: m_musicSlider
+      value: 
+      objectReference: {fileID: 863787118}
+    - target: {fileID: 114641214375648774, guid: f50ce05a22160ba47874c1bcda59f286,
+        type: 2}
+      propertyPath: m_SFXSlider
+      value: 
+      objectReference: {fileID: 1824159261}
+    - target: {fileID: 82110405826046106, guid: f50ce05a22160ba47874c1bcda59f286,
+        type: 2}
+      propertyPath: spreadCustomCurve.m_RotationOrder
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+  m_IsPrefabParent: 0
+--- !u!114 &1104059887 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114947079025376570, guid: ae9d5bd1a4e055d458234d4e6f82f242,
+    type: 2}
+  m_PrefabInternal: {fileID: 503965266}
+  m_Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
 --- !u!1 &1108951534
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,5 +461,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &1824159261 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114574331421443396, guid: ae9d5bd1a4e055d458234d4e6f82f242,
+    type: 2}
+  m_PrefabInternal: {fileID: 503965266}
+  m_Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
