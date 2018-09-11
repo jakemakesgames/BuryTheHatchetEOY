@@ -770,7 +770,7 @@ MonoBehaviour:
   m_muzzle: {fileID: 4691381705358626}
   m_projectile: {fileID: 114829323488259280, guid: a883ad10fa123b4468de6a534da42a33,
     type: 2}
-  m_secondsBetweenShots: 0.01
+  m_secondsBetweenShots: 0.08
   m_reloadTimeInSeconds: 0.1
   m_muzzleVelocity: 100
   m_projectileLifeTime: 15

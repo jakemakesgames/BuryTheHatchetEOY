@@ -9,6 +9,11 @@ public class PlayerAnimationEvents : MonoBehaviour {
     [Tooltip("The player, needed to grab functions for")]
     [SerializeField] private PlayerInput m_player;
 
+    public void HalfWay() {
+        if (m_player != null)
+            m_player.HalfWay();
+    }
+
     public void SlowingRoll() {
         if(m_player != null)
             m_player.SlowingRoll();

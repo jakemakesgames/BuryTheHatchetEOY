@@ -5,12 +5,9 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Our Assets/Scenes/LiamW/LiamW.unity
-    guid: caba65bb70f4dc34bb610e553a280dbd
-  - enabled: 0
-    path: Assets/Our Assets/Scenes/LiamW/TestScene.unity
-    guid: be5c7a07c856a4a4e8befc89cfc0399c
   - enabled: 1
-    path: Assets/Our Assets/Scenes/JakeBlockout_Level.unity
-    guid: c1a4dbe6df56640478d0cac321e57355
+    path: Assets/Our Assets/Scenes/LiamW/TestGuiScene.unity
+    guid: e4c7a2da5e29b6543a765d924aadf8cd
+  - enabled: 1
+    path: Assets/Our Assets/Scenes/LiamW/LiamW_main.unity
+    guid: 2ee3e8411710dbb4ea9b055a8eaf59f6

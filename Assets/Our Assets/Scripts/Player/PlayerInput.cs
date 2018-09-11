@@ -29,12 +29,15 @@ public class PlayerInput : MonoBehaviour {
         [Tooltip("Unit speed decrease per sceond when rolling")]
         [Range(1.1f, 5)]
         [SerializeField] private float m_rollAccelerationRate = 2f;
+        [Tooltip("Controls the x component of the roll curves, higher values make the roll switch curves faster")]
+        [SerializeField] private float m_rollTimeMultiplier = 1f;
         [Tooltip("The Time in seconds the player is invincible after starting to roll")]
         [SerializeField] private float m_invicibilityTime = 1f;
         [Tooltip("If an enemy is within this distance from the player " +
             "consider the player in combat")]
         [SerializeField] private float m_inCombatRadius = 10f;
-        [SerializeField] private AnimationCurve animCurve;
+        [Tooltip("The time that the player will have their weapons raised after entering combat stance")]
+        [SerializeField] private float m_inCombatTime = 5f;
     #endregion
     
     #region In world game objects
@@ -86,9 +89,10 @@ public class PlayerInput : MonoBehaviour {
         private float m_rollStartTime;
         private float m_rollTimePassed;
         private float m_invicibilityTimer = 0;
+        private float m_inCombatTimer = 0f;
         private bool m_isHoldingGun;
-        private bool m_isRolling = false;
-        private bool m_canRoll = true;
+        public bool m_isRolling = false;
+        public bool m_canRoll = true;
         private bool m_rollAccelerating = true;
         private bool m_inCombat = false;
         private bool m_isInvincible = false;
@@ -123,13 +127,19 @@ public class PlayerInput : MonoBehaviour {
         Gun equippedGun = m_weaponController.GetEquippedGun();
         if (equippedGun == null) {
             Melee equippedMelee = m_weaponController.GetEquippedMelee();
-            if (equippedMelee == null) {
+            if (equippedMelee == null)
                 return;
-            }
+
             if (equippedMelee.IsIdle) {
                 if (Input.GetMouseButtonDown(0)) {
-                    m_weaponController.Swing();
-                    m_playerAnimator.SetTrigger("HatchetSwingTrigger");
+                    if (m_inCombat) {
+                        m_weaponController.Swing();
+                        m_playerAnimator.SetTrigger("HatchetSwingTrigger");
+                    }
+                    else {
+                        m_inCombat = true;
+                        m_inCombatTimer = Time.time + m_inCombatTime;
+                    }
                 }
             }
             else
@@ -140,8 +150,14 @@ public class PlayerInput : MonoBehaviour {
 
         else if (equippedGun.m_isAutomatic && equippedGun.IsIdle) {
             if (Input.GetMouseButton(0)) {
-                if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
-                    m_playerAnimator.SetTrigger("Shoot");
+                if (m_inCombat) {
+                    if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
+                        m_playerAnimator.SetTrigger("Shoot");
+                }
+                else {
+                    m_inCombat = true;
+                    m_inCombatTimer = Time.time + m_inCombatTime;
+                }
             }
             else if (Input.GetKey(KeyCode.R)) {
                 if (m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
@@ -151,8 +167,14 @@ public class PlayerInput : MonoBehaviour {
         else if (equippedGun.IsIdle) {
             m_playerAnimator.SetBool("Reloading", false);
             if (Input.GetMouseButtonDown(0)) {
-                if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
-                    m_playerAnimator.SetTrigger("Shoot");
+                if (m_inCombat) {
+                    if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
+                        m_playerAnimator.SetTrigger("Shoot");
+                }
+                else {
+                    m_inCombat = true;
+                    m_inCombatTimer = Time.time + m_inCombatTime;
+                }
             }
             else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
                 if(m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
@@ -213,21 +235,19 @@ public class PlayerInput : MonoBehaviour {
             }
         }
         else {
-            m_rollTimePassed = (Time.time - m_rollStartTime) * 5;
+            m_rollTimePassed = (Time.time - m_rollStartTime) * (m_rollTimeMultiplier + m_rollAccelerationRate);
             //time passed = t
             //acceleration rate = a
             if (m_rollAccelerating) {
                 //Accelerate along a parabola starting at 0 ending at 1
                 //velocity = -1 * (t - a)^2 + a^2
                 m_rollVelocity = transform.forward * (-1 * Mathf.Pow(m_rollTimePassed - m_rollAccelerationRate, 2) + Mathf.Pow(m_rollAccelerationRate, 2));
-                //float power = (m_rollTimePassed - m_rollAccelerationRate) + 2;
-                //m_rollVelocity = transform.forward * ((Mathf.Pow(m_rollAccelerationRate, power)));
                 if (m_rollTimePassed - m_rollAccelerationRate >= 0)
                     m_rollAccelerating = false;
             }
             else {
                 //Decelerate along an exponential graph starting at 1 and tending toward 0
-                //velocity = -1 * (a^( -( t - a ) + 2)
+                //velocity = a^( -( t - a ) + 2)
                 float power = -(m_rollTimePassed - m_rollAccelerationRate) + 2;
                 m_rollVelocity = transform.forward * ((Mathf.Pow(m_rollAccelerationRate, power)));
                 Debug.Log("Decelerating");
@@ -277,7 +297,8 @@ public class PlayerInput : MonoBehaviour {
             if (Input.GetMouseButtonDown(1)) {
                 m_rollStartTime = Time.time;
                 m_invicibilityTimer = m_rollStartTime;
-                m_playerAnimator.SetTrigger("Roll");
+                m_playerAnimator.SetBool("Roll", true);
+                Debug.Log("roll");
                 m_isRolling = true;
                 m_canRoll = false;
                 m_rollAccelerating = true;
@@ -303,7 +324,11 @@ public class PlayerInput : MonoBehaviour {
     private IEnumerator CheckEnemyDistance() {
         while (true) {
             Collider[] enemies = Physics.OverlapSphere(transform.position, m_inCombatRadius, m_weaponController.EntityCollisionMask);
-            m_inCombat = (enemies.Length > 0);
+            if (m_inCombatTimer < Time.time) {
+                m_inCombat = (enemies.Length > 0);
+                if (m_inCombat)
+                    m_inCombatTimer = Time.time + m_inCombatTime;
+            }
             m_playerAnimator.SetBool("WeaponActive", m_inCombat);
             yield return new WaitForSeconds(0.25f);
         }
@@ -399,6 +424,10 @@ public class PlayerInput : MonoBehaviour {
 
     #region animation event functions
 
+    public void HalfWay() {
+        Debug.Log(m_rollTimePassed);
+    }
+
     public void SlowingRoll() {
         m_rollAccelerating = false;
     }
@@ -409,6 +438,8 @@ public class PlayerInput : MonoBehaviour {
         m_nma.speed = m_nmaSpeed;
         m_nma.angularSpeed = m_nmaAngledSpeed;
         m_nma.acceleration = m_nmaAcceleration;
+        m_rollCoolDownTimer = Time.time + m_rollCoolDownTime;
+        m_playerAnimator.SetBool("Roll", false);
 
         m_isRolling = false;
 
@@ -431,10 +462,7 @@ public class PlayerInput : MonoBehaviour {
         
         //Debug.Log(myVelocity);
         Vector3 localVel = transform.InverseTransformDirection(m_velocity.normalized);
-        if (m_preMoveVector != m_velocity) {
-            localVel = m_preMoveVector + m_velocity;
-            localVel.Normalize();
-        }
+
         m_playerAnimator.SetFloat("Velocity", myVelocity);
         
         m_playerAnimator.SetFloat("MovementDirectionRight", localVel.x);
@@ -457,7 +485,6 @@ public class PlayerInput : MonoBehaviour {
         
         playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.z * transform.right.z);
         */    
-        m_preMoveVector = m_movementVector;
     }
 
     //Get all requied attached components and store them for later use
@@ -510,10 +537,11 @@ public class PlayerInput : MonoBehaviour {
 
                 //Player attacking
                 Attack();
+
+                if (m_rollCoolDownTimer <= Time.time)
+                    m_canRoll = true;
             }
-            
-            else if(m_rollCoolDownTimer <= Time.time)
-                m_canRoll = true;
+
             //Player rolling
             if(m_canRoll)
                 Roll();
