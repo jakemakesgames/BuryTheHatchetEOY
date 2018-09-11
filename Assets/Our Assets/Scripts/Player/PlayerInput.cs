@@ -29,12 +29,15 @@ public class PlayerInput : MonoBehaviour {
         [Tooltip("Unit speed decrease per sceond when rolling")]
         [Range(1.1f, 5)]
         [SerializeField] private float m_rollAccelerationRate = 2f;
+        [Tooltip("Controls the x component of the roll curves, higher values make the roll switch curves faster")]
+        [SerializeField] private float m_rollTimeMultiplier = 3f;
         [Tooltip("The Time in seconds the player is invincible after starting to roll")]
         [SerializeField] private float m_invicibilityTime = 1f;
         [Tooltip("If an enemy is within this distance from the player " +
             "consider the player in combat")]
         [SerializeField] private float m_inCombatRadius = 10f;
-        [SerializeField] private AnimationCurve animCurve;
+        [Tooltip("The time that the player will have their weapons raised after entering combat stance")]
+        [SerializeField] private float m_inCombatTime = 5f;
     #endregion
     
     #region In world game objects
@@ -86,6 +89,7 @@ public class PlayerInput : MonoBehaviour {
         private float m_rollStartTime;
         private float m_rollTimePassed;
         private float m_invicibilityTimer = 0;
+        private float m_inCombatTimer = 0f;
         private bool m_isHoldingGun;
         private bool m_isRolling = false;
         private bool m_canRoll = true;
@@ -118,18 +122,32 @@ public class PlayerInput : MonoBehaviour {
     //via the weapon controller script
     //and also checks if the player wishes to reload
     public void Attack() {
+
+        if (m_inCombat) {
+            if (m_inCombatTimer > Time.time)
+                m_inCombat = false;
+        }
+
+
+
         //Get's the currently equipped weapon and executes the appropriate attack action
         //and animation
         Gun equippedGun = m_weaponController.GetEquippedGun();
         if (equippedGun == null) {
             Melee equippedMelee = m_weaponController.GetEquippedMelee();
-            if (equippedMelee == null) {
+            if (equippedMelee == null)
                 return;
-            }
+
             if (equippedMelee.IsIdle) {
                 if (Input.GetMouseButtonDown(0)) {
-                    m_weaponController.Swing();
-                    m_playerAnimator.SetTrigger("HatchetSwingTrigger");
+                    if (m_inCombat) {
+                        m_weaponController.Swing();
+                        m_playerAnimator.SetTrigger("HatchetSwingTrigger");
+                    }
+                    else {
+                        m_inCombat = true;
+                        m_inCombatTimer = Time.time + m_inCombatTime;
+                    }
                 }
             }
             else
@@ -140,8 +158,14 @@ public class PlayerInput : MonoBehaviour {
 
         else if (equippedGun.m_isAutomatic && equippedGun.IsIdle) {
             if (Input.GetMouseButton(0)) {
-                if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
-                    m_playerAnimator.SetTrigger("Shoot");
+                if (m_inCombat) {
+                    if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
+                        m_playerAnimator.SetTrigger("Shoot");
+                }
+                else {
+                    m_inCombat = true;
+                    m_inCombatTimer = Time.time + m_inCombatTime;
+                }
             }
             else if (Input.GetKey(KeyCode.R)) {
                 if (m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
@@ -151,8 +175,14 @@ public class PlayerInput : MonoBehaviour {
         else if (equippedGun.IsIdle) {
             m_playerAnimator.SetBool("Reloading", false);
             if (Input.GetMouseButtonDown(0)) {
-                if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
-                    m_playerAnimator.SetTrigger("Shoot");
+                if (m_inCombat) {
+                    if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
+                        m_playerAnimator.SetTrigger("Shoot");
+                }
+                else {
+                    m_inCombat = true;
+                    m_inCombatTimer = Time.time + m_inCombatTime;
+                }
             }
             else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
                 if(m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
@@ -213,15 +243,13 @@ public class PlayerInput : MonoBehaviour {
             }
         }
         else {
-            m_rollTimePassed = (Time.time - m_rollStartTime) * 5;
+            m_rollTimePassed = (Time.time - m_rollStartTime) * m_rollTimeMultiplier;
             //time passed = t
             //acceleration rate = a
             if (m_rollAccelerating) {
                 //Accelerate along a parabola starting at 0 ending at 1
                 //velocity = -1 * (t - a)^2 + a^2
                 m_rollVelocity = transform.forward * (-1 * Mathf.Pow(m_rollTimePassed - m_rollAccelerationRate, 2) + Mathf.Pow(m_rollAccelerationRate, 2));
-                //float power = (m_rollTimePassed - m_rollAccelerationRate) + 2;
-                //m_rollVelocity = transform.forward * ((Mathf.Pow(m_rollAccelerationRate, power)));
                 if (m_rollTimePassed - m_rollAccelerationRate >= 0)
                     m_rollAccelerating = false;
             }
@@ -303,7 +331,11 @@ public class PlayerInput : MonoBehaviour {
     private IEnumerator CheckEnemyDistance() {
         while (true) {
             Collider[] enemies = Physics.OverlapSphere(transform.position, m_inCombatRadius, m_weaponController.EntityCollisionMask);
-            m_inCombat = (enemies.Length > 0);
+            if (m_inCombat == false) {
+                m_inCombat = (enemies.Length > 0);
+                if (m_inCombat)
+                    m_inCombatTimer = Time.time + m_inCombatTime;
+            }
             m_playerAnimator.SetBool("WeaponActive", m_inCombat);
             yield return new WaitForSeconds(0.25f);
         }
@@ -398,6 +430,10 @@ public class PlayerInput : MonoBehaviour {
     #endregion
 
     #region animation event functions
+
+    public void HalfWay() {
+        Debug.Log(m_rollTimePassed);
+    }
 
     public void SlowingRoll() {
         m_rollAccelerating = false;
