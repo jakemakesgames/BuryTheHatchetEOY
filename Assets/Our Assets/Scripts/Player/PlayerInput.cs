@@ -462,10 +462,7 @@ public class PlayerInput : MonoBehaviour {
         
         //Debug.Log(myVelocity);
         Vector3 localVel = transform.InverseTransformDirection(m_velocity.normalized);
-        if (m_preMoveVector != m_velocity) {
-            localVel = m_preMoveVector + m_velocity;
-            localVel.Normalize();
-        }
+
         m_playerAnimator.SetFloat("Velocity", myVelocity);
         
         m_playerAnimator.SetFloat("MovementDirectionRight", localVel.x);
@@ -488,7 +485,6 @@ public class PlayerInput : MonoBehaviour {
         
         playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.z * transform.right.z);
         */    
-        m_preMoveVector = m_movementVector;
     }
 
     //Get all requied attached components and store them for later use
