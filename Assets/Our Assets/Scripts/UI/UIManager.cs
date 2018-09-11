@@ -10,9 +10,88 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-   
+    [Header("Menu GameObjects")]
+    [Tooltip("Main Menu object")]
+    [SerializeField] GameObject m_mainMenu;
+    [Tooltip("Options Menu object")]
+    [SerializeField] GameObject m_optionsMenu;
+    [Tooltip("Pause Menu object")]
+    [SerializeField] GameObject m_pauseMenu;
 
-    
+    [Header("Scene Names")]
+    [Tooltip("Game Scene string")]
+    [SerializeField] string m_playScene;
+    [Tooltip("Menu Scene string")]
+    [SerializeField] string m_menuScene;
+
+    private void Awake()
+    {
+        Time.timeScale = 1;
+    }
+
+    private void Start()
+    {
+        m_mainMenu.SetActive(true);
+        m_optionsMenu.SetActive(false);
+
+        if (m_pauseMenu != null)
+        {
+            m_pauseMenu.SetActive(false);
+        }
+    }
+
+
+    #region Public Functions
+
+    public void PlayGame()
+    {
+        SceneManager.LoadScene(m_playScene);
+    }
+
+    public void Options()
+    {
+        m_optionsMenu.SetActive(true);
+        m_mainMenu.SetActive(false);
+
+        if (m_pauseMenu != null)
+        {
+            m_pauseMenu.SetActive(false);
+        }
+    }
+
+    public void Pause()
+    {
+        Time.timeScale = 0;
+        m_pauseMenu.SetActive(true);
+        m_optionsMenu.SetActive(false);
+        m_mainMenu.SetActive(false);
+    }
+
+    public void Unpause()
+    {
+        Time.timeScale = 1;
+        m_pauseMenu.SetActive(false);
+    }
+
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene(m_menuScene);
+    }
+
+    public void Back()
+    {
+        m_optionsMenu.SetActive(false);
+        m_mainMenu.SetActive(true);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
+    #endregion
+}
+/*
     #region LIAM
     #region Public Variables
 
@@ -359,5 +438,4 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #endregion
-    
-}
+*/
