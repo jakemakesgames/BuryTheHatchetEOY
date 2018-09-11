@@ -222,6 +222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b65f9015cd6712f489fd288f8345af39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_parent: {fileID: 0}
   m_reloadSound: {fileID: 8300000, guid: ff93fc2eb8d39ff408ddc14993f70ac9, type: 3}
   m_shootSound: {fileID: 8300000, guid: 9be75488ac7024b44b7f33471b4fa683, type: 3}
   m_shootParticleSystem: {fileID: 1538840732690000, guid: d0b31f22c2781f944bdb8389d2ea5a32,

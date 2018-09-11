@@ -24,28 +24,61 @@ public class UIManager : MonoBehaviour
     [Tooltip("Menu Scene string")]
     [SerializeField] string m_menuScene;
 
+    private bool m_isPaused;
+    private bool m_inMenu;
+
+    public static UIManager m_instance;
+
     private void Awake()
     {
         Time.timeScale = 1;
+        m_inMenu = true;
+
+        //Makes sure there is only ever one instance of this GameObject
+        if (m_instance == null)
+        {
+            m_instance = this;
+        }
+        else if (m_instance != this)
+        {
+            Destroy(gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
         m_mainMenu.SetActive(true);
         m_optionsMenu.SetActive(false);
-
+        
         if (m_pauseMenu != null)
         {
             m_pauseMenu.SetActive(false);
         }
     }
 
+    public void Update()
+    {
+        if (m_inMenu == false)
+        {
+            if (Input.GetKeyDown("escape") && m_isPaused == false)
+            {
+                Pause();
+            }
+            else if (Input.GetKeyDown("escape") && m_isPaused == true)
+            {
+                Unpause();
+            }
+        }
+    }
 
     #region Public Functions
 
     public void PlayGame()
     {
         SceneManager.LoadScene(m_playScene);
+        m_mainMenu.SetActive(false);
+        m_inMenu = false;
     }
 
     public void Options()
@@ -61,6 +94,7 @@ public class UIManager : MonoBehaviour
 
     public void Pause()
     {
+        m_isPaused = true;
         Time.timeScale = 0;
         m_pauseMenu.SetActive(true);
         m_optionsMenu.SetActive(false);
@@ -70,18 +104,31 @@ public class UIManager : MonoBehaviour
     public void Unpause()
     {
         Time.timeScale = 1;
+        m_isPaused = false;
         m_pauseMenu.SetActive(false);
+        m_optionsMenu.SetActive(false);
     }
 
     public void ReturnToMenu()
     {
         SceneManager.LoadScene(m_menuScene);
+        m_pauseMenu.SetActive(false);
+        m_mainMenu.SetActive(true);
+        m_inMenu = true;
     }
 
     public void Back()
     {
-        m_optionsMenu.SetActive(false);
-        m_mainMenu.SetActive(true);
+        if (m_inMenu == true)
+        {
+            m_optionsMenu.SetActive(false);
+            m_mainMenu.SetActive(true);
+        }
+        else if (m_inMenu == false)
+        {
+            m_pauseMenu.SetActive(true);
+            m_optionsMenu.SetActive(false);
+        }
     }
 
     public void QuitGame()
