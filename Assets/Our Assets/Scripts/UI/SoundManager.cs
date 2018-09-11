@@ -78,8 +78,8 @@ public class SoundManager : MonoBehaviour
     {
         if (m_buttonSound != null)
         {
-            m_buttonSound.volume = m_SFXSlider.value * m_masterSlider.value;
-            m_backSound.volume = m_SFXSlider.value * m_masterSlider.value;
+            //m_buttonSound.volume = m_SFXSlider.value * m_masterSlider.value;
+            //m_backSound.volume = m_SFXSlider.value * m_masterSlider.value;
         }
     }
 
@@ -88,7 +88,7 @@ public class SoundManager : MonoBehaviour
     {
         if (m_musicSound != null)
         {
-            m_musicSound.volume = m_musicSlider.value * m_masterSlider.value;
+            //m_musicSound.volume = m_musicSlider.value * m_masterSlider.value;
         }
     }
 
@@ -97,7 +97,7 @@ public class SoundManager : MonoBehaviour
     {
         if (m_buttonSound != null)
         {
-            m_buttonSound.Play();
+            //m_buttonSound.Play();
         }
     }
 
@@ -106,7 +106,7 @@ public class SoundManager : MonoBehaviour
     {
         if (m_backSound != null)
         {
-            m_backSound.Play();
+            //m_backSound.Play();
         }
     }
 
