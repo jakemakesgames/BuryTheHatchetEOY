@@ -9,15 +9,15 @@ using System.Collections.Generic;
 
 public class FindCover : IState<AI>
 {
-    AI m_owner;
     Vector3 m_targetLocation;
     Collider[] m_hitColliders;
-    bool m_initialCoverFound = false;
+    Transform m_nearestPoint;
+    bool m_coverFound;
 
 
     public void Enter(AI a_owner)
     {
-        m_owner = a_owner;
+        m_coverFound = false;
     }
 
     public void Exit(AI a_owner)
@@ -27,52 +27,61 @@ public class FindCover : IState<AI>
 
     public void Update(AI a_owner)
     {
-        if (IsCoverAvailable())
+        if (IsCoverAvailable(a_owner))
         {
-            if (m_initialCoverFound == false)
+            if (a_owner.CurrCoverObj == null || m_coverFound == false)
             {
-                FindNearestCover();
-                SetPathToCover();
-            }
-
-            if (m_owner.Agent.remainingDistance >= m_owner.CoverFoundThreshold)
-                FindNearestCover(); // stop finding a new cover position when within threshold
-
-            if (HasDestinationReached() == false)
-            {
-                SetPathToCover();
-                m_owner.AtCover = false;
+                FindNearestCover(a_owner);
+                CalcRelativeCoverPos(a_owner);
+                SetPathToCover(a_owner);
             }
             else
             {
-                m_owner.AtCover = true;
-                m_owner.MovingToCover = false;
+                m_nearestPoint = a_owner.CurrCoverObj;
+               // CalcRelativeCoverPos(a_owner);
+                SetPathToCover(a_owner);
+            }
+
+            if (a_owner.Agent.remainingDistance >= a_owner.CoverFoundThreshold)
+                CalcRelativeCoverPos(a_owner); // stop finding a new cover position when within threshold
+
+
+            if (HasDestinationReached(a_owner) == false)
+            {
+                SetPathToCover(a_owner);
+                a_owner.AtCover = false;
+            }
+            else
+            {
+                a_owner.AtCover = true;
+                //a_owner.MovingToCover = false;
+                m_coverFound = false;
             }
         }
         else
         {
-            m_owner.AtCover = false;
-            m_owner.MovingToCover = false;
+            a_owner.AtCover = false;
+            //a_owner.MovingToCover = false;
         }
 
     }
 
-    private bool HasDestinationReached()
+    private bool HasDestinationReached(AI a_owner)
     {
-        if (!m_owner.Agent.pathPending)
+        if (!a_owner.Agent.pathPending)
         {
-            if (m_owner.Agent.remainingDistance <= m_owner.Agent.stoppingDistance)
+            if (a_owner.Agent.remainingDistance <= a_owner.Agent.stoppingDistance)
             {
-                if (!m_owner.Agent.hasPath || m_owner.Agent.velocity.sqrMagnitude == 0f)
+                if (!a_owner.Agent.hasPath || a_owner.Agent.velocity.sqrMagnitude == 0f)
                     return true;
             }
         }
         return false;
     }
 
-    private bool IsCoverAvailable()
+    private bool IsCoverAvailable(AI a_owner)
     {
-        m_hitColliders = Physics.OverlapSphere(m_owner.transform.position, m_owner.CoverRadius, m_owner.CoverLayer);
+        m_hitColliders = Physics.OverlapSphere(a_owner.transform.position, a_owner.CoverRadius, a_owner.CoverLayer);
 
         if (m_hitColliders.Length == 0)
 
@@ -82,63 +91,70 @@ public class FindCover : IState<AI>
             return true;
     }
 
-    private void SetPathToCover()
+    private void SetPathToCover(AI a_owner)
     {
-        m_owner.Agent.destination = m_targetLocation;
-        m_owner.MovingToCover = true;
+        a_owner.Agent.destination = m_targetLocation;
+        //a_owner.MovingToCover = true;
     }
-
-    //private void ReloadGun()
-    //{
-    //    if (m_owner.Gun.ReloadOne())
-    //    {
-    //        m_owner.Agent.SetDestination(m_owner.transform.position);
-    //        m_owner.FinishedReload = false;
-    //        //Set anim bool
-    //    }
-    //    else
-    //    {
-    //        m_owner.FinishedReload = true;
-    //    }
-    //}
-
-    void FindNearestCover()
+    void FindNearestCover(AI a_owner)
     {
         List<Collider> cols = new List<Collider>();
         cols.AddRange(m_hitColliders);
 
-        Transform nearestPoint = m_owner.transform;
-        //float nearestDistance = float.MaxValue;
-        //float distance;
-        float distToPlayer = (m_owner.transform.position - m_owner.PlayerPosition).sqrMagnitude;
+        Transform prevCoverObj = a_owner.CurrCoverObj;
+        m_nearestPoint = prevCoverObj;
 
+        float distToPlayer = (a_owner.transform.position - a_owner.PlayerPosition).sqrMagnitude;
 
-
-        cols.Sort((a, b) => (m_owner.transform.position - a.transform.position).sqrMagnitude.CompareTo((m_owner.transform.position - b.transform.position).sqrMagnitude));
-
+        cols.Sort((a, b) => (a_owner.transform.position - a.transform.position).sqrMagnitude.CompareTo((a_owner.transform.position - b.transform.position).sqrMagnitude));
 
         for (int i = 0; i < cols.Count; i++)
         {
-            if ((m_owner.transform.position - cols[i].transform.position).sqrMagnitude < distToPlayer) //If dist from me to cover is less than dist to player
+            if (cols[i].transform.tag == "CoverFree")
             {
-                if ((m_owner.transform.position - cols[i].transform.position).sqrMagnitude < (cols[i].transform.position - m_owner.PlayerPosition).sqrMagnitude) //If dist from me to cover is less than dist from cover to player
+                float distMeCover = (a_owner.transform.position - cols[i].transform.position).sqrMagnitude;
+                Vector3 vecMePlayer = a_owner.transform.position - a_owner.PlayerPosition;
+                Vector3 vecCoverPlayer = cols[i].transform.position - a_owner.PlayerPosition;
+
+                if (distMeCover < distToPlayer) //If dist from me to cover is less than dist to player
                 {
-                    nearestPoint = cols[i].transform;
-                    m_owner.CurrCoverObj = nearestPoint;
-                    break;
+                    if (distMeCover <= Vector3.Dot(vecMePlayer, vecCoverPlayer) * Vector3.Dot(vecMePlayer, vecCoverPlayer)) //If dist from me to cover is less than the dot of dist from me to player and cover to player
+                    {
+                        if (a_owner.CurrCoverObj != null)
+                        {
+                            a_owner.CurrCoverObj.tag = "CoverFree";
+                        }
+                        m_nearestPoint = cols[i].transform;
+                        a_owner.CurrCoverObj = m_nearestPoint;
+                        a_owner.CurrCoverObj.tag = "CoverTaken";
+                        break;
+                    }
                 }
-            }
+            }  
         }
 
+        if (m_nearestPoint == prevCoverObj)
+        {
+            a_owner.NoCover = true;
+        }
+        else
+        {
+            a_owner.NoCover = false;
+        }
+        m_coverFound = true;
 
-        Vector3 dirFromPlayer = nearestPoint.position;
-        dirFromPlayer = ((nearestPoint.position - m_owner.PlayerPosition).normalized);
+    }
 
-        Vector3 finalPoint = (nearestPoint.position + dirFromPlayer);
-        finalPoint = new Vector3(finalPoint.x, nearestPoint.position.y, finalPoint.z);
+    void CalcRelativeCoverPos(AI a_owner)
+    {
+        Vector3 dirFromPlayer = m_nearestPoint.position;
+        dirFromPlayer = ((m_nearestPoint.position - a_owner.PlayerPosition).normalized);
+
+        Vector3 finalPoint = (m_nearestPoint.position + dirFromPlayer);
+        finalPoint = new Vector3(finalPoint.x, m_nearestPoint.position.y, finalPoint.z);
 
         m_targetLocation = finalPoint;
-        m_owner.CoverPos = finalPoint;
-        m_initialCoverFound = true;
+        a_owner.CoverPos = finalPoint;
+        Debug.Log("CALCULATING");
     }
 }
