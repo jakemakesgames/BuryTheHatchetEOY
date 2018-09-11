@@ -123,6 +123,11 @@ GameObject:
   m_PrefabParentObject: {fileID: 1408100201400886, guid: ae9d5bd1a4e055d458234d4e6f82f242,
     type: 2}
   m_PrefabInternal: {fileID: 503965266}
+--- !u!1 &205919857 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1483883936691270, guid: ae9d5bd1a4e055d458234d4e6f82f242,
+    type: 2}
+  m_PrefabInternal: {fileID: 503965266}
 --- !u!1 &362459307 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1927032586132536, guid: ae9d5bd1a4e055d458234d4e6f82f242,
@@ -429,6 +434,7 @@ MonoBehaviour:
   m_mainMenu: {fileID: 13118063}
   m_optionsMenu: {fileID: 362459307}
   m_pauseMenu: {fileID: 67602245}
+  m_gameCanvas: {fileID: 205919857}
   m_playScene: LiamW_main
   m_menuScene: TestGuiScene
 --- !u!4 &1059119370

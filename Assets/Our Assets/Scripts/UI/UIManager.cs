@@ -25,20 +25,29 @@ public class UIManager : MonoBehaviour
     [SerializeField] string m_menuScene;
 
     private bool m_isPaused;
-    private Scene m_currentScene;
+    private bool m_inMenu;
+
+    public static UIManager m_instance;
 
     private void Awake()
     {
         Time.timeScale = 1;
+        m_inMenu = true;
 
-
-        DontDestroyOnLoad(this);
+        if (m_instance == null)
+        {
+            m_instance = this;
+        }
+        else if (m_instance != this)
+        {
+            Destroy(gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
-        m_currentScene = SceneManager.GetActiveScene();
-        if (m_currentScene.name == m_menuScene)
+        if (m_inMenu == true)
         {
              m_mainMenu.SetActive(true);
              m_optionsMenu.SetActive(false);
@@ -48,7 +57,7 @@ public class UIManager : MonoBehaviour
                  m_pauseMenu.SetActive(false);
              }
         }
-        else if (m_currentScene.name == m_playScene)
+        else if (m_inMenu == false)
         {
             m_pauseMenu.SetActive(false);
             m_mainMenu.SetActive(false);
@@ -59,7 +68,7 @@ public class UIManager : MonoBehaviour
 
     public void Update()
     {
-        if (m_currentScene.name == m_playScene)
+        if (m_inMenu == false)
         {
             if (Input.GetKeyDown("escape") && m_isPaused == false)
             {
@@ -74,10 +83,11 @@ public class UIManager : MonoBehaviour
 
     #region Public Functions
 
-
     public void PlayGame()
     {
         SceneManager.LoadScene(m_playScene);
+        m_mainMenu.SetActive(false);
+        m_inMenu = false;
     }
 
     public void Options()
@@ -111,16 +121,19 @@ public class UIManager : MonoBehaviour
     public void ReturnToMenu()
     {
         SceneManager.LoadScene(m_menuScene);
+        m_pauseMenu.SetActive(false);
+        m_mainMenu.SetActive(true);
+        m_inMenu = true;
     }
 
     public void Back()
     {
-        if (m_currentScene.name == m_menuScene)
+        if (m_inMenu == true)
         {
             m_optionsMenu.SetActive(false);
             m_mainMenu.SetActive(true);
         }
-        else if (m_currentScene.name == m_playScene)
+        else if (m_inMenu == false)
         {
             m_pauseMenu.SetActive(true);
             m_optionsMenu.SetActive(false);
