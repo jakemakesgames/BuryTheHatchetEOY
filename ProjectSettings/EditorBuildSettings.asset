@@ -12,5 +12,8 @@ EditorBuildSettings:
     path: Assets/Our Assets/Scenes/LiamW/TestScene.unity
     guid: be5c7a07c856a4a4e8befc89cfc0399c
   - enabled: 1
+    path: Assets/Our Assets/Scenes/LiamW/TestGuiScene.unity
+    guid: e4c7a2da5e29b6543a765d924aadf8cd
+  - enabled: 1
     path: Assets/Our Assets/Scenes/JakeBlockout_Level.unity
     guid: c1a4dbe6df56640478d0cac321e57355
