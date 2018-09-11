@@ -30,7 +30,7 @@ public class PlayerInput : MonoBehaviour {
         [Range(1.1f, 5)]
         [SerializeField] private float m_rollAccelerationRate = 2f;
         [Tooltip("Controls the x component of the roll curves, higher values make the roll switch curves faster")]
-        [SerializeField] private float m_rollTimeMultiplier = 3f;
+        [SerializeField] private float m_rollTimeMultiplier = 1f;
         [Tooltip("The Time in seconds the player is invincible after starting to roll")]
         [SerializeField] private float m_invicibilityTime = 1f;
         [Tooltip("If an enemy is within this distance from the player " +
@@ -91,8 +91,8 @@ public class PlayerInput : MonoBehaviour {
         private float m_invicibilityTimer = 0;
         private float m_inCombatTimer = 0f;
         private bool m_isHoldingGun;
-        private bool m_isRolling = false;
-        private bool m_canRoll = true;
+        public bool m_isRolling = false;
+        public bool m_canRoll = true;
         private bool m_rollAccelerating = true;
         private bool m_inCombat = false;
         private bool m_isInvincible = false;
@@ -122,14 +122,6 @@ public class PlayerInput : MonoBehaviour {
     //via the weapon controller script
     //and also checks if the player wishes to reload
     public void Attack() {
-
-        if (m_inCombat) {
-            if (m_inCombatTimer > Time.time)
-                m_inCombat = false;
-        }
-
-
-
         //Get's the currently equipped weapon and executes the appropriate attack action
         //and animation
         Gun equippedGun = m_weaponController.GetEquippedGun();
@@ -243,7 +235,7 @@ public class PlayerInput : MonoBehaviour {
             }
         }
         else {
-            m_rollTimePassed = (Time.time - m_rollStartTime) * m_rollTimeMultiplier;
+            m_rollTimePassed = (Time.time - m_rollStartTime) * (m_rollTimeMultiplier + m_rollAccelerationRate);
             //time passed = t
             //acceleration rate = a
             if (m_rollAccelerating) {
@@ -255,7 +247,7 @@ public class PlayerInput : MonoBehaviour {
             }
             else {
                 //Decelerate along an exponential graph starting at 1 and tending toward 0
-                //velocity = -1 * (a^( -( t - a ) + 2)
+                //velocity = a^( -( t - a ) + 2)
                 float power = -(m_rollTimePassed - m_rollAccelerationRate) + 2;
                 m_rollVelocity = transform.forward * ((Mathf.Pow(m_rollAccelerationRate, power)));
                 Debug.Log("Decelerating");
@@ -305,7 +297,8 @@ public class PlayerInput : MonoBehaviour {
             if (Input.GetMouseButtonDown(1)) {
                 m_rollStartTime = Time.time;
                 m_invicibilityTimer = m_rollStartTime;
-                m_playerAnimator.SetTrigger("Roll");
+                m_playerAnimator.SetBool("Roll", true);
+                Debug.Log("roll");
                 m_isRolling = true;
                 m_canRoll = false;
                 m_rollAccelerating = true;
@@ -331,7 +324,7 @@ public class PlayerInput : MonoBehaviour {
     private IEnumerator CheckEnemyDistance() {
         while (true) {
             Collider[] enemies = Physics.OverlapSphere(transform.position, m_inCombatRadius, m_weaponController.EntityCollisionMask);
-            if (m_inCombat == false) {
+            if (m_inCombatTimer < Time.time) {
                 m_inCombat = (enemies.Length > 0);
                 if (m_inCombat)
                     m_inCombatTimer = Time.time + m_inCombatTime;
@@ -445,6 +438,8 @@ public class PlayerInput : MonoBehaviour {
         m_nma.speed = m_nmaSpeed;
         m_nma.angularSpeed = m_nmaAngledSpeed;
         m_nma.acceleration = m_nmaAcceleration;
+        m_rollCoolDownTimer = Time.time + m_rollCoolDownTime;
+        m_playerAnimator.SetBool("Roll", false);
 
         m_isRolling = false;
 
@@ -546,10 +541,11 @@ public class PlayerInput : MonoBehaviour {
 
                 //Player attacking
                 Attack();
+
+                if (m_rollCoolDownTimer <= Time.time)
+                    m_canRoll = true;
             }
-            
-            else if(m_rollCoolDownTimer <= Time.time)
-                m_canRoll = true;
+
             //Player rolling
             if(m_canRoll)
                 Roll();
