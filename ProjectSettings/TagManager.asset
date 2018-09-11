@@ -11,6 +11,8 @@ TagManager:
   - UI Pause Menu
   - UI BB
   - UI Bounty Screen
+  - CoverTaken
+  - CoverFree
   layers:
   - Default
   - TransparentFX

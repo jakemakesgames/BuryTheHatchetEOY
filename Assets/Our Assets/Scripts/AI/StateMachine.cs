@@ -35,6 +35,10 @@ namespace StateMachine
                     currentState = a_newState;
                     currentState.Enter(owner);
                 }
+                else
+                {
+                    currentState = a_newState;
+                }
             }
             else
             {
