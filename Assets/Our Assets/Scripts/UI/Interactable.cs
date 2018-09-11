@@ -33,7 +33,7 @@ public class Interactable : MonoBehaviour
 
     private void Start()
     {
-        m_uiManager = UIManager.m_Instance;
+        //m_uiManager = UIManager.m_Instance;
     }
 
     private void Update()
