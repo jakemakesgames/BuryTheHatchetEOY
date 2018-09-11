@@ -122,9 +122,12 @@ public class PlayerInput : MonoBehaviour {
     //via the weapon controller script
     //and also checks if the player wishes to reload
     public void Attack() {
-        //Get's the currently equipped weapon and executes the appropriate attack action
-        //and animation
+        //Get's the currently equipped weapon and executes
+        //the appropriate attack action and animation
         Gun equippedGun = m_weaponController.GetEquippedGun();
+        //---------------//
+        //MELEE ATTACKING//
+        //---------------//
         if (equippedGun == null) {
             Melee equippedMelee = m_weaponController.GetEquippedMelee();
             if (equippedMelee == null)
@@ -147,7 +150,9 @@ public class PlayerInput : MonoBehaviour {
                 Debug.Log("axe not idle");
             }
         }
-
+        //-------------//
+        //GUN ATTACKING//
+        //-------------//
         else if (equippedGun.m_isAutomatic && equippedGun.IsIdle) {
             if (Input.GetMouseButton(0)) {
                 if (m_inCombat) {
@@ -188,6 +193,9 @@ public class PlayerInput : MonoBehaviour {
         Vector3 moveVelocity = Vector3.one;
 
         //Calculating velocity
+        //----------------//
+        //REGULAR MOVEMENT//
+        //----------------//
         if (m_isRolling == false) {
             m_acceleration = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
             m_acceleration *= m_accelerationRate;
@@ -234,7 +242,11 @@ public class PlayerInput : MonoBehaviour {
                 }
             }
         }
-        else {
+        //----------------//
+        //ROLLING MOVEMENT//
+        //----------------//
+        else
+        {
             m_rollTimePassed = (Time.time - m_rollStartTime) * (m_rollTimeMultiplier + m_rollAccelerationRate);
             //time passed = t
             //acceleration rate = a
@@ -252,13 +264,9 @@ public class PlayerInput : MonoBehaviour {
                 m_rollVelocity = transform.forward * ((Mathf.Pow(m_rollAccelerationRate, power)));
                 Debug.Log("Decelerating");
             }
-            //moveVelocity = m_rollVelocity;
-            //moveVelocity *= m_rollDeceleration;
-            //m_rollVelocity -= moveVelocity * Time.deltaTime;
             m_velocity = m_rollVelocity;
         }
-
-
+        
         m_nma.velocity = m_velocity;
     }
 
@@ -272,14 +280,13 @@ public class PlayerInput : MonoBehaviour {
         float rayDistance;
         //Cast the ray from the camera to the generated ground plane which will be created at the players hand position
         if (groundPlane.Raycast(ray, out rayDistance)) {
+            Vector3 lookAtPoint = ray.GetPoint(rayDistance);
 
-            Vector3 pointOnGround = ray.GetPoint(rayDistance);
-
-            Vector3 heightCorrectedLookPoint = new Vector3(pointOnGround.x, transform.position.y, pointOnGround.z);
+            Vector3 heightCorrectedLookPoint = new Vector3(lookAtPoint.x, transform.position.y, lookAtPoint.z);
 
             transform.LookAt(heightCorrectedLookPoint);
             if(m_weaponController.EquippedGun != null)
-                hand.LookAt(pointOnGround);
+                hand.LookAt(lookAtPoint);
             m_weaponController.WeaponHold = hand;
             //place the crosshiar at the mouse position
             if (m_crosshair != null && m_canvas != null) {
@@ -314,7 +321,7 @@ public class PlayerInput : MonoBehaviour {
                 if(m_rollSpeaker != null && m_rollSound != null)
                     m_rollSpeaker.Play(); /**NEED TO IMPLEMENT VOLUME CONTROL AND RANDOM PITCHING*/
 
-                if(m_rollParticleSystem != null)
+                if (m_rollParticleSystem != null)
                     m_rollParticleSystem.Play();
             }
         }
@@ -425,7 +432,7 @@ public class PlayerInput : MonoBehaviour {
     #region animation event functions
 
     public void HalfWay() {
-        Debug.Log(m_rollTimePassed);
+        Debug.Log("HalfRoll: " + m_rollTimePassed);
     }
 
     public void SlowingRoll() {
@@ -435,6 +442,7 @@ public class PlayerInput : MonoBehaviour {
     //To be called as an animation event at the end of the roll animation.
     //Resets the player to a non-rolling state
     public void EndRoll() {
+        Debug.Log("EndRoll: " + m_rollTimePassed);
         m_nma.speed = m_nmaSpeed;
         m_nma.angularSpeed = m_nmaAngledSpeed;
         m_nma.acceleration = m_nmaAcceleration;
@@ -453,38 +461,38 @@ public class PlayerInput : MonoBehaviour {
     public void EndSwing() {
         m_weaponController.GetEquippedMelee().EndSwing();
     }
+
+    //To be called at the start of the shoot animation to make sure
+    //that each projectile fire will be fired at the same height
     #endregion
 
     //Charlie
-    private void UpdateAnims()
-    {
+    private void UpdateAnims() {
         float myVelocity = m_velocity.magnitude;
         
-        //Debug.Log(myVelocity);
         Vector3 localVel = transform.InverseTransformDirection(m_velocity.normalized);
 
         m_playerAnimator.SetFloat("Velocity", myVelocity);
         
         m_playerAnimator.SetFloat("MovementDirectionRight", localVel.x);
         m_playerAnimator.SetFloat("MovementDirectionForward", localVel.z);
-        /*
-        Debug.Log(m_playerAnimator.GetFloat("MovementDirectionRight")/100);
         
-        ORIGINAL CODE//////////////////////////////////////////////////////////////////////////////
-                playerAnimator.SetFloat ("MovementDirectionRight", m_velocity.x * transform.right.x);
-                playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        
-        
-                if (m_velocity.x * transform.right.x == 0){
-                    playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
-                }
-        
-        
-        playerAnimator.SetFloat ("MovementDirectionForward", m_movementVector.x * transform.forward.x);
-        
-        playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.z * transform.right.z);
-        */    
+        //Debug.Log(m_playerAnimator.GetFloat("MovementDirectionRight")/100);
+        //
+        //ORIGINAL CODE//////////////////////////////////////////////////////////////////////////////
+        //        playerAnimator.SetFloat ("MovementDirectionRight", m_velocity.x * transform.right.x);
+        //        playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
+        //////////////////////////////////////////////////////////////////////////////////////////////
+        //
+        //
+        //        if (m_velocity.x * transform.right.x == 0){
+        //            playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
+        //        }
+        //
+        //
+        //playerAnimator.SetFloat ("MovementDirectionForward", m_movementVector.x * transform.forward.x);
+        //
+        //playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.z * transform.right.z);   
     }
 
     //Get all requied attached components and store them for later use
