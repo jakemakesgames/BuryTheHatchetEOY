@@ -34,6 +34,7 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 1;
         m_inMenu = true;
 
+        //Makes sure there is only ever one instance of this GameObject
         if (m_instance == null)
         {
             m_instance = this;
@@ -47,23 +48,13 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        if (m_inMenu == true)
-        {
-             m_mainMenu.SetActive(true);
-             m_optionsMenu.SetActive(false);
-         
-             if (m_pauseMenu != null)
-             {
-                 m_pauseMenu.SetActive(false);
-             }
-        }
-        else if (m_inMenu == false)
+        m_mainMenu.SetActive(true);
+        m_optionsMenu.SetActive(false);
+        
+        if (m_pauseMenu != null)
         {
             m_pauseMenu.SetActive(false);
-            m_mainMenu.SetActive(false);
-            m_optionsMenu.SetActive(false);
         }
-        
     }
 
     public void Update()
