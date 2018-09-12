@@ -91,6 +91,7 @@ public class PlayerInput : MonoBehaviour {
         private float m_invicibilityTimer = 0;
         private float m_inCombatTimer = 0f;
         private bool m_isHoldingGun;
+        private bool m_canAttack = true;
         public bool m_isRolling = false;
         public bool m_canRoll = true;
         private bool m_rollAccelerating = true;
@@ -116,6 +117,10 @@ public class PlayerInput : MonoBehaviour {
         set { m_isInvincible = value; }
     }
 
+    public bool CanAttack {
+        get { return m_canAttack; }
+        set { m_canAttack = value; }
+    }
     #region Player action methods
     //calls the equipped weapons attacking method 
     //(swing for melee or shoot for gun)
@@ -242,6 +247,7 @@ public class PlayerInput : MonoBehaviour {
                 }
             }
         }
+
         //----------------//
         //ROLLING MOVEMENT//
         //----------------//
@@ -543,6 +549,7 @@ public class PlayerInput : MonoBehaviour {
                 //Player looking at mouse
                 PlayerLookAt();
 
+                if(CanAttack)
                 //Player attacking
                 Attack();
 
