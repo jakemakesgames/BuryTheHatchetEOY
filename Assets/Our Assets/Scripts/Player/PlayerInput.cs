@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 03/09/2018
+//Last edited 12/09/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -91,6 +91,7 @@ public class PlayerInput : MonoBehaviour {
         private float m_invicibilityTimer = 0;
         private float m_inCombatTimer = 0f;
         private bool m_isHoldingGun;
+        private bool m_canAttack = true;
         public bool m_isRolling = false;
         public bool m_canRoll = true;
         private bool m_rollAccelerating = true;
@@ -116,6 +117,10 @@ public class PlayerInput : MonoBehaviour {
         set { m_isInvincible = value; }
     }
 
+    public bool CanAttack {
+        get { return m_canAttack; }
+        set { m_canAttack = value; }
+    }
     #region Player action methods
     //calls the equipped weapons attacking method 
     //(swing for melee or shoot for gun)
@@ -242,6 +247,7 @@ public class PlayerInput : MonoBehaviour {
                 }
             }
         }
+
         //----------------//
         //ROLLING MOVEMENT//
         //----------------//
@@ -386,7 +392,7 @@ public class PlayerInput : MonoBehaviour {
                 m_weaponController.EquipWeapon(m_player.m_heldWeapons[a_inumerator]);
                 m_playerAnimator.SetInteger("whichWeapon", a_inumerator + 1);
 
-                if (!m_player.ToEquipIsMelee(a_inumerator)) {
+                if (m_player.ToEquipIsMelee(a_inumerator) == false) {
                     m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(a_inumerator));
                     m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(a_inumerator));
                 }
@@ -543,6 +549,7 @@ public class PlayerInput : MonoBehaviour {
                 //Player looking at mouse
                 PlayerLookAt();
 
+                if(CanAttack)
                 //Player attacking
                 Attack();
 

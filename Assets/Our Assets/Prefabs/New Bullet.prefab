@@ -218,10 +218,10 @@ MonoBehaviour:
   - serializedVersion: 2
     m_Bits: 32768
   m_environmentParticles:
-  - {fileID: 1474140810270196, guid: 2042d629f72f21942b9dec3a0e32975a, type: 2}
-  - {fileID: 1474207008557910, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc, type: 2}
-  - {fileID: 1474140810270196, guid: 2042d629f72f21942b9dec3a0e32975a, type: 2}
-  - {fileID: 1474207008557910, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc, type: 2}
+  - {fileID: 1133731609116984, guid: ee483b73f0806c94eae2441a640707ef, type: 2}
+  - {fileID: 1855641858711452, guid: 5a977e869248b36419555212c596c406, type: 2}
+  - {fileID: 1133731609116984, guid: ee483b73f0806c94eae2441a640707ef, type: 2}
+  - {fileID: 1133731609116984, guid: ee483b73f0806c94eae2441a640707ef, type: 2}
   m_environmentParticleTimers:
   - 3
   - 3
