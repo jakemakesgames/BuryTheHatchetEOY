@@ -16,7 +16,7 @@ public class AI : MonoBehaviour, IDamagable
 {
     enum STATE
     {
-        SEEK,
+        //SEEK,
         PEEK,
         STATIONARY,
         FINDCOVER,
@@ -121,6 +121,7 @@ public class AI : MonoBehaviour, IDamagable
 
     private Vector3 m_coverPos;
     private Transform m_currCoverObj;
+    private Transform m_nextCoverObj;
     private NavMeshAgent m_agent;
     private LineRenderer m_line;
     private GameObject m_player;
@@ -149,6 +150,7 @@ public class AI : MonoBehaviour, IDamagable
     public bool AtCover { get { return m_atCover; } set { m_atCover = value; } }
     public Transform CurrCoverObj { get { return m_currCoverObj; } set { m_currCoverObj = value; } }
     public bool NoCover { get { return m_noCover; } set { m_noCover = value; } }
+    public Transform NextCoverObj { get { return m_nextCoverObj; } set { m_nextCoverObj = value; } }
     #endregion
 
     void Awake()
@@ -191,7 +193,10 @@ public class AI : MonoBehaviour, IDamagable
             Debug.Log("Current State: " + m_state);
             DrawLinePath(m_agent.path);
             m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
-            m_distBetweenCover = Vector3.Distance(transform.position, CoverPos);
+            if (CurrCoverObj != null)
+            {
+                m_distBetweenCover = Vector3.Distance(transform.position, CurrCoverObj.transform.position);
+            }
             m_gunDistToPlayer = Vector3.Distance(m_weaponController.GetEquippedWeapon().transform.position, m_player.transform.position);
 
             if (m_health <= 0)
@@ -230,33 +235,39 @@ public class AI : MonoBehaviour, IDamagable
         if (m_distBetweenPlayer < m_attackRadius)
         {
             transform.LookAt(PlayerPosition);
- 
-            if (m_time < Time.time)
+            
+            if(m_distBetweenCover < m_seekFromCoverRadius)
             {
-                float choice = Random.Range(0, 100);
-                if (choice <= 50)
+                if (m_time < Time.time)
                 {
-                    m_state = STATE.PEEK;
-                    m_time = Time.time + Random.Range(m_minAttackDelay, m_maxAttackDelay);
-                }
-                if (choice > 50)
-                {
-                    m_state = STATE.FINDCOVER;
-                    m_time = Time.time + Random.Range(m_minAttackDelay, m_maxAttackDelay);
+                    float choice = Random.Range(0, 100);
+                    if (choice <= 50)
+                    {
+                        if (m_state != STATE.FINDCOVER)
+                        {
+                            m_state = STATE.PEEK;
+                            m_time = Time.time + Random.Range(m_minAttackDelay, m_maxAttackDelay);
+                        }
+                    }
+                    if (choice > 50)
+                    {
+                        m_state = STATE.FINDCOVER;
+                        m_time = Time.time + Random.Range(m_minAttackDelay, m_maxAttackDelay);
+                    }
                 }
             }
-            if (m_distBetweenCover < m_seekFromCoverRadius && NoCover)
+            //if(Gun.CurrentClip <= 2)
+            //{
+            //    m_state = STATE.PEEK;
+            //}
+            if (m_distBetweenCover < m_seekFromCoverRadius && NoCover) // no cover
             {
                 m_state = STATE.PEEK;
-            }
-            else
-            {
-                m_state = STATE.FINDCOVER;
             }
 
             if (m_distBetweenCover <= m_seekFromCoverRadius + m_deadZone && m_distBetweenCover >= m_seekFromCoverRadius - m_deadZone)
             {
-                if (m_state != STATE.FINDCOVER)
+                if (m_state != STATE.FINDCOVER && prevState != STATE.FINDCOVER)
                 {
                     //If player is within cover and we're at max seek from cover distance (deadzone for floating point precision)
                     m_state = STATE.STATIONARY;
@@ -270,9 +281,21 @@ public class AI : MonoBehaviour, IDamagable
             //TO DO: WANDER STATE
         }
 
+        if (CurrCoverObj != null)
+        {
+            if (m_distBetweenCover < m_seekFromCoverRadius)
+            {
+                CurrCoverObj.tag = "CoverTaken";
+            }
+            else
+            {
+                CurrCoverObj.tag = "CoverFree";
+                CurrCoverObj = NextCoverObj;
+            }
+        }
+
         if (m_gun.GetIsEmpty())
         {
-            CurrCoverObj.tag = "CoverFree";
             m_state = STATE.FINDCOVER;
         }
 
