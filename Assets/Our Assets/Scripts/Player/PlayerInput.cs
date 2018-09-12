@@ -72,6 +72,8 @@ public class PlayerInput : MonoBehaviour {
         [SerializeField] private ParticleSystem m_walkingParticleSystem;
         [Tooltip("Particles that will play when the player rolls")]
         [SerializeField] private ParticleSystem m_rollParticleSystem;
+        [Tooltip("The particle effect to indicate when the player is invincible")]
+        [SerializeField] private ParticleSystem m_invincibilityParticle;
         [Header("Volumes")]
         [SerializeField] [Range(0, 1)] private float m_walkVol = 0.5f;
         [SerializeField] [Range(0, 1)] private float m_clothesVol = 0.5f;
@@ -309,7 +311,7 @@ public class PlayerInput : MonoBehaviour {
         if (m_isRolling == false) {
             if (Input.GetMouseButtonDown(1)) {
                 m_rollStartTime = Time.time;
-                m_invicibilityTimer = m_rollStartTime;
+                m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
                 m_playerAnimator.SetBool("Roll", true);
                 Debug.Log("roll");
                 m_isRolling = true;
@@ -329,6 +331,9 @@ public class PlayerInput : MonoBehaviour {
 
                 if (m_rollParticleSystem != null)
                     m_rollParticleSystem.Play();
+
+                if (m_invincibilityParticle != null)
+                    m_invincibilityParticle.Play();
             }
         }
     }
@@ -529,6 +534,8 @@ public class PlayerInput : MonoBehaviour {
             m_walkingParticleSystem.Stop();
         if(m_rollParticleSystem != null)
             m_rollParticleSystem.Stop();
+        if (m_invincibilityParticle != null)
+            m_invincibilityParticle.Stop();
 
         m_playerAnimator = GetComponentInChildren<Animator>();
         m_viewCamera = m_camera;
@@ -549,12 +556,19 @@ public class PlayerInput : MonoBehaviour {
                 //Player looking at mouse
                 PlayerLookAt();
 
-                if(CanAttack)
                 //Player attacking
-                Attack();
+                if(CanAttack)
+                    Attack();
 
                 if (m_rollCoolDownTimer <= Time.time)
                     m_canRoll = true;
+            }
+            else {
+                if (m_invicibilityTimer <= Time.time) {
+                    IsInvincible = false;
+                    if (m_invincibilityParticle != null)
+                        m_invincibilityParticle.Stop();
+                }
             }
 
             //Player rolling
