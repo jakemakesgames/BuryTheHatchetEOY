@@ -17,6 +17,7 @@ public class AI : MonoBehaviour, IDamagable
     enum STATE
     {
         SEEK,
+        PEEK,
         STATIONARY,
         FINDCOVER,
         RELOAD
@@ -63,6 +64,12 @@ public class AI : MonoBehaviour, IDamagable
     [Tooltip("World height of body when dead")]
     [SerializeField]
     private float m_bodyDropHeight;
+    [Tooltip("Minimum delay in seconds that AI will leave cover to attack")]
+    [SerializeField]
+    private float m_minAttackDelay;
+    [Tooltip("Maximum delay in seconds that AI will leave cover to attack")]
+    [SerializeField]
+    private float m_maxAttackDelay;
     [Tooltip("Transform for gun's raycast")]
     [SerializeField]
     private Transform m_gunRayTransform;
@@ -102,12 +109,13 @@ public class AI : MonoBehaviour, IDamagable
     private float m_gunDistToPlayer;
     private float m_distBetweenCover;
     private float m_counter = 0;
+    private float m_time = 0;
     private bool m_isDead = false;
     private bool m_hasDropped = false;
     private bool m_hasDroppedTrigger = false;
     private bool m_finishedReload = true;
     private bool m_atCover = false;
-    private bool m_movingToCover = false;
+    private bool m_noCover = false;
 
     private STATE m_state;
 
@@ -117,8 +125,6 @@ public class AI : MonoBehaviour, IDamagable
     private LineRenderer m_line;
     private GameObject m_player;
     private List<Transform> m_coverPoints;
-    RaycastHit m_hit;
-
 
     private WeaponController m_weaponController;
     private Gun m_gun;
@@ -142,7 +148,7 @@ public class AI : MonoBehaviour, IDamagable
     public Vector3 CoverPos { get { return m_coverPos; } set { m_coverPos = value; } }
     public bool AtCover { get { return m_atCover; } set { m_atCover = value; } }
     public Transform CurrCoverObj { get { return m_currCoverObj; } set { m_currCoverObj = value; } }
-    public bool MovingToCover { get { return m_movingToCover; } set { m_movingToCover = value; } }
+    public bool NoCover { get { return m_noCover; } set { m_noCover = value; } }
     #endregion
 
     void Awake()
@@ -161,6 +167,7 @@ public class AI : MonoBehaviour, IDamagable
         m_stateMachine = new StateMachine<AI>(this);
         m_stateMachine.ChangeState(new FindCover());
         m_state = STATE.FINDCOVER;
+        m_time = Time.time + Random.Range(m_minAttackDelay, m_maxAttackDelay);
 
         if (m_weaponController.GetEquippedGun() != null)
         {
@@ -193,7 +200,7 @@ public class AI : MonoBehaviour, IDamagable
                 return;
             }
 
-            if (ClearShot() == DETECTION.CLEAR)
+            if (ClearShot())
                 Attack();
 
             if (CheckStates())
@@ -220,25 +227,52 @@ public class AI : MonoBehaviour, IDamagable
         STATE prevState = m_state;
 
         //does this work?
-        if (m_distBetweenCover < m_seekFromCoverRadius)
+        if (m_distBetweenPlayer < m_attackRadius)
         {
             transform.LookAt(PlayerPosition);
-
-            if(ClearShot() == DETECTION.BEHINDCOVER)
-            m_state = STATE.SEEK;
+ 
+            if (m_time < Time.time)
+            {
+                float choice = Random.Range(0, 100);
+                if (choice <= 50)
+                {
+                    m_state = STATE.PEEK;
+                    m_time = Time.time + Random.Range(m_minAttackDelay, m_maxAttackDelay);
+                }
+                if (choice > 50)
+                {
+                    m_state = STATE.FINDCOVER;
+                    m_time = Time.time + Random.Range(m_minAttackDelay, m_maxAttackDelay);
+                }
+            }
+            if (m_distBetweenCover < m_seekFromCoverRadius && NoCover)
+            {
+                m_state = STATE.PEEK;
+            }
+            else
+            {
+                m_state = STATE.FINDCOVER;
+            }
 
             if (m_distBetweenCover <= m_seekFromCoverRadius + m_deadZone && m_distBetweenCover >= m_seekFromCoverRadius - m_deadZone)
-                //If player is within cover and we're at max seek from cover distance (deadzone for floating point precision)
-                m_state = STATE.STATIONARY;
+            {
+                if (m_state != STATE.FINDCOVER)
+                {
+                    //If player is within cover and we're at max seek from cover distance (deadzone for floating point precision)
+                    m_state = STATE.STATIONARY;
+                }
+            }
 
         }
-        if(m_distBetweenPlayer > m_attackRadius)
+        else
         {
             m_state = STATE.FINDCOVER;
+            //TO DO: WANDER STATE
         }
 
         if (m_gun.GetIsEmpty())
         {
+            CurrCoverObj.tag = "CoverFree";
             m_state = STATE.FINDCOVER;
         }
 
@@ -253,15 +287,15 @@ public class AI : MonoBehaviour, IDamagable
                 AtCover = false;
             }
         }
-
+ 
         if (m_gunDistToPlayer < m_attackRadius && m_gun.GetIsEmpty() == false)
         {
             if (m_finishedReload)
             {
-                if (ClearShot() == DETECTION.BLOCKED)
-                {
-                    m_state = STATE.FINDCOVER;
-                }
+                //if (ClearShot() == DETECTION.BLOCKED)
+                //{
+                //    m_state = STATE.FINDCOVER;
+                //}
             }
         }
 
@@ -276,8 +310,8 @@ public class AI : MonoBehaviour, IDamagable
     {
         switch (m_state)
         {
-            case STATE.SEEK:
-                m_stateMachine.ChangeState(new Seek());
+            case STATE.PEEK:
+                m_stateMachine.ChangeState(new Peek());
                 break;
             case STATE.FINDCOVER:
                 m_stateMachine.ChangeState(new FindCover());
@@ -294,7 +328,7 @@ public class AI : MonoBehaviour, IDamagable
     }
 
     //Check if there is nothing blocking the gun
-    DETECTION ClearShot()
+    bool ClearShot()
     {
         Vector3 vecBetween = (m_player.transform.position - m_gunRayTransform.position);
         Vector3 rayPos1 = m_gunRayTransform.position - (m_gunRayTransform.forward * m_rayDetectBufferDist);
@@ -307,50 +341,80 @@ public class AI : MonoBehaviour, IDamagable
         Debug.DrawRay(rayPos1, vecBetween, Color.green);
         Debug.DrawRay(rayPos2, vecBetween, Color.green);
 
-        RaycastHit[] hits1;
-        hits1 = Physics.RaycastAll(ray1, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer);
-        RaycastHit[] hits2;
-        hits2 = Physics.RaycastAll(ray2, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer);
+        RaycastHit hit;
 
-        if (hits1.Length == 0 || hits2.Length == 0)
+        if (Physics.Raycast(ray1, out hit, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer))
         {
-            return DETECTION.CLEAR;
+            if (hit.transform == CurrCoverObj)
+                return false;
         }
-        else if (hits1.Length == 1 || hits2.Length == 1)
-        {
-            if (hits1[0].transform == CurrCoverObj || hits2[0].transform == CurrCoverObj)
-            {
-                return DETECTION.BEHINDCOVER;
-            }
-            else
-            {
-                return DETECTION.BLOCKED;
-            }
-        }
-        else
-        {
-            return DETECTION.BLOCKED;
-        }
+        if (Physics.Raycast(ray2, out hit, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer))
+            if (hit.transform == CurrCoverObj)
+                return false;
 
-        //if (Physics.Raycast(ray1, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer))
-        //    return false;
-        //
-        //if (Physics.Raycast(ray2, out m_hit, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer))
-        //    return false;
-        //
-        //
-        //return true;
+        return true;
+
+        //RaycastHit[] hits1;
+        //hits1 = Physics.RaycastAll(ray1, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer);
+        //RaycastHit[] hits2;
+        //hits2 = Physics.RaycastAll(ray2, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer);
+
+
+        //if (hits1.Length == 0)
+        //{
+        //    if (hits2.Length == 0)
+        //    {
+        //        return DETECTION.CLEAR;
+        //    }
+        //    else if (hits2.Length == 1)
+        //    {
+        //        if (hits2[0].transform == CurrCoverObj)
+        //        {
+        //            return DETECTION.BEHINDCOVER;
+        //        }
+        //    }          
+        //}
+        //if (hits1.Length == 1)
+        //{
+        //    if (hits2.Length < 2)
+        //    {
+        //        if (hits1[0].transform == CurrCoverObj)
+        //        {
+        //            if (hits2.Length == 0)
+        //            {
+        //                return DETECTION.BEHINDCOVER;
+        //            }
+        //            else if (hits2[0].transform == CurrCoverObj)
+        //            {
+        //                return DETECTION.BEHINDCOVER;
+        //            }
+        //        }
+        //    }
+        //}
+
+        //return DETECTION.BLOCKED;
+
+        //if (hits1.Length == 0 && hits2.Length == 0)
+        //{
+        //    return DETECTION.CLEAR;
+        //}
+        //else if (hits1.Length == 1 && hits2.Length == 1)
+        //{
+        //    if (hits1[0].transform == CurrCoverObj && hits2[0].transform == CurrCoverObj)
+        //    {
+        //        return DETECTION.BEHINDCOVER;
+        //    }
+        //    else
+        //    {
+        //        return DETECTION.BLOCKED;
+        //    }
+        //}
+        //else
+        //{
+        //    return DETECTION.BLOCKED;
+        //}
+
     }
-
-    bool AmIBlocked()
-    {
-        if (m_hit.transform == CurrCoverObj)
-            return false;
-
-        else
-            return true;
-    }
-
     void Attack()
     {
         if (m_gunDistToPlayer < m_attackRadius && m_finishedReload)
