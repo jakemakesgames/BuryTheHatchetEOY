@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 27/08/2018
+//Last edited 12/09/2018
 
 
 public class Projectile : MonoBehaviour {
@@ -18,7 +18,7 @@ public class Projectile : MonoBehaviour {
     private LayerMask m_ricochetCollisionMask;
     private LayerMask m_entityCollisionMask;
     private LayerMask m_environmentCollisionMask;
-
+    
     [Header("Required for sound")]
     [Tooltip("The prefab for the speakers that'll spawn on events")]
     [SerializeField] private SpawnedSpeaker m_spawnedSpeaker;

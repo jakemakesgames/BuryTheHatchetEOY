@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 03/09/2018
+//Last edited 12/09/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -386,7 +386,7 @@ public class PlayerInput : MonoBehaviour {
                 m_weaponController.EquipWeapon(m_player.m_heldWeapons[a_inumerator]);
                 m_playerAnimator.SetInteger("whichWeapon", a_inumerator + 1);
 
-                if (!m_player.ToEquipIsMelee(a_inumerator)) {
+                if (m_player.ToEquipIsMelee(a_inumerator) == false) {
                     m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(a_inumerator));
                     m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(a_inumerator));
                 }
