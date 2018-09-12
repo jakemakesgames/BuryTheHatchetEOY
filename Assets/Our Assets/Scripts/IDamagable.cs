@@ -8,6 +8,7 @@ using UnityEngine;
 //Last edited 13/08/2018
 public interface IDamagable {
 
+    //This is an interface for anything that will be hit by anything that'll apply damage in the game
     void TakeHit(int a_damage, RaycastHit a_hit);
     void TakeDamage(int a_damage);
     void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile);

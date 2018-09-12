@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 03/09/2018
+//Last edited 12/09/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -72,6 +72,8 @@ public class PlayerInput : MonoBehaviour {
         [SerializeField] private ParticleSystem m_walkingParticleSystem;
         [Tooltip("Particles that will play when the player rolls")]
         [SerializeField] private ParticleSystem m_rollParticleSystem;
+        [Tooltip("The particle effect to indicate when the player is invincible")]
+        [SerializeField] private ParticleSystem m_invincibilityParticle;
         [Header("Volumes")]
         [SerializeField] [Range(0, 1)] private float m_walkVol = 0.5f;
         [SerializeField] [Range(0, 1)] private float m_clothesVol = 0.5f;
@@ -91,6 +93,7 @@ public class PlayerInput : MonoBehaviour {
         private float m_invicibilityTimer = 0;
         private float m_inCombatTimer = 0f;
         private bool m_isHoldingGun;
+        private bool m_canAttack = true;
         public bool m_isRolling = false;
         public bool m_canRoll = true;
         private bool m_rollAccelerating = true;
@@ -116,6 +119,10 @@ public class PlayerInput : MonoBehaviour {
         set { m_isInvincible = value; }
     }
 
+    public bool CanAttack {
+        get { return m_canAttack; }
+        set { m_canAttack = value; }
+    }
     #region Player action methods
     //calls the equipped weapons attacking method 
     //(swing for melee or shoot for gun)
@@ -242,6 +249,7 @@ public class PlayerInput : MonoBehaviour {
                 }
             }
         }
+
         //----------------//
         //ROLLING MOVEMENT//
         //----------------//
@@ -303,7 +311,7 @@ public class PlayerInput : MonoBehaviour {
         if (m_isRolling == false) {
             if (Input.GetMouseButtonDown(1)) {
                 m_rollStartTime = Time.time;
-                m_invicibilityTimer = m_rollStartTime;
+                m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
                 m_playerAnimator.SetBool("Roll", true);
                 Debug.Log("roll");
                 m_isRolling = true;
@@ -323,6 +331,9 @@ public class PlayerInput : MonoBehaviour {
 
                 if (m_rollParticleSystem != null)
                     m_rollParticleSystem.Play();
+
+                if (m_invincibilityParticle != null)
+                    m_invincibilityParticle.Play();
             }
         }
     }
@@ -386,7 +397,7 @@ public class PlayerInput : MonoBehaviour {
                 m_weaponController.EquipWeapon(m_player.m_heldWeapons[a_inumerator]);
                 m_playerAnimator.SetInteger("whichWeapon", a_inumerator + 1);
 
-                if (!m_player.ToEquipIsMelee(a_inumerator)) {
+                if (m_player.ToEquipIsMelee(a_inumerator) == false) {
                     m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(a_inumerator));
                     m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(a_inumerator));
                 }
@@ -523,6 +534,8 @@ public class PlayerInput : MonoBehaviour {
             m_walkingParticleSystem.Stop();
         if(m_rollParticleSystem != null)
             m_rollParticleSystem.Stop();
+        if (m_invincibilityParticle != null)
+            m_invincibilityParticle.Stop();
 
         m_playerAnimator = GetComponentInChildren<Animator>();
         m_viewCamera = m_camera;
@@ -544,10 +557,18 @@ public class PlayerInput : MonoBehaviour {
                 PlayerLookAt();
 
                 //Player attacking
-                Attack();
+                if(CanAttack)
+                    Attack();
 
                 if (m_rollCoolDownTimer <= Time.time)
                     m_canRoll = true;
+            }
+            else {
+                if (m_invicibilityTimer <= Time.time) {
+                    IsInvincible = false;
+                    if (m_invincibilityParticle != null)
+                        m_invincibilityParticle.Stop();
+                }
             }
 
             //Player rolling

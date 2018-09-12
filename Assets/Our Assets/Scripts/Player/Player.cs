@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 03/09/2018
+//Last edited 12/09/2018
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(AudioSource))]
@@ -25,13 +25,14 @@ public class Player : MonoBehaviour, IDamagable {
     }
 
     #region Member variables
-    private bool m_dead;
-    private int m_health;
-    private float m_deathFadeOutTimer;
-    private Vector3 m_respawnPoint;
-    private List<WeaponInfo> m_heldWeaponsInfo = new List<WeaponInfo>();
-    private AudioSource m_audioSource;
-    private PlayerInput m_input;
+        private bool m_dead;
+        private int m_health;
+        private int m_heldWeaponLocation;
+        private float m_deathFadeOutTimer;
+        private Vector3 m_respawnPoint;
+        private List<WeaponInfo> m_heldWeaponsInfo = new List<WeaponInfo>();
+        private AudioSource m_audioSource;
+        private PlayerInput m_input;
     #endregion
 
     #region Inspector Variables
@@ -59,14 +60,18 @@ public class Player : MonoBehaviour, IDamagable {
         public List<GameObject> m_heldWeapons;
         public Animator m_playerAnimator;
 
-    public bool Dead {
-        get { return m_dead; }
-        set { m_dead = value; }
-    }
+        public bool Dead {
+            get { return m_dead; }
+            set { m_dead = value; }
+        }
 
     public event System.Action OnDeath;
     #endregion
-
+    
+    public int HeldWeaponLocation {
+        get { return m_heldWeaponLocation; }
+        set { m_heldWeaponLocation = value; }
+    }
     //IDamageble interfaces methods for taking damage
     #region IDamagable methods
     public void TakeDamage(int a_damage) {
@@ -99,7 +104,7 @@ public class Player : MonoBehaviour, IDamagable {
     public bool AssignWeaponInfo(int a_listIterator, int a_clip, int a_reserveAmmo) {
 
         if (m_heldWeapons[a_listIterator].GetComponent<Gun>() != null) {
-            if (!m_heldWeapons[a_listIterator].GetComponent<Gun>().SetCurrentClip(a_clip))
+            if (m_heldWeapons[a_listIterator].GetComponent<Gun>().SetCurrentClip(a_clip) == false)
                 return false;
             m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(false, a_clip, a_reserveAmmo);
             return true;
@@ -116,14 +121,14 @@ public class Player : MonoBehaviour, IDamagable {
 
     #region To Equip Information
         public bool ToEquipIsMelee(int a_iterator) {
-        return m_heldWeaponsInfo[a_iterator].m_isMelee;
-    }
+            return m_heldWeaponsInfo[a_iterator].m_isMelee;
+        }
         public int ToEquipCurrentClip(int a_iterator) {
-        return m_heldWeaponsInfo[a_iterator].m_curClip;
-    }
+            return m_heldWeaponsInfo[a_iterator].m_curClip;
+        }
         public int ToEquipCurrentReserve(int a_iterator) {
-        return m_heldWeaponsInfo[a_iterator].m_curReserve;
-    }
+            return m_heldWeaponsInfo[a_iterator].m_curReserve;
+        }
     #endregion
 
     #region Player death handling
@@ -169,6 +174,7 @@ public class Player : MonoBehaviour, IDamagable {
         m_input = GetComponent<PlayerInput>();
         m_deathFadeOutTimer = m_deathFadeOutTime;
         m_playerAnimator.SetInteger("whichWeapon", m_startingWeaponLocation);
+        HeldWeaponLocation = m_startingWeaponLocation;
     }
     
     //Makes sure health never goes above maximum

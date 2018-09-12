@@ -35,10 +35,10 @@ public class FindCover : IState<AI>
                 CalcRelativeCoverPos(a_owner);
                 SetPathToCover(a_owner);
             }
-            else
+            else if(a_owner.Gun.GetIsEmpty())
             {
                 m_nearestPoint = a_owner.CurrCoverObj;
-               // CalcRelativeCoverPos(a_owner);
+                CalcRelativeCoverPos(a_owner);
                 SetPathToCover(a_owner);
             }
 
@@ -101,8 +101,7 @@ public class FindCover : IState<AI>
         List<Collider> cols = new List<Collider>();
         cols.AddRange(m_hitColliders);
 
-        Transform prevCoverObj = a_owner.CurrCoverObj;
-        m_nearestPoint = prevCoverObj;
+        m_nearestPoint = a_owner.CurrCoverObj;
 
         float distToPlayer = (a_owner.transform.position - a_owner.PlayerPosition).sqrMagnitude;
 
@@ -120,20 +119,19 @@ public class FindCover : IState<AI>
                 {
                     if (distMeCover <= Vector3.Dot(vecMePlayer, vecCoverPlayer) * Vector3.Dot(vecMePlayer, vecCoverPlayer)) //If dist from me to cover is less than the dot of dist from me to player and cover to player
                     {
-                        if (a_owner.CurrCoverObj != null)
-                        {
-                            a_owner.CurrCoverObj.tag = "CoverFree";
-                        }
                         m_nearestPoint = cols[i].transform;
-                        a_owner.CurrCoverObj = m_nearestPoint;
-                        a_owner.CurrCoverObj.tag = "CoverTaken";
+                        a_owner.NextCoverObj = m_nearestPoint;
+                        if (a_owner.CurrCoverObj == null)
+                        {
+                            a_owner.CurrCoverObj = m_nearestPoint;
+                        }
                         break;
                     }
                 }
             }  
         }
 
-        if (m_nearestPoint == prevCoverObj)
+        if (m_nearestPoint == a_owner.CurrCoverObj)
         {
             a_owner.NoCover = true;
         }
@@ -142,7 +140,6 @@ public class FindCover : IState<AI>
             a_owner.NoCover = false;
         }
         m_coverFound = true;
-
     }
 
     void CalcRelativeCoverPos(AI a_owner)
@@ -155,6 +152,5 @@ public class FindCover : IState<AI>
 
         m_targetLocation = finalPoint;
         a_owner.CoverPos = finalPoint;
-        Debug.Log("CALCULATING");
     }
 }
