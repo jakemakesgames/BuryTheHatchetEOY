@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 12/09/2018
+//Last edited 17/09/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -123,6 +123,7 @@ public class PlayerInput : MonoBehaviour {
         get { return m_canAttack; }
         set { m_canAttack = value; }
     }
+
     #region Player action methods
     //calls the equipped weapons attacking method 
     //(swing for melee or shoot for gun)
@@ -309,7 +310,8 @@ public class PlayerInput : MonoBehaviour {
     //Quickly moves the player in the direction they are facing
     private void Roll() {
         if (m_isRolling == false) {
-            if (Input.GetMouseButtonDown(1)) {
+            if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Space) ||
+                    Input.GetKeyDown(KeyCode.LeftShift)) {
                 m_rollStartTime = Time.time;
                 m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
                 m_playerAnimator.SetBool("Roll", true);
@@ -392,7 +394,6 @@ public class PlayerInput : MonoBehaviour {
 
                 if (m_weaponController.GetEquippedWeapon() != null)
                     m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-
                 m_equippedWeaponInumerator = a_inumerator;
                 m_weaponController.EquipWeapon(m_player.m_heldWeapons[a_inumerator]);
                 m_playerAnimator.SetInteger("whichWeapon", a_inumerator + 1);
