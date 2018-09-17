@@ -28,9 +28,9 @@ public class PlayerInput : MonoBehaviour {
         [SerializeField] private float m_rollCoolDownTime = 1f;
         [Tooltip("Unit speed decrease per sceond when rolling")]
         [Range(1.1f, 5)]
-        [SerializeField] private float m_rollAccelerationRate = 2f;
+        [SerializeField] private float m_rollAccelerationRate = 3f;
         [Tooltip("Controls the x component of the roll curves, higher values make the roll switch curves faster")]
-        [SerializeField] private float m_rollTimeMultiplier = 1f;
+        [SerializeField] private float m_rollTimeMultiplier = 1.2f;
         [Tooltip("The Time in seconds the player is invincible after starting to roll")]
         [SerializeField] private float m_invicibilityTime = 1f;
         [Tooltip("If an enemy is within this distance from the player " +
@@ -153,10 +153,12 @@ public class PlayerInput : MonoBehaviour {
                     }
                 }
             }
-            else
-            {
-                Debug.Log("axe not idle");
-            }
+            //else if (equippedMelee.IsSwinging) {
+            //    Debug.Log("axe swinging");
+            //}
+            //else {
+            //    Debug.Log("axe not idle");
+            //}
         }
         //-------------//
         //GUN ATTACKING//
