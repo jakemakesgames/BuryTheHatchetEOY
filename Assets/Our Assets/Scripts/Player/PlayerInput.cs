@@ -219,7 +219,7 @@ public class PlayerInput : MonoBehaviour {
                 m_movementVector.Normalize();
             Vector3 direction = m_camera.transform.rotation * m_movementVector;
             direction.y = 0;
-            moveVelocity = direction.normalized * m_speed * Time.deltaTime;
+            moveVelocity = direction.normalized * m_speed;
             m_velocity = moveVelocity;
             //Sound and Particle effects
             if ((m_walkSpeaker == null || m_clothesSpeaker == null || m_walkingParticleSystem == null) == false)
@@ -261,8 +261,7 @@ public class PlayerInput : MonoBehaviour {
         //----------------//
         //ROLLING MOVEMENT//
         //----------------//
-        else
-        {
+        else {
             m_rollTimePassed = (Time.time - m_rollStartTime) * (m_rollTimeMultiplier + m_rollAccelerationRate);
             //time passed = t
             //acceleration rate = a
