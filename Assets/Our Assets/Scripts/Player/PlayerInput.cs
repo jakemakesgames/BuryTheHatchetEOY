@@ -25,12 +25,13 @@ public class PlayerInput : MonoBehaviour {
         [Tooltip("Movement speed of the player at the start of the roll")]
         [SerializeField] private float m_rollSpeedStart = 100f;
         [Tooltip("The Time in seconds the player has to wait before they can roll again after rolling")]
-        [SerializeField] private float m_rollCoolDownTime = 1f;
+        [Range(0.125f, 1f)]
+        [SerializeField] private float m_rollCoolDownTime = 0.25f;
         [Tooltip("Unit speed decrease per sceond when rolling")]
         [Range(1.1f, 5)]
-        [SerializeField] private float m_rollAccelerationRate = 2f;
+        [SerializeField] private float m_rollAccelerationRate = 3f;
         [Tooltip("Controls the x component of the roll curves, higher values make the roll switch curves faster")]
-        [SerializeField] private float m_rollTimeMultiplier = 1f;
+        [SerializeField] private float m_rollTimeMultiplier = 1.2f;
         [Tooltip("The Time in seconds the player is invincible after starting to roll")]
         [SerializeField] private float m_invicibilityTime = 1f;
         [Tooltip("If an enemy is within this distance from the player " +
@@ -67,6 +68,8 @@ public class PlayerInput : MonoBehaviour {
         [SerializeField] private AudioClip m_walkingSound;
         [Tooltip("The sound that'll play when the player is rolling")]
         [SerializeField] private AudioClip m_rollSound;
+        [Tooltip("The sound that will player when the player can roll again")]
+        [SerializeField] private AudioClip m_canRollSound;
         [Header("Particles")]
         [Tooltip("Paricles that will play when the player is walking")]
         [SerializeField] private ParticleSystem m_walkingParticleSystem;
@@ -75,9 +78,12 @@ public class PlayerInput : MonoBehaviour {
         [Tooltip("The particle effect to indicate when the player is invincible")]
         [SerializeField] private ParticleSystem m_invincibilityParticle;
         [Header("Volumes")]
-        [SerializeField] [Range(0, 1)] private float m_walkVol = 0.5f;
-        [SerializeField] [Range(0, 1)] private float m_clothesVol = 0.5f;
-        [SerializeField] [Range(0, 1)] private float m_rollVol = 0.5f;
+        [Range(0, 1)]
+        [SerializeField] private float m_walkVol = 0.5f;
+        [Range(0, 1)]
+        [SerializeField] private float m_clothesVol = 0.5f;
+        [Range(0, 1)]
+        [SerializeField] private float m_rollVol = 0.5f;
     #endregion    
 
     #region private member variables
@@ -153,10 +159,12 @@ public class PlayerInput : MonoBehaviour {
                     }
                 }
             }
-            else
-            {
-                Debug.Log("axe not idle");
-            }
+            //else if (equippedMelee.IsSwinging) {
+            //    Debug.Log("axe swinging");
+            //}
+            //else {
+            //    Debug.Log("axe not idle");
+            //}
         }
         //-------------//
         //GUN ATTACKING//
@@ -212,7 +220,7 @@ public class PlayerInput : MonoBehaviour {
                 m_movementVector.Normalize();
             Vector3 direction = m_camera.transform.rotation * m_movementVector;
             direction.y = 0;
-            moveVelocity = direction.normalized * m_speed * Time.deltaTime;
+            moveVelocity = direction.normalized * m_speed;
             m_velocity = moveVelocity;
             //Sound and Particle effects
             if ((m_walkSpeaker == null || m_clothesSpeaker == null || m_walkingParticleSystem == null) == false)
@@ -254,8 +262,7 @@ public class PlayerInput : MonoBehaviour {
         //----------------//
         //ROLLING MOVEMENT//
         //----------------//
-        else
-        {
+        else {
             m_rollTimePassed = (Time.time - m_rollStartTime) * (m_rollTimeMultiplier + m_rollAccelerationRate);
             //time passed = t
             //acceleration rate = a
@@ -396,11 +403,15 @@ public class PlayerInput : MonoBehaviour {
                     m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
                 m_equippedWeaponInumerator = a_inumerator;
                 m_weaponController.EquipWeapon(m_player.m_heldWeapons[a_inumerator]);
-                m_playerAnimator.SetInteger("whichWeapon", a_inumerator + 1);
+                m_player.HeldWeaponLocation = a_inumerator + 1;
+                m_playerAnimator.SetInteger("whichWeapon", m_player.HeldWeaponLocation);
 
                 if (m_player.ToEquipIsMelee(a_inumerator) == false) {
-                    m_weaponController.GetEquippedGun().SetCurrentClip(m_player.ToEquipCurrentClip(a_inumerator));
-                    m_weaponController.GetEquippedGun().SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(a_inumerator));
+                    Gun gun = m_weaponController.GetEquippedGun();
+                    gun.SetCurrentClip(m_player.ToEquipCurrentClip(a_inumerator));
+                    gun.SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(a_inumerator));
+                    if(gun.CurrentClip < gun.m_clipSize)
+                        gun.IsFull = false;
                 }
             }
         }
@@ -547,6 +558,10 @@ public class PlayerInput : MonoBehaviour {
         StartCoroutine(CheckEnemyDistance());
     }
 
+    private void Start() {
+        m_equippedWeaponInumerator = m_player.HeldWeaponLocation - 1;
+    }
+
     private void Update() {
         //Only run if the game is not paused
         if (Time.timeScale > 0 && m_player.Dead == false) {
@@ -561,8 +576,11 @@ public class PlayerInput : MonoBehaviour {
                 if(CanAttack)
                     Attack();
 
-                if (m_rollCoolDownTimer <= Time.time)
+                if (m_rollCoolDownTimer <= Time.time) {
                     m_canRoll = true;
+                    if(m_rollSpeaker != null && m_canRollSound != null)
+                        m_rollSpeaker.PlayOneShot(m_canRollSound);
+                }
             }
             else {
                 if (m_invicibilityTimer <= Time.time) {

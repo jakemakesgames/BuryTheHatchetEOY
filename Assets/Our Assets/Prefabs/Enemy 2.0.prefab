@@ -931,6 +931,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1922235827246178
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4251749152737456}
+  m_Layer: 9
+  m_Name: RightShoulder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1932891348836484
 GameObject:
   m_ObjectHideFlags: 1
@@ -1121,7 +1136,7 @@ Transform:
   - {fileID: 4758643188791056}
   - {fileID: 4985967277219970}
   m_Father: {fileID: 4194742904834050}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4052369198484844
 Transform:
@@ -1274,6 +1289,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 4251749152737456}
   - {fileID: 4050069238499698}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -1332,6 +1348,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4004480206253192}
   m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4251749152737456
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1922235827246178}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.157, y: 0.365, z: -0.078}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4194742904834050}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4259318453095092
 Transform:
@@ -2250,12 +2279,15 @@ MonoBehaviour:
   m_seekFromCoverRadius: 2.5
   m_alertRadius: 12.7
   m_fleeRadius: 2.1
-  m_coverRadius: 6.1
+  m_coverRadius: 8.1
   m_attackRadius: 11
   m_deadZone: 0.1
   m_coverFoundThreshold: 3
   m_rayDetectBufferDist: 0.3
   m_bodyDropHeight: 0.6
+  m_minAttackDelay: 1
+  m_maxAttackDelay: 3
+  m_gunRayTransform: {fileID: 4251749152737456}
   m_coverLayer:
     serializedVersion: 2
     m_Bits: 1024

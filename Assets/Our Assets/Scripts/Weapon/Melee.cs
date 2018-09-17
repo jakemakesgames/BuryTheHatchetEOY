@@ -49,12 +49,18 @@ public class Melee : MonoBehaviour {
         set { m_isIdle = value; }
     }
 
+    public bool IsSwinging { 
+        get { return m_isSwinging; } 
+        set { m_isSwinging = value; }
+    }
+
     //Turn on raycasts in anticipation for being moved
     public void Swing() {
-        if (!m_isSwinging && m_coolDownTimer <= 0) {
-            m_isSwinging = true;
+        if (!IsSwinging && m_coolDownTimer <= 0) {
+            IsSwinging = true;
             IsIdle = false;
-            m_audioSource.PlayOneShot(m_swooshSound, 0.3f);
+            if (m_audioSource != null && m_swooshSound != null)
+                m_audioSource.PlayOneShot(m_swooshSound, 0.3f);
             m_coolDownTimer = m_coolDown;
 
             //If the weapon starts swinging within a collider,
@@ -78,7 +84,7 @@ public class Melee : MonoBehaviour {
     //Tells this that the weapon is no longer being moved 
     //and to therefore stop casting rays
     public void EndSwing() {
-        m_isSwinging = false;
+        IsSwinging = false;
         m_coolDownTimer = Time.time + m_coolDown;
     }
     
@@ -102,12 +108,9 @@ public class Melee : MonoBehaviour {
                 //hit multiple times by the weapon through a single swing
                 if (hit.transform.gameObject != m_lastHit.transform.gameObject) {
                     Debug.Log("Hit Enemy With Hatchet");
-                    if (m_hitEntitySound != null)
-                    {
+                    if (m_audioSource != null && m_hitEntitySound != null)
                         m_audioSource.PlayOneShot(m_hitEntitySound, 0.3f);
-                    }
-                    if (m_hitEntityParticle != null)
-                    {
+                    if (m_hitEntityParticle != null) {
                         GameObject GO = Instantiate(m_hitEntityParticle, transform.position - transform.forward, transform.rotation);
                         Destroy(GO, m_hitEntityParticleTime);
                     }
@@ -142,7 +145,7 @@ public class Melee : MonoBehaviour {
     //If this weapon thinks it is swinging the update will check for collisions.
     //If it isn't swinging but has recently the update will run the cool down.
     private void Update() {
-        if (m_isSwinging) {
+        if (IsSwinging) {
             CheckCollisions(m_rayHitDistance);
         }
         else if (IsIdle == false) {
