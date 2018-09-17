@@ -77,10 +77,6 @@ public class UIManager : MonoBehaviour
 
     public void Update()
     {
-        if (m_currScene == SceneManager.GetSceneByName(m_playScene))
-        {
-            m_player = (Player)FindObjectOfType((typeof(Player)));
-        }
 
         if (m_inMenu == false)
         {
@@ -100,9 +96,17 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
+    private void OnEnable()
     {
-        throw new System.NotImplementedException();
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode a_mode)
+    {
+        if (scene.name == m_playScene)
+        {
+            m_player = (Player)FindObjectOfType((typeof(Player)));
+        }
     }
 
     #region Public Functions
