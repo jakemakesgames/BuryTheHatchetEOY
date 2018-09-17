@@ -17,15 +17,31 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject m_optionsMenu;
     [Tooltip("Pause Menu object")]
     [SerializeField] GameObject m_pauseMenu;
-
+    [Tooltip("Game HUD")]
+    [SerializeField] GameObject m_gameHUD;
+    [Tooltip("Revolver Bullet")]
+    [SerializeField] GameObject m_revBulletImage;
+    [Tooltip("Hatchet")]
+    [SerializeField] GameObject m_hatchetImage;
+    
     [Header("Scene Names")]
     [Tooltip("Game Scene string")]
     [SerializeField] string m_playScene;
     [Tooltip("Menu Scene string")]
     [SerializeField] string m_menuScene;
+    [Tooltip("Player character")]
+    [SerializeField] Player m_player;
+    [Tooltip("Players Health Bar")]
+    [SerializeField] Image m_health;
 
     private bool m_isPaused;
     private bool m_inMenu;
+    private float m_maxHealth;
+    private float m_currHealth;
+    private SceneManager m_sceneManager;
+    private Scene m_currScene;
+
+    private WeaponController m_weaponController;
 
     public static UIManager m_instance;
 
@@ -50,15 +66,26 @@ public class UIManager : MonoBehaviour
     {
         m_mainMenu.SetActive(true);
         m_optionsMenu.SetActive(false);
-        
-        if (m_pauseMenu != null)
-        {
-            m_pauseMenu.SetActive(false);
-        }
+        m_gameHUD.SetActive(false);
+        m_pauseMenu.SetActive(false);
+
+        CurrentEquippedWeaponImage();
+
+        m_currScene = SceneManager.GetActiveScene();
+
     }
 
     public void Update()
     {
+
+        if (m_inMenu == false)
+        {
+            CurrentEquippedWeaponImage();
+            CurrentHealth();
+        }
+
+
+
         if (m_inMenu == false)
         {
             if (Input.GetKeyDown("escape") && m_isPaused == false)
@@ -72,26 +99,44 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode a_mode)
+    {
+        if (scene.name == m_playScene)
+        {
+            m_player = (Player)FindObjectOfType((typeof(Player)));
+        }
+    }
+
     #region Public Functions
 
+    [ContextMenu("Play Game")]
     public void PlayGame()
     {
+
         SceneManager.LoadScene(m_playScene);
         m_mainMenu.SetActive(false);
         m_inMenu = false;
+        m_gameHUD.SetActive(true);
+
+        m_currScene = SceneManager.GetSceneByName(m_playScene);
+        //m_player = (Player)FindObjectOfType((typeof(Player)));
     }
 
+    [ContextMenu("Options")]
     public void Options()
     {
         m_optionsMenu.SetActive(true);
         m_mainMenu.SetActive(false);
+        m_pauseMenu.SetActive(false);
 
-        if (m_pauseMenu != null)
-        {
-            m_pauseMenu.SetActive(false);
-        }
     }
 
+    [ContextMenu("Pause Game")]
     public void Pause()
     {
         m_isPaused = true;
@@ -101,22 +146,27 @@ public class UIManager : MonoBehaviour
         m_mainMenu.SetActive(false);
     }
 
+    [ContextMenu("Unpause Game")]
     public void Unpause()
     {
         Time.timeScale = 1;
         m_isPaused = false;
         m_pauseMenu.SetActive(false);
         m_optionsMenu.SetActive(false);
+        m_gameHUD.SetActive(true);
     }
 
+    [ContextMenu("Return to Menu")]
     public void ReturnToMenu()
     {
         SceneManager.LoadScene(m_menuScene);
         m_pauseMenu.SetActive(false);
+        m_gameHUD.SetActive(false);
         m_mainMenu.SetActive(true);
         m_inMenu = true;
     }
 
+    [ContextMenu("Back")]
     public void Back()
     {
         if (m_inMenu == true)
@@ -131,6 +181,41 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void CurrentHealth()
+    {
+        if (m_player != null)
+        {
+            //Grabs the health of the player and fills the bottle based on the players current health
+            m_currHealth = m_player.GetHealth();
+            m_maxHealth = m_player.GetMaxHealth();
+
+            m_health.fillAmount = m_currHealth / m_maxHealth;
+        }
+    }
+
+    private void CurrentEquippedWeaponImage()
+    {
+        if (m_player != null)
+        {
+            if (m_player.HeldWeaponLocation == 1)
+            {
+                //Turns the Revolver Bullets off
+                m_revBulletImage.SetActive(false);
+                //Put in Hatchet image
+                m_hatchetImage.SetActive(true);
+            }
+
+            if (m_player.HeldWeaponLocation == 2)
+            {
+                //Turns the Hatchet off
+                m_hatchetImage.SetActive(false);
+                //Put in Revolver image
+                m_revBulletImage.SetActive(true);
+            }
+        }  
+    }
+
+    [ContextMenu("Quit Game")]
     public void QuitGame()
     {
         Application.Quit();
