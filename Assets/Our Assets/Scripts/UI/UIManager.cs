@@ -19,6 +19,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject m_pauseMenu;
     [Tooltip("Game HUD")]
     [SerializeField] GameObject m_gameHUD;
+    [Tooltip("End Level")]
+    public GameObject m_endLevel;
     [Tooltip("Revolver Bullet")]
     [SerializeField] GameObject m_revBulletImage;
     [Tooltip("Hatchet")]
@@ -68,6 +70,8 @@ public class UIManager : MonoBehaviour
         m_optionsMenu.SetActive(false);
         m_gameHUD.SetActive(false);
         m_pauseMenu.SetActive(false);
+        m_endLevel.SetActive(false);
+
 
         CurrentEquippedWeaponImage();
 
@@ -113,6 +117,7 @@ public class UIManager : MonoBehaviour
 
         SceneManager.LoadScene(m_playScene);
         m_mainMenu.SetActive(false);
+        m_endLevel.SetActive(false);
         m_inMenu = false;
         m_gameHUD.SetActive(true);
 
@@ -203,6 +208,11 @@ public class UIManager : MonoBehaviour
                 m_revBulletImage.SetActive(true);
             }
         }  
+    }
+
+    public void RestartLevel()
+    {
+        SceneManager.LoadScene(m_playScene);
     }
 
     [ContextMenu("Quit Game")]
