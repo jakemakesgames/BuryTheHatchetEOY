@@ -183,11 +183,14 @@ public class UIManager : MonoBehaviour
 
     public void CurrentHealth()
     {
-        //Grabs the health of the player and fills the bottle based on the players current health
-        m_currHealth = m_player.GetHealth();
-        m_maxHealth = m_player.GetMaxHealth();
+        if (m_player != null)
+        {
+            //Grabs the health of the player and fills the bottle based on the players current health
+            m_currHealth = m_player.GetHealth();
+            m_maxHealth = m_player.GetMaxHealth();
 
-        m_health.fillAmount = m_currHealth / m_maxHealth;
+            m_health.fillAmount = m_currHealth / m_maxHealth;
+        }
     }
 
     private void CurrentEquippedWeaponImage()
