@@ -102,7 +102,7 @@ public class Player : MonoBehaviour, IDamagable {
     //Returns false if a successful assignment couldn't occur
     //Sets information for a weapon the player is unequipping
     public bool AssignWeaponInfo(int a_listIterator, int a_clip, int a_reserveAmmo) {
-
+        HeldWeaponLocation = a_listIterator;
         if (m_heldWeapons[a_listIterator].GetComponent<Gun>() != null) {
             if (m_heldWeapons[a_listIterator].GetComponent<Gun>().SetCurrentClip(a_clip) == false)
                 return false;

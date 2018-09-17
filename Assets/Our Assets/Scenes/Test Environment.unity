@@ -7903,6 +7903,7 @@ MonoBehaviour:
   m_rollSound: {fileID: 0}
   m_walkingParticleSystem: {fileID: 0}
   m_rollParticleSystem: {fileID: 0}
+  m_invincibilityParticle: {fileID: 0}
   m_walkVol: 0.5
   m_clothesVol: 0.5
   m_rollVol: 0.5
