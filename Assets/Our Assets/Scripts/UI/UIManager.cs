@@ -187,8 +187,6 @@ public class UIManager : MonoBehaviour
     {
         if (m_player != null)
         {
-            
-
             if (m_player.HeldWeaponLocation == 1)
             {
                 //Turns the Revolver Bullets off
