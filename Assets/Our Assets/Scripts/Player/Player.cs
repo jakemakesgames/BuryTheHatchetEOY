@@ -89,7 +89,7 @@ public class Player : MonoBehaviour, IDamagable {
         TakeDamage(a_damage);
     }
     public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile) {
-    TakeDamage(a_damage);
+        TakeDamage(a_damage);
     }
     #endregion
 

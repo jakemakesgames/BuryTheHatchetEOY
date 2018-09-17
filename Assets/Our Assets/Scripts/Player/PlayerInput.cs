@@ -67,6 +67,8 @@ public class PlayerInput : MonoBehaviour {
         [SerializeField] private AudioClip m_walkingSound;
         [Tooltip("The sound that'll play when the player is rolling")]
         [SerializeField] private AudioClip m_rollSound;
+        [Tooltip("The sound that will player when the player can roll again")]
+        [SerializeField] private AudioClip m_canRollSound;
         [Header("Particles")]
         [Tooltip("Paricles that will play when the player is walking")]
         [SerializeField] private ParticleSystem m_walkingParticleSystem;
@@ -75,9 +77,12 @@ public class PlayerInput : MonoBehaviour {
         [Tooltip("The particle effect to indicate when the player is invincible")]
         [SerializeField] private ParticleSystem m_invincibilityParticle;
         [Header("Volumes")]
-        [SerializeField] [Range(0, 1)] private float m_walkVol = 0.5f;
-        [SerializeField] [Range(0, 1)] private float m_clothesVol = 0.5f;
-        [SerializeField] [Range(0, 1)] private float m_rollVol = 0.5f;
+        [Range(0, 1)]
+        [SerializeField] private float m_walkVol = 0.5f;
+        [Range(0, 1)]
+        [SerializeField] private float m_clothesVol = 0.5f;
+        [Range(0, 1)]
+        [SerializeField] private float m_rollVol = 0.5f;
     #endregion    
 
     #region private member variables
@@ -563,8 +568,11 @@ public class PlayerInput : MonoBehaviour {
                 if(CanAttack)
                     Attack();
 
-                if (m_rollCoolDownTimer <= Time.time)
+                if (m_rollCoolDownTimer <= Time.time) {
                     m_canRoll = true;
+                    if(m_rollSpeaker != null && m_canRollSound != null)
+                        m_rollSpeaker.PlayOneShot(m_canRollSound);
+                }
             }
             else {
                 if (m_invicibilityTimer <= Time.time) {
