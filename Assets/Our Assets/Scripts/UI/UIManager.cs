@@ -81,7 +81,10 @@ public class UIManager : MonoBehaviour
         if (m_inMenu == false)
         {
             CurrentEquippedWeaponImage();
+            CurrentHealth();
         }
+
+
 
         if (m_inMenu == false)
         {
