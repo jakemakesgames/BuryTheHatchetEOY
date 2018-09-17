@@ -25,7 +25,8 @@ public class PlayerInput : MonoBehaviour {
         [Tooltip("Movement speed of the player at the start of the roll")]
         [SerializeField] private float m_rollSpeedStart = 100f;
         [Tooltip("The Time in seconds the player has to wait before they can roll again after rolling")]
-        [SerializeField] private float m_rollCoolDownTime = 1f;
+        [Range(0.125f, 1f)]
+        [SerializeField] private float m_rollCoolDownTime = 0.25f;
         [Tooltip("Unit speed decrease per sceond when rolling")]
         [Range(1.1f, 5)]
         [SerializeField] private float m_rollAccelerationRate = 3f;
