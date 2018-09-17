@@ -1,14 +1,19 @@
 fileFormatVersion: 2
 guid: 5cce273e7da464e4a918ef1c7a49e8ab
-timeCreated: 1536720496
+timeCreated: 1537157523
 licenseType: Free
 ShaderImporter:
   externalObjects: {}
   defaultTextures:
-  - _A: {fileID: 2800000, guid: d4e418e181e0f514d909f8779d1f689d, type: 3}
+  - _A: {fileID: 2800000, guid: 64734c9bc6df32149a0c9cb0b18693e1, type: 3}
   - _B: {fileID: 2800000, guid: 7bbfb8818476e4641ba3e75f5225eb69, type: 3}
-  - _B_copy: {fileID: 2800000, guid: e00d5a9a0944134448432ccacf221b95, type: 3}
-  - _A_copy: {fileID: 2800000, guid: aeacadf0f6079ed4180aabfbd4250159, type: 3}
+  - _B_Normal: {fileID: 2800000, guid: e00d5a9a0944134448432ccacf221b95, type: 3}
+  - _A_Normal: {fileID: 2800000, guid: 81b50d9cb6f3104448ec54c00a80101a, type: 3}
+  - _A_copy: {fileID: 2800000, guid: 64734c9bc6df32149a0c9cb0b18693e1, type: 3}
+  - _B_copy: {fileID: 2800000, guid: 7bbfb8818476e4641ba3e75f5225eb69, type: 3}
+  - _A_Normal_copy: {fileID: 2800000, guid: 81b50d9cb6f3104448ec54c00a80101a, type: 3}
+  - _B_Normal_copy: {fileID: 2800000, guid: e00d5a9a0944134448432ccacf221b95, type: 3}
+  - _node_7140: {fileID: 2800000, guid: 28c7aad1372ff114b90d330f8a2dd938, type: 3}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
