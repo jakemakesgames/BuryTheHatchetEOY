@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 69263e07248cd9c4b804b5f223945265
+timeCreated: 1537164309
+licenseType: Free
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _RaisedFloor: {fileID: 2800000, guid: 64734c9bc6df32149a0c9cb0b18693e1, type: 3}
+  - _Bottom: {fileID: 2800000, guid: 7bbfb8818476e4641ba3e75f5225eb69, type: 3}
+  - _B_Normal: {fileID: 2800000, guid: e00d5a9a0944134448432ccacf221b95, type: 3}
+  - _A_Normal: {fileID: 2800000, guid: 81b50d9cb6f3104448ec54c00a80101a, type: 3}
+  - _A_copy: {fileID: 2800000, guid: 64734c9bc6df32149a0c9cb0b18693e1, type: 3}
+  - _B_copy: {fileID: 2800000, guid: 7bbfb8818476e4641ba3e75f5225eb69, type: 3}
+  - _A_Normal_copy: {fileID: 2800000, guid: 81b50d9cb6f3104448ec54c00a80101a, type: 3}
+  - _B_Normal_copy: {fileID: 2800000, guid: e00d5a9a0944134448432ccacf221b95, type: 3}
+  - _SandNoise: {fileID: 2800000, guid: 28c7aad1372ff114b90d330f8a2dd938, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

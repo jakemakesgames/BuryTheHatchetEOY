@@ -27,7 +27,7 @@ GameObject:
   - component: {fileID: 65134690438009362}
   m_Layer: 10
   m_Name: Pillar
-  m_TagString: Untagged
+  m_TagString: CoverFree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -38,8 +38,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1428412638370868}
-  m_LocalRotation: {x: -0, y: -0.9288169, z: -0, w: 0.37053895}
-  m_LocalPosition: {x: -91.43, y: 0.25000024, z: -59.81}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -108.3, y: 0.18000022, z: -45.399998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
