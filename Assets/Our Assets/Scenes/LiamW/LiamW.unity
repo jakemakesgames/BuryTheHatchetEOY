@@ -222,11 +222,6 @@ Prefab:
     - {fileID: 82800998843761706, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &565802499 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1521192645865146, guid: ae9d5bd1a4e055d458234d4e6f82f242,
-    type: 2}
-  m_PrefabInternal: {fileID: 2123015723}
 --- !u!1 &1145584651
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,11 +532,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!1 &1673870095 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1607886443681610, guid: ae9d5bd1a4e055d458234d4e6f82f242,
-    type: 2}
-  m_PrefabInternal: {fileID: 2123015723}
 --- !u!1001 &2123015723
 Prefab:
   m_ObjectHideFlags: 0
@@ -639,31 +629,6 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114209535597535246, guid: ae9d5bd1a4e055d458234d4e6f82f242,
-        type: 2}
-      propertyPath: m_hatchetImage
-      value: 
-      objectReference: {fileID: 1673870095}
-    - target: {fileID: 114209535597535246, guid: ae9d5bd1a4e055d458234d4e6f82f242,
-        type: 2}
-      propertyPath: m_revImage
-      value: 
-      objectReference: {fileID: 565802499}
-    - target: {fileID: 114209535597535246, guid: ae9d5bd1a4e055d458234d4e6f82f242,
-        type: 2}
-      propertyPath: m_hatchet
-      value: 
-      objectReference: {fileID: 1673870095}
-    - target: {fileID: 114209535597535246, guid: ae9d5bd1a4e055d458234d4e6f82f242,
-        type: 2}
-      propertyPath: m_revBullet
-      value: 
-      objectReference: {fileID: 565802499}
-    - target: {fileID: 114209535597535246, guid: ae9d5bd1a4e055d458234d4e6f82f242,
-        type: 2}
-      propertyPath: m_revBulletImage
-      value: 
-      objectReference: {fileID: 565802499}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ae9d5bd1a4e055d458234d4e6f82f242, type: 2}
   m_IsPrefabParent: 0
