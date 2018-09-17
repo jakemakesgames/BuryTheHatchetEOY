@@ -8,10 +8,10 @@ using StateMachine;
 //Created 13/08/2018
 //Last edited 29/08/2018
 
-[RequireComponent(typeof(WeaponController))]
-[RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(AudioSource))]
+//[RequireComponent(typeof(WeaponController))]
+//[RequireComponent(typeof(NavMeshAgent))]
+//[RequireComponent(typeof(Rigidbody))]
+//[RequireComponent(typeof(AudioSource))]
 public class AI : BaseAI
 {
     enum STATE
@@ -22,7 +22,6 @@ public class AI : BaseAI
         FINDCOVER,
         RELOAD
     }
-
     enum DETECTION
     {
         CLEAR,

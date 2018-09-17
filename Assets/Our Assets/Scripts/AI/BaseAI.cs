@@ -6,7 +6,6 @@ using StateMachine;
 
 [RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(AudioSource))]
 public class BaseAI : MonoBehaviour, IDamagable
 {
