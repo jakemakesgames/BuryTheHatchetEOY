@@ -29,7 +29,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     [Header("Animation")]
     [SerializeField]
     protected Animator m_enemyAnimator;
-    [Tooltip("The number of death animations (starting at 0)")]
+    [Tooltip("The number of death animations")]
     [SerializeField]
     protected int m_deathAnimationCount;
 
@@ -122,7 +122,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     {
         m_agent.ResetPath();
         m_walkingParticleSystem.Stop();
-        int randomAnim = Random.Range(0, m_deathAnimationCount);
+        int randomAnim = Random.Range(0, m_deathAnimationCount - 1);
         m_enemyAnimator.SetInteger("WhichDeath", randomAnim);
         m_enemyAnimator.SetTrigger("Death");
         RandomPitch();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
@@ -40,6 +41,8 @@ public class Player : MonoBehaviour, IDamagable {
 
     #region Inspector Variables
         [SerializeField] private int m_maxHealth;
+        [Tooltip("The number of death animations")]
+        [SerializeField] private int m_deathAnimCount;
         [SerializeField] private float m_deathFadeOutTime;
         [Tooltip("World height of body when dead")]
         [SerializeField] private float m_bodyDropHeight;
@@ -156,7 +159,12 @@ public class Player : MonoBehaviour, IDamagable {
         if (OnDeath != null)
             OnDeath();
         if (m_playerAnimator != null)
+        {
+            int randomAnim = Random.Range(0, m_deathAnimCount - 1);
+            m_playerAnimator.SetInteger("WhichDeath", randomAnim);
             m_playerAnimator.SetTrigger("Death");
+            GetComponent<NavMeshAgent>().enabled = false;
+        }
         if (m_dieSound != null)
             m_audioSource.PlayOneShot(m_dieSound);
         //SceneManager.LoadScene(0);
@@ -170,6 +178,7 @@ public class Player : MonoBehaviour, IDamagable {
         m_health = m_maxHealth;
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Respawn");
+            GetComponent<NavMeshAgent>().enabled = true;
     }
 
     private void DropDead()
