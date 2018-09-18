@@ -423,11 +423,12 @@ public class PlayerInput : MonoBehaviour {
         if (equippedGun != null) {
             if (m_clipAmmoDisplay != null)
                 m_clipAmmoDisplay.GetComponent<Text>().text =
-                    (equippedGun.GetCurrentClip().ToString() + " / " + equippedGun.m_clipSize.ToString());
-
-            if (m_totalAmmoDisplay != null)
-                m_totalAmmoDisplay.GetComponent<Text>().text =
-                    (equippedGun.GetCurrentAmmo().ToString() + " / " + equippedGun.m_maxAmmo.ToString());
+                    (equippedGun.GetCurrentClip().ToString() + " / " + equippedGun.GetCurrentAmmo().ToString());
+        }
+        else
+        {
+            if (m_clipAmmoDisplay != null)
+                m_clipAmmoDisplay.GetComponent<Text>().text = (" ");
         }
     }
     
