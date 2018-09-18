@@ -261,7 +261,7 @@ public class AI : BaseAI
             //{
             //    m_state = STATE.PEEK;
             //}
-            if (m_distBetweenCover < m_seekFromCoverRadius && NoCover) // no cover
+            if (m_distBetweenCover < m_seekFromCoverRadius && AtCover) // no other cover
             {
                 m_state = STATE.PEEK;
             }
