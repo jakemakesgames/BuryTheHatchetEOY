@@ -88,8 +88,6 @@ public class UIManager : MonoBehaviour
             CurrentHealth();
         }
 
-
-
         if (m_inMenu == false)
         {
             if (Input.GetKeyDown("escape") && m_isPaused == false)
@@ -236,6 +234,7 @@ public class UIManager : MonoBehaviour
 
     #endregion
 }
+
 /*
     #region LIAM
     #region Public Variables
