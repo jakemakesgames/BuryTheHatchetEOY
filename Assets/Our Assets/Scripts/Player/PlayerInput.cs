@@ -14,6 +14,14 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Player))]
 public class PlayerInput : MonoBehaviour {
 
+    public enum InteractableObject
+    {
+        NONE = 0,
+        CAMPFIRE,
+        MINECART,
+        PICKUP
+    }
+
     #region Movement/ animation variables
         [Header("Movement variables")]
         [Tooltip("Movement speed of the player")]
@@ -40,7 +48,7 @@ public class PlayerInput : MonoBehaviour {
         [Tooltip("The time that the player will have their weapons raised after entering combat stance")]
         [SerializeField] private float m_inCombatTime = 5f;
     #endregion
-    
+
     #region In world game objects
         [Header("In world game objects")]
         [Tooltip("The camera used to orient the player when the camera rotates, required for movement to work")]
@@ -55,6 +63,7 @@ public class PlayerInput : MonoBehaviour {
         [Tooltip("will change the text of this object to the amount of ammo" +
             "the player has left excluding the ammo in the clip")]
         [SerializeField] private Text m_totalAmmoDisplay;
+        private GameObject m_interactionObject;
     #endregion
 
     #region sounds and particles
@@ -105,6 +114,8 @@ public class PlayerInput : MonoBehaviour {
         private bool m_rollAccelerating = true;
         private bool m_inCombat = false;
         private bool m_isInvincible = false;
+        private InteractableObject m_currentlyCanInteractWith;
+        private InteractableObject m_currentlyInteractingWith;
         private NavMeshAgent m_nma;
         private Vector3 m_velocity;
         private Vector3 m_acceleration;
@@ -117,18 +128,36 @@ public class PlayerInput : MonoBehaviour {
         private AudioSource m_audioSource;
     #endregion
 
-    [Header("CHARLIE!")]
-    public Animator m_playerAnimator;
-
-    public bool IsInvincible {
+    #region properties
+        public bool IsInvincible {
         get { return m_isInvincible; } 
         set { m_isInvincible = value; }
     }
 
-    public bool CanAttack {
+        public bool CanAttack {
         get { return m_canAttack; }
         set { m_canAttack = value; }
     }
+
+        public InteractableObject CurrentlyCanInteractWith {
+        get { return m_currentlyCanInteractWith; } 
+        set { m_currentlyCanInteractWith = value; }
+    }
+
+        public InteractableObject CurrentlyInteractingWith {
+        get { return m_currentlyInteractingWith; }
+        set { m_currentlyInteractingWith = value; }
+    }
+
+        public GameObject InteractionObject {
+            get { return m_interactionObject; } 
+            set { m_interactionObject = value; }
+        }
+
+    #endregion
+
+    [Header("CHARLIE!")]
+    public Animator m_playerAnimator;
 
     #region Player action methods
     //calls the equipped weapons attacking method 
@@ -301,7 +330,7 @@ public class PlayerInput : MonoBehaviour {
             Vector3 heightCorrectedLookPoint = new Vector3(lookAtPoint.x, transform.position.y, lookAtPoint.z);
 
             transform.LookAt(heightCorrectedLookPoint);
-            if(m_weaponController.EquippedGun != null)
+            if(m_weaponController.EquippedGun != null && m_inCombat)
                 hand.LookAt(lookAtPoint);
             m_weaponController.WeaponHold = hand;
             //place the crosshiar at the mouse position
@@ -347,6 +376,12 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
+    //Player interacting with the world in way other than moving and attacking
+    private void Interact()
+    {
+
+    }
+
     //Coroutine used to detect if the player has entered combat range
     private IEnumerator CheckEnemyDistance() {
         while (true) {
@@ -359,6 +394,20 @@ public class PlayerInput : MonoBehaviour {
             m_playerAnimator.SetBool("WeaponActive", m_inCombat);
             yield return new WaitForSeconds(0.25f);
         }
+    }
+    #endregion
+
+    #region Interaction methods
+    private void CampFireInteraction() {
+
+    }
+
+    private void MinecartInteraction() {
+
+    }
+
+    private void PickupInteraction() {
+
     }
     #endregion
 
