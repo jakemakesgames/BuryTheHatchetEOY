@@ -72,6 +72,10 @@ public class Player : MonoBehaviour, IDamagable {
         get { return m_heldWeaponLocation; }
         set { m_heldWeaponLocation = value; }
     }
+    public Vector3 RespawnPoint {
+        get { return m_respawnPoint; } 
+        set { m_respawnPoint = value; }
+    }
     //IDamageble interfaces methods for taking damage
     #region IDamagable methods
     public void TakeDamage(int a_damage) {
@@ -148,7 +152,7 @@ public class Player : MonoBehaviour, IDamagable {
 
     //Moves the player to the respawn position
     public void Respawn() {
-        transform.position = m_respawnPoint;
+        transform.position = RespawnPoint;
         m_deathFadeOutTimer = m_deathFadeOutTime;
         Dead = false;
         m_health = m_maxHealth;
@@ -159,7 +163,7 @@ public class Player : MonoBehaviour, IDamagable {
     private void Awake () {
         m_health = m_maxHealth;
         m_heldWeaponsInfo.Capacity = m_heldWeapons.Count;
-        m_respawnPoint = transform.position;
+        RespawnPoint = transform.position;
         for (int i = 0; i < m_heldWeapons.Count; i++) {
             if (m_heldWeapons[i].GetComponent<Gun>() != null) {
                 int currentAmmo = m_heldWeapons[i].GetComponent<Gun>().GetCurrentAmmo();
