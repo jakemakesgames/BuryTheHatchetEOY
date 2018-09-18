@@ -12,6 +12,7 @@ public class EndLevelTrigger : MonoBehaviour
 
     private void Start()
     {
+        m_uiManager = FindObjectOfType<UIManager>();
         //endLevel.SetActive(false);
     }
 

@@ -168,6 +168,7 @@ public class UIManager : MonoBehaviour
         m_pauseMenu.SetActive(false);
         m_gameHUD.SetActive(false);
         m_mainMenu.SetActive(true);
+        m_endLevel.SetActive(false);
         m_inMenu = true;
     }
 
@@ -222,6 +223,8 @@ public class UIManager : MonoBehaviour
 
     public void RestartLevel()
     {
+        Time.timeScale = 1;
+        m_endLevel.SetActive(false);
         SceneManager.LoadScene(m_playScene);
     }
 
