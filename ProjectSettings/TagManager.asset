@@ -13,6 +13,8 @@ TagManager:
   - UI Bounty Screen
   - CoverTaken
   - CoverFree
+  - UIClip
+  - UIReserve
   layers:
   - Default
   - TransparentFX
