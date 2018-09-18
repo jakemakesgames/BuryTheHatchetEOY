@@ -166,7 +166,8 @@ public class Projectile : MonoBehaviour {
         if (m_insideEntity)
             return;
         Destroy(gameObject);
-        Destroy(m_trailRenderer, m_trailRendererLifeTime);
+        if (m_trailRenderer != null)
+            Destroy(m_trailRenderer, m_trailRendererLifeTime);
     }
     private void OnHitObject(Collider a_c, bool a_hitEntity) {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
@@ -189,6 +190,8 @@ public class Projectile : MonoBehaviour {
 
     private void Start() {
         m_insideEntity = false;
+        if (m_trailRenderer != null)
+            m_trailRenderer = Instantiate(m_trailRenderer, transform.position, transform.rotation);
         //If the projectile spawns within a collider, it will activate the appropriate collision response
         Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
         if (initialEnemyCollision.Length > 0) {
@@ -207,8 +210,6 @@ public class Projectile : MonoBehaviour {
             OnHitObject(initialRicochetCollision[0], false);
             return;
         }
-        if (m_trailRenderer != null)
-            m_trailRenderer = Instantiate(m_trailRenderer , transform.position, transform.rotation);
     }
 
     //Moves the projectile also counts down until this should be destroyed
