@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4800656119393584}
   - component: {fileID: 54600621332702296}
   - component: {fileID: 65197384932863604}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Mine_Cart_Complete_v01_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4212995653756366}
   - component: {fileID: 33037232099259302}
   - component: {fileID: 23942062762918066}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Modular_Mine_Cart_Mesh_v01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 4181347146810922}
   - component: {fileID: 33533537012886818}
   - component: {fileID: 23374136695298768}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Modular_Mine_Axle02_Mesh_v01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,7 +72,7 @@ GameObject:
   - component: {fileID: 4192976423031254}
   - component: {fileID: 33359631545412020}
   - component: {fileID: 23532067599419988}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Modular_Mine_Axle01_Mesh_v01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
