@@ -42,7 +42,7 @@ public class Player : MonoBehaviour, IDamagable {
         [SerializeField] private float m_deathFadeOutTime;
         [Tooltip("World height of body when dead")]
         [SerializeField] private float m_bodyDropHeight;
-    [Tooltip("The audio clip that will play whenever the player gets hit")]
+        [Tooltip("The audio clip that will play whenever the player gets hit")]
         [SerializeField] private AudioClip m_hitSound;
         [Tooltip("The audio clip  that will play once the player has died")]
         [SerializeField] private AudioClip m_dieSound;
@@ -61,11 +61,8 @@ public class Player : MonoBehaviour, IDamagable {
         [Header("Needs to be filled with weapon prefabs")]
         [Tooltip("All weapons the player will be able to wield " +
             "throughout the game and which position they'll be stored")]
-
-
-
-
-    public List<GameObject> m_heldWeapons;
+        
+        public List<GameObject> m_heldWeapons;
         public Animator m_playerAnimator;
 
         public bool Dead {
@@ -73,7 +70,7 @@ public class Player : MonoBehaviour, IDamagable {
             set { m_dead = value; }
         }
 
-    public event System.Action OnDeath;
+        public event System.Action OnDeath;
     #endregion
     
     public int HeldWeaponLocation {
@@ -215,6 +212,7 @@ public class Player : MonoBehaviour, IDamagable {
         if (m_health > m_maxHealth)
             m_health = m_maxHealth;
         if(Dead) {
+            DropDead();
             m_deathFadeOutTimer -= Time.deltaTime;
             //fade the screen to black
             if (m_deathFadeOutTimer <= 0)
