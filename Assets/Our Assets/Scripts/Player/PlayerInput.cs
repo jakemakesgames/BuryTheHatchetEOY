@@ -582,12 +582,10 @@ public class PlayerInput : MonoBehaviour {
                         m_rollSpeaker.PlayOneShot(m_canRollSound);
                 }
             }
-            else {
-                if (m_invicibilityTimer <= Time.time) {
-                    IsInvincible = false;
-                    if (m_invincibilityParticle != null)
-                        m_invincibilityParticle.Stop();
-                }
+            if (m_invicibilityTimer <= Time.time) {
+                IsInvincible = false;
+                if (m_invincibilityParticle != null)
+                    m_invincibilityParticle.Stop();
             }
 
             //Player rolling
