@@ -17,7 +17,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     [Tooltip("Accounts for floating point precision - when AI knows to switch to Stationary")]
     [SerializeField]
     protected float m_deadZone;
-
+     
     [Tooltip("World height of body when dead")]
     [SerializeField]
     protected float m_bodyDropHeight;
