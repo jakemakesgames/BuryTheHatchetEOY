@@ -3959,8 +3959,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1999925407510398}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -100.40844, y: 20.999336, z: -91.92542}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.85048664, y: 1, z: 1}
   m_Children:
   - {fileID: 4781331482718442}
   - {fileID: 4767941544280596}
@@ -4950,13 +4950,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5778159e463981f4eb7ae2dc4350093f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_speed: 200
+  m_speed: 5
   m_accelerationRate: 0.1
   m_decelerationRate: 0.99
   m_rollSpeedStart: 20
   m_rollCoolDownTime: 0.125
-  m_rollAccelerationRate: 3
-  m_rollTimeMultiplier: 1.2
+  m_rollAccelerationRate: 4
+  m_rollTimeMultiplier: 3
   m_invicibilityTime: 1
   m_inCombatRadius: 10
   m_inCombatTime: 5
