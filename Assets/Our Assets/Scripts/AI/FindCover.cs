@@ -13,6 +13,9 @@ public class FindCover : IState<AI>
     Collider[] m_hitColliders;
     Transform m_nearestPoint;
     bool m_coverFound;
+    int m_didHitCount;
+    int m_highestHitCount;
+    int m_numOfIfChecks = 3;
 
 
     public void Enter(AI a_owner)
@@ -38,8 +41,8 @@ public class FindCover : IState<AI>
             else if(a_owner.Gun.GetIsEmpty())
             {
                 m_nearestPoint = a_owner.CurrCoverObj;
-                CalcRelativeCoverPos(a_owner);
-                SetPathToCover(a_owner);
+                //CalcRelativeCoverPos(a_owner);
+                //SetPathToCover(a_owner);
             }
 
             if (a_owner.Agent.remainingDistance >= a_owner.CoverFoundThreshold)
@@ -54,7 +57,6 @@ public class FindCover : IState<AI>
             else
             {
                 a_owner.AtCover = true;
-                //a_owner.MovingToCover = false;
                 m_coverFound = false;
             }
         }
@@ -106,19 +108,24 @@ public class FindCover : IState<AI>
         float distToPlayer = (a_owner.transform.position - a_owner.PlayerPosition).sqrMagnitude;
 
         cols.Sort((a, b) => (a_owner.transform.position - a.transform.position).sqrMagnitude.CompareTo((a_owner.transform.position - b.transform.position).sqrMagnitude));
+        m_highestHitCount = 0;
 
         for (int i = 0; i < cols.Count; i++)
         {
+            m_didHitCount = 0;
             if (cols[i].transform.tag == "CoverFree")
             {
                 float distMeCover = (a_owner.transform.position - cols[i].transform.position).sqrMagnitude;
                 Vector3 vecMePlayer = a_owner.transform.position - a_owner.PlayerPosition;
                 Vector3 vecCoverPlayer = cols[i].transform.position - a_owner.PlayerPosition;
+                m_didHitCount++;
 
                 if (distMeCover < distToPlayer) //If dist from me to cover is less than dist to player
                 {
+                    m_didHitCount++;
                     if (distMeCover <= Vector3.Dot(vecMePlayer, vecCoverPlayer) * Vector3.Dot(vecMePlayer, vecCoverPlayer)) //If dist from me to cover is less than the dot of dist from me to player and cover to player
                     {
+                        m_didHitCount++;
                         m_nearestPoint = cols[i].transform;
                         a_owner.NextCoverObj = m_nearestPoint;
                         if (a_owner.CurrCoverObj == null)
@@ -128,10 +135,15 @@ public class FindCover : IState<AI>
                         break;
                     }
                 }
-            }  
+            }
+            if (m_highestHitCount < m_didHitCount)
+            {
+                m_highestHitCount = m_didHitCount;
+            }
         }
 
-        if (m_nearestPoint == a_owner.CurrCoverObj)
+        //if (m_highestHitCount < m_numOfIfChecks)
+        if(m_nearestPoint == a_owner.CurrCoverObj)
         {
             a_owner.NoCover = true;
         }
