@@ -26,6 +26,8 @@ public class Player : MonoBehaviour, IDamagable {
 
     #region Member variables
         private bool m_dead;
+        private bool m_hasDropped;
+        private float m_counter = 0;
         private int m_health;
         private int m_heldWeaponLocation;
         private float m_deathFadeOutTimer;
@@ -38,7 +40,9 @@ public class Player : MonoBehaviour, IDamagable {
     #region Inspector Variables
         [SerializeField] private int m_maxHealth;
         [SerializeField] private float m_deathFadeOutTime;
-        [Tooltip("The audio clip that will play whenever the player gets hit")]
+        [Tooltip("World height of body when dead")]
+        [SerializeField] private float m_bodyDropHeight;
+    [Tooltip("The audio clip that will play whenever the player gets hit")]
         [SerializeField] private AudioClip m_hitSound;
         [Tooltip("The audio clip  that will play once the player has died")]
         [SerializeField] private AudioClip m_dieSound;
@@ -57,7 +61,11 @@ public class Player : MonoBehaviour, IDamagable {
         [Header("Needs to be filled with weapon prefabs")]
         [Tooltip("All weapons the player will be able to wield " +
             "throughout the game and which position they'll be stored")]
-        public List<GameObject> m_heldWeapons;
+
+
+
+
+    public List<GameObject> m_heldWeapons;
         public Animator m_playerAnimator;
 
         public bool Dead {
@@ -76,6 +84,12 @@ public class Player : MonoBehaviour, IDamagable {
         get { return m_respawnPoint; } 
         set { m_respawnPoint = value; }
     }
+
+    public bool HasDropped {
+        get { return m_hasDropped; }
+        set { m_hasDropped = value; }
+    }
+
     //IDamageble interfaces methods for taking damage
     #region IDamagable methods
     public void TakeDamage(int a_damage) {
@@ -158,6 +172,18 @@ public class Player : MonoBehaviour, IDamagable {
         m_health = m_maxHealth;
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Respawn");
+    }
+
+    private void DropDead()
+    {
+        if (m_hasDropped == false)
+        {
+            m_counter += Time.deltaTime;
+            Vector3 target = new Vector3(transform.position.x, m_bodyDropHeight, transform.position.z);
+            transform.position = Vector3.Lerp(transform.position, target, m_counter);
+            if (transform.position.y == m_bodyDropHeight)
+                m_hasDropped = true;    
+        }
     }
     #endregion
 

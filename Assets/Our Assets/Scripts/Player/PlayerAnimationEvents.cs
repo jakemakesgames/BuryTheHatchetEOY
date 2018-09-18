@@ -38,4 +38,8 @@ public class PlayerAnimationEvents : MonoBehaviour {
         if (m_player != null)
             m_player.EndRoll();
     }
+
+    public void HasDropTrigger() {
+        GetComponentInParent<Player>().HasDropped = true;
+    }
 }
