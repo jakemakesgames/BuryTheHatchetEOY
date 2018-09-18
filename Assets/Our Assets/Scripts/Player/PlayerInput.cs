@@ -57,6 +57,11 @@ public class PlayerInput : MonoBehaviour {
         [SerializeField] private Canvas m_canvas;
         [Tooltip("This object will be where ever the player is looking")]
         [SerializeField] private Image m_crosshair;
+        [Header("Ammo display")]
+        [Tooltip("the tag of the ammo clip text object")]
+        [SerializeField] private string m_clipTextTag;
+        [Tooltip("the tag of the ammo reserve text object")]
+        [SerializeField] private string m_ammoTextTag;
         [Tooltip("Will change the text of this object to the amount " +
             "of ammo left in the currently equipped gun's clip")]
         [SerializeField] private Text m_clipAmmoDisplay;
@@ -573,6 +578,15 @@ public class PlayerInput : MonoBehaviour {
         m_weaponController = GetComponent<WeaponController>();
         m_player = GetComponent<Player>();
         m_audioSource = GetComponent<AudioSource>();
+
+        Text[] texts = FindObjectsOfType<Text>();
+        for (int i = 0; i < texts.Length; i++) {
+            if (texts[i].tag == m_clipTextTag)
+                m_clipAmmoDisplay = texts[i];
+
+            else if (texts[i].tag == m_ammoTextTag)
+                m_totalAmmoDisplay = texts[i];
+        }
 
         //Create the speakers for the individual sounds
         
