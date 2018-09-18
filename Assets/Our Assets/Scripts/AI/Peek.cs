@@ -27,5 +27,4 @@ public class Peek : IState<AI> {
             a_owner.Agent.SetDestination(a_owner.transform.position + a_owner.transform.right);
         }
     }
-
 }

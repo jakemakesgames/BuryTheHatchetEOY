@@ -16,7 +16,7 @@ public class AI : BaseAI
 {
     enum STATE
     {
-        //SEEK,
+        SEEK,
         PEEK,
         STATIONARY,
         FINDCOVER,
@@ -295,10 +295,18 @@ public class AI : BaseAI
             }
         }
 
-        if (m_gun.GetIsEmpty())
-        {
-            m_state = STATE.FINDCOVER;
-        }
+        //if (m_gun.GetIsEmpty())
+        //{
+        //    if (NoCover == false)
+        //    {
+        //        m_state = STATE.FINDCOVER;
+        //    }
+        //    else
+        //    {
+        //        m_state = STATE.RELOAD;
+        //    }
+        //
+        //}
 
         if (AtCover)
         {
@@ -309,6 +317,13 @@ public class AI : BaseAI
             else
             {
                 AtCover = false;
+            }
+        }
+        else if (NoCover)
+        {
+            if (m_finishedReload == false || m_gun.GetIsEmpty())
+            {
+                m_state = STATE.RELOAD;
             }
         }
  
@@ -346,6 +361,9 @@ public class AI : BaseAI
             case STATE.RELOAD:
                 m_stateMachine.ChangeState(new Reload());
                 break;
+            case STATE.SEEK:
+                m_stateMachine.ChangeState(new Seek());
+                break;
             default:
                 return;
         }
@@ -354,7 +372,7 @@ public class AI : BaseAI
     //Check if there is nothing blocking the gun
     bool ClearShot()
     {
-        Vector3 vecBetween = (m_player.transform.position - m_gunRayTransform.position);
+        Vector3 vecBetween = (new Vector3(m_player.transform.position.x, m_gunRayTransform.position.y, m_player.transform.position.z) - m_gunRayTransform.position);
         Vector3 rayPos1 = m_gunRayTransform.position - (m_gunRayTransform.forward * m_rayDetectBufferDist);
         Vector3 rayPos2 = rayPos1 + m_gunRayTransform.right * 0.1f;
         rayPos1 -= m_gunRayTransform.right * 0.1f;
@@ -370,11 +388,13 @@ public class AI : BaseAI
         if (Physics.Raycast(ray1, out hit, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer))
         {
             if (hit.transform == CurrCoverObj)
-                return false;
+                return false;    
         }
         if (Physics.Raycast(ray2, out hit, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer))
+        {
             if (hit.transform == CurrCoverObj)
                 return false;
+        }
 
         return true;
 

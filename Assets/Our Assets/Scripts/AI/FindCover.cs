@@ -32,13 +32,15 @@ public class FindCover : IState<AI>
     {
         if (IsCoverAvailable(a_owner))
         {
+            a_owner.NoCover = false;
+
             if (a_owner.CurrCoverObj == null || m_coverFound == false)
             {
                 FindNearestCover(a_owner);
                 CalcRelativeCoverPos(a_owner);
                 SetPathToCover(a_owner);
             }
-            else if(a_owner.Gun.GetIsEmpty())
+            else if(a_owner.Gun.GetIsEmpty() && a_owner.CurrCoverObj != null)
             {
                 m_nearestPoint = a_owner.CurrCoverObj;
                 //CalcRelativeCoverPos(a_owner);
@@ -63,7 +65,7 @@ public class FindCover : IState<AI>
         else
         {
             a_owner.AtCover = false;
-            //a_owner.MovingToCover = false;
+            a_owner.NoCover = true;
         }
 
     }
