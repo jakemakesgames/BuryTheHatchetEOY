@@ -156,6 +156,8 @@ public class Player : MonoBehaviour, IDamagable {
         m_deathFadeOutTimer = m_deathFadeOutTime;
         Dead = false;
         m_health = m_maxHealth;
+        if (m_playerAnimator != null)
+            m_playerAnimator.SetTrigger("Respawn");
     }
     #endregion
 
