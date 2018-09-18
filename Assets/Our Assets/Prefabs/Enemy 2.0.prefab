@@ -1284,15 +1284,15 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1935959088329442}
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0.00000058114523}
-  m_LocalPosition: {x: -99.99, y: 1.51, z: -51.18}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4251749152737456}
   - {fileID: 4050069238499698}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 180.00002, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4219266242546888
 Transform:
   m_ObjectHideFlags: 1
@@ -2275,8 +2275,8 @@ MonoBehaviour:
   m_attackRadius: 11
   m_coverFoundThreshold: 3
   m_rayDetectBufferDist: 0.3
-  m_minAttackDelay: 1
-  m_maxAttackDelay: 3
+  m_minAttackDelay: 3
+  m_maxAttackDelay: 5
   m_gunRayTransform: {fileID: 4251749152737456}
   m_coverLayer:
     serializedVersion: 2
@@ -2512,7 +2512,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 0.9
+  m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!198 &198202974096351630

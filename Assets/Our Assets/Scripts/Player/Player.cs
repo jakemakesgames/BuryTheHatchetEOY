@@ -26,7 +26,8 @@ public class Player : MonoBehaviour, IDamagable {
 
     #region Member variables
         private bool m_dead;
-        private bool m_hasDropped;
+        private bool m_hasDropped = false;
+        private bool m_hasDroppedTrigger = false;
         private float m_counter = 0;
         private int m_health;
         private int m_heldWeaponLocation;
@@ -82,9 +83,9 @@ public class Player : MonoBehaviour, IDamagable {
         set { m_respawnPoint = value; }
     }
 
-    public bool HasDropped {
-        get { return m_hasDropped; }
-        set { m_hasDropped = value; }
+    public bool HasDroppedTrigger {
+        get { return m_hasDroppedTrigger; }
+        set { m_hasDroppedTrigger = value; }
     }
 
     //IDamageble interfaces methods for taking damage
@@ -212,7 +213,10 @@ public class Player : MonoBehaviour, IDamagable {
         if (m_health > m_maxHealth)
             m_health = m_maxHealth;
         if(Dead) {
-            DropDead();
+            if (HasDroppedTrigger)
+            {
+                DropDead();
+            }
             m_deathFadeOutTimer -= Time.deltaTime;
             //fade the screen to black
             if (m_deathFadeOutTimer <= 0)

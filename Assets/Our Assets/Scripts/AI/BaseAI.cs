@@ -31,7 +31,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     protected Animator m_enemyAnimator;
     [Tooltip("The number of death animations (starting at 0)")]
     [SerializeField]
-    protected int deathAnimationCount;
+    protected int m_deathAnimationCount;
 
     [Header("Particles")]
     [Tooltip("Paricles that will play when the enemy is walking")]
@@ -122,8 +122,8 @@ public class BaseAI : MonoBehaviour, IDamagable
     {
         m_agent.ResetPath();
         m_walkingParticleSystem.Stop();
-        int randomAnim = Random.Range(0, deathAnimationCount);
-        m_enemyAnimator.SetInteger("WhichDeath", 2);
+        int randomAnim = Random.Range(0, m_deathAnimationCount);
+        m_enemyAnimator.SetInteger("WhichDeath", randomAnim);
         m_enemyAnimator.SetTrigger("Death");
         RandomPitch();
         if (m_deathSounds.Count != 0)

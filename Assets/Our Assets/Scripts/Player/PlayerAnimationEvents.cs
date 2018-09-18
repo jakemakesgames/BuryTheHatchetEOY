@@ -40,6 +40,6 @@ public class PlayerAnimationEvents : MonoBehaviour {
     }
 
     public void HasDropTrigger() {
-        GetComponentInParent<Player>().HasDropped = true;
+        GetComponentInParent<Player>().HasDroppedTrigger = true;
     }
 }
