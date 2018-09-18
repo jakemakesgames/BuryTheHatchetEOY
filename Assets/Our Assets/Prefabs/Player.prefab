@@ -4963,6 +4963,8 @@ MonoBehaviour:
   m_camera: {fileID: 0}
   m_canvas: {fileID: 0}
   m_crosshair: {fileID: 0}
+  m_clipTextTag: UIClip
+  m_ammoTextTag: UIReserve
   m_clipAmmoDisplay: {fileID: 0}
   m_totalAmmoDisplay: {fileID: 0}
   m_clothesRustleSound: {fileID: 0}

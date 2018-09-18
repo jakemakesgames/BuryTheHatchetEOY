@@ -343,7 +343,7 @@ GameObject:
   - component: {fileID: 114555661749819278}
   m_Layer: 5
   m_Name: Reserve_Amount
-  m_TagString: Reserve
+  m_TagString: UIReserve
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -576,7 +576,7 @@ GameObject:
   - component: {fileID: 114897842536496100}
   m_Layer: 5
   m_Name: Clip_Amount
-  m_TagString: Clip
+  m_TagString: UIClip
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
