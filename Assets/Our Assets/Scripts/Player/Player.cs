@@ -175,6 +175,8 @@ public class Player : MonoBehaviour, IDamagable {
         transform.position = RespawnPoint;
         m_deathFadeOutTimer = m_deathFadeOutTime;
         Dead = false;
+        m_hasDropped = false;
+        HasDroppedTrigger = false;
         m_health = m_maxHealth;
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Respawn");
