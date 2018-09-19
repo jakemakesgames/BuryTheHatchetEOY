@@ -24,7 +24,8 @@ public class Reload : IState<AI>
         {
             a_owner.Agent.SetDestination(a_owner.transform.position);
             a_owner.FinishedReload = false;
-            //Set anim bool
+            if (a_owner.EnemyAnimator.GetBool("Reloading") == false)
+                a_owner.EnemyAnimator.SetBool("Reloading", true);
         }
         else
         {

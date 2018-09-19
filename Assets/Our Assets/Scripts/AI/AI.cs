@@ -466,7 +466,7 @@ public class AI : BaseAI
             m_weaponController.m_weaponHold.LookAt(PlayerPosition);
             if (Gun.Shoot())
             {
-                m_enemyAnimator.SetTrigger("Shoot");
+                EnemyAnimator.SetTrigger("Shoot");
             }
 
         }

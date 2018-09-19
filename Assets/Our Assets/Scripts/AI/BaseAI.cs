@@ -28,7 +28,7 @@ public class BaseAI : MonoBehaviour, IDamagable
 
     [Header("Animation")]
     [SerializeField]
-    protected Animator m_enemyAnimator;
+    private Animator enemyAnimator;
     [Tooltip("The number of death animations")]
     [SerializeField]
     protected int m_deathAnimationCount;
@@ -59,6 +59,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     public NavMeshAgent Agent { get { return m_agent; } }
     public Vector3 PlayerPosition { get { return m_player.transform.position; } }
     public bool HasDroppedTrigger { set { m_hasDroppedTrigger = value; } }
+    public Animator EnemyAnimator {   get { return enemyAnimator; } set { enemyAnimator = value; } }
     #endregion
 
     protected virtual void Awake()
@@ -71,7 +72,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     {
         m_agent = GetComponent<NavMeshAgent>();
         m_audioSource = GetComponent<AudioSource>();
-        m_enemyAnimator = GetComponentInChildren<Animator>();
+        EnemyAnimator = GetComponentInChildren<Animator>();
         m_health = m_maxHealth;
     }
 
@@ -123,8 +124,8 @@ public class BaseAI : MonoBehaviour, IDamagable
         m_agent.ResetPath();
         m_walkingParticleSystem.Stop();
         int randomAnim = Random.Range(0, m_deathAnimationCount - 1);
-        m_enemyAnimator.SetInteger("WhichDeath", randomAnim);
-        m_enemyAnimator.SetTrigger("Death");
+        EnemyAnimator.SetInteger("WhichDeath", randomAnim);
+        EnemyAnimator.SetTrigger("Death");
         RandomPitch();
         if (m_deathSounds.Count != 0)
         {
@@ -156,10 +157,10 @@ public class BaseAI : MonoBehaviour, IDamagable
         float myVelocity = m_agent.velocity.magnitude;
         Vector3 localVel = transform.InverseTransformDirection(m_agent.velocity.normalized);
 
-        m_enemyAnimator.SetFloat("Velocity", myVelocity);
+        EnemyAnimator.SetFloat("Velocity", myVelocity);
 
-        m_enemyAnimator.SetFloat("MovementDirectionRight", localVel.x);
-        m_enemyAnimator.SetFloat("MovementDirectionForward", localVel.z);
+        EnemyAnimator.SetFloat("MovementDirectionRight", localVel.x);
+        EnemyAnimator.SetFloat("MovementDirectionForward", localVel.z);
     }
 
     private void UpdateParticles()
