@@ -107,8 +107,8 @@ Shader "Custom/FloorShader" {
                 indirectDiffuse += UNITY_LIGHTMODEL_AMBIENT.rgb; // Ambient Light
                 float4 _Bottom_var = tex2D(_Bottom,TRANSFORM_TEX(node_1966, _Bottom));
                 float4 _RaisedFloor_var = tex2D(_RaisedFloor,TRANSFORM_TEX(i.uv0, _RaisedFloor));
-                float4 node_4922 = _Time;
-                float2 node_2297 = (i.uv0+node_4922.g*float2(0.05,0));
+                float4 node_8030 = _Time;
+                float2 node_2297 = (i.uv0+node_8030.g*float2(0.05,0));
                 float4 node_4521 = tex2D(_SandNoise,TRANSFORM_TEX(node_2297, _SandNoise));
                 float3 diffuseColor = (lerp( lerp( lerp( _Bottom_var.rgb, _Bottom_var.rgb, i.vertexColor.rgb.r ), _RaisedFloor_var.rgb, i.vertexColor.rgb.g ), lerp(((_SandColour.rgb*node_4521.r)+_RaisedFloor_var.rgb),_RaisedFloor_var.rgb,_sandintensity), i.vertexColor.rgb.b ));
                 float3 diffuse = (directDiffuse + indirectDiffuse) * diffuseColor;
@@ -207,8 +207,8 @@ Shader "Custom/FloorShader" {
                 float3 directDiffuse = max( 0.0, NdotL) * attenColor;
                 float4 _Bottom_var = tex2D(_Bottom,TRANSFORM_TEX(node_1966, _Bottom));
                 float4 _RaisedFloor_var = tex2D(_RaisedFloor,TRANSFORM_TEX(i.uv0, _RaisedFloor));
-                float4 node_1873 = _Time;
-                float2 node_2297 = (i.uv0+node_1873.g*float2(0.05,0));
+                float4 node_2067 = _Time;
+                float2 node_2297 = (i.uv0+node_2067.g*float2(0.05,0));
                 float4 node_4521 = tex2D(_SandNoise,TRANSFORM_TEX(node_2297, _SandNoise));
                 float3 diffuseColor = (lerp( lerp( lerp( _Bottom_var.rgb, _Bottom_var.rgb, i.vertexColor.rgb.r ), _RaisedFloor_var.rgb, i.vertexColor.rgb.g ), lerp(((_SandColour.rgb*node_4521.r)+_RaisedFloor_var.rgb),_RaisedFloor_var.rgb,_sandintensity), i.vertexColor.rgb.b ));
                 float3 diffuse = directDiffuse * diffuseColor;
