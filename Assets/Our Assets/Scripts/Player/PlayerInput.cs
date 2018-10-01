@@ -21,6 +21,10 @@ public class PlayerInput : MonoBehaviour {
         MINECART,
         PICKUP
     }
+    
+    [Header("CHARLIE!")]
+    public Animator m_playerAnimator;
+
     #region Melee attacking
 
     [Tooltip("The damage delt to any enemy within the hitbox")]
@@ -30,7 +34,6 @@ public class PlayerInput : MonoBehaviour {
     GameObject m_meleeHitBox;
         
     #endregion
-
 
     #region Movement/ animation variables
     [Header("Movement variables")]
@@ -176,9 +179,7 @@ public class PlayerInput : MonoBehaviour {
         }
 
     #endregion
-
-    [Header("CHARLIE!")]
-    public Animator m_playerAnimator;
+    
 
     #region Player action methods
     //calls the equipped weapons attacking method 
@@ -553,10 +554,11 @@ public class PlayerInput : MonoBehaviour {
     //To be called as an animation event at the end of the roll animation.
     //Resets the player to a non-rolling state
     public void EndRoll() {
-        Debug.Log("EndRoll: " + m_rollTimePassed);
+
         m_nma.speed = m_nmaSpeed;
         m_nma.angularSpeed = m_nmaAngledSpeed;
         m_nma.acceleration = m_nmaAcceleration;
+
         m_rollCoolDownTimer = Time.time + m_rollCoolDownTime;
         m_playerAnimator.SetBool("Roll", false);
 
@@ -572,7 +574,8 @@ public class PlayerInput : MonoBehaviour {
     //To be called by the animator after the melee weapon swing animation has finished playing
     public void EndSwing() {
         //m_weaponController.GetEquippedMelee().EndSwing();
-        m_meleeHitBox.SetActive(false);
+        if (m_meleeHitBox != null)
+            m_meleeHitBox.SetActive(false);
     }
     #endregion
 
