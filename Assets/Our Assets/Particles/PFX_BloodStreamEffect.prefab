@@ -86,7 +86,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1679593801378596}
   m_LocalRotation: {x: -0, y: 0.94694734, z: 0.32138887, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -88.65474, y: 0.25000012, z: -61.34503}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4510246280946532}
@@ -10677,10 +10677,10 @@ ParticleSystem:
           outSlope: 1.9918286
           tangentMode: 0
         - serializedVersion: 2
-          time: 0.79605293
-          value: 1
-          inSlope: 0.12397766
-          outSlope: 0.12397766
+          time: 0.7900715
+          value: 0.6216221
+          inSlope: -1.387622
+          outSlope: -1.387622
           tangentMode: 0
         - serializedVersion: 2
           time: 1
@@ -10724,8 +10724,8 @@ ParticleSystem:
           outSlope: 1.9918286
           tangentMode: 0
         - serializedVersion: 2
-          time: 0.79605293
-          value: 1
+          time: 0.76620674
+          value: 0.63513565
           inSlope: 0.12397766
           outSlope: 0.12397766
           tangentMode: 0
@@ -11177,7 +11177,7 @@ ParticleSystem:
     speedModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.75
       minScalar: 1
       maxCurve:
         serializedVersion: 2
