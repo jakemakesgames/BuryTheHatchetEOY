@@ -1,13 +1,10 @@
 fileFormatVersion: 2
 guid: 0e1043dabd7af30458e3e545443e9c8c
-timeCreated: 1538325016
+timeCreated: 1538436707
 licenseType: Free
 ShaderImporter:
   externalObjects: {}
-  defaultTextures:
-  - _TransparentMap: {instanceID: 0}
-  - _NormalMap: {instanceID: 0}
-  - _Albedo: {fileID: 2800000, guid: 0b4c1564f776ac24f9df3708f138aeb6, type: 3}
+  defaultTextures: []
   userData: 
   assetBundleName: 
   assetBundleVariant: 
