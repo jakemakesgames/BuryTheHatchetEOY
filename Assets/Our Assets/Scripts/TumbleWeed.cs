@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class TumbleWeed : MonoBehaviour {
 
-    public float textureAlpha = 1f;
+    private float textureAlpha = 0f;
     public float moveSpeed = 10f;
 
     private GameObject mesh;
     private GameObject spawnPos;
     private GameObject goalPos;
 
+    private float finalFadeStartDistance = 1f;
+
     private bool triggered = false;
+    private bool fade = false;
 
 
 	void Start () {
@@ -39,17 +42,43 @@ public class TumbleWeed : MonoBehaviour {
 
 	void Update () {
         Move();
-	}
-
-
-
-    public void Spawn() {
-
+        FadeDeathTrigger();
+        FadeDeath();
     }
 
+    //Trigger Mesh spawning 
+    public void Spawn() {
+        mesh.SetActive(true);
+        triggered = true;
+    }
+
+    //Increase shader transparency & move tumbleweed towards goal position
     void Move() {
         if (triggered) {
+            if (textureAlpha < 1) {
+                textureAlpha += 0.1f;
+            }
 
+            float step = moveSpeed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, goalPos.transform.position, step);
+        }
+    }
+
+    //Detects distance to begin fading the tumbleweed
+    void FadeDeathTrigger() {
+        if (Vector3.Distance(goalPos.transform.position, transform.position) < finalFadeStartDistance) {
+            fade = true;
+        }
+    }
+
+    //Fades the tumbleweeds shader and destroys upon reaching minimum
+    void FadeDeath() {
+        if (fade && textureAlpha > 0) {
+            textureAlpha -= 0.1f;
+        }
+
+        if (textureAlpha <= 0) {
+            Destroy(this.gameObject);
         }
     }
 }
