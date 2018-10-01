@@ -121,6 +121,11 @@ public class Gun : MonoBehaviour {
         get { return m_currentAmmo; }
         set { m_currentAmmo = value; }
     }
+
+    public Transform Muzzle {
+        get { return m_muzzle; }
+        set { m_muzzle = value; }
+    }
     #endregion
 
     #region setters, getters and other variable control
@@ -163,7 +168,7 @@ public class Gun : MonoBehaviour {
     public int GetCurrentAmmo() { return CurrentAmmo; }
     public int GetTotalAmmo() { return GetCurrentAmmo() + GetCurrentClip(); }
     public int GetMaxAmmo() { return m_maxAmmo + m_clipSize; }
-    public Transform GetMuzzle() { return m_muzzle; }
+    public Transform GetMuzzle() { return Muzzle; }
     #endregion
 
     #region ammo control
@@ -234,7 +239,7 @@ public class Gun : MonoBehaviour {
     #region shoot
     //Randomises the projectiles angle based on the dispersion angle variable
     private Vector3 RandomAngle() {
-        Vector3 direction = m_muzzle.forward + Random.insideUnitSphere * m_dispersionAngle;
+        Vector3 direction = Muzzle.forward + Random.insideUnitSphere * m_dispersionAngle;
         direction.x = 0;
         return direction;
     }
@@ -249,9 +254,9 @@ public class Gun : MonoBehaviour {
                     //Projectile setup
                     Projectile newProjectile;
                     if (m_parent != null)
-                        newProjectile = Instantiate(m_projectile, m_muzzle.position, m_muzzle.rotation * Quaternion.Euler(RandomAngle()), m_parent.transform) as Projectile;
+                        newProjectile = Instantiate(m_projectile, Muzzle.position, Muzzle.rotation * Quaternion.Euler(RandomAngle()), m_parent.transform) as Projectile;
                     else
-                        newProjectile = Instantiate(m_projectile, m_muzzle.position, m_muzzle.rotation * Quaternion.Euler(RandomAngle())) as Projectile;
+                        newProjectile = Instantiate(m_projectile, Muzzle.position, Muzzle.rotation * Quaternion.Euler(RandomAngle())) as Projectile;
 
                     newProjectile.SetDamage(m_damage); 
                     newProjectile.SetSpeed(m_muzzleVelocity);
@@ -263,11 +268,11 @@ public class Gun : MonoBehaviour {
                 }
                 //Play particles and sounds
                 if (m_shootParticleSystem != null) {
-                    GameObject GO = Instantiate(m_shootParticleSystem, m_muzzle.position, transform.rotation);
+                    GameObject GO = Instantiate(m_shootParticleSystem, Muzzle.position, transform.rotation);
                     Destroy(GO, m_shootParticleLifeTime);
                 }
                 if (m_smokeParticleSystem != null) {
-                    GameObject GO = Instantiate(m_smokeParticleSystem, m_muzzle.position, transform.rotation);
+                    GameObject GO = Instantiate(m_smokeParticleSystem, Muzzle.position, transform.rotation);
                     Destroy(GO, m_smokeParticleLifeTime);
                 }
                 if (m_audioSource != null) {
