@@ -27,11 +27,12 @@ public class PlayerInput : MonoBehaviour {
 
     #region Melee attacking
 
+    [Header("Melee Weapon")]
     [Tooltip("The damage delt to any enemy within the hitbox")]
     [SerializeField] private int m_meleeDamage = 1;
 
     [Tooltip("The hit box of the melee swing")]
-    GameObject m_meleeHitBox;
+    [SerializeField] private BoxCollider m_meleeHitBox;
         
     #endregion
 
@@ -190,7 +191,7 @@ public class PlayerInput : MonoBehaviour {
         //Get's the currently equipped weapon and executes
         //the appropriate attack action and animation
         Gun equippedGun = m_weaponController.GetEquippedGun();
-        if (equippedGun.IsIdle && m_meleeHitBox.activeInHierarchy == false) {
+        if (equippedGun.IsIdle && m_meleeHitBox.enabled == false) {
 
             m_playerAnimator.SetBool("Reloading", false);
 
@@ -201,7 +202,7 @@ public class PlayerInput : MonoBehaviour {
                 m_playerAnimator.SetTrigger("HatchetSwingTrigger");
 
                 if (m_meleeHitBox != null)
-                    m_meleeHitBox.SetActive(true);
+                    m_meleeHitBox.enabled = true;
             }
 
             //-------------//
@@ -575,7 +576,7 @@ public class PlayerInput : MonoBehaviour {
     public void EndSwing() {
         //m_weaponController.GetEquippedMelee().EndSwing();
         if (m_meleeHitBox != null)
-            m_meleeHitBox.SetActive(false);
+            m_meleeHitBox.enabled = false;
     }
     #endregion
 
