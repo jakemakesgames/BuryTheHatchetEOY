@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 17/09/2018
+//Last edited 1/10/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -21,9 +21,19 @@ public class PlayerInput : MonoBehaviour {
         MINECART,
         PICKUP
     }
+    #region Melee attacking
+
+    [Tooltip("The damage delt to any enemy within the hitbox")]
+    [SerializeField] private int m_meleeDamage = 1;
+
+    [Tooltip("The hit box of the melee swing")]
+    GameObject m_meleeHitBox;
+        
+    #endregion
+
 
     #region Movement/ animation variables
-        [Header("Movement variables")]
+    [Header("Movement variables")]
         [Tooltip("Movement speed of the player")]
         [SerializeField] private float m_speed = 5f;
         [Tooltip("Percent speed increace per sceond")]
@@ -104,6 +114,7 @@ public class PlayerInput : MonoBehaviour {
         private int m_equippedWeaponInumerator;
         private int m_ammoInClip;
         private int m_ammoInReserve;
+
         private float m_nmaSpeed;
         private float m_rollCoolDownTimer = 0;
         private float m_nmaAngledSpeed;
@@ -112,21 +123,26 @@ public class PlayerInput : MonoBehaviour {
         private float m_rollTimePassed;
         private float m_invicibilityTimer = 0;
         private float m_inCombatTimer = 0f;
+
         private bool m_isHoldingGun;
         private bool m_canAttack = true;
-        public bool m_isRolling = false;
-        public bool m_canRoll = true;
+        private bool m_isRolling = false;
+        private bool m_canRoll = true;
         private bool m_rollAccelerating = true;
         private bool m_inCombat = false;
         private bool m_isInvincible = false;
+
         private InteractableObject m_currentlyCanInteractWith;
         private InteractableObject m_currentlyInteractingWith;
+
         private NavMeshAgent m_nma;
+
         private Vector3 m_velocity;
         private Vector3 m_acceleration;
         private Vector3 m_movementVector;
         private Vector3 m_preMoveVector;
         private Vector3 m_rollVelocity;
+
         private Camera m_viewCamera;
         private WeaponController m_weaponController;
         private Player m_player;
@@ -173,37 +189,63 @@ public class PlayerInput : MonoBehaviour {
         //Get's the currently equipped weapon and executes
         //the appropriate attack action and animation
         Gun equippedGun = m_weaponController.GetEquippedGun();
-        //---------------//
-        //MELEE ATTACKING//
-        //---------------//
-        if (equippedGun == null) {
-            Melee equippedMelee = m_weaponController.GetEquippedMelee();
-            if (equippedMelee == null)
-                return;
+        if (equippedGun.IsIdle && m_meleeHitBox.activeInHierarchy == false) {
 
-            if (equippedMelee.IsIdle) {
-                if (Input.GetMouseButtonDown(0)) {
-                    if (m_inCombat) {
-                        m_weaponController.Swing();
-                        m_playerAnimator.SetTrigger("HatchetSwingTrigger");
-                    }
-                    else {
-                        m_inCombat = true;
-                        m_inCombatTimer = Time.time + m_inCombatTime;
-                    }
+            m_playerAnimator.SetBool("Reloading", false);
+
+            //---------------//
+            //MELEE ATTACKING//
+            //---------------//
+            if (Input.GetMouseButtonDown(1)) {
+                m_playerAnimator.SetTrigger("HatchetSwingTrigger");
+
+                if (m_meleeHitBox != null)
+                    m_meleeHitBox.SetActive(true);
+            }
+
+            //-------------//
+            //GUN ATTACKING//
+            //-------------//
+            else if (Input.GetMouseButtonDown(0)) {
+                if (m_inCombat) {
+                    if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
+                        m_playerAnimator.SetTrigger("Shoot");
+                }
+                else {
+                    m_inCombat = true;
+                    m_inCombatTimer = Time.time + m_inCombatTime;
                 }
             }
-            //else if (equippedMelee.IsSwinging) {
-            //    Debug.Log("axe swinging");
-            //}
-            //else {
-            //    Debug.Log("axe not idle");
-            //}
-        }
-        //-------------//
-        //GUN ATTACKING//
-        //-------------//
-        else if (equippedGun.m_isAutomatic && equippedGun.IsIdle) {
+
+            //-------------//
+            //GUN RELOADING//
+            //-------------//
+            else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
+                if(m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
+                    m_playerAnimator.SetBool("Reloading", true);
+            }
+            #region old melee
+        //if (equippedGun == null) {
+        //    Melee equippedMelee = m_weaponController.GetEquippedMelee();
+        //    if (equippedMelee == null)
+        //        return;
+        //
+        //    if (equippedMelee.IsIdle) {
+        //        if (Input.GetMouseButtonDown(0)) {
+        //            if (m_inCombat) {
+        //                m_weaponController.Swing();
+        //                m_playerAnimator.SetTrigger("HatchetSwingTrigger");
+        //            }
+        //            else {
+        //                m_inCombat = true;
+        //                m_inCombatTimer = Time.time + m_inCombatTime;
+        //            }
+        //        }
+        //    }
+        //}
+        #endregion
+            #region unneeded auto gun shooting
+        /*else if (equippedGun.m_isAutomatic && equippedGun.IsIdle) {
             if (Input.GetMouseButton(0)) {
                 if (m_inCombat) {
                     if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
@@ -218,23 +260,8 @@ public class PlayerInput : MonoBehaviour {
                 if (m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
                     m_playerAnimator.SetBool("Reloading", true);
             }
-        }
-        else if (equippedGun.IsIdle) {
-            m_playerAnimator.SetBool("Reloading", false);
-            if (Input.GetMouseButtonDown(0)) {
-                if (m_inCombat) {
-                    if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
-                        m_playerAnimator.SetTrigger("Shoot");
-                }
-                else {
-                    m_inCombat = true;
-                    m_inCombatTimer = Time.time + m_inCombatTime;
-                }
-            }
-            else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
-                if(m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
-                    m_playerAnimator.SetBool("Reloading", true);
-            }
+        }*/
+        #endregion
         }
     }
     
@@ -327,6 +354,10 @@ public class PlayerInput : MonoBehaviour {
         //Cast a ray from the given camera through the mouse to the created ground plane
         Ray ray = m_viewCamera.ScreenPointToRay(Input.mousePosition);
         Plane groundPlane = new Plane(Vector3.up, hand.position);
+        if (m_weaponController.EquippedGun != null) {
+            Vector3 planePos = m_weaponController.EquippedGun.Muzzle.position;
+            groundPlane = new Plane(Vector3.up, planePos);
+        }
         float rayDistance;
         //Cast the ray from the camera to the generated ground plane which will be created at the players hand position
         if (groundPlane.Raycast(ray, out rayDistance)) {
@@ -339,12 +370,12 @@ public class PlayerInput : MonoBehaviour {
                 hand.LookAt(lookAtPoint);
             m_weaponController.WeaponHold = hand;
             //place the crosshiar at the mouse position
-            if (m_crosshair != null && m_canvas != null) {
-                Vector2 pos;
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    m_canvas.transform as RectTransform, Input.mousePosition, m_camera, out pos);
-                m_crosshair.transform.position = m_canvas.transform.TransformPoint(pos);
-            }
+            //if (m_crosshair != null && m_canvas != null) {
+            //    Vector2 pos;
+            //    RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            //        m_canvas.transform as RectTransform, Input.mousePosition, m_camera, out pos);
+            //    m_crosshair.transform.position = m_canvas.transform.TransformPoint(pos);
+            //}
         }
     }
 
@@ -513,6 +544,8 @@ public class PlayerInput : MonoBehaviour {
         Debug.Log("HalfRoll: " + m_rollTimePassed);
     }
 
+    //To be called via an animation event which will tell the roll melthod
+    //when to switch from the first curve to the second
     public void SlowingRoll() {
         m_rollAccelerating = false;
     }
@@ -535,13 +568,12 @@ public class PlayerInput : MonoBehaviour {
         if (m_rollParticleSystem != null)
             m_rollParticleSystem.Stop();
     }
+
     //To be called by the animator after the melee weapon swing animation has finished playing
     public void EndSwing() {
-        m_weaponController.GetEquippedMelee().EndSwing();
+        //m_weaponController.GetEquippedMelee().EndSwing();
+        m_meleeHitBox.SetActive(false);
     }
-
-    //To be called at the start of the shoot animation to make sure
-    //that each projectile fire will be fired at the same height
     #endregion
 
     //Charlie
@@ -631,7 +663,7 @@ public class PlayerInput : MonoBehaviour {
         if (Time.timeScale > 0 && m_player.Dead == false) {
             if (m_isRolling == false) {
                 //Switch Weapons
-                SwitchWeapon();
+                //SwitchWeapon();
 
                 //Player looking at mouse
                 PlayerLookAt();
