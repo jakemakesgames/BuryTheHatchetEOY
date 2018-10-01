@@ -157,13 +157,6 @@ public class Melee : MonoBehaviour {
 
     private void OnDrawGizmosSelected()
     {
-        for (int i = 0; i < m_contactPoints.Length; i++) {
-            Vector3 tempPos = m_contactPoints[i].transform.position;
-            Vector3 tempForward = m_contactPoints[i].transform.forward;
-            tempForward *= m_rayHitDistance;
-            tempForward += tempPos;
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(tempPos, tempForward);
-        }
+
     }
 }
