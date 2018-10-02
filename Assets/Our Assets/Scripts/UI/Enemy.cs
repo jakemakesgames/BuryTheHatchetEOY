@@ -154,11 +154,11 @@ public class Enemy : MonoBehaviour, IDamagable {
             Attack();
         }
 
-        if (m_gun.GetIsEmpty() || m_gun.m_isReloading)
+        if (m_gun.GetIsEmpty() || m_gun.IsReloading)
         {
             m_state = STATE.COVER;
         }
-        else if (!m_gun.GetIsEmpty() && !m_gun.m_isReloading )
+        else if (!m_gun.GetIsEmpty() && !m_gun.IsReloading)
         {
             m_coverFound = false;
         }
@@ -324,7 +324,7 @@ public class Enemy : MonoBehaviour, IDamagable {
             {
                 if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
                 {
-                    if (!m_gun.m_isReloading && m_gun.GetIsEmpty())
+                    if (!m_gun.IsReloading && m_gun.GetIsEmpty())
                     {
                         m_gun.Reload();
                     }
