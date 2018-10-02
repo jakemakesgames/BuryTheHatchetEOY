@@ -147,11 +147,11 @@ public class FindCover : IState<AI>
         //if (m_highestHitCount < m_numOfIfChecks)
         if(m_nearestPoint == a_owner.CurrCoverObj)
         {
-            a_owner.NoCover = true;
+            a_owner.NoOtherCover = true;
         }
         else
         {
-            a_owner.NoCover = false;
+            a_owner.NoOtherCover = false;
         }
         m_coverFound = true;
     }
