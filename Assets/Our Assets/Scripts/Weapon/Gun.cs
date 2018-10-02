@@ -37,30 +37,37 @@ public class Gun : MonoBehaviour {
     [SerializeField] private Projectile m_projectile;
 
     [Tooltip("Time between shots in seconds")]
-    public float m_secondsBetweenShots = 0.1f;
-    public float m_reloadTimeInSeconds = 0.1f;
+    [SerializeField] private float m_secondsBetweenShots = 0.1f;
+    [Tooltip("Time between it takes for an individual bullet to be reloaded into this weapon")]
+    [SerializeField] private float m_reloadTimeInSeconds = 0.1f;
+
     [Tooltip("Speed of the projectile when the gun shoots it")]
-    public float m_muzzleVelocity = 15;
+    [SerializeField] private float m_muzzleVelocity = 15;
+
     [Tooltip("How long in seconds the projectile will exist in the world")]
-    public float m_projectileLifeTime = 15;
+    [SerializeField] private float m_projectileLifeTime = 15;
+
     [Tooltip("The angle from a line straight out the gun either side within which the projectile may be spawned")]
-    public float m_dispersionAngle = 0;
+    [SerializeField] private float m_dispersionAngle = 0;
+
+    [Tooltip("The amount of knockback a bullet fired from this weapon will apply to an entity")]
+    [SerializeField] private float m_knockBack = 5f;
 
     [Tooltip("The number of projectiles that will be spawned when the gun shoots")]
-    public int m_numProjectilesPerShot = 1;
+    [SerializeField] private int m_numProjectilesPerShot = 1;
     [Tooltip("Currently does nothing")]
-    public int m_burstProjectiles = 1;
+    [SerializeField] private int m_burstProjectiles = 1;
     [Tooltip("The ammount of ammo that the entity wielding the gun can hold outside of the clip")]
-    public int m_maxAmmo = 100;
+    [SerializeField] private int m_maxAmmo = 100;
     [Tooltip("The number of times the gun can be shot before needing to reload from full")]
-    public int m_clipSize = 6;
+    [SerializeField] private int m_clipSize = 6;
     [Tooltip("The damage each projectile does on impact")]
-    public int m_damage = 1;
+    [SerializeField] private int m_damage = 1;
 
     [Tooltip("shows when this gun is being reloaded")]
-    public bool m_isReloading = false;
+    [SerializeField] private bool m_isReloading = false;
     [Tooltip("Determines if mouse press or hold mouse down to shoot")]
-    public bool m_isAutomatic = false;
+    [SerializeField] private bool m_isAutomatic = false;
     #endregion
 
     #region Private member variables
@@ -126,6 +133,16 @@ public class Gun : MonoBehaviour {
         get { return m_muzzle; }
         set { m_muzzle = value; }
     }
+
+    public int ClipSize {
+        get { return m_clipSize; } 
+        set { m_clipSize = value; }
+    }
+
+    public bool IsReloading {
+        get { return m_isReloading; } 
+        set { m_isReloading = value; }
+    }
     #endregion
 
     #region setters, getters and other variable control
@@ -145,7 +162,7 @@ public class Gun : MonoBehaviour {
 
     //will return false if the max clip size is smaller than the attemped assignment
     public bool SetCurrentClip(int a_currentClip) {
-        if (a_currentClip > m_clipSize)
+        if (a_currentClip > ClipSize)
             return false;
 
         else
@@ -167,7 +184,7 @@ public class Gun : MonoBehaviour {
     public int GetCurrentClip() { return CurrentClip; }
     public int GetCurrentAmmo() { return CurrentAmmo; }
     public int GetTotalAmmo() { return GetCurrentAmmo() + GetCurrentClip(); }
-    public int GetMaxAmmo() { return m_maxAmmo + m_clipSize; }
+    public int GetMaxAmmo() { return m_maxAmmo + ClipSize; }
     public Transform GetMuzzle() { return Muzzle; }
     #endregion
 
@@ -175,23 +192,23 @@ public class Gun : MonoBehaviour {
     //reloads the gun and also prevents shooting for a time based on the reload time in seconds variable
     //returns true if the gun can reload or false if it cannot
     public bool Reload() {
-        if (CurrentClip == m_clipSize)
+        if (CurrentClip == ClipSize)
         {
             return false;
         }
-        if (m_isReloading == false) {
+        if (IsReloading == false) {
             TimeUntilNextAction = Time.time + m_reloadTimeInSeconds;
-            m_isReloading = true;
+            IsReloading = true;
             IsIdle = false;
-            if (CurrentAmmo < m_clipSize) {
+            if (CurrentAmmo < ClipSize) {
                 CurrentClip = CurrentAmmo;
                 if (m_infiniteAmmo == false)
                     CurrentAmmo = 0;
             }
             else {
                 if (m_infiniteAmmo == false)
-                    CurrentAmmo -= m_clipSize - CurrentClip;
-                CurrentClip = m_clipSize;
+                    CurrentAmmo -= ClipSize - CurrentClip;
+                CurrentClip = ClipSize;
                 IsFull = true;
             }
             if (m_audioSource != null)
@@ -203,10 +220,10 @@ public class Gun : MonoBehaviour {
 
     //returns true if the gun can reload or false if it cannot
     public bool ReloadOne() {
-        if (CurrentClip < m_clipSize && CurrentAmmo > 0) {
+        if (CurrentClip < ClipSize && CurrentAmmo > 0) {
             if (IsIdle) {
-                if (m_isReloading == false)
-                    m_isReloading = true;
+                if (IsReloading == false)
+                    IsReloading = true;
 
                 TimeUntilNextAction = Time.time + m_reloadTimeInSeconds;
                 m_setToReloadOne = true;
@@ -218,7 +235,7 @@ public class Gun : MonoBehaviour {
                 CurrentClip++;
                 if(m_infiniteAmmo == false)
                     CurrentAmmo--;
-                if (CurrentClip == m_clipSize)
+                if (CurrentClip == ClipSize)
                     IsFull = true;
                 SetToReloadOne = false;
             }
@@ -258,6 +275,7 @@ public class Gun : MonoBehaviour {
                     else
                         newProjectile = Instantiate(m_projectile, Muzzle.position, Muzzle.rotation * Quaternion.Euler(RandomAngle())) as Projectile;
 
+                    newProjectile.KnockBack = m_knockBack;
                     newProjectile.SetDamage(m_damage); 
                     newProjectile.SetSpeed(m_muzzleVelocity);
                     newProjectile.SetLifeTime(m_projectileLifeTime);
@@ -290,7 +308,7 @@ public class Gun : MonoBehaviour {
 
     private void Awake() {
         CurrentAmmo = m_maxAmmo;
-        CurrentClip = m_clipSize;
+        CurrentClip = ClipSize;
         m_audioSource = GetComponent<AudioSource>();
         if (m_parent != null)
             m_parent = Instantiate(m_parent, Vector3.zero, Quaternion.identity);
@@ -299,16 +317,16 @@ public class Gun : MonoBehaviour {
     //and stops the ammo stores from going higher than their respective maximums
     private void Update() {
         if (Time.time > TimeUntilNextAction) {
-            if (m_isReloading) 
-                m_isReloading = false;
+            if (IsReloading) 
+                IsReloading = false;
             if (SetToReloadOne)
                 ReloadOne();
             IsIdle = true;
         }
         if (CurrentAmmo > m_maxAmmo)
             CurrentAmmo = m_maxAmmo;
-        if (CurrentClip > m_clipSize)
-            CurrentClip = m_clipSize;
+        if (CurrentClip > ClipSize)
+            CurrentClip = ClipSize;
     }
     
 }

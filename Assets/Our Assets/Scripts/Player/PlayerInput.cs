@@ -36,6 +36,9 @@ public class PlayerInput : MonoBehaviour {
 
     [Tooltip("Time the player is lunging in seconds")]
     [SerializeField] private float m_lungeTime = 0.5f;
+    
+    [Tooltip("Time the player is swinging in seconds")]
+    [SerializeField] private float m_swingTime = 0.5f;
 
     [Tooltip("The hit box of the melee swing")]
     [SerializeField] private BoxCollider m_meleeHitBox;
@@ -67,6 +70,8 @@ public class PlayerInput : MonoBehaviour {
         [SerializeField] private float m_inCombatRadius = 10f;
         [Tooltip("The time that the player will have their weapons raised after entering combat stance")]
         [SerializeField] private float m_inCombatTime = 5f;
+
+        private Vector3 m_velocityModifyer = Vector3.zero;
     #endregion
 
     #region In world game objects
@@ -145,6 +150,7 @@ public class PlayerInput : MonoBehaviour {
         private float m_invicibilityTimer = 0;
         private float m_inCombatTimer = 0f;
         private float m_lungeTimer = 0f;
+        private float m_swingTimer = 0f;
 
         private bool m_isHoldingGun;
         public bool m_canAttack = true;
@@ -203,6 +209,11 @@ public class PlayerInput : MonoBehaviour {
             set { m_player = value; }
         }
 
+        public Vector3 VelocityModifyer {
+            get { return m_velocityModifyer; }
+            set { m_velocityModifyer = value; }
+        }
+
     #endregion
 
 
@@ -212,6 +223,9 @@ public class PlayerInput : MonoBehaviour {
     //via the weapon controller script
     //and also checks if the player wishes to reload
     public void Attack() {
+        if (m_swingTimer < Time.time)
+            m_meleeHitBox.enabled = false;
+
         //Get's the currently equipped weapon and executes
         //the appropriate attack action and animation
         Gun equippedGun = m_weaponController.GetEquippedGun();
@@ -227,6 +241,7 @@ public class PlayerInput : MonoBehaviour {
 
                 m_isLunging = true;
                 m_lungeTimer = Time.time + m_lungeTime;
+                m_swingTimer = Time.time + m_swingTime;
 
                 if (m_meleeHitBox != null)
                     m_meleeHitBox.enabled = true;
@@ -387,7 +402,8 @@ public class PlayerInput : MonoBehaviour {
         }
         
         
-        m_nma.velocity = m_velocity;
+        m_nma.velocity = m_velocity + VelocityModifyer;
+        VelocityModifyer = Vector3.zero;
     }
 
     //Forces the player to look at the mouse position on screen
@@ -538,7 +554,7 @@ public class PlayerInput : MonoBehaviour {
                     Gun gun = m_weaponController.GetEquippedGun();
                     gun.SetCurrentClip(Player.ToEquipCurrentClip(a_inumerator));
                     gun.SetCurrentReserveAmmo(Player.ToEquipCurrentReserve(a_inumerator));
-                    if(gun.CurrentClip < gun.m_clipSize)
+                    if(gun.CurrentClip < gun.ClipSize)
                         gun.IsFull = false;
                 }
             }

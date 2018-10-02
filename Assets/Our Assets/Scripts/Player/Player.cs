@@ -109,6 +109,7 @@ public class Player : MonoBehaviour, IDamagable {
     }
     public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile) {
         TakeDamage(a_damage);
+        m_input.VelocityModifyer = a_projectile.transform.forward * a_projectile.KnockBack;
     }
     #endregion
 
@@ -158,16 +159,22 @@ public class Player : MonoBehaviour, IDamagable {
         Dead = true;
         if (OnDeath != null)
             OnDeath();
-        if (m_playerAnimator != null)
-        {
+
+        if (m_playerAnimator != null) {
             int randomAnim = Random.Range(0, m_deathAnimCount - 1);
             m_playerAnimator.SetInteger("WhichDeath", randomAnim);
             m_playerAnimator.SetTrigger("Death");
             GetComponent<NavMeshAgent>().enabled = false;
         }
+
         if (m_dieSound != null)
             m_audioSource.PlayOneShot(m_dieSound);
-        //SceneManager.LoadScene(0);
+
+        if (m_dieParticleSystem != null) {
+            ParticleSystem bloodPool = Instantiate(m_dieParticleSystem, m_dieParticleSystem.transform.position, m_dieParticleSystem.transform.rotation);
+            bloodPool.Play();
+            Destroy(bloodPool, m_deathFadeOutTime + 1f);
+        }
     }
 
     //Moves the player to the respawn position
@@ -183,13 +190,14 @@ public class Player : MonoBehaviour, IDamagable {
             GetComponent<NavMeshAgent>().enabled = true;
     }
 
-    private void DropDead()
-    {
-        if (m_hasDropped == false)
-        {
+    private void DropDead() {
+        if (m_hasDropped == false) {
             m_counter += Time.deltaTime;
+
             Vector3 target = new Vector3(transform.position.x, m_bodyDropHeight, transform.position.z);
+
             transform.position = Vector3.Lerp(transform.position, target, m_counter);
+
             if (transform.position.y == m_bodyDropHeight)
                 m_hasDropped = true;    
         }
@@ -225,11 +233,14 @@ public class Player : MonoBehaviour, IDamagable {
             m_health = m_maxHealth;
         if(Dead) {
             if (HasDroppedTrigger)
-            {
                 DropDead();
-            }
+
             m_deathFadeOutTimer -= Time.deltaTime;
+
             //fade the screen to black
+            //if (m_blackCanvas != null)
+            //    m_blackCanvas.alpha = (m_deathFadeOutTime - m_deathFadeOutTimer) / m_deathFadeOutTime;
+
             if (m_deathFadeOutTimer <= 0)
                 Respawn();
         }

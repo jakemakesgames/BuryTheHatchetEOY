@@ -154,9 +154,4 @@ public class Melee : MonoBehaviour {
             }
         }
     }
-
-    private void OnDrawGizmosSelected()
-    {
-
-    }
 }
