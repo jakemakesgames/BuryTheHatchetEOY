@@ -2264,10 +2264,13 @@ MonoBehaviour:
   m_bodyDropHeight: 0.6
   m_deathSounds:
   - {fileID: 8300000, guid: b05fd4b13e6775b41afdc221f5d39481, type: 3}
-  m_enemyAnimator: {fileID: 0}
-  deathAnimationCount: 2
+  enemyAnimator: {fileID: 0}
+  m_deathAnimationCount: 0
   m_walkingParticleSystem: {fileID: 198113631147028018, guid: d0e94ad31ea49a34ea8d52238797bef2,
     type: 2}
+  m_numOfStateChanges: 3
+  m_seekChanceIncrease: 10
+  m_maxSeekChance: 30
   m_seekFromCoverRadius: 2.5
   m_alertRadius: 12.7
   m_fleeRadius: 2.1

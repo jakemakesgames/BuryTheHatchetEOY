@@ -34,6 +34,13 @@ public class AI : BaseAI
     //[Tooltip("Max health value, currently at 5 (5 hits to die).")]
     //[SerializeField]
     //private float m_maxHealth = 5;
+    [Header("State Chance")]
+    [Tooltip("The number of state changes at which the chance to Seek is increased")]
+    [SerializeField] private int m_numOfStateChanges;
+    [Tooltip("The amount in percent that the chance to seek is increased")]
+    [SerializeField] private float m_seekChanceIncrease;
+    [Tooltip("The maximum amount in percent that seek chance can reach")]
+    [SerializeField] private float m_maxSeekChance;
 
     [Header("AI State Radii")]
     [Tooltip("Seek radius/green sphere - distance to seek to player.")]
@@ -107,14 +114,22 @@ public class AI : BaseAI
     //private float m_distBetweenPlayer;
     private float m_gunDistToPlayer;
     private float m_distBetweenCover;
-    //private float m_counter = 0;
-    private float m_time = 0;
+    private float m_distBetweenNextCover;
+    private float m_choice;
+    private float m_coverChance;
+    private float m_peekChance;
+    private float m_relativeCoverChance;
+    private float m_relativePeekChance;
+    private float m_seekChance;
+    private float m_relativeToSeekChance;
+    private int m_stateCounter;
     //private bool m_isDead = false;
     //private bool m_hasDropped = false;
     //private bool m_hasDroppedTrigger = false;
     private bool m_finishedReload = true;
     private bool m_atCover = false;
     private bool m_noCover = false;
+    private bool m_noOtherCover = false;
 
     private STATE m_state;
 
@@ -150,6 +165,7 @@ public class AI : BaseAI
     public Transform CurrCoverObj { get { return m_currCoverObj; } set { m_currCoverObj = value; } }
     public bool NoCover { get { return m_noCover; } set { m_noCover = value; } }
     public Transform NextCoverObj { get { return m_nextCoverObj; } set { m_nextCoverObj = value; } }
+    public bool NoOtherCover { get { return m_noOtherCover; } set {m_noOtherCover = value; } }
     #endregion
 
     protected override void Awake()
@@ -169,8 +185,14 @@ public class AI : BaseAI
         m_stateMachine = new StateMachine<AI>(this);
         m_stateMachine.ChangeState(new FindCover());
         m_state = STATE.FINDCOVER;
-        m_time = Time.time + Random.Range(m_minAttackDelay, m_maxAttackDelay);
-        //m_health = m_maxHealth;
+        m_coverChance = 50f;
+        m_peekChance = 50f;
+        m_relativeCoverChance = m_coverChance;
+        m_relativePeekChance = m_peekChance;
+        m_seekChance = 0f;;
+        m_relativeToSeekChance = (100f - m_seekChance) / 100f;
+        m_stateCounter = 0;
+        m_choice = Random.Range(0f, 100f);
 
         if (m_weaponController.GetEquippedGun() != null)
         {
@@ -196,6 +218,7 @@ public class AI : BaseAI
             if (CurrCoverObj != null)
             {
                 m_distBetweenCover = Vector3.Distance(transform.position, CurrCoverObj.transform.position);
+                //m_distBetweenNextCover = Vector3.Distance(transform.position, CoverPos);
             }
             m_gunDistToPlayer = Vector3.Distance(m_weaponController.GetEquippedWeapon().transform.position, m_player.transform.position);
 
@@ -232,28 +255,48 @@ public class AI : BaseAI
     {
         STATE prevState = m_state;
 
-        //does this work?
+        if (m_stateCounter == m_numOfStateChanges)
+        {
+            m_seekChance += m_seekChanceIncrease;
+            if (m_seekChance > m_maxSeekChance)
+            {
+                m_seekChance = m_maxSeekChance;
+            }
+            m_relativeToSeekChance = (100f - m_seekChance) / 100f;
+            m_peekChance = m_relativePeekChance * m_relativeToSeekChance;
+            m_coverChance = m_relativeCoverChance * m_relativeToSeekChance;
+            m_stateCounter = 0;
+        }
+
         if (m_distBetweenPlayer < m_attackRadius)
         {
             transform.LookAt(PlayerPosition);
             
             if(m_distBetweenCover < m_seekFromCoverRadius)
             {
-                if (m_time < Time.time)
+                if ((m_finishedReload == false || m_gun.GetIsEmpty()) == false && AtCover)
                 {
-                    float choice = Random.Range(0, 100);
-                    if (choice <= 50)
+                    m_choice = Random.Range(0f, 100f);
+                    m_stateCounter++;
+                    if (m_choice <= m_peekChance)
                     {
-                        if (m_state != STATE.FINDCOVER)
-                        {
-                            m_state = STATE.PEEK;
-                            m_time = Time.time + Random.Range(m_minAttackDelay, m_maxAttackDelay);
-                        }
+                        m_state = STATE.PEEK;
+                        m_relativePeekChance -= 25f;
+                        m_relativeCoverChance += 25f;
+                        m_peekChance = m_relativePeekChance * m_relativeToSeekChance;
+                        m_coverChance = m_relativeCoverChance * m_relativeToSeekChance;
                     }
-                    if (choice > 50)
+                    else if (m_choice <= m_peekChance + m_coverChance)
                     {
                         m_state = STATE.FINDCOVER;
-                        m_time = Time.time + Random.Range(m_minAttackDelay, m_maxAttackDelay);
+                        m_relativePeekChance += 25f;
+                        m_relativeCoverChance -= 25f;
+                        m_peekChance = m_relativePeekChance * m_relativeToSeekChance;
+                        m_coverChance = m_relativeCoverChance * m_relativeToSeekChance;
+                    }
+                    else //If the remainder percent is chosen then seek
+                    {
+                        m_state = STATE.SEEK;
                     }
                 }
             }
@@ -261,20 +304,19 @@ public class AI : BaseAI
             //{
             //    m_state = STATE.PEEK;
             //}
-            if (m_distBetweenCover < m_seekFromCoverRadius && AtCover) // no other cover
-            {
-                m_state = STATE.PEEK;
-            }
+            //if (m_distBetweenCover < m_seekFromCoverRadius && AtCover) // no other cover
+            //{
+            //    m_state = STATE.PEEK;
+            //}
 
             if (m_distBetweenCover <= m_seekFromCoverRadius + m_deadZone && m_distBetweenCover >= m_seekFromCoverRadius - m_deadZone)
             {
-                if (m_state != STATE.FINDCOVER && prevState != STATE.FINDCOVER)
+                if (m_state == STATE.PEEK)
                 {
                     //If player is within cover and we're at max seek from cover distance (deadzone for floating point precision)
                     m_state = STATE.STATIONARY;
                 }
             }
-
         }
         else
         {
@@ -295,18 +337,17 @@ public class AI : BaseAI
             }
         }
 
-        //if (m_gun.GetIsEmpty())
-        //{
-        //    if (NoCover == false)
-        //    {
-        //        m_state = STATE.FINDCOVER;
-        //    }
-        //    else
-        //    {
-        //        m_state = STATE.RELOAD;
-        //    }
-        //
-        //}
+        if (m_gun.GetIsEmpty())
+        {
+            if (NoCover == false)
+            {
+                m_state = STATE.FINDCOVER;
+            }
+            else
+            {
+                m_state = STATE.RELOAD;
+            }
+        }
 
         if (AtCover)
         {
@@ -318,6 +359,8 @@ public class AI : BaseAI
             {
                 AtCover = false;
             }
+
+
         }
         else if (NoCover)
         {
@@ -338,9 +381,9 @@ public class AI : BaseAI
             }
         }
 
+
         if (prevState != m_state)
             return true;
-
         else
             return false;
     }
@@ -490,58 +533,58 @@ public class AI : BaseAI
         base.Die();
     }
 
-    //void DropDead()
+    //void dropdead()
     //{
-    //    if (m_hasDropped == false)
+    //    if (m_hasdropped == false)
     //    {
-    //        m_counter += Time.deltaTime;
-    //        Vector3 target = new Vector3(transform.position.x, m_bodyDropHeight, transform.position.z);
+    //        m_counter += time.deltatime;
+    //        vector3 target = new vector3(transform.position.x, m_bodydropheight, transform.position.z);
     //
-    //        transform.position = Vector3.Lerp(transform.position, target, m_counter);
+    //        transform.position = vector3.lerp(transform.position, target, m_counter);
     //
-    //        if (transform.position.y == m_bodyDropHeight)
+    //        if (transform.position.y == m_bodydropheight)
     //        {
-    //            m_hasDropped = true;
+    //            m_hasdropped = true;
     //        }
     //    }
     //}
 
-   // public void TakeHit(int a_damage, RaycastHit a_hit)
+   // public void takehit(int a_damage, raycasthit a_hit)
    // {
-   //     TakeDamage(a_damage);
+   //     takedamage(a_damage);
    // }
    //
-   // public void TakeDamage(int a_damage)
+   // public void takedamage(int a_damage)
    // {
    //     m_health -= a_damage;
    // }
    //
-   // public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile)
+   // public void takeimpact(int a_damage, raycasthit a_hit, projectile a_projectile)
    // {
-   //     TakeHit(a_damage, a_hit);
+   //     takehit(a_damage, a_hit);
    // }
 
-   // private void UpdateAnims()
+   // private void updateanims()
    // {
-   //     float myVelocity = m_agent.velocity.magnitude;
-   //     Vector3 localVel = transform.InverseTransformDirection(m_agent.velocity.normalized);
+   //     float myvelocity = m_agent.velocity.magnitude;
+   //     vector3 localvel = transform.inversetransformdirection(m_agent.velocity.normalized);
    //
-   //     m_enemyAnimator.SetFloat("Velocity", myVelocity);
+   //     m_enemyanimator.setfloat("velocity", myvelocity);
    //
-   //     m_enemyAnimator.SetFloat("MovementDirectionRight", localVel.x);
-   //     m_enemyAnimator.SetFloat("MovementDirectionForward", localVel.z);
+   //     m_enemyanimator.setfloat("movementdirectionright", localvel.x);
+   //     m_enemyanimator.setfloat("movementdirectionforward", localvel.z);
    // }
 
-    //private void UpdateParticles()
+    //private void updateparticles()
     //{
-    //    if (m_agent.velocity != Vector3.zero)
+    //    if (m_agent.velocity != vector3.zero)
     //    {
-    //        if (m_walkingParticleSystem.isPlaying == false)
-    //            m_walkingParticleSystem.Play();
+    //        if (m_walkingparticlesystem.isplaying == false)
+    //            m_walkingparticlesystem.play();
     //    }
     //    else
     //    {
-    //        m_walkingParticleSystem.Stop();
+    //        m_walkingparticlesystem.stop();
     //    }
     //}
 
@@ -567,7 +610,10 @@ public class AI : BaseAI
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(CoverPos, m_seekFromCoverRadius);
+        if (CurrCoverObj != null)
+        {
+            Gizmos.DrawWireSphere(CurrCoverObj.transform.position, m_seekFromCoverRadius);
+        }
         //Gizmos.DrawWireSphere(transform.position, m_fleeRadius);
         Gizmos.color = Color.red;
         if (m_weaponController != null)

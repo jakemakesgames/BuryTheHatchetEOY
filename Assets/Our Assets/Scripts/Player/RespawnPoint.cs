@@ -16,6 +16,7 @@ public class RespawnPoint : MonoBehaviour {
             if (m_player != null) {
                 m_player.CurrentlyCanInteractWith = PlayerInput.InteractableObject.CAMPFIRE;
                 m_player.InteractionObject = gameObject;
+                m_player.Player.RespawnPoint = m_respawnPoint.position;
             }
         }
     }

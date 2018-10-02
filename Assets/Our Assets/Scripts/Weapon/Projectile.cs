@@ -12,6 +12,7 @@ public class Projectile : MonoBehaviour {
     private float m_lifeTime = 20 /*seconds*/;
     private float m_skinWidth = 0.1f;
     private float m_speed = 10;
+    private float m_knockBack = 5f;
     private int m_damage = 1;
     private bool m_insideEntity;
     private bool m_hasEntered;
@@ -71,6 +72,11 @@ public class Projectile : MonoBehaviour {
     [SerializeField] private List<float> m_environmentParticleDists;
     [Tooltip("Dound to play on impact")]
     [SerializeField] private List<AudioClip> m_environmentAudioClips;
+
+    public float KnockBack {
+        get { return m_knockBack; }
+        set { m_knockBack = value; }
+    }
 
     #region setters
     public void SetSpeed(float a_speed) {
@@ -161,7 +167,7 @@ public class Projectile : MonoBehaviour {
     private void OnHitObject(RaycastHit a_hit, bool a_hitEntity) {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
         if (damagableObject != null)
-            damagableObject.TakeHit(m_damage, a_hit);
+            damagableObject.TakeImpact(m_damage, a_hit, this);
         m_insideEntity = a_hitEntity;
         if (m_insideEntity)
             return;

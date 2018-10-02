@@ -236,7 +236,7 @@ MonoBehaviour:
     type: 2}
   m_secondsBetweenShots: 0.5
   m_reloadTimeInSeconds: 0.7
-  m_muzzleVelocity: 30
+  m_muzzleVelocity: 60
   m_projectileLifeTime: 15
   m_dispersionAngle: 0
   m_numProjectilesPerShot: 1
