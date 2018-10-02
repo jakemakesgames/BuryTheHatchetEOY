@@ -2084,6 +2084,7 @@ GameObject:
   - component: {fileID: 82018876502477954}
   - component: {fileID: 82040681777354954}
   - component: {fileID: 82383125248586870}
+  - component: {fileID: 65530337999573900}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -3959,7 +3960,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1999925407510398}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -111.6, y: 1.33, z: -102.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4781331482718442}
@@ -4105,6 +4106,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &65530337999573900
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1999925407510398}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 1}
 --- !u!82 &82018876502477954
 AudioSource:
   m_ObjectHideFlags: 1
@@ -4950,6 +4963,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5778159e463981f4eb7ae2dc4350093f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_playerAnimator: {fileID: 95662078434291026}
+  m_meleeDamage: 1
+  m_meleeHitBox: {fileID: 65530337999573900}
   m_speed: 5
   m_accelerationRate: 0.1
   m_decelerationRate: 0.99
@@ -4979,9 +4995,7 @@ MonoBehaviour:
   m_walkVol: 0.5
   m_clothesVol: 0.5
   m_rollVol: 0.5
-  m_isRolling: 0
-  m_canRoll: 1
-  m_playerAnimator: {fileID: 95662078434291026}
+  m_canAttack: 1
 --- !u!114 &114465586240957604
 MonoBehaviour:
   m_ObjectHideFlags: 1

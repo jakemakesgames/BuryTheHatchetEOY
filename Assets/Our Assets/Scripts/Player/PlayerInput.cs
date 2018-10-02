@@ -129,7 +129,7 @@ public class PlayerInput : MonoBehaviour {
         private float m_inCombatTimer = 0f;
 
         private bool m_isHoldingGun;
-        private bool m_canAttack = true;
+        public bool m_canAttack = true;
         private bool m_isRolling = false;
         private bool m_canRoll = true;
         private bool m_rollAccelerating = true;
@@ -384,8 +384,7 @@ public class PlayerInput : MonoBehaviour {
     //Quickly moves the player in the direction they are facing
     private void Roll() {
         if (m_isRolling == false) {
-            if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Space) ||
-                    Input.GetKeyDown(KeyCode.LeftShift)) {
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.LeftShift)) {
                 m_rollStartTime = Time.time;
                 m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
                 m_playerAnimator.SetBool("Roll", true);
@@ -660,6 +659,7 @@ public class PlayerInput : MonoBehaviour {
 
     private void Start() {
         m_equippedWeaponInumerator = m_player.HeldWeaponLocation - 1;
+        m_meleeHitBox.enabled = false;
     }
 
     private void Update() {
@@ -691,6 +691,7 @@ public class PlayerInput : MonoBehaviour {
             //Player rolling
             if(m_canRoll)
                 Roll();
+
             //Player movement
             Move();
                         
