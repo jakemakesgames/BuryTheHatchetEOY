@@ -46,9 +46,6 @@ public class AI : BaseAI
     [Tooltip("Seek radius/green sphere - distance to seek to player.")]
     [SerializeField]
     private float m_seekFromCoverRadius;
-    [Tooltip("Seek radius/green sphere - distance to seek to player.")]
-    [SerializeField]
-    private float m_alertRadius;
     [Tooltip("Flee radius/Blue sphere (small) - distance to flee from player.")]
     [SerializeField]
     private float m_fleeRadius;
@@ -70,6 +67,9 @@ public class AI : BaseAI
     //[Tooltip("World height of body when dead")]
     //[SerializeField]
     //private float m_bodyDropHeight;
+    [Tooltip("Distance at which the AI will melee attack")]
+    [SerializeField]
+    private float m_meleeRange;
     [Tooltip("Minimum delay in seconds that AI will leave cover to attack")]
     [SerializeField]
     private float m_minAttackDelay;
@@ -300,6 +300,7 @@ public class AI : BaseAI
                     }
                 }
             }
+
             //if(Gun.CurrentClip <= 2)
             //{
             //    m_state = STATE.PEEK;
@@ -316,6 +317,11 @@ public class AI : BaseAI
                     //If player is within cover and we're at max seek from cover distance (deadzone for floating point precision)
                     m_state = STATE.STATIONARY;
                 }
+            }
+
+            if (m_state == STATE.STATIONARY && Gun.GetIsEmpty() == false && ClearShot() == false)
+            {
+                m_state = STATE.PEEK;
             }
         }
         else
