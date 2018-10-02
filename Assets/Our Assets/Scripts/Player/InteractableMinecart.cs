@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//Michael Corben
+//Created 17/09/2018
+//Last edited 19/09/2018
 
 public class InteractableMinecart : MonoBehaviour {
     [SerializeField] private float m_playerMoveSpeedMultipler;

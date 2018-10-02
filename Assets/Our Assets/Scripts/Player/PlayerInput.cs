@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 1/10/2018
+//Last edited 02/10/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -251,16 +251,10 @@ public class PlayerInput : MonoBehaviour {
             //GUN ATTACKING//
             //-------------//
             else if (Input.GetMouseButtonDown(0)) {
-                if (m_inCombat) {
-                    if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false) {
-                        m_playerAnimator.SetTrigger("Shoot");
-                        if (m_shootDustParticle != null)
-                            m_shootDustParticle.Play();
-                    }
-                }
-                else {
-                    m_inCombat = true;
-                    m_inCombatTimer = Time.time + m_inCombatTime;
+                if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false) {
+                    m_playerAnimator.SetTrigger("Shoot");
+                    if (m_shootDustParticle != null)
+                        m_shootDustParticle.Play();
                 }
             }
 

@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//Michael Corben
+//Created 17/09/2018
+//Last edited 02/10/2018
 
 public class RespawnPoint : MonoBehaviour {
 

@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 12/09/2018
+//Last edited 02/10/2018
 
 
 public class Projectile : MonoBehaviour {
