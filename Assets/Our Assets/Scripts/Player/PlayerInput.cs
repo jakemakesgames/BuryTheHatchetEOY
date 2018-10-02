@@ -31,13 +31,19 @@ public class PlayerInput : MonoBehaviour {
     [Tooltip("The damage delt to any enemy within the hitbox")]
     [SerializeField] private int m_meleeDamage = 1;
 
+    [Tooltip("Movement speed of the player whilst lunging with their hatchet")]
+    [SerializeField] private float m_lungeSpeed = 25f;
+
+    [Tooltip("Time the player is lunging in seconds")]
+    [SerializeField] private float m_lungeTime = 0.5f;
+
     [Tooltip("The hit box of the melee swing")]
     [SerializeField] private BoxCollider m_meleeHitBox;
         
     #endregion
 
     #region Movement/ animation variables
-    [Header("Movement variables")]
+        [Header("Movement variables")]
         [Tooltip("Movement speed of the player")]
         [SerializeField] private float m_speed = 5f;
         [Tooltip("Percent speed increace per sceond")]
@@ -127,6 +133,7 @@ public class PlayerInput : MonoBehaviour {
         private float m_rollTimePassed;
         private float m_invicibilityTimer = 0;
         private float m_inCombatTimer = 0f;
+        private float m_lungeTimer = 0f;
 
         private bool m_isHoldingGun;
         public bool m_canAttack = true;
@@ -135,6 +142,7 @@ public class PlayerInput : MonoBehaviour {
         private bool m_rollAccelerating = true;
         private bool m_inCombat = false;
         private bool m_isInvincible = false;
+        private bool m_isLunging = false;
 
         private InteractableObject m_currentlyCanInteractWith;
         private InteractableObject m_currentlyInteractingWith;
@@ -200,6 +208,9 @@ public class PlayerInput : MonoBehaviour {
             //---------------//
             if (Input.GetMouseButtonDown(1)) {
                 m_playerAnimator.SetTrigger("HatchetSwingTrigger");
+
+                m_isLunging = true;
+                m_lungeTimer = Time.time + m_lungeTime;
 
                 if (m_meleeHitBox != null)
                     m_meleeHitBox.enabled = true;
@@ -272,10 +283,20 @@ public class PlayerInput : MonoBehaviour {
         Vector3 moveVelocity = Vector3.one;
 
         //Calculating velocity
+
+        //--------------//
+        //LUNGE MOVEMENT//
+        //--------------//
+        if (m_isLunging) {
+            if (m_lungeTimer < Time.time)
+                m_isLunging = false;
+            m_velocity = m_lungeSpeed * transform.forward;
+        }
+        
         //----------------//
         //REGULAR MOVEMENT//
         //----------------//
-        if (m_isRolling == false) {
+        else if (m_isRolling == false) {
             m_acceleration = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
             m_acceleration *= m_accelerationRate;
             m_movementVector = Vector3.Lerp(m_movementVector, m_acceleration, m_decelerationRate);
@@ -345,6 +366,7 @@ public class PlayerInput : MonoBehaviour {
             }
             m_velocity = m_rollVelocity;
         }
+        
         
         m_nma.velocity = m_velocity;
     }
