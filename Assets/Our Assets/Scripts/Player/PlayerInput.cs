@@ -95,22 +95,33 @@ public class PlayerInput : MonoBehaviour {
         private AudioSource m_walkSpeaker;
         private AudioSource m_clothesSpeaker;
         private AudioSource m_rollSpeaker;
+
         [Header("Sounds")]
         [Tooltip("One of the sounds that'll player when the player moves")]
         [SerializeField] private AudioClip m_clothesRustleSound;
+
         [Tooltip("The sound that'll play when the player is walking")]
         [SerializeField] private AudioClip m_walkingSound;
+
         [Tooltip("The sound that'll play when the player is rolling")]
         [SerializeField] private AudioClip m_rollSound;
+
         [Tooltip("The sound that will player when the player can roll again")]
         [SerializeField] private AudioClip m_canRollSound;
+
         [Header("Particles")]
         [Tooltip("Paricles that will play when the player is walking")]
         [SerializeField] private ParticleSystem m_walkingParticleSystem;
+
         [Tooltip("Particles that will play when the player rolls")]
         [SerializeField] private ParticleSystem m_rollParticleSystem;
+
         [Tooltip("The particle effect to indicate when the player is invincible")]
         [SerializeField] private ParticleSystem m_invincibilityParticle;
+
+        [Tooltip("The particle that will play from the players feet when they shoot")]
+        [SerializeField] private ParticleSystem m_shootDustParticle;
+
         [Header("Volumes")]
         [Range(0, 1)]
         [SerializeField] private float m_walkVol = 0.5f;
@@ -168,9 +179,9 @@ public class PlayerInput : MonoBehaviour {
     }
 
         public bool CanAttack {
-        get { return m_canAttack; }
-        set { m_canAttack = value; }
-    }
+            get { return m_canAttack; }
+            set { m_canAttack = value; }
+        }
 
         public InteractableObject CurrentlyCanInteractWith {
         get { return m_currentlyCanInteractWith; } 
@@ -187,8 +198,13 @@ public class PlayerInput : MonoBehaviour {
             set { m_interactionObject = value; }
         }
 
+        public Player Player {
+            get { return m_player; }
+            set { m_player = value; }
+        }
+
     #endregion
-    
+
 
     #region Player action methods
     //calls the equipped weapons attacking method 
@@ -221,8 +237,11 @@ public class PlayerInput : MonoBehaviour {
             //-------------//
             else if (Input.GetMouseButtonDown(0)) {
                 if (m_inCombat) {
-                    if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
+                    if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false) {
                         m_playerAnimator.SetTrigger("Shoot");
+                        if (m_shootDustParticle != null)
+                            m_shootDustParticle.Play();
+                    }
                 }
                 else {
                     m_inCombat = true;
@@ -284,9 +303,9 @@ public class PlayerInput : MonoBehaviour {
 
         //Calculating velocity
 
-        //--------------//
-        //LUNGE MOVEMENT//
-        //--------------//
+        //----------------//
+        //LUNGING MOVEMENT//
+        //----------------//
         if (m_isLunging) {
             if (m_lungeTimer < Time.time)
                 m_isLunging = false;
@@ -504,21 +523,21 @@ public class PlayerInput : MonoBehaviour {
     //if they do, the method then stores the values of the currently equipped weapon
     //then equipes the player with the new weapon with the stored values for that specific weapon
     private void ChangeWeapon(int a_inumerator) {
-        if (m_player.m_weaponsAvailableToPlayer[a_inumerator]) {
-            if (m_player.m_heldWeapons[a_inumerator] != null) {
+        if (Player.m_weaponsAvailableToPlayer[a_inumerator]) {
+            if (Player.m_heldWeapons[a_inumerator] != null) {
                 SetWeaponInfo();
 
                 if (m_weaponController.GetEquippedWeapon() != null)
-                    m_player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
+                    Player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
                 m_equippedWeaponInumerator = a_inumerator;
-                m_weaponController.EquipWeapon(m_player.m_heldWeapons[a_inumerator]);
-                m_player.HeldWeaponLocation = a_inumerator + 1;
-                m_playerAnimator.SetInteger("whichWeapon", m_player.HeldWeaponLocation);
+                m_weaponController.EquipWeapon(Player.m_heldWeapons[a_inumerator]);
+                Player.HeldWeaponLocation = a_inumerator + 1;
+                m_playerAnimator.SetInteger("whichWeapon", Player.HeldWeaponLocation);
 
-                if (m_player.ToEquipIsMelee(a_inumerator) == false) {
+                if (Player.ToEquipIsMelee(a_inumerator) == false) {
                     Gun gun = m_weaponController.GetEquippedGun();
-                    gun.SetCurrentClip(m_player.ToEquipCurrentClip(a_inumerator));
-                    gun.SetCurrentReserveAmmo(m_player.ToEquipCurrentReserve(a_inumerator));
+                    gun.SetCurrentClip(Player.ToEquipCurrentClip(a_inumerator));
+                    gun.SetCurrentReserveAmmo(Player.ToEquipCurrentReserve(a_inumerator));
                     if(gun.CurrentClip < gun.m_clipSize)
                         gun.IsFull = false;
                 }
@@ -634,7 +653,7 @@ public class PlayerInput : MonoBehaviour {
     private void Awake() {
         m_nma = GetComponent<NavMeshAgent>();
         m_weaponController = GetComponent<WeaponController>();
-        m_player = GetComponent<Player>();
+        Player = GetComponent<Player>();
         m_audioSource = GetComponent<AudioSource>();
 
         Text[] texts = FindObjectsOfType<Text>();
@@ -680,13 +699,13 @@ public class PlayerInput : MonoBehaviour {
     }
 
     private void Start() {
-        m_equippedWeaponInumerator = m_player.HeldWeaponLocation - 1;
+        m_equippedWeaponInumerator = Player.HeldWeaponLocation - 1;
         m_meleeHitBox.enabled = false;
     }
 
     private void Update() {
         //Only run if the game is not paused
-        if (Time.timeScale > 0 && m_player.Dead == false) {
+        if (Time.timeScale > 0 && Player.Dead == false) {
             if (m_isRolling == false) {
                 //Switch Weapons
                 //SwitchWeapon();
