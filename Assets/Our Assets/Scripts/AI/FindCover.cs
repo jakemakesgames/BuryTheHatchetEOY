@@ -40,11 +40,15 @@ public class FindCover : IState<AI>
                 CalcRelativeCoverPos(a_owner);
                 SetPathToCover(a_owner);
             }
-            else if(a_owner.Gun.GetIsEmpty() && a_owner.CurrCoverObj != null)
+            else if (a_owner.Gun.GetIsEmpty() && a_owner.CurrCoverObj != null)
             {
                 m_nearestPoint = a_owner.CurrCoverObj;
                 //CalcRelativeCoverPos(a_owner);
                 //SetPathToCover(a_owner);
+            }
+            else if (a_owner.IsPeeking && a_owner.CurrCoverObj != null)
+            {
+                m_nearestPoint = a_owner.CurrCoverObj;
             }
 
             if (a_owner.Agent.remainingDistance >= a_owner.CoverFoundThreshold)

@@ -116,6 +116,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile)
     {
         TakeHit(a_damage, a_hit);
+        m_agent.velocity +=  a_projectile.transform.forward * a_projectile.KnockBack;
     }
 
 

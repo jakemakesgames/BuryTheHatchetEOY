@@ -65,7 +65,7 @@ public class LootManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
-            Instantiate(m_enemyPrefab, new Vector3(5f, 0f, 0f), Quaternion.identity);
+            //Instantiate(m_enemyPrefab, new Vector3(5f, 0f, 0f), Quaternion.identity);
         }
     
     }

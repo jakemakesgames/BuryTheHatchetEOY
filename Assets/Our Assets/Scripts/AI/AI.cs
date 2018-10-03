@@ -130,6 +130,7 @@ public class AI : BaseAI
     private bool m_atCover = false;
     private bool m_noCover = false;
     private bool m_noOtherCover = false;
+    private bool m_isPeeking;
 
     private STATE m_state;
 
@@ -166,6 +167,7 @@ public class AI : BaseAI
     public bool NoCover { get { return m_noCover; } set { m_noCover = value; } }
     public Transform NextCoverObj { get { return m_nextCoverObj; } set { m_nextCoverObj = value; } }
     public bool NoOtherCover { get { return m_noOtherCover; } set {m_noOtherCover = value; } }
+    public bool IsPeeking { get { return m_isPeeking; } set{ m_isPeeking = value; } }
     #endregion
 
     protected override void Awake()
@@ -270,7 +272,7 @@ public class AI : BaseAI
 
         if (m_distBetweenPlayer < m_attackRadius)
         {
-            transform.LookAt(PlayerPosition);
+            transform.LookAt(HeightCorrectedLookPos(transform.position.y));
             
             if(m_distBetweenCover < m_seekFromCoverRadius)
             {
@@ -297,6 +299,10 @@ public class AI : BaseAI
                     else //If the remainder percent is chosen then seek
                     {
                         m_state = STATE.SEEK;
+                        m_seekChance = 0f;
+                          m_relativeToSeekChance = (100f - m_seekChance) / 100f;
+                        m_peekChance = m_relativePeekChance * m_relativeToSeekChance;
+                        m_coverChance = m_relativeCoverChance * m_relativeToSeekChance;
                     }
                 }
             }
@@ -322,6 +328,21 @@ public class AI : BaseAI
             if (m_state == STATE.STATIONARY && Gun.GetIsEmpty() == false && ClearShot() == false)
             {
                 m_state = STATE.PEEK;
+            }
+
+            if (m_state == STATE.PEEK || m_state == STATE.STATIONARY)
+            {
+                int randAmmo = Random.Range(2, Gun.ClipSize - 2);
+
+                if (Gun.CurrentClip == randAmmo)
+                {
+                    IsPeeking = true;
+                    m_state = STATE.FINDCOVER;
+                }
+            }
+            else if (AtCover && Gun.GetIsEmpty() == false)
+            {
+                IsPeeking = false;
             }
         }
         else
@@ -512,7 +533,7 @@ public class AI : BaseAI
     {
         if (m_gunDistToPlayer < m_attackRadius && m_finishedReload)
         {
-            m_weaponController.m_weaponHold.LookAt(PlayerPosition);
+            m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
             if (Gun.Shoot())
             {
                 EnemyAnimator.SetTrigger("Shoot");
@@ -555,31 +576,31 @@ public class AI : BaseAI
     //    }
     //}
 
-   // public void takehit(int a_damage, raycasthit a_hit)
-   // {
-   //     takedamage(a_damage);
-   // }
-   //
-   // public void takedamage(int a_damage)
-   // {
-   //     m_health -= a_damage;
-   // }
-   //
-   // public void takeimpact(int a_damage, raycasthit a_hit, projectile a_projectile)
-   // {
-   //     takehit(a_damage, a_hit);
-   // }
+    // public void takehit(int a_damage, raycasthit a_hit)
+    // {
+    //     takedamage(a_damage);
+    // }
+    //
+    // public void takedamage(int a_damage)
+    // {
+    //     m_health -= a_damage;
+    // }
+    //
+    // public void takeimpact(int a_damage, raycasthit a_hit, projectile a_projectile)
+    // {
+    //     takehit(a_damage, a_hit);
+    // }
 
-   // private void updateanims()
-   // {
-   //     float myvelocity = m_agent.velocity.magnitude;
-   //     vector3 localvel = transform.inversetransformdirection(m_agent.velocity.normalized);
-   //
-   //     m_enemyanimator.setfloat("velocity", myvelocity);
-   //
-   //     m_enemyanimator.setfloat("movementdirectionright", localvel.x);
-   //     m_enemyanimator.setfloat("movementdirectionforward", localvel.z);
-   // }
+    // private void updateanims()
+    // {
+    //     float myvelocity = m_agent.velocity.magnitude;
+    //     vector3 localvel = transform.inversetransformdirection(m_agent.velocity.normalized);
+    //
+    //     m_enemyanimator.setfloat("velocity", myvelocity);
+    //
+    //     m_enemyanimator.setfloat("movementdirectionright", localvel.x);
+    //     m_enemyanimator.setfloat("movementdirectionforward", localvel.z);
+    // }
 
     //private void updateparticles()
     //{
@@ -593,6 +614,11 @@ public class AI : BaseAI
     //        m_walkingparticlesystem.stop();
     //    }
     //}
+
+    private Vector3 HeightCorrectedLookPos(float a_positionY)
+    {
+        return new Vector3(PlayerPosition.x, a_positionY, PlayerPosition.z);
+    }
 
     private void RandomPitch()
     {
