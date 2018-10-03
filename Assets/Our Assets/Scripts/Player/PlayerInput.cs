@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 02/10/2018
+//Last edited 03/10/2018
 
 
 [RequireComponent (typeof(NavMeshAgent))]
@@ -29,7 +29,7 @@ public class PlayerInput : MonoBehaviour {
 
     [Header("Melee Weapon")]
     [Tooltip("The damage delt to any enemy within the hitbox")]
-    [SerializeField] private int m_meleeDamage = 1;
+    [SerializeField] private int m_meleeDamage = 10;
 
     [Tooltip("Movement speed of the player whilst lunging with their hatchet")]
     [SerializeField] private float m_lungeSpeed = 25f;
@@ -588,6 +588,12 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
+    private void OnHitObject(Collider a_c) {
+        IDamagable damagableObject = a_c.GetComponent<IDamagable>();
+
+        if (damagableObject != null)
+            damagableObject.TakeDamage(m_meleeDamage);
+    }
     #endregion
 
     #region animation event functions
@@ -754,4 +760,7 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
+    private void OnTriggerEnter(Collider other) {
+        OnHitObject(other);
+    }
 }
