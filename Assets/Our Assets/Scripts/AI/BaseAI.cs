@@ -22,6 +22,10 @@ public class BaseAI : MonoBehaviour, IDamagable
     [SerializeField]
     protected float m_bodyDropHeight;
 
+    [Tooltip("Duration in seconds for stun when hit taken")]
+    [SerializeField]
+    protected float m_stunDuration;
+
     [Header("Sounds")]
     [SerializeField]
     protected List<AudioClip> m_deathSounds;
@@ -42,6 +46,8 @@ public class BaseAI : MonoBehaviour, IDamagable
     protected float m_health;
     protected float m_distBetweenPlayer;
     protected float m_counter = 0;
+    protected float m_takeHitTimer;
+    protected bool m_hasTakenImpact = false;
     protected bool m_isDead = false;
     protected bool m_hasDropped = false;
     protected bool m_hasDroppedTrigger = false;
@@ -88,6 +94,8 @@ public class BaseAI : MonoBehaviour, IDamagable
                 return;
             }
 
+            CheckIfHitTaken();
+
             UpdateAnims();
             UpdateParticles();
         }
@@ -116,9 +124,23 @@ public class BaseAI : MonoBehaviour, IDamagable
     public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile)
     {
         TakeHit(a_damage, a_hit);
-        m_agent.velocity +=  a_projectile.transform.forward * a_projectile.KnockBack;
+        m_agent.velocity = a_projectile.transform.forward * a_projectile.KnockBack;
+        m_hasTakenImpact = true;
     }
 
+    private void CheckIfHitTaken()
+    {
+        if (m_hasTakenImpact)
+        {
+            m_agent.isStopped = true;
+            m_takeHitTimer = Time.time + m_stunDuration;
+            m_hasTakenImpact = false;
+        }
+        if (m_takeHitTimer < Time.time)
+        {
+            m_agent.isStopped = false;
+        }
+    }
 
     protected virtual void Die()
     {

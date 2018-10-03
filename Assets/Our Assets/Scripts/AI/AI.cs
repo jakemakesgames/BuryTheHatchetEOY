@@ -531,7 +531,7 @@ public class AI : BaseAI
     }
     protected override void Attack()
     {
-        if (m_gunDistToPlayer < m_attackRadius && m_finishedReload)
+        if (m_gunDistToPlayer < m_attackRadius && m_finishedReload && m_state != STATE.RELOAD)
         {
             m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
             if (Gun.Shoot())
