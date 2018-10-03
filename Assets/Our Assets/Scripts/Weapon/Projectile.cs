@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 02/10/2018
+//Last edited 03/10/2018
 
 
 public class Projectile : MonoBehaviour {
@@ -105,16 +105,23 @@ public class Projectile : MonoBehaviour {
     //Check for when the projectile leaves an entity it has entered to play appropiate effects
     private void GoThroughEntity(float a_distanceToMove) {
         if (m_hasEntered == false) {
-            if (m_enterEntityParticle != null) {
-                GameObject GO = Instantiate(m_enterEntityParticle, transform.position + transform.forward * m_enterParticleDist, transform.rotation);
-                Destroy(GO, m_enterParticleTimer);
+            if (m_enterEntityParticle != null)
+            {
+                Ray enterRay = new Ray(transform.position, transform.forward);
+                RaycastHit enterRayHit;
+                Physics.Raycast(enterRay, out enterRayHit, a_distanceToMove + m_skinWidth, m_entityCollisionMask);
+                if (m_exitEntityParticle != null) {
+                    GameObject GO = Instantiate(m_enterEntityParticle, enterRayHit.point + transform.forward * m_enterParticleDist, transform.rotation);
+                    Destroy(GO, m_enterParticleTimer);
+                }
             }
             m_hasEntered = true;
         }
         Ray ray = new Ray(transform.position, -(transform.forward));
-        if (Physics.Raycast(ray, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
+        RaycastHit exitRayHit;
+        if (Physics.Raycast(ray, out exitRayHit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
             if (m_exitEntityParticle != null) {
-                GameObject GO = Instantiate(m_exitEntityParticle, transform.position - transform.forward * m_exitParticleDist, transform.rotation);
+                GameObject GO = Instantiate(m_exitEntityParticle, exitRayHit.point - transform.forward * m_exitParticleDist, transform.rotation);
                 Destroy(GO, m_exitParticleTimer);
             }
             m_lifeTime = m_bulletKillTime;

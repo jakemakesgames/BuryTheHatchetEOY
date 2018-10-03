@@ -189,6 +189,19 @@ public class PlayerInput : MonoBehaviour {
             set { m_canAttack = value; }
         }
 
+        public int CurrentAmmoInClip {
+            get {
+                if (m_weaponController.GetEquippedGun() != null)
+                    return m_weaponController.GetEquippedGun().CurrentClip;
+                else
+                    return 0;
+            }
+        }   
+
+        public int CurrentHealth {
+            get { return m_player.GetHealth(); }
+        }
+
         public InteractableObject CurrentlyCanInteractWith {
         get { return m_currentlyCanInteractWith; } 
         set { m_currentlyCanInteractWith = value; }
@@ -251,10 +264,12 @@ public class PlayerInput : MonoBehaviour {
             //GUN ATTACKING//
             //-------------//
             else if (Input.GetMouseButtonDown(0)) {
-                if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false) {
-                    m_playerAnimator.SetTrigger("Shoot");
-                    if (m_shootDustParticle != null)
-                        m_shootDustParticle.Play();
+                if (m_playerAnimator.GetBool("Reloading") == false) {
+                    if (m_weaponController.Shoot()) {
+                        m_playerAnimator.SetTrigger("Shoot");
+                        if (m_shootDustParticle != null)
+                            m_shootDustParticle.Play();
+                    }
                 }
             }
 
