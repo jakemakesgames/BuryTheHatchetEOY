@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 08/10/2018
+//Last edited 09/10/2018
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(AudioSource))]
@@ -24,10 +24,13 @@ public class Player : MonoBehaviour, IDamagable {
         private List<WeaponInfo> m_heldWeaponsInfo = new List<WeaponInfo>();
         private AudioSource m_audioSource;
         private PlayerInput m_input;
+        private RespawnPoint m_rp;
     #endregion
 
+    //----------------------------
     #region Inspector Variables
         [SerializeField] private int m_maxHealth;
+
         [Tooltip("The number of death animations")]
         [SerializeField] private int m_deathAnimCount;
 
@@ -66,14 +69,11 @@ public class Player : MonoBehaviour, IDamagable {
 
         [SerializeField] private Animator m_playerAnimator;
 
-        public bool Dead {
-            get { return m_dead; }
-            set { m_dead = value; }
-        }
 
     //public event System.Action OnDeath;
     #endregion
 
+    //----------------------------
     #region Properties
     public int HeldWeaponLocation {
         get { return m_heldWeaponLocation; }
@@ -88,6 +88,16 @@ public class Player : MonoBehaviour, IDamagable {
     public bool HasDroppedTrigger {
         get { return m_hasDroppedTrigger; }
         set { m_hasDroppedTrigger = value; }
+    }
+
+    public bool Dead {
+        get { return m_dead; }
+        set { m_dead = value; }
+    }
+
+    public RespawnPoint Rp {
+        get { return m_rp; }
+        set { m_rp = value; }
     }
     #endregion
 
@@ -208,6 +218,8 @@ public class Player : MonoBehaviour, IDamagable {
         m_hasDropped = false;
         HasDroppedTrigger = false;
         m_health = m_maxHealth;
+        if (Rp != null)
+            Rp.ResetEnemies();
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Respawn");
         GetComponent<NavMeshAgent>().enabled = true;
