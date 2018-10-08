@@ -73,7 +73,7 @@ public class Boss : MonoBehaviour, IDamagable
     private bool m_enraged;
     private bool m_barrelsDestroyed = false;
     private float m_distance;
-    private bool m_startFight;
+    private bool m_inSentryRange;
 
     #region Lerp
 
@@ -117,12 +117,11 @@ public class Boss : MonoBehaviour, IDamagable
     void Update()
     {
         //Checks if the player is in range of the Boss
-        StartBossFight();
+        SentryRange();
 
-        if (m_startFight)
+        if (m_inSentryRange)
         {
             Movement();
-            Overheat();
         }
     }
 
@@ -134,19 +133,21 @@ public class Boss : MonoBehaviour, IDamagable
         m_weaponController.GetEquippedGun().transform.position = m_bossGunPos.transform.position;
 
         //While the barrel hasnt been destroyed
-        if (!m_barrelsDestroyed)
-        {
-            //Aims at the player
-            m_targetDir = m_targetPlayer.position - m_weaponController.GetEquippedGun().transform.position;
+        //if (!m_barrelsDestroyed)
+        //{
 
-            //Rotation of the boss looking towards the player
-            m_rotation = Quaternion.LookRotation(m_targetDir);
+        //Aims at the player
+        m_targetDir = m_targetPlayer.position - m_weaponController.GetEquippedGun().transform.position;
 
-            //Rotation of the Boss's weapon towards the Player
-            m_weaponController.GetEquippedGun().transform.rotation = Quaternion.Lerp(m_weaponController.GetEquippedGun().transform.rotation,
-                m_rotation, m_gunRotateSpeed * Time.deltaTime);
+        //Rotation of the boss looking towards the player
+        m_rotation = Quaternion.LookRotation(m_targetDir);
 
-            #region Lerp
+        //Rotation of the Boss's weapon towards the Player
+        m_weaponController.GetEquippedGun().transform.rotation = Quaternion.Lerp(m_weaponController.GetEquippedGun().transform.rotation,
+            m_rotation, m_gunRotateSpeed * Time.deltaTime);
+
+        #region Lerp
+            /*
             ///Lerp Attempt
             m_disTrav = (Time.time - m_startTime) * m_cartSpeed;
             m_journeyFrac = m_disTrav / m_journeyLength;
@@ -164,65 +165,70 @@ public class Boss : MonoBehaviour, IDamagable
                 m_movingLeft = !m_movingLeft;
                 m_startTime = Time.time;
             }
+            */
             #endregion
 
             //When the barrels are destroyed we begin initiation of Phase Two
-            if (m_barrelOne == false && m_barrelTwo == false)
-            {
-                m_barrelsDestroyed = true;
-                m_bossAgent.GetComponent<NavMeshAgent>().enabled = true;
-                m_railTrack.SetActive(false);
-                m_minecart.SetActive(false);
-                m_boss.transform.position = m_phaseTwo.position;
-            }
-        }
-        else if (m_barrelsDestroyed)
-        {
-            #region Boss Rotation
+            //if (m_barrelOne == false && m_barrelTwo == false)
+            //{
+            //    m_barrelsDestroyed = true;
+            //    m_bossAgent.GetComponent<NavMeshAgent>().enabled = true;
+            //    m_railTrack.SetActive(false);
+            //    m_minecart.SetActive(false);
+            //    m_boss.transform.position = m_phaseTwo.position;
+            //}
 
-            //Re-Target the player
-            m_targetDir = m_targetPlayer.position - m_boss.transform.position;
 
-            //Initialise the boss's rotation
-            m_rotation = Quaternion.LookRotation(m_targetDir);
-            m_boss.transform.rotation = Quaternion.Lerp(m_boss.transform.rotation, m_rotation, m_bossRotateSpeed * Time.deltaTime);
+        //}
+        //else if (m_barrelsDestroyed)
+        //{
+        //    #region Boss Rotation
 
-            #endregion
+        //    //Re-Target the player
+        //    m_targetDir = m_targetPlayer.position - m_boss.transform.position;
 
-            #region Gun Rotation
+        //    //Initialise the boss's rotation
+        //    m_rotation = Quaternion.LookRotation(m_targetDir);
+        //    m_boss.transform.rotation = Quaternion.Lerp(m_boss.transform.rotation, m_rotation, m_bossRotateSpeed * Time.deltaTime);
 
-            //Gets the direction
-            m_targetDir = m_targetPlayer.position - m_weaponController.GetEquippedGun().transform.position;
-            m_rotation = Quaternion.LookRotation(m_targetDir);
-            //Lerps between the guns current rotation to the target rotation
-            m_weaponController.GetEquippedGun().transform.rotation = Quaternion.Lerp(m_weaponController.GetEquippedGun().transform.rotation,
-                m_rotation, m_gunRotateSpeed * Time.deltaTime);
+        //    #endregion
 
-            #endregion
+        //    #region Gun Rotation
 
-            //Gets the distance between the Boss and the Player
-            m_distance = Vector3.Distance(m_boss.transform.position, m_targetPlayer.position);
+        //    //Gets the direction
+        //    m_targetDir = m_targetPlayer.position - m_weaponController.GetEquippedGun().transform.position;
+        //    m_rotation = Quaternion.LookRotation(m_targetDir);
+        //    //Lerps between the guns current rotation to the target rotation
+        //    m_weaponController.GetEquippedGun().transform.rotation = Quaternion.Lerp(m_weaponController.GetEquippedGun().transform.rotation,
+        //        m_rotation, m_gunRotateSpeed * Time.deltaTime);
 
-            //When the Boss is further away from the player keep chasing
-            if (m_distance > m_distanceToBoss)
-            {
-                m_bossAgent.isStopped = false;
-                m_bossAgent.SetDestination(m_targetPlayer.position);
-            }
-            //If the Boss reaches the Player it stops
-            else
-            {
-                m_bossAgent.isStopped = true;
-            }
+        //    #endregion
 
-            //Sets it to be enraged
-            if (m_bossHealth <= m_enragedHealth)
-            {
-                m_enraged = true;
-            }
-        }
+        //    //Gets the distance between the Boss and the Player
+        //    m_distance = Vector3.Distance(m_boss.transform.position, m_targetPlayer.position);
+
+        //    //When the Boss is further away from the player keep chasing
+        //    if (m_distance > m_distanceToBoss)
+        //    {
+        //        m_bossAgent.isStopped = false;
+        //        m_bossAgent.SetDestination(m_targetPlayer.position);
+        //    }
+        //    //If the Boss reaches the Player it stops
+        //    else
+        //    {
+        //        m_bossAgent.isStopped = true;
+        //    }
+
+       //Sets it to be enraged
+       //if (m_bossHealth <= m_enragedHealth)
+       //{
+           //m_enraged = true;
+       //}
+        //}
     }
 
+    //Old Overheat Code
+    /*
     public void Overheat()
     {
         //Machine Gun overheating
@@ -272,6 +278,7 @@ public class Boss : MonoBehaviour, IDamagable
             }
         }
     }
+    */
 
     public void TakeHit(int a_damage, RaycastHit a_hit)
     {
@@ -301,13 +308,13 @@ public class Boss : MonoBehaviour, IDamagable
         Destroy(m_bossGun);
     }
 
-    private void StartBossFight()
+    private void SentryRange()
     {
-        if (m_startFight == false)
+        if (m_inSentryRange == false)
         {
             if ((m_boss.transform.position - m_targetPlayer.position).magnitude <= m_bossFightDist)
             {
-                m_startFight = true;
+                m_inSentryRange = true;
 
                 //Gets the starting time
                 m_startTime = Time.time;
