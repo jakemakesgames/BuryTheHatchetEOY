@@ -4,10 +4,12 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 25/08/2018
+//Last edited 08/10/2018
 
 public class WeaponController : MonoBehaviour {
 
+    //----------------------------
+    #region Setup variables
     [Tooltip("The position the equipped weapon will be")]
     [SerializeField] public Transform m_weaponHold;
 
@@ -27,7 +29,10 @@ public class WeaponController : MonoBehaviour {
     [Tooltip("The layer on which object that can be destroyed are to be assigned " +
         "Currently only works for the melee weapon")]
     [SerializeField] private LayerMask m_destroyableCollisionMask;
+    #endregion
 
+    //----------------------------
+    #region Properties
     public Transform WeaponHold {
         get { return m_weaponHold; } 
         set { m_weaponHold = value; }
@@ -46,8 +51,10 @@ public class WeaponController : MonoBehaviour {
         get { return m_entityCollisionMask; }
         set { m_entityCollisionMask = value; }
     }
+    #endregion
 
-
+    //----------------------------
+    #region Getters
     //returns if there is an equipped melee
     public Melee GetEquippedMelee() { return EquippedMelee; }
 
@@ -64,7 +71,10 @@ public class WeaponController : MonoBehaviour {
     
     //returns if there is an equipped gun
     public Gun GetEquippedGun() { return EquippedGun; }
+    #endregion
 
+    //----------------------------
+    #region Equippers
     //destroys any currently equipped weapon and equips a new gun
     public void EquipGun(Gun a_gunToEquip) {
         if (EquippedGun != null) {
@@ -114,7 +124,11 @@ public class WeaponController : MonoBehaviour {
             EquippedGun.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
         }
     }
+    #endregion
 
+
+    //----------------------------
+    #region Actions
     //Reloads the equipped gun, returns false if the action failed
     public bool ReloadEquippedGun() {
         if (EquippedGun != null) {
@@ -123,6 +137,7 @@ public class WeaponController : MonoBehaviour {
         return false;
     }
 
+    //Attacks with the equipped gun
     public bool Shoot() {
         if (EquippedGun != null) {
             return EquippedGun.Shoot();
@@ -130,12 +145,15 @@ public class WeaponController : MonoBehaviour {
         return false;
     }
 
+    //attacks with the equipped melee
     public void Swing() {
         if (EquippedMelee != null) {
             EquippedMelee.Swing();
         }
     }
-
+    #endregion
+    
+    //Equips a starting weapon
     public void Awake() {
         if (m_startingGun != null) {
             EquipGun(m_startingGun);
