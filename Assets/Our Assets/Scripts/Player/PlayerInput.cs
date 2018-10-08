@@ -25,7 +25,7 @@ public class PlayerInput : MonoBehaviour {
     [Header("CHARLIE!")]
     public Animator m_playerAnimator;
 
-    #region Melee attacking
+    #region Melee attacking variables
 
     [Header("Melee Weapon")]
     [Tooltip("The damage delt to any enemy within the hitbox")]
@@ -42,7 +42,10 @@ public class PlayerInput : MonoBehaviour {
 
     [Tooltip("The hit box of the melee swing")]
     [SerializeField] private BoxCollider m_meleeHitBox;
-        
+
+    //The damageable objects hit during this swing
+    private List<IDamagable> m_hitThisSwing;
+
     #endregion
 
     #region Movement/ animation variables
@@ -486,18 +489,18 @@ public class PlayerInput : MonoBehaviour {
     }
 
     //Coroutine used to detect if the player has entered combat range
-    private IEnumerator CheckEnemyDistance() {
-        while (true) {
-            Collider[] enemies = Physics.OverlapSphere(transform.position, m_inCombatRadius, m_weaponController.EntityCollisionMask);
-            if (m_inCombatTimer < Time.time) {
-                m_inCombat = (enemies.Length > 0);
-                if (m_inCombat)
-                    m_inCombatTimer = Time.time + m_inCombatTime;
-            }
-            m_playerAnimator.SetBool("WeaponActive", m_inCombat);
-            yield return new WaitForSeconds(0.25f);
-        }
-    }
+    //private IEnumerator CheckEnemyDistance() {
+    //    while (true) {
+    //        Collider[] enemies = Physics.OverlapSphere(transform.position, m_inCombatRadius, m_weaponController.EntityCollisionMask);
+    //        if (m_inCombatTimer < Time.time) {
+    //            m_inCombat = (enemies.Length > 0);
+    //            if (m_inCombat)
+    //                m_inCombatTimer = Time.time + m_inCombatTime;
+    //        }
+    //        m_playerAnimator.SetBool("WeaponActive", m_inCombat);
+    //        yield return new WaitForSeconds(0.25f);
+    //    }
+    //}
     #endregion
 
     #region Interaction methods
@@ -607,7 +610,17 @@ public class PlayerInput : MonoBehaviour {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
 
         if (damagableObject != null)
-            damagableObject.TakeDamage(m_meleeDamage);
+        {
+            bool ignore = false;
+            for (int i = 0; i < m_hitThisSwing.Count; i++) {
+                if (damagableObject == m_hitThisSwing[i])
+                    ignore = true;
+            }
+            if (ignore == false) { 
+                damagableObject.TakeDamage(m_meleeDamage);
+                m_hitThisSwing.Add(damagableObject);
+            }
+        }
     }
     #endregion
 
