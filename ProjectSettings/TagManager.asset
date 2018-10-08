@@ -15,6 +15,7 @@ TagManager:
   - CoverFree
   - UIClip
   - UIReserve
+  - ScreenShake
   layers:
   - Default
   - TransparentFX

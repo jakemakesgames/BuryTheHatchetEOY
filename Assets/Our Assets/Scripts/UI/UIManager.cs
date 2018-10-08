@@ -36,6 +36,8 @@ public class UIManager : MonoBehaviour
     [Tooltip("Players Health Bar")]
     [SerializeField] Image m_health;
 
+    [SerializeField] Animator m_uiAnim;
+
     private bool m_isPaused;
     private bool m_inMenu;
     private float m_maxHealth;
@@ -230,6 +232,16 @@ public class UIManager : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+    public void DeathFade()
+    {
+        m_uiAnim.SetTrigger("FadeOut");
+    }
+
+    public void RespawnFade()
+    {
+        m_uiAnim.SetTrigger("FadeIn");
     }
 
     #endregion

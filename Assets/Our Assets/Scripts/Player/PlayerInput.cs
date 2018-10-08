@@ -739,7 +739,7 @@ public class PlayerInput : MonoBehaviour {
         m_nmaAngledSpeed = m_nma.angularSpeed;
         m_nmaSpeed = m_nma.speed;
 
-        StartCoroutine(CheckEnemyDistance());
+        //StartCoroutine(CheckEnemyDistance());
     }
 
     private void Start() {
