@@ -8,9 +8,12 @@ public class PlayingCardTransforms : MonoBehaviour {
 	public Transform deactivePosition;
 	public GameObject playingCard;
 
-	private float speed = 1750f;
+	private float speed = 800f;
 
 	public bool activate = true;
+
+    private bool rotate = false;
+    private int spinR = 0; 
 
 	// Use this for initialization
 	void Start () {
@@ -34,6 +37,7 @@ public class PlayingCardTransforms : MonoBehaviour {
 		
 		ActiveMove ();
 		DeactiveMove();
+        Rotate();
 	
 	}
 
@@ -51,15 +55,29 @@ public class PlayingCardTransforms : MonoBehaviour {
 		}
 	}
 
+    void Rotate() {
+        if (rotate) {
+            if (spinR == 0) {
+                playingCard.transform.Rotate(0, 0, -5);
+            } else if (spinR == 1) {
+                playingCard.transform.Rotate(0, 0, 5);
+            }
+        }
+    }
+
 	public void UseCard(){
 		if (activate) {
 			activate = false;
+            rotate = true;
+            spinR = Random.Range(0, 2);
 		}
 	}
 
 	public void RestoreCard(){
 		if (!activate){
 			activate = true;
+            rotate = false;
+            playingCard.transform.rotation = Quaternion.Euler(0,0,0);
 		}
 	}
 }

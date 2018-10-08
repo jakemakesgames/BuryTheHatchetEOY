@@ -8,7 +8,7 @@ public class AmmoController : MonoBehaviour {
 
 	private int currentCard = 5;
 
-	public float timeBetweenCardsUp = 1f;
+	//public float timeBetweenCardsUp = 1f;
 	private float timer;
 
 	private bool reloading = false;
