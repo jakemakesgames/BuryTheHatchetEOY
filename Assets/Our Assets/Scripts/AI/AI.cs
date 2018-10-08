@@ -641,17 +641,17 @@ public class AI : BaseAI
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.blue;
+        Gizmos.color = new Color(0f, 0f, 1f, 0.4f);
         if (CurrCoverObj != null)
         {
             Gizmos.DrawWireSphere(CurrCoverObj.transform.position, m_seekFromCoverRadius);
         }
         //Gizmos.DrawWireSphere(transform.position, m_fleeRadius);
-        Gizmos.color = Color.red;
+        Gizmos.color = new Color(1f, 0f, 0f, 0.4f); ;
         if (m_weaponController != null)
         {
             Gizmos.DrawWireSphere(m_weaponController.m_weaponHold.transform.position, m_attackRadius);
-            Gizmos.color = Color.green;
+            Gizmos.color = new Color(0f, 1f, 0f, 0.4f); ;
             Gizmos.DrawWireSphere(m_weaponController.m_weaponHold.transform.position, m_coverRadius);
         }
     }

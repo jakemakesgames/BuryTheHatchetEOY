@@ -13,12 +13,12 @@ public class RespawnPoint : MonoBehaviour {
 
     private bool m_isCurrentRespawnPoint;
     private PlayerInput m_player;
-    private AI[] m_AIs;
+    private BaseAI[] m_AIs;
 
     //To be called by the player when they respawn
     public void ResetEnemies() {
         for (int i = 0; i < m_AIs.Length; i++) {
-            //m_AIs[i].Respawn();
+            m_AIs[i].Respawn();
         }
     }
 
@@ -26,7 +26,7 @@ public class RespawnPoint : MonoBehaviour {
     //to respawn enemies within an are if the
     //player dies before reaching the next checkpoint
     private void Start() {
-        m_AIs = GetComponentsInChildren<AI>();
+        m_AIs = GetComponentsInChildren<BaseAI>();
     }
 
     //When the player enters this trigger range 

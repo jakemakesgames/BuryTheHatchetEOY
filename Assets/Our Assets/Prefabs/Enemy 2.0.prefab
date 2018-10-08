@@ -1509,7 +1509,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1115818656347442}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -1.192, z: 0}
+  m_LocalPosition: {x: 0, y: -1.15, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 4985967277219970}
@@ -2262,22 +2262,22 @@ MonoBehaviour:
   m_maxHealth: 20
   m_deadZone: 0.1
   m_bodyDropHeight: 0.6
+  m_stunDuration: 0.5
   m_deathSounds:
   - {fileID: 8300000, guid: b05fd4b13e6775b41afdc221f5d39481, type: 3}
-  enemyAnimator: {fileID: 0}
+  m_enemyAnimator: {fileID: 0}
   m_deathAnimationCount: 0
-  m_walkingParticleSystem: {fileID: 198113631147028018, guid: d0e94ad31ea49a34ea8d52238797bef2,
-    type: 2}
+  m_walkingParticleSystem: {fileID: 198202974096351630}
   m_numOfStateChanges: 3
   m_seekChanceIncrease: 10
   m_maxSeekChance: 30
   m_seekFromCoverRadius: 2.5
-  m_alertRadius: 12.7
   m_fleeRadius: 2.1
   m_coverRadius: 8.1
   m_attackRadius: 11
   m_coverFoundThreshold: 3
   m_rayDetectBufferDist: 0.3
+  m_meleeRange: 0
   m_minAttackDelay: 3
   m_maxAttackDelay: 5
   m_gunRayTransform: {fileID: 4251749152737456}
@@ -2304,7 +2304,7 @@ LineRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1935959088329442}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
