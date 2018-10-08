@@ -109,29 +109,26 @@ public class PlayerInput : MonoBehaviour {
     #region In world game objects
     [Header("In world game objects")]
     [Tooltip("The camera used to orient the player when the camera rotates, required for movement to work")]
-    [SerializeField]
-    private Camera m_camera;
+    [SerializeField] private Camera m_camera;
+
     [Tooltip("The reference to the canvas for the player and the crosshair")]
-    [SerializeField]
-    private Canvas m_canvas;
-    [Tooltip("This object will be where ever the player is looking")]
-    [SerializeField]
-    private Image m_crosshair;
+    [SerializeField] private Canvas m_canvas;
+
     [Header("Ammo display")]
+
+    [Tooltip("The cards ammo display controller")]
+    [SerializeField] private AmmoController m_ammoController;
+
     [Tooltip("the tag of the ammo clip text object")]
-    [SerializeField]
-    private string m_clipTextTag;
+    [SerializeField] private string m_clipTextTag;
     [Tooltip("the tag of the ammo reserve text object")]
-    [SerializeField]
-    private string m_ammoTextTag;
+    [SerializeField] private string m_ammoTextTag;
     [Tooltip("Will change the text of this object to the amount " +
         "of ammo left in the currently equipped gun's clip")]
-    [SerializeField]
-    private Text m_clipAmmoDisplay;
+    [SerializeField] private Text m_clipAmmoDisplay;
     [Tooltip("will change the text of this object to the amount of ammo" +
         "the player has left excluding the ammo in the clip")]
-    [SerializeField]
-    private Text m_totalAmmoDisplay;
+    [SerializeField] private Text m_totalAmmoDisplay;
     private GameObject m_interactionObject;
     #endregion
 
@@ -323,6 +320,8 @@ public class PlayerInput : MonoBehaviour {
             else if (Input.GetMouseButtonDown(0)) {
                 if (m_playerAnimator.GetBool("Reloading") == false) {
                     if (m_weaponController.Shoot()) {
+                        if (m_ammoController != null)
+                            m_ammoController.Shoot();
                         m_playerAnimator.SetTrigger("Shoot");
                         if (m_shootDustParticle != null)
                             m_shootDustParticle.Play();
@@ -334,8 +333,13 @@ public class PlayerInput : MonoBehaviour {
             //GUN RELOADING//
             //-------------//
             else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
-                if (m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
-                    m_playerAnimator.SetBool("Reloading", true);
+                if (m_playerAnimator.GetBool("Reloading") == false) {
+                    if (m_weaponController.ReloadEquippedGun()) {
+                        if (m_ammoController != null)
+                            m_ammoController.Reload();
+                        m_playerAnimator.SetBool("Reloading", true);
+                    } 
+                }
             }
 
             #region old melee
