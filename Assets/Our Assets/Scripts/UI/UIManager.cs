@@ -236,12 +236,12 @@ public class UIManager : MonoBehaviour
 
     public void DeathFade()
     {
-        
+        m_uiAnim.SetTrigger("FadeOut");
     }
 
     public void RespawnFade()
     {
-        
+        m_uiAnim.SetTrigger("FadeIn");
     }
 
     #endregion
