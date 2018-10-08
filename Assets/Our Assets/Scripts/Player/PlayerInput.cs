@@ -499,16 +499,9 @@ public class PlayerInput : MonoBehaviour {
             Vector3 heightCorrectedLookPoint = new Vector3(lookAtPoint.x, transform.position.y, lookAtPoint.z);
 
             transform.LookAt(heightCorrectedLookPoint);
-            if (m_weaponController.EquippedGun != null && m_inCombat)
+            if (m_weaponController.EquippedGun != null && m_weaponController.EquippedGun.IsReloading == false)
                 hand.LookAt(lookAtPoint);
             m_weaponController.WeaponHold = hand;
-            //place the crosshiar at the mouse position
-            //if (m_crosshair != null && m_canvas != null) {
-            //    Vector2 pos;
-            //    RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            //        m_canvas.transform as RectTransform, Input.mousePosition, m_camera, out pos);
-            //    m_crosshair.transform.position = m_canvas.transform.TransformPoint(pos);
-            //}
         }
     }
 
