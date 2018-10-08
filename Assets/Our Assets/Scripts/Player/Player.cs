@@ -6,25 +6,12 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 03/10/2018
+//Last edited 08/10/2018
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(AudioSource))]
 public class Player : MonoBehaviour, IDamagable {
-
-    //This is for storing information on the currently uneqipped weapons of the player
-    public struct WeaponInfo {
-        public bool m_isMelee;
-        public int m_curClip;
-        public int m_curReserve;
-
-        public WeaponInfo(bool a_isMelee, int a_curClip, int a_curReserve) {
-            m_isMelee = a_isMelee;
-            m_curClip = a_curClip;
-            m_curReserve = a_curReserve;
-        }
-    }
-
+    
     #region Member variables
         private bool m_dead;
         private bool m_hasDropped = false;
@@ -43,17 +30,26 @@ public class Player : MonoBehaviour, IDamagable {
         [SerializeField] private int m_maxHealth;
         [Tooltip("The number of death animations")]
         [SerializeField] private int m_deathAnimCount;
+
         [SerializeField] private float m_deathFadeOutTime;
+
         [Tooltip("World height of body when dead")]
         [SerializeField] private float m_bodyDropHeight;
+
         [Tooltip("The audio clip that will play whenever the player gets hit")]
         [SerializeField] private AudioClip m_hitSound;
+
         [Tooltip("The audio clip  that will play once the player has died")]
         [SerializeField] private AudioClip m_dieSound;
+
         [Tooltip("The particles that will play when ever the player gets hit")]
         [SerializeField] private ParticleSystem m_hitParticleSystem;
+
         [Tooltip("The particles that will play once the player has died")]
         [SerializeField] private ParticleSystem m_dieParticleSystem;
+
+        [Tooltip("The UI Manager")]
+        [SerializeField] private UIManager m_UIManager;
 
         [Tooltip("Button would you press to equip the starting weapon")]
         [SerializeField] private int m_startingWeaponLocation = 2;
@@ -62,25 +58,28 @@ public class Player : MonoBehaviour, IDamagable {
         [Tooltip("which weapons assigned in the below " +
             "list are currently available to the player")]
         public List<bool> m_weaponsAvailableToPlayer;
+
         [Header("Needs to be filled with weapon prefabs")]
         [Tooltip("All weapons the player will be able to wield " +
             "throughout the game and which position they'll be stored")]
-        
         public List<GameObject> m_heldWeapons;
-        public Animator m_playerAnimator;
+
+        [SerializeField] private Animator m_playerAnimator;
 
         public bool Dead {
             get { return m_dead; }
             set { m_dead = value; }
         }
 
-        public event System.Action OnDeath;
+    //public event System.Action OnDeath;
     #endregion
-    
+
+    #region Properties
     public int HeldWeaponLocation {
         get { return m_heldWeaponLocation; }
         set { m_heldWeaponLocation = value; }
     }
+
     public Vector3 RespawnPoint {
         get { return m_respawnPoint; } 
         set { m_respawnPoint = value; }
@@ -90,6 +89,7 @@ public class Player : MonoBehaviour, IDamagable {
         get { return m_hasDroppedTrigger; }
         set { m_hasDroppedTrigger = value; }
     }
+    #endregion
 
     //IDamageble interfaces methods for taking damage
     #region IDamagable methods
@@ -113,33 +113,50 @@ public class Player : MonoBehaviour, IDamagable {
     }
     #endregion
 
+    //Methods for outsider scripts to change the players health
     #region Health manipulation
     public void Heal(int a_healAmount) { m_health += a_healAmount; }
     public int GetHealth() { return m_health; }
     public int GetMaxHealth() { return m_maxHealth; }
     #endregion
 
-    //Returns false if a successful assignment couldn't occur
-    //Sets information for a weapon the player is unequipping
-    public bool AssignWeaponInfo(int a_listIterator, int a_clip, int a_reserveAmmo) {
-        HeldWeaponLocation = a_listIterator;
-        if (m_heldWeapons[a_listIterator].GetComponent<Gun>() != null) {
-            if (m_heldWeapons[a_listIterator].GetComponent<Gun>().SetCurrentClip(a_clip) == false)
-                return false;
-            m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(false, a_clip, a_reserveAmmo);
-            return true;
-        }
-        else if (m_heldWeapons[a_listIterator].GetComponent<Melee>() != null) {
-            m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(true, 0, 0);
-            return true;
-        }
-        else
-            return false;
-    }
-
     //Returns information about the weapon which is about to be equipped
-
     #region To Equip Information
+        //This is for storing information on the currently uneqipped weapons of the player
+        //No longer used however as the player will only have one weapon and the melee will
+        //Be specific to the player
+        public struct WeaponInfo
+        {
+            public bool m_isMelee;
+            public int m_curClip;
+            public int m_curReserve;
+
+            public WeaponInfo(bool a_isMelee, int a_curClip, int a_curReserve)
+            {
+                m_isMelee = a_isMelee;
+                m_curClip = a_curClip;
+                m_curReserve = a_curReserve;
+            }
+        }
+
+        //Returns false if a successful assignment couldn't occur
+        //Sets information for a weapon the player is unequipping
+        public bool AssignWeaponInfo(int a_listIterator, int a_clip, int a_reserveAmmo) {
+            HeldWeaponLocation = a_listIterator;
+            if (m_heldWeapons[a_listIterator].GetComponent<Gun>() != null) {
+                if (m_heldWeapons[a_listIterator].GetComponent<Gun>().SetCurrentClip(a_clip) == false)
+                    return false;
+                m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(false, a_clip, a_reserveAmmo);
+                return true;
+            }
+            else if (m_heldWeapons[a_listIterator].GetComponent<Melee>() != null) {
+                m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(true, 0, 0);
+                return true;
+            }
+            else
+                return false;
+        }
+
         public bool ToEquipIsMelee(int a_iterator) {
             return m_heldWeaponsInfo[a_iterator].m_isMelee;
         }
@@ -151,22 +168,23 @@ public class Player : MonoBehaviour, IDamagable {
         }
     #endregion
 
+    //Functionality to handle what will happen if the player dies
     #region Player death handling
     //Calls all subscribed OnDeath methods when the player dies
     //and tells the player it is dead allowing for other 
     //functionality to occur elsewhere
     private void Die() {
         Dead = true;
-        if (OnDeath != null)
-            OnDeath();
 
+        //if the player animator exists, play a random death animation
+        //and disable their navmesh agent to let the player fall with their mesh
         if (m_playerAnimator != null) {
             int randomAnim = Random.Range(0, m_deathAnimCount - 1);
             m_playerAnimator.SetInteger("WhichDeath", randomAnim);
             m_playerAnimator.SetTrigger("Death");
             GetComponent<NavMeshAgent>().enabled = false;
         }
-
+        
         if (m_dieSound != null)
             m_audioSource.PlayOneShot(m_dieSound);
 
@@ -175,9 +193,14 @@ public class Player : MonoBehaviour, IDamagable {
             bloodPool.Play();
             Destroy(bloodPool, m_deathFadeOutTime + 1f);
         }
+
+        if (m_UIManager != null)
+            m_UIManager.DeathFade();
     }
 
-    //Moves the player to the respawn position
+    //Moves the player to the respawn position.
+    //Resets the player's health and give the,
+    //player control over the player character again
     public void Respawn() {
         transform.position = RespawnPoint;
         m_deathFadeOutTimer = m_deathFadeOutTime;
@@ -187,9 +210,13 @@ public class Player : MonoBehaviour, IDamagable {
         m_health = m_maxHealth;
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Respawn");
-            GetComponent<NavMeshAgent>().enabled = true;
+        GetComponent<NavMeshAgent>().enabled = true;
+        if (m_UIManager != null)
+            m_UIManager.DeathFade();
     }
 
+    //Drop the player to fall with the animation to appear as to fall
+    //to the ground rather than just fall and float
     private void DropDead() {
         if (m_hasDropped == false) {
             m_counter += Time.deltaTime;
@@ -236,10 +263,6 @@ public class Player : MonoBehaviour, IDamagable {
                 DropDead();
 
             m_deathFadeOutTimer -= Time.deltaTime;
-
-            //fade the screen to black
-            //if (m_blackCanvas != null)
-            //    m_blackCanvas.alpha = (m_deathFadeOutTime - m_deathFadeOutTimer) / m_deathFadeOutTime;
 
             if (m_deathFadeOutTimer <= 0)
                 Respawn();

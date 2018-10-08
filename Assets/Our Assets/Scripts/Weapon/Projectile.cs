@@ -4,11 +4,12 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 03/10/2018
+//Last edited 08/10/2018
 
 
 public class Projectile : MonoBehaviour {
-
+    
+    #region private variables
     private float m_lifeTime = 20 /*seconds*/;
     private float m_skinWidth = 0.1f;
     private float m_speed = 10;
@@ -19,7 +20,11 @@ public class Projectile : MonoBehaviour {
     private LayerMask m_ricochetCollisionMask;
     private LayerMask m_entityCollisionMask;
     private LayerMask m_environmentCollisionMask;
-    
+    private GameObject m_currentlyInside;
+    #endregion
+
+    //----------------------------
+    #region inspector variables
     [Header("Required for sound")]
     [Tooltip("The prefab for the speakers that'll spawn on events")]
     [SerializeField] private SpawnedSpeaker m_spawnedSpeaker;
@@ -72,12 +77,14 @@ public class Projectile : MonoBehaviour {
     [SerializeField] private List<float> m_environmentParticleDists;
     [Tooltip("Dound to play on impact")]
     [SerializeField] private List<AudioClip> m_environmentAudioClips;
+    #endregion
 
     public float KnockBack {
         get { return m_knockBack; }
         set { m_knockBack = value; }
     }
 
+    //----------------------------
     #region setters
     public void SetSpeed(float a_speed) {
         m_speed = a_speed;
@@ -102,43 +109,20 @@ public class Projectile : MonoBehaviour {
     }
     #endregion
 
-    //Check for when the projectile leaves an entity it has entered to play appropiate effects
-    private void GoThroughEntity(float a_distanceToMove) {
-        if (m_hasEntered == false) {
-            if (m_enterEntityParticle != null)
-            {
-                Ray enterRay = new Ray(transform.position, transform.forward);
-                RaycastHit enterRayHit;
-                Physics.Raycast(enterRay, out enterRayHit, a_distanceToMove + m_skinWidth, m_entityCollisionMask);
-                if (m_exitEntityParticle != null) {
-                    GameObject GO = Instantiate(m_enterEntityParticle, enterRayHit.point + transform.forward * m_enterParticleDist, transform.rotation);
-                    Destroy(GO, m_enterParticleTimer);
-                }
-            }
-            m_hasEntered = true;
-        }
-        Ray ray = new Ray(transform.position, -(transform.forward));
-        RaycastHit exitRayHit;
-        if (Physics.Raycast(ray, out exitRayHit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
-            if (m_exitEntityParticle != null) {
-                GameObject GO = Instantiate(m_exitEntityParticle, exitRayHit.point - transform.forward * m_exitParticleDist, transform.rotation);
-                Destroy(GO, m_exitParticleTimer);
-            }
-            m_lifeTime = m_bulletKillTime;
-            m_hasEntered = false;
-            m_insideEntity = false;
-        }
-    }
-
     //Use ray casts to check for collisions
+    #region Collision Detection Methods
     private void CheckCollisions(float a_distanceToMove) {
+
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
+
+        //The case where the projectile hits a ricochet object
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_ricochetCollisionMask)) {
             if (m_ricochetParticle != null) {
                 GameObject GO = Instantiate(m_ricochetParticle, transform.position - transform.forward * m_ricochetParticleDist, transform.rotation);
                 Destroy(GO, m_ricochetParticleTimer);
             }
+
             if (m_ricochetAudioClip != null && m_spawnedSpeaker != null) {
                 SpawnedSpeaker SS = Instantiate(m_spawnedSpeaker, transform) as SpawnedSpeaker;
                 SS.AudioSource.clip = m_ricochetAudioClip;
@@ -146,13 +130,19 @@ public class Projectile : MonoBehaviour {
             }
             OnHitObject(hit, this, false);
         }
+
+        //The case where the projectile hits an entity
         if (m_insideEntity == false) {
-            if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask))
+            if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
                 OnHitObject(hit, true);
+                m_currentlyInside = hit.transform.gameObject;
+            }
         }
+
+
+        //Checking for the case where the projectile hits an environment object with custom effects
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMask))
             OnHitObject(hit, false);
-
 
         for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMasks[i])) {
@@ -170,7 +160,50 @@ public class Projectile : MonoBehaviour {
         }
     }
 
+    //Check for when the projectile leaves an entity it has entered to play appropiate effects
+    private void GoThroughEntity(float a_distanceToMove)
+    {
+        if (m_hasEntered == false)
+        {
+            if (m_enterEntityParticle != null)
+            {
+                Ray enterRay = new Ray(transform.position, transform.forward);
+                RaycastHit enterRayHit;
+                Physics.Raycast(enterRay, out enterRayHit, a_distanceToMove + m_skinWidth, m_entityCollisionMask);
+                if (m_exitEntityParticle != null)
+                {
+                    GameObject GO = Instantiate(m_enterEntityParticle, enterRayHit.point + transform.forward * m_enterParticleDist, transform.rotation);
+                    Destroy(GO, m_enterParticleTimer);
+                }
+            }
+            m_hasEntered = true;
+        }
+        Ray ray = new Ray(transform.position, -(transform.forward));
+        RaycastHit exitRayHit;
+
+        //checking when the projectile, which has entered an entity, has left that entity
+        if (Physics.Raycast(ray, out exitRayHit, a_distanceToMove + m_skinWidth, m_entityCollisionMask))
+        {
+            if (exitRayHit.transform.gameObject == m_currentlyInside)
+            {
+                if (m_exitEntityParticle != null)
+                {
+                    GameObject GO = Instantiate(m_exitEntityParticle, exitRayHit.point - transform.forward * m_exitParticleDist, transform.rotation);
+                    Destroy(GO, m_exitParticleTimer);
+                }
+
+                m_lifeTime = m_bulletKillTime;
+                m_hasEntered = false;
+                m_insideEntity = false;
+                m_currentlyInside = null;
+            }
+        }
+    }
+
+    #endregion
+
     //Events for when the projectile collides with objects in the world with appropriate layers
+    #region Collision Response Methods
     private void OnHitObject(RaycastHit a_hit, bool a_hitEntity) {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
         if (damagableObject != null)
@@ -182,6 +215,7 @@ public class Projectile : MonoBehaviour {
         if (m_trailRenderer != null)
             Destroy(m_trailRenderer, m_trailRendererLifeTime);
     }
+
     private void OnHitObject(Collider a_c, bool a_hitEntity) {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
         if (damagableObject != null)
@@ -192,6 +226,7 @@ public class Projectile : MonoBehaviour {
         Destroy(gameObject);
         Destroy(m_trailRenderer, m_trailRendererLifeTime);
     }
+    
     private void OnHitObject(RaycastHit a_hit, Projectile a_bullet, bool a_hitEntity) {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
         if (damagableObject != null)
@@ -200,11 +235,11 @@ public class Projectile : MonoBehaviour {
         if (m_insideEntity)
             return;
     }
+    #endregion
 
+    //Create the trail renderer and check for initial collisions
     private void Start() {
         m_insideEntity = false;
-        if (m_trailRenderer != null)
-            m_trailRenderer = Instantiate(m_trailRenderer, transform.position, transform.rotation);
         //If the projectile spawns within a collider, it will activate the appropriate collision response
         Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
         if (initialEnemyCollision.Length > 0) {
@@ -223,24 +258,35 @@ public class Projectile : MonoBehaviour {
             OnHitObject(initialRicochetCollision[0], false);
             return;
         }
+
+        if (m_trailRenderer != null)
+            m_trailRenderer = Instantiate(m_trailRenderer, transform.position, transform.rotation);
+
     }
 
-    //Moves the projectile also counts down until this should be destroyed
+    //Moves the projectile along its forward
+    //also counts down until this should be destroyed
     public void Update () {
         float moveDistance = m_speed * Time.deltaTime;
         CheckCollisions(moveDistance);
         transform.Translate(Vector3.forward * moveDistance);
+
         if (m_insideEntity)
             GoThroughEntity(moveDistance);
 
-        if (m_lifeTime <= 0) {
+        if (m_lifeTime <= 0)
             Destroy(gameObject);
-        }
+
         m_lifeTime -= Time.deltaTime;
         if (m_trailRenderer != null) {
             m_trailRenderer.transform.position = transform.position;
             m_trailRenderer.transform.rotation = transform.rotation;
         }
 
+    }
+
+    //Displays a line out the projectile showing what it'll hit next calculation
+    private void OnDrawGizmosSelected() {
+        Gizmos.DrawLine(transform.position, transform.position + transform.forward * m_speed * Time.deltaTime);
     }
 }

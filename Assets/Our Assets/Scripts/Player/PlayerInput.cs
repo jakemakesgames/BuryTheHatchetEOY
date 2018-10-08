@@ -6,239 +6,293 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 03/10/2018
+//Last edited 08/10/2018
 
 
-[RequireComponent (typeof(NavMeshAgent))]
+[RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(Player))]
 public class PlayerInput : MonoBehaviour {
-
     public enum InteractableObject
     {
         NONE = 0,
-        CAMPFIRE,
+        RESPAWNPOINT,
         MINECART,
         PICKUP
     }
-    
-    [Header("CHARLIE!")]
-    public Animator m_playerAnimator;
 
+    //----------------------------
+    //Variables and access
+    //----------------------------
     #region Melee attacking variables
 
     [Header("Melee Weapon")]
     [Tooltip("The damage delt to any enemy within the hitbox")]
-    [SerializeField] private int m_meleeDamage = 10;
+    [SerializeField]
+    private int m_meleeDamage = 10;
 
     [Tooltip("Movement speed of the player whilst lunging with their hatchet")]
-    [SerializeField] private float m_lungeSpeed = 25f;
+    [SerializeField]
+    private float m_lungeSpeed = 25f;
 
     [Tooltip("Time the player is lunging in seconds")]
-    [SerializeField] private float m_lungeTime = 0.5f;
-    
+    [SerializeField]
+    private float m_lungeTime = 0.5f;
+
     [Tooltip("Time the player is swinging in seconds")]
-    [SerializeField] private float m_swingTime = 0.5f;
+    [SerializeField]
+    private float m_swingTime = 0.5f;
 
     [Tooltip("The hit box of the melee swing")]
-    [SerializeField] private BoxCollider m_meleeHitBox;
+    [SerializeField]
+    private BoxCollider m_meleeHitBox;
 
     //The damageable objects hit during this swing
     private List<IDamagable> m_hitThisSwing;
 
     #endregion
 
+    //----------------------------
     #region Movement/ animation variables
-        [Header("Movement variables")]
-        [Tooltip("Movement speed of the player")]
-        [SerializeField] private float m_speed = 5f;
-        [Tooltip("Percent speed increace per sceond")]
-        [SerializeField] private float m_accelerationRate = 0.1f;
-        [Tooltip("Percent speed decrease per sceond")]
-        [SerializeField] private float m_decelerationRate = 0.99f;
-        [Tooltip("Movement speed of the player at the start of the roll")]
-        [SerializeField] private float m_rollSpeedStart = 100f;
-        [Tooltip("The Time in seconds the player has to wait before they can roll again after rolling")]
-        [Range(0.125f, 1f)]
-        [SerializeField] private float m_rollCoolDownTime = 0.25f;
-        [Tooltip("Unit speed decrease per sceond when rolling")]
-        [Range(1.1f, 5)]
-        [SerializeField] private float m_rollAccelerationRate = 3f;
-        [Tooltip("Controls the x component of the roll curves, higher values make the roll switch curves faster")]
-        [SerializeField] private float m_rollTimeMultiplier = 1.2f;
-        [Tooltip("The Time in seconds the player is invincible after starting to roll")]
-        [SerializeField] private float m_invicibilityTime = 1f;
-        [Tooltip("If an enemy is within this distance from the player " +
-            "consider the player in combat")]
-        [SerializeField] private float m_inCombatRadius = 10f;
-        [Tooltip("The time that the player will have their weapons raised after entering combat stance")]
-        [SerializeField] private float m_inCombatTime = 5f;
+    [Header("CHARLIE!")]
+    [SerializeField]
+    private Animator m_playerAnimator;
 
-        private Vector3 m_velocityModifyer = Vector3.zero;
+    [Header("Movement variables")]
+    [Tooltip("Movement speed of the player")]
+    [SerializeField]
+    private float m_speed = 5f;
+
+    [Tooltip("Percent speed increace per sceond")]
+    [SerializeField]
+    private float m_accelerationRate = 0.1f;
+
+    [Tooltip("Percent speed decrease per sceond")]
+    [SerializeField]
+    private float m_decelerationRate = 0.99f;
+
+    [Tooltip("Movement speed of the player at the start of the roll")]
+    [SerializeField]
+    private float m_rollSpeedStart = 100f;
+
+    [Tooltip("The Time in seconds the player has to wait before they can roll again after rolling")]
+    [Range(0.125f, 1f)]
+    [SerializeField]
+    private float m_rollCoolDownTime = 0.25f;
+
+    [Tooltip("Unit speed decrease per sceond when rolling")]
+    [Range(1.1f, 5)]
+    [SerializeField]
+    private float m_rollAccelerationRate = 3f;
+
+    [Tooltip("Controls the x component of the roll curves, higher values make the roll switch curves faster")]
+    [SerializeField]
+    private float m_rollTimeMultiplier = 1.2f;
+
+    [Tooltip("The Time in seconds the player is invincible after starting to roll")]
+    [SerializeField]
+    private float m_invicibilityTime = 1f;
+
+    [Tooltip("If an enemy is within this distance from the player " +
+        "consider the player in combat")]
+    [SerializeField]
+    private float m_inCombatRadius = 10f;
+
+    [Tooltip("The time that the player will have their weapons raised after entering combat stance")]
+    [SerializeField]
+    private float m_inCombatTime = 5f;
+
+    private Vector3 m_velocityModifyer = Vector3.zero;
     #endregion
 
+    //----------------------------
     #region In world game objects
-        [Header("In world game objects")]
-        [Tooltip("The camera used to orient the player when the camera rotates, required for movement to work")]
-        [SerializeField] private Camera m_camera;
-        [Tooltip("The reference to the canvas for the player and the crosshair")]
-        [SerializeField] private Canvas m_canvas;
-        [Tooltip("This object will be where ever the player is looking")]
-        [SerializeField] private Image m_crosshair;
-        [Header("Ammo display")]
-        [Tooltip("the tag of the ammo clip text object")]
-        [SerializeField] private string m_clipTextTag;
-        [Tooltip("the tag of the ammo reserve text object")]
-        [SerializeField] private string m_ammoTextTag;
-        [Tooltip("Will change the text of this object to the amount " +
-            "of ammo left in the currently equipped gun's clip")]
-        [SerializeField] private Text m_clipAmmoDisplay;
-        [Tooltip("will change the text of this object to the amount of ammo" +
-            "the player has left excluding the ammo in the clip")]
-        [SerializeField] private Text m_totalAmmoDisplay;
-        private GameObject m_interactionObject;
+    [Header("In world game objects")]
+    [Tooltip("The camera used to orient the player when the camera rotates, required for movement to work")]
+    [SerializeField]
+    private Camera m_camera;
+    [Tooltip("The reference to the canvas for the player and the crosshair")]
+    [SerializeField]
+    private Canvas m_canvas;
+    [Tooltip("This object will be where ever the player is looking")]
+    [SerializeField]
+    private Image m_crosshair;
+    [Header("Ammo display")]
+    [Tooltip("the tag of the ammo clip text object")]
+    [SerializeField]
+    private string m_clipTextTag;
+    [Tooltip("the tag of the ammo reserve text object")]
+    [SerializeField]
+    private string m_ammoTextTag;
+    [Tooltip("Will change the text of this object to the amount " +
+        "of ammo left in the currently equipped gun's clip")]
+    [SerializeField]
+    private Text m_clipAmmoDisplay;
+    [Tooltip("will change the text of this object to the amount of ammo" +
+        "the player has left excluding the ammo in the clip")]
+    [SerializeField]
+    private Text m_totalAmmoDisplay;
+    private GameObject m_interactionObject;
     #endregion
 
+    //----------------------------
     #region sounds and particles
-        private AudioSource m_walkSpeaker;
-        private AudioSource m_clothesSpeaker;
-        private AudioSource m_rollSpeaker;
+    private AudioSource m_walkSpeaker;
+    private AudioSource m_clothesSpeaker;
+    private AudioSource m_rollSpeaker;
 
-        [Header("Sounds")]
-        [Tooltip("One of the sounds that'll player when the player moves")]
-        [SerializeField] private AudioClip m_clothesRustleSound;
+    [Header("Sounds")]
+    [Tooltip("One of the sounds that'll player when the player moves")]
+    [SerializeField]
+    private AudioClip m_clothesRustleSound;
 
-        [Tooltip("The sound that'll play when the player is walking")]
-        [SerializeField] private AudioClip m_walkingSound;
+    [Tooltip("The sound that'll play when the player is walking")]
+    [SerializeField]
+    private AudioClip m_walkingSound;
 
-        [Tooltip("The sound that'll play when the player is rolling")]
-        [SerializeField] private AudioClip m_rollSound;
+    [Tooltip("The sound that'll play when the player is rolling")]
+    [SerializeField]
+    private AudioClip m_rollSound;
 
-        [Tooltip("The sound that will player when the player can roll again")]
-        [SerializeField] private AudioClip m_canRollSound;
+    [Tooltip("The sound that will player when the player can roll again")]
+    [SerializeField]
+    private AudioClip m_canRollSound;
 
-        [Header("Particles")]
-        [Tooltip("Paricles that will play when the player is walking")]
-        [SerializeField] private ParticleSystem m_walkingParticleSystem;
+    [Header("Particles")]
+    [Tooltip("Paricles that will play when the player is walking")]
+    [SerializeField]
+    private ParticleSystem m_walkingParticleSystem;
 
-        [Tooltip("Particles that will play when the player rolls")]
-        [SerializeField] private ParticleSystem m_rollParticleSystem;
+    [Tooltip("Particles that will play when the player rolls")]
+    [SerializeField]
+    private ParticleSystem m_rollParticleSystem;
 
-        [Tooltip("The particle effect to indicate when the player is invincible")]
-        [SerializeField] private ParticleSystem m_invincibilityParticle;
+    [Tooltip("The particle effect to indicate when the player is invincible")]
+    [SerializeField]
+    private ParticleSystem m_invincibilityParticle;
 
-        [Tooltip("The particle that will play from the players feet when they shoot")]
-        [SerializeField] private ParticleSystem m_shootDustParticle;
+    [Tooltip("The particle that will play from the players feet when they shoot")]
+    [SerializeField]
+    private ParticleSystem m_shootDustParticle;
 
-        [Header("Volumes")]
-        [Range(0, 1)]
-        [SerializeField] private float m_walkVol = 0.5f;
-        [Range(0, 1)]
-        [SerializeField] private float m_clothesVol = 0.5f;
-        [Range(0, 1)]
-        [SerializeField] private float m_rollVol = 0.5f;
-    #endregion    
-
-    #region private member variables
-        private int m_equippedWeaponInumerator;
-        private int m_ammoInClip;
-        private int m_ammoInReserve;
-
-        private float m_nmaSpeed;
-        private float m_rollCoolDownTimer = 0;
-        private float m_nmaAngledSpeed;
-        private float m_nmaAcceleration;
-        private float m_rollStartTime;
-        private float m_rollTimePassed;
-        private float m_invicibilityTimer = 0;
-        private float m_inCombatTimer = 0f;
-        private float m_lungeTimer = 0f;
-        private float m_swingTimer = 0f;
-
-        private bool m_isHoldingGun;
-        public bool m_canAttack = true;
-        private bool m_isRolling = false;
-        private bool m_canRoll = true;
-        private bool m_rollAccelerating = true;
-        private bool m_inCombat = false;
-        private bool m_isInvincible = false;
-        private bool m_isLunging = false;
-
-        private InteractableObject m_currentlyCanInteractWith;
-        private InteractableObject m_currentlyInteractingWith;
-
-        private NavMeshAgent m_nma;
-
-        private Vector3 m_velocity;
-        private Vector3 m_acceleration;
-        private Vector3 m_movementVector;
-        private Vector3 m_preMoveVector;
-        private Vector3 m_rollVelocity;
-
-        private Camera m_viewCamera;
-        private WeaponController m_weaponController;
-        private Player m_player;
-        private AudioSource m_audioSource;
+    [Header("Volumes")]
+    [Range(0, 1)]
+    [SerializeField]
+    private float m_walkVol = 0.5f;
+    [Range(0, 1)]
+    [SerializeField]
+    private float m_clothesVol = 0.5f;
+    [Range(0, 1)]
+    [SerializeField]
+    private float m_rollVol = 0.5f;
     #endregion
 
+    //----------------------------
+    #region private member variables
+    private int m_equippedWeaponInumerator;
+    private int m_ammoInClip;
+    private int m_ammoInReserve;
+
+    private float m_nmaSpeed;
+    private float m_rollCoolDownTimer = 0;
+    private float m_nmaAngledSpeed;
+    private float m_nmaAcceleration;
+    private float m_rollStartTime;
+    private float m_rollTimePassed;
+    private float m_invicibilityTimer = 0;
+    private float m_inCombatTimer = 0f;
+    private float m_lungeTimer = 0f;
+    private float m_swingTimer = 0f;
+
+    private bool m_isHoldingGun;
+    public bool m_canAttack = true;
+    private bool m_isRolling = false;
+    private bool m_canRoll = true;
+    private bool m_rollAccelerating = true;
+    private bool m_inCombat = false;
+    private bool m_isInvincible = false;
+    private bool m_isLunging = false;
+
+    private InteractableObject m_currentlyCanInteractWith;
+    private InteractableObject m_currentlyInteractingWith;
+
+    private NavMeshAgent m_nma;
+
+    private Vector3 m_velocity;
+    private Vector3 m_acceleration;
+    private Vector3 m_movementVector;
+    private Vector3 m_preMoveVector;
+    private Vector3 m_rollVelocity;
+
+    private Camera m_viewCamera;
+    private WeaponController m_weaponController;
+    private Player m_player;
+    private AudioSource m_audioSource;
+    #endregion
+
+    //----------------------------
     #region properties
-        public bool IsInvincible {
-        get { return m_isInvincible; } 
+    public bool IsInvincible {
+        get { return m_isInvincible; }
         set { m_isInvincible = value; }
     }
 
-        public bool CanAttack {
-            get { return m_canAttack; }
-            set { m_canAttack = value; }
+    public bool CanAttack {
+        get { return m_canAttack; }
+        set { m_canAttack = value; }
+    }
+
+    public int CurrentAmmoInClip {
+        get
+        {
+            if (m_weaponController.GetEquippedGun() != null)
+                return m_weaponController.GetEquippedGun().CurrentClip;
+            else
+                return 0;
         }
+    }
 
-        public int CurrentAmmoInClip {
-            get {
-                if (m_weaponController.GetEquippedGun() != null)
-                    return m_weaponController.GetEquippedGun().CurrentClip;
-                else
-                    return 0;
-            }
-        }   
+    public int CurrentHealth     {
+        get { return m_player.GetHealth(); }
+    }
 
-        public int CurrentHealth {
-            get { return m_player.GetHealth(); }
-        }
-
-        public InteractableObject CurrentlyCanInteractWith {
-        get { return m_currentlyCanInteractWith; } 
+    public InteractableObject CurrentlyCanInteractWith {
+        get { return m_currentlyCanInteractWith; }
         set { m_currentlyCanInteractWith = value; }
     }
 
-        public InteractableObject CurrentlyInteractingWith {
+    public InteractableObject CurrentlyInteractingWith {
         get { return m_currentlyInteractingWith; }
         set { m_currentlyInteractingWith = value; }
     }
 
-        public GameObject InteractionObject {
-            get { return m_interactionObject; } 
-            set { m_interactionObject = value; }
-        }
+    public GameObject InteractionObject {
+        get { return m_interactionObject; }
+        set { m_interactionObject = value; }
+    }
 
-        public Player Player {
-            get { return m_player; }
-            set { m_player = value; }
-        }
+    public Player Player {
+        get { return m_player; }
+        set { m_player = value; }
+    }
 
-        public Vector3 VelocityModifyer {
-            get { return m_velocityModifyer; }
-            set { m_velocityModifyer = value; }
-        }
+    public Vector3 VelocityModifyer {
+        get { return m_velocityModifyer; }
+        set { m_velocityModifyer = value; }
+    }
 
     #endregion
 
-
+    //----------------------------
+    //Methods and functionality
+    //----------------------------
     #region Player action methods
     //calls the equipped weapons attacking method 
     //(swing for melee or shoot for gun)
     //via the weapon controller script
     //and also checks if the player wishes to reload
-    public void Attack() {
+    public void Attack()
+    {
         if (m_swingTimer < Time.time)
             m_meleeHitBox.enabled = false;
 
@@ -280,50 +334,51 @@ public class PlayerInput : MonoBehaviour {
             //GUN RELOADING//
             //-------------//
             else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
-                if(m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
-                    m_playerAnimator.SetBool("Reloading", true);
-            }
-            #region old melee
-        //if (equippedGun == null) {
-        //    Melee equippedMelee = m_weaponController.GetEquippedMelee();
-        //    if (equippedMelee == null)
-        //        return;
-        //
-        //    if (equippedMelee.IsIdle) {
-        //        if (Input.GetMouseButtonDown(0)) {
-        //            if (m_inCombat) {
-        //                m_weaponController.Swing();
-        //                m_playerAnimator.SetTrigger("HatchetSwingTrigger");
-        //            }
-        //            else {
-        //                m_inCombat = true;
-        //                m_inCombatTimer = Time.time + m_inCombatTime;
-        //            }
-        //        }
-        //    }
-        //}
-        #endregion
-            #region unneeded auto gun shooting
-        /*else if (equippedGun.m_isAutomatic && equippedGun.IsIdle) {
-            if (Input.GetMouseButton(0)) {
-                if (m_inCombat) {
-                    if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
-                        m_playerAnimator.SetTrigger("Shoot");
-                }
-                else {
-                    m_inCombat = true;
-                    m_inCombatTimer = Time.time + m_inCombatTime;
-                }
-            }
-            else if (Input.GetKey(KeyCode.R)) {
                 if (m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
                     m_playerAnimator.SetBool("Reloading", true);
             }
-        }*/
-        #endregion
+
+            #region old melee
+            //if (equippedGun == null) {
+            //    Melee equippedMelee = m_weaponController.GetEquippedMelee();
+            //    if (equippedMelee == null)
+            //        return;
+            //
+            //    if (equippedMelee.IsIdle) {
+            //        if (Input.GetMouseButtonDown(0)) {
+            //            if (m_inCombat) {
+            //                m_weaponController.Swing();
+            //                m_playerAnimator.SetTrigger("HatchetSwingTrigger");
+            //            }
+            //            else {
+            //                m_inCombat = true;
+            //                m_inCombatTimer = Time.time + m_inCombatTime;
+            //            }
+            //        }
+            //    }
+            //}
+            #endregion
+            #region unneeded auto gun shooting
+            /*else if (equippedGun.m_isAutomatic && equippedGun.IsIdle) {
+                if (Input.GetMouseButton(0)) {
+                    if (m_inCombat) {
+                        if (m_weaponController.Shoot() && m_playerAnimator.GetBool("Reloading") == false)
+                            m_playerAnimator.SetTrigger("Shoot");
+                    }
+                    else {
+                        m_inCombat = true;
+                        m_inCombatTimer = Time.time + m_inCombatTime;
+                    }
+                }
+                else if (Input.GetKey(KeyCode.R)) {
+                    if (m_weaponController.ReloadEquippedGun() && m_playerAnimator.GetBool("Reloading") == false)
+                        m_playerAnimator.SetBool("Reloading", true);
+                }
+            }*/
+            #endregion
         }
     }
-    
+
     //Calculates the players velocity for the next frame
     private void Move() {
         Vector3 moveVelocity = Vector3.one;
@@ -336,47 +391,47 @@ public class PlayerInput : MonoBehaviour {
         if (m_isLunging) {
             if (m_lungeTimer < Time.time)
                 m_isLunging = false;
-            m_velocity = m_lungeSpeed * transform.forward;
+            else
+                m_velocity = m_lungeSpeed * transform.forward;
         }
-        
+
         //----------------//
         //REGULAR MOVEMENT//
         //----------------//
         else if (m_isRolling == false) {
+
             m_acceleration = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
             m_acceleration *= m_accelerationRate;
+
             m_movementVector = Vector3.Lerp(m_movementVector, m_acceleration, m_decelerationRate);
+
             if (m_movementVector.sqrMagnitude > 1f)
                 m_movementVector.Normalize();
+
             Vector3 direction = m_camera.transform.rotation * m_movementVector;
             direction.y = 0;
             moveVelocity = direction.normalized * m_speed;
             m_velocity = moveVelocity;
+
             //Sound and Particle effects
-            if ((m_walkSpeaker == null || m_clothesSpeaker == null || m_walkingParticleSystem == null) == false)
-            {
-                if (m_movementVector.sqrMagnitude > 0)
-                {
-                    if (m_walkSpeaker.isPlaying == false)
-                    {
+            if ((m_walkSpeaker == null || m_clothesSpeaker == null || m_walkingParticleSystem == null) == false) {
+                if (m_movementVector.sqrMagnitude > 0) {
+                    if (m_walkSpeaker.isPlaying == false) {
                         if (m_walkSpeaker != null && m_walkingSound != null)
                             m_walkSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
 
-                        if (m_clothesSpeaker != null && m_clothesSpeaker != null)
-                        {
+                        if (m_clothesSpeaker != null && m_clothesSpeaker != null) {
                             m_clothesSpeaker.Play();
                             m_clothesSpeaker.loop = true;
                         }
                         if (m_walkingParticleSystem != null)
                             m_walkingParticleSystem.Play();
                     }
-                    else
-                    {
+                    else {
 
                     }
                 }
-                else if (m_walkSpeaker.isPlaying || m_clothesSpeaker.loop)
-                {
+                else if (m_walkSpeaker.isPlaying || m_clothesSpeaker.loop) {
                     if (m_walkSpeaker != null && m_walkingSound != null)
                         m_walkSpeaker.Stop();
 
@@ -413,7 +468,6 @@ public class PlayerInput : MonoBehaviour {
             m_velocity = m_rollVelocity;
         }
         
-        
         m_nma.velocity = m_velocity + VelocityModifyer;
         VelocityModifyer = Vector3.zero;
     }
@@ -422,14 +476,18 @@ public class PlayerInput : MonoBehaviour {
     //as well as place a crosshair object where the player is looking
     private void PlayerLookAt() {
         Transform hand = m_weaponController.WeaponHold;
+
         //Cast a ray from the given camera through the mouse to the created ground plane
         Ray ray = m_viewCamera.ScreenPointToRay(Input.mousePosition);
         Plane groundPlane = new Plane(Vector3.up, hand.position);
+
         if (m_weaponController.EquippedGun != null) {
             Vector3 planePos = m_weaponController.EquippedGun.Muzzle.position;
             groundPlane = new Plane(Vector3.up, planePos);
         }
+
         float rayDistance;
+
         //Cast the ray from the camera to the generated ground plane which will be created at the players hand position
         if (groundPlane.Raycast(ray, out rayDistance)) {
             Vector3 lookAtPoint = ray.GetPoint(rayDistance);
@@ -437,7 +495,7 @@ public class PlayerInput : MonoBehaviour {
             Vector3 heightCorrectedLookPoint = new Vector3(lookAtPoint.x, transform.position.y, lookAtPoint.z);
 
             transform.LookAt(heightCorrectedLookPoint);
-            if(m_weaponController.EquippedGun != null && m_inCombat)
+            if (m_weaponController.EquippedGun != null && m_inCombat)
                 hand.LookAt(lookAtPoint);
             m_weaponController.WeaponHold = hand;
             //place the crosshiar at the mouse position
@@ -458,10 +516,12 @@ public class PlayerInput : MonoBehaviour {
                 m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
                 m_playerAnimator.SetBool("Roll", true);
                 Debug.Log("roll");
+
                 m_isRolling = true;
                 m_canRoll = false;
                 m_rollAccelerating = true;
                 IsInvincible = true;
+
                 if (m_nma.velocity != Vector3.zero) {
                     Vector3 newForward = m_nma.velocity.normalized;
                     m_rollVelocity = m_rollSpeedStart * newForward;
@@ -470,7 +530,7 @@ public class PlayerInput : MonoBehaviour {
                 else
                     m_rollVelocity = m_rollSpeedStart * transform.forward;
 
-                if(m_rollSpeaker != null && m_rollSound != null)
+                if (m_rollSpeaker != null && m_rollSound != null)
                     m_rollSpeaker.Play(); /**NEED TO IMPLEMENT VOLUME CONTROL AND RANDOM PITCHING*/
 
                 if (m_rollParticleSystem != null)
@@ -483,8 +543,7 @@ public class PlayerInput : MonoBehaviour {
     }
 
     //Player interacting with the world in way other than moving and attacking
-    private void Interact()
-    {
+    private void Interact() {
 
     }
 
@@ -503,20 +562,25 @@ public class PlayerInput : MonoBehaviour {
     //}
     #endregion
 
+    //----------------------------
     #region Interaction methods
-    private void CampFireInteraction() {
+    private void CampFireInteraction()
+    {
 
     }
 
-    private void MinecartInteraction() {
+    private void MinecartInteraction()
+    {
 
     }
 
-    private void PickupInteraction() {
+    private void PickupInteraction()
+    {
 
     }
     #endregion
 
+    //----------------------------
     #region Weapon methods
     //Gives a ui text object the players ammo for their currently equipped weapon
     private void DisplayAmmo() {
@@ -526,13 +590,12 @@ public class PlayerInput : MonoBehaviour {
                 m_clipAmmoDisplay.GetComponent<Text>().text =
                     (equippedGun.GetCurrentClip().ToString() + " / " + equippedGun.GetCurrentAmmo().ToString());
         }
-        else
-        {
+        else {
             if (m_clipAmmoDisplay != null)
                 m_clipAmmoDisplay.GetComponent<Text>().text = (" ");
         }
     }
-    
+
     //Caches the weapon info of the currently equipped weapon for storing on weapon switch
     private void SetWeaponInfo() {
         if (m_weaponController.GetEquippedGun() == null) {
@@ -540,7 +603,7 @@ public class PlayerInput : MonoBehaviour {
             m_ammoInReserve = 0;
             m_isHoldingGun = false;
         }
-        else {
+        else         {
             m_ammoInClip = m_weaponController.GetEquippedGun().GetCurrentClip();
             m_ammoInReserve = m_weaponController.GetEquippedGun().GetCurrentAmmo();
             m_isHoldingGun = true;
@@ -566,7 +629,7 @@ public class PlayerInput : MonoBehaviour {
                     Gun gun = m_weaponController.GetEquippedGun();
                     gun.SetCurrentClip(Player.ToEquipCurrentClip(a_inumerator));
                     gun.SetCurrentReserveAmmo(Player.ToEquipCurrentReserve(a_inumerator));
-                    if(gun.CurrentClip < gun.ClipSize)
+                    if (gun.CurrentClip < gun.ClipSize)
                         gun.IsFull = false;
                 }
             }
@@ -609,14 +672,13 @@ public class PlayerInput : MonoBehaviour {
     private void OnHitObject(Collider a_c) {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
 
-        if (damagableObject != null)
-        {
+        if (damagableObject != null) {
             bool ignore = false;
             for (int i = 0; i < m_hitThisSwing.Count; i++) {
                 if (damagableObject == m_hitThisSwing[i])
                     ignore = true;
             }
-            if (ignore == false) { 
+            if (ignore == false) {
                 damagableObject.TakeDamage(m_meleeDamage);
                 m_hitThisSwing.Add(damagableObject);
             }
@@ -624,6 +686,7 @@ public class PlayerInput : MonoBehaviour {
     }
     #endregion
 
+    //----------------------------
     #region animation event functions
 
     public void HalfWay() {
@@ -662,19 +725,18 @@ public class PlayerInput : MonoBehaviour {
         if (m_meleeHitBox != null)
             m_meleeHitBox.enabled = false;
     }
-    #endregion
 
     //Charlie
     private void UpdateAnims() {
         float myVelocity = m_velocity.magnitude;
-        
+
         Vector3 localVel = transform.InverseTransformDirection(m_velocity.normalized);
 
         m_playerAnimator.SetFloat("Velocity", myVelocity);
-        
+
         m_playerAnimator.SetFloat("MovementDirectionRight", localVel.x);
         m_playerAnimator.SetFloat("MovementDirectionForward", localVel.z);
-        
+
         //Debug.Log(m_playerAnimator.GetFloat("MovementDirectionRight")/100);
         //
         //ORIGINAL CODE//////////////////////////////////////////////////////////////////////////////
@@ -692,7 +754,10 @@ public class PlayerInput : MonoBehaviour {
         //
         //playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.z * transform.right.z);   
     }
+    #endregion
 
+    //----------------------------
+    #region startup
     //Get all requied attached components and store them for later use
     private void Awake() {
         m_nma = GetComponent<NavMeshAgent>();
@@ -710,7 +775,7 @@ public class PlayerInput : MonoBehaviour {
         }
 
         //Create the speakers for the individual sounds
-        
+
         m_walkSpeaker = gameObject.AddComponent<AudioSource>();
         m_walkSpeaker.volume = m_walkVol;
         if (m_walkSpeaker != null)
@@ -728,7 +793,7 @@ public class PlayerInput : MonoBehaviour {
 
         if (m_walkingParticleSystem != null)
             m_walkingParticleSystem.Stop();
-        if(m_rollParticleSystem != null)
+        if (m_rollParticleSystem != null)
             m_rollParticleSystem.Stop();
         if (m_invincibilityParticle != null)
             m_invincibilityParticle.Stop();
@@ -746,7 +811,10 @@ public class PlayerInput : MonoBehaviour {
         m_equippedWeaponInumerator = Player.HeldWeaponLocation - 1;
         m_meleeHitBox.enabled = false;
     }
+    #endregion
 
+    //----------------------------
+    #region Runtime
     private void Update() {
         //Only run if the game is not paused
         if (Time.timeScale > 0 && Player.Dead == false) {
@@ -758,12 +826,12 @@ public class PlayerInput : MonoBehaviour {
                 PlayerLookAt();
 
                 //Player attacking
-                if(CanAttack)
+                if (CanAttack)
                     Attack();
 
                 if (m_rollCoolDownTimer <= Time.time) {
                     m_canRoll = true;
-                    if(m_rollSpeaker != null && m_canRollSound != null)
+                    if (m_rollSpeaker != null && m_canRollSound != null)
                         m_rollSpeaker.PlayOneShot(m_canRollSound);
                 }
             }
@@ -774,12 +842,12 @@ public class PlayerInput : MonoBehaviour {
             }
 
             //Player rolling
-            if(m_canRoll)
+            if (m_canRoll)
                 Roll();
 
             //Player movement
             Move();
-                        
+
             //Ammo display
             DisplayAmmo();
 
@@ -791,4 +859,5 @@ public class PlayerInput : MonoBehaviour {
     private void OnTriggerEnter(Collider other) {
         OnHitObject(other);
     }
+    #endregion
 }

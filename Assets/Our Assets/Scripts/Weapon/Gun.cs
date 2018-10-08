@@ -4,11 +4,14 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 11/09/2018
+//Last edited 08/10/2018
 
     [RequireComponent(typeof(AudioSource))]
 public class Gun : MonoBehaviour {
 
+    //----------------------------
+    //Variables and access
+    //----------------------------
     #region Inspector variables
     [Header("projectiles parent object, MUST BE AT 0,0,0")]
     [Tooltip("Parent object for scene clarity")]
@@ -70,6 +73,7 @@ public class Gun : MonoBehaviour {
     [SerializeField] private bool m_isAutomatic = false;
     #endregion
 
+    //----------------------------
     #region Private member variables
     private AudioSource m_audioSource;
 
@@ -88,6 +92,7 @@ public class Gun : MonoBehaviour {
     private bool m_setToReloadOne = false;
     #endregion
 
+    //----------------------------
     #region properties
     public LayerMask EntityCollisionMask {
         get { return m_entityCollisionMask; } 
@@ -145,17 +150,22 @@ public class Gun : MonoBehaviour {
     }
     #endregion
 
+    //----------------------------
     #region setters, getters and other variable control
     public void AddAmmo(int a_ammoToAdd) { CurrentAmmo += a_ammoToAdd; }
+
     public void SetEntityCollisionLayer(LayerMask a_collsionMask) {
         EntityCollisionMask = a_collsionMask;
     }
+
     public void SetEnvironmentCollisionLayer(LayerMask a_collsionMask) {
         EnvironmentCollisionMask = a_collsionMask;
     }
+
     public void SetRicochetCollisionLayer(LayerMask a_collsionMask) {
         RicochetCollisionMask = a_collsionMask;
     }
+
     public void SetInfiniteAmmo(bool a_infiniteAmmo) {
         m_infiniteAmmo = a_infiniteAmmo;
     }
@@ -188,14 +198,17 @@ public class Gun : MonoBehaviour {
     public Transform GetMuzzle() { return Muzzle; }
     #endregion
 
+    //----------------------------
+    //Methods and functionality
+    //----------------------------
     #region ammo control
+
     //reloads the gun and also prevents shooting for a time based on the reload time in seconds variable
     //returns true if the gun can reload or false if it cannot
     public bool Reload() {
         if (CurrentClip == ClipSize)
-        {
             return false;
-        }
+
         if (IsReloading == false) {
             TimeUntilNextAction = Time.time + m_reloadTimeInSeconds;
             IsReloading = true;
@@ -253,6 +266,7 @@ public class Gun : MonoBehaviour {
         }
     #endregion
 
+    //----------------------------
     #region shoot
     //Randomises the projectiles angle based on the dispersion angle variable
     private Vector3 RandomAngle() {
