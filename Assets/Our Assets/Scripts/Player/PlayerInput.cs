@@ -265,19 +265,23 @@ public class PlayerInput : MonoBehaviour {
         set { m_interactionObject = value; }
     }
 
-    public Player Player {
-        get { return m_player; }
-        set { m_player = value; }
-    }
 
     public Vector3 VelocityModifyer {
         get { return m_velocityModifyer; }
         set { m_velocityModifyer = value; }
     }
+    public Player Player {
+        get { return m_player; }
+        set { m_player = value; }
+    }
 
     public WeaponController WeapCont {
         get { return m_weaponController; }
         set { m_weaponController = value; }
+    }
+
+    public AmmoController AmmoCont {
+        get { return m_ammoController; }
     }
     #endregion
 

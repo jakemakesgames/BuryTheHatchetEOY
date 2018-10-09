@@ -242,8 +242,13 @@ public class Player : MonoBehaviour, IDamagable {
             m_UIManager.DeathFade();
 
         if (m_input != null) {
-            if (m_input.WeapCont != null)
+            if (m_input.WeapCont != null) {
                 m_input.WeapCont.InstantReload();
+                for (int i = 0; i < m_input.WeapCont.EquippedGun.CurrentClip; i++) {
+                    m_input.AmmoCont.Reload();
+                }
+            }
+                
         }
             
     }
