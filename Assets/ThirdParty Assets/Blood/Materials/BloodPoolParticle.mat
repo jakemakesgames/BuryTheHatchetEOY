@@ -65,7 +65,11 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
     - _GlossMapScale: 1
+<<<<<<< HEAD
     - _Glossiness: 0.007
+=======
+    - _Glossiness: 0
+>>>>>>> 9755c1e8394aa3a27620e8cdd68ab9e25760eccb
     - _GlossyReflections: 1
     - _InvFade: 1
     - _Metallic: 0
