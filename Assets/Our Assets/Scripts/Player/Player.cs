@@ -309,9 +309,9 @@ public class Player : MonoBehaviour, IDamagable {
             UpdateHealthDisplay();
             m_health = m_maxHealth;
         }
-        else if (m_health < 0) {
-            UpdateHealthDisplay();
+        else if (m_health <= 0) {
             m_health = 0;
+            UpdateHealthDisplay();
         }
         if(Dead) {
             if (HasDroppedTrigger)
