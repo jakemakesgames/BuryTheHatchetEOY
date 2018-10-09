@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using TMPro;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
@@ -74,7 +75,7 @@ public class Player : MonoBehaviour, IDamagable {
         [SerializeField] private Image m_healthBar;
 
         [Tooltip("The text mesh object that'll display the heath")]
-        [SerializeField] private TextMesh m_healthAmountTextMesh;
+        [SerializeField] private TextMeshProUGUI m_healthAmountTextMesh;
         
     #endregion
 
@@ -258,9 +259,9 @@ public class Player : MonoBehaviour, IDamagable {
     #endregion
 
     //updates the health display
-    private void UpdateHealthDisplay() {
+    private void UpdateHealthDisplay() {    
         if (m_healthAmountTextMesh != null)
-            m_healthAmountTextMesh.text = m_health.ToString();
+            m_healthAmountTextMesh.text = m_health + " / " + m_maxHealth.ToString();
         if (m_healthBar != null)
             m_healthBar.fillAmount = m_health / m_maxHealth;
     }
