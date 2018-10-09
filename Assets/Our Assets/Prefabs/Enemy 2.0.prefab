@@ -2326,7 +2326,7 @@ MonoBehaviour:
   m_deathSounds:
   - {fileID: 8300000, guid: b05fd4b13e6775b41afdc221f5d39481, type: 3}
   m_enemyAnimator: {fileID: 0}
-  m_deathAnimationCount: 0
+  m_deathAnimationCount: 2
   m_walkingParticleSystem: {fileID: 198202974096351630}
   m_bloodPoolParticleSystem: {fileID: 198691641089117318}
   m_numOfStateChanges: 3

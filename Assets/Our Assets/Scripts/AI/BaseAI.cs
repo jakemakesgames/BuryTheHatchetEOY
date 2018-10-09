@@ -153,7 +153,7 @@ public class BaseAI : MonoBehaviour, IDamagable
         m_agent.ResetPath();
         m_walkingParticleSystem.Stop();
         m_bloodPoolParticleSystem.Stop();
-        int randomAnim = Random.Range(0, m_deathAnimationCount - 1);
+        int randomAnim = Random.Range(0, m_deathAnimationCount);
         EnemyAnimator.SetInteger("WhichDeath", randomAnim);
         EnemyAnimator.SetTrigger("Death");
         EnemyAnimator.ResetTrigger("Reloading");
