@@ -129,27 +129,33 @@ public class WeaponController : MonoBehaviour {
 
     //----------------------------
     #region Actions
+    //Instantly reloads the equipped gun with no cool down
+    public void InstantReload() {
+        if (EquippedGun != null)
+            EquippedGun.InstantReload();
+    }
+
+
     //Reloads the equipped gun, returns false if the action failed
     public bool ReloadEquippedGun() {
-        if (EquippedGun != null) {
+        if (EquippedGun != null)
             return EquippedGun.ReloadOne();
-        }
+
         return false;
     }
 
     //Attacks with the equipped gun
     public bool Shoot() {
-        if (EquippedGun != null) {
+        if (EquippedGun != null) 
             return EquippedGun.Shoot();
-        }
+
         return false;
     }
 
     //attacks with the equipped melee
     public void Swing() {
-        if (EquippedMelee != null) {
+        if (EquippedMelee != null)
             EquippedMelee.Swing();
-        }
     }
     #endregion
     

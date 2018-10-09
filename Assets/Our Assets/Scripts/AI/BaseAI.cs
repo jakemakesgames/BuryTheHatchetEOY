@@ -32,15 +32,18 @@ public class BaseAI : MonoBehaviour, IDamagable
 
     [Header("Animation")]
     [SerializeField]
-    private Animator enemyAnimator;
+    private Animator m_enemyAnimator;
     [Tooltip("The number of death animations")]
     [SerializeField]
     protected int m_deathAnimationCount;
 
     [Header("Particles")]
-    [Tooltip("Paricles that will play when the enemy is walking")]
+    [Tooltip("Particles that will play when the enemy is walking")]
     [SerializeField]
     protected ParticleSystem m_walkingParticleSystem;
+    [Tooltip("Particles that will play when the enemy dies")]
+    [SerializeField]
+    protected ParticleSystem m_bloodPoolParticleSystem;
     #endregion
 
     protected float m_health;
@@ -51,6 +54,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     protected bool m_isDead = false;
     protected bool m_hasDropped = false;
     protected bool m_hasDroppedTrigger = false;
+    protected Vector3 m_respawnPoint;
     protected NavMeshAgent m_agent;
     protected AudioSource m_audioSource;
     protected GameObject m_player;
@@ -65,7 +69,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     public NavMeshAgent Agent { get { return m_agent; } }
     public Vector3 PlayerPosition { get { return m_player.transform.position; } }
     public bool HasDroppedTrigger { set { m_hasDroppedTrigger = value; } }
-    public Animator EnemyAnimator {   get { return enemyAnimator; } set { enemyAnimator = value; } }
+    public Animator EnemyAnimator {   get { return m_enemyAnimator; } set { m_enemyAnimator = value; } }
     #endregion
 
     protected virtual void Awake()
@@ -80,10 +84,12 @@ public class BaseAI : MonoBehaviour, IDamagable
         m_audioSource = GetComponent<AudioSource>();
         EnemyAnimator = GetComponentInChildren<Animator>();
         m_health = m_maxHealth;
+        m_respawnPoint = transform.position;
     }
 
     protected virtual void Update()
     {
+        Debug.Log("Dead: " + m_isDead);
         if (m_isDead == false)
         {
             m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
@@ -149,6 +155,8 @@ public class BaseAI : MonoBehaviour, IDamagable
         int randomAnim = Random.Range(0, m_deathAnimationCount - 1);
         EnemyAnimator.SetInteger("WhichDeath", randomAnim);
         EnemyAnimator.SetTrigger("Death");
+        EnemyAnimator.ResetTrigger("Reloading");
+        EnemyAnimator.ResetTrigger("Shoot");
         RandomPitch();
         if (m_deathSounds.Count != 0)
         {
@@ -170,10 +178,25 @@ public class BaseAI : MonoBehaviour, IDamagable
             if (transform.position.y == m_bodyDropHeight)
             {
                 m_hasDropped = true;
+                m_bloodPoolParticleSystem.Play();
             }
         }
     }
 
+    public void Respawn()
+    {
+        if(m_isDead)
+        {
+            if (m_enemyAnimator != null)
+                m_enemyAnimator.SetTrigger("Respawn");
+        }
+        transform.position = m_respawnPoint;
+        m_isDead = false;
+        m_hasDropped = false;
+        HasDroppedTrigger = false;
+        m_health = m_maxHealth;
+        GetComponent<NavMeshAgent>().enabled = true;
+    }
 
     private void UpdateAnims()
     {

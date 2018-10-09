@@ -3,15 +3,35 @@ using System.Collections.Generic;
 using UnityEngine;
 //Michael Corben
 //Created 17/09/2018
-//Last edited 08/10/2018
+//Last edited 09/10/2018
 
 public class RespawnPoint : MonoBehaviour {
-
+    [Tooltip("The position in the world that the player will respawn")]
     [SerializeField] private Transform m_respawnPoint;
 
+    [Tooltip("The game object that is the parent of all enemies in the next area")]
+    [SerializeField] private GameObject m_enemiesParent;
+
+    [Tooltip("The tag which is on the player")]
     [SerializeField] private string m_playerTag;
+
     private bool m_isCurrentRespawnPoint;
     private PlayerInput m_player;
+    private AI[] m_AIs;
+
+    //To be called by the player when they respawn
+    public void ResetEnemies() {
+        for (int i = 0; i < m_AIs.Length; i++) {
+            m_AIs[i].Respawn();
+        }
+    }
+
+    //Sets up the array of ai which will be used
+    //to respawn enemies within an are if the
+    //player dies before reaching the next checkpoint
+    private void Start() {
+        m_AIs = GetComponentsInChildren<AI>();
+    }
 
     //When the player enters this trigger range 
     //set the players respawn point to the set respawn point
@@ -23,6 +43,7 @@ public class RespawnPoint : MonoBehaviour {
                 m_player.CurrentlyCanInteractWith = PlayerInput.InteractableObject.RESPAWNPOINT;
                 m_player.InteractionObject = gameObject;
                 m_player.Player.RespawnPoint = m_respawnPoint.position;
+                m_player.Player.Rp = this;
             }
         }
     }
