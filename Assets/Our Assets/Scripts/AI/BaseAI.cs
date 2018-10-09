@@ -152,7 +152,6 @@ public class BaseAI : MonoBehaviour, IDamagable
     {
         m_agent.ResetPath();
         m_walkingParticleSystem.Stop();
-        m_bloodPoolParticleSystem.Stop();
         int randomAnim = Random.Range(0, m_deathAnimationCount);
         EnemyAnimator.SetInteger("WhichDeath", randomAnim);
         EnemyAnimator.SetTrigger("Death");
@@ -220,6 +219,17 @@ public class BaseAI : MonoBehaviour, IDamagable
         else
         {
             m_walkingParticleSystem.Stop();
+            m_walkingParticleSystem.Clear();
+        }
+
+        if (m_isDead)
+        {
+            m_bloodPoolParticleSystem.Play();
+        }
+        else if(m_bloodPoolParticleSystem.isPlaying)
+        {
+            m_bloodPoolParticleSystem.Stop();
+            m_bloodPoolParticleSystem.Clear();
         }
     }
 
