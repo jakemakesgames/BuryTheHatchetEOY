@@ -305,13 +305,14 @@ public class Player : MonoBehaviour, IDamagable {
     //Makes sure health never goes above maximum
     //and handles fade transitions on death and respawn
     private void Update() {
-        if (m_health > m_maxHealth)
-        {
+        if (m_health > m_maxHealth) {
             UpdateHealthDisplay();
             m_health = m_maxHealth;
         }
-        else if (m_health < 0)
+        else if (m_health < 0) {
+            UpdateHealthDisplay();
             m_health = 0;
+        }
         if(Dead) {
             if (HasDroppedTrigger)
                 DropDead();
