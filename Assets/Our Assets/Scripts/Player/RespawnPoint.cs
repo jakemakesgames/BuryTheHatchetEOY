@@ -6,9 +6,13 @@ using UnityEngine;
 //Last edited 09/10/2018
 
 public class RespawnPoint : MonoBehaviour {
-
+    [Tooltip("The position in the world that the player will respawn")]
     [SerializeField] private Transform m_respawnPoint;
+
+    [Tooltip("The game object that is the parent of all enemies in the next area")]
     [SerializeField] private GameObject m_enemiesParent;
+
+    [Tooltip("The tag which is on the player")]
     [SerializeField] private string m_playerTag;
 
     private bool m_isCurrentRespawnPoint;
