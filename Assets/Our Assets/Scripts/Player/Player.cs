@@ -69,8 +69,9 @@ public class Player : MonoBehaviour, IDamagable {
 
         [SerializeField] private Animator m_playerAnimator;
 
-
-    //public event System.Action OnDeath;
+        [Tooltip("The text mesh object that'll display the heath")]
+        [SerializeField] private TextMesh m_healthAmountTextMesh;
+        
     #endregion
 
     //----------------------------
@@ -113,6 +114,8 @@ public class Player : MonoBehaviour, IDamagable {
             m_hitParticleSystem.Play();
         if (m_hitSound != null)
             m_audioSource.PlayOneShot(m_hitSound);
+        if (m_healthAmountTextMesh != null)
+            m_healthAmountTextMesh.text = m_health.ToString();
     }
     public void TakeHit(int a_damage, RaycastHit a_hit) {
         TakeDamage(a_damage);
@@ -123,9 +126,11 @@ public class Player : MonoBehaviour, IDamagable {
     }
     #endregion
 
-    //Methods for outsider scripts to change the players health
+    //Methods for outside scripts to change the players health
     #region Health manipulation
-    public void Heal(int a_healAmount) { m_health += a_healAmount; }
+    public void Heal(int a_healAmount) { m_health += a_healAmount;
+        if (m_healthAmountTextMesh != null)
+            m_healthAmountTextMesh.text = m_health.ToString(); }
     public int GetHealth() { return m_health; }
     public int GetMaxHealth() { return m_maxHealth; }
     #endregion
@@ -218,6 +223,8 @@ public class Player : MonoBehaviour, IDamagable {
         m_hasDropped = false;
         HasDroppedTrigger = false;
         m_health = m_maxHealth;
+        if (m_healthAmountTextMesh != null)
+            m_healthAmountTextMesh.text = m_health.ToString();
         if (Rp != null)
             Rp.ResetEnemies();
         if (m_playerAnimator != null)
@@ -246,6 +253,8 @@ public class Player : MonoBehaviour, IDamagable {
     //Sets up health, weapon information and respawn point
     private void Awake () {
         m_health = m_maxHealth;
+        if (m_healthAmountTextMesh != null)
+            m_healthAmountTextMesh.text = m_health.ToString();
         m_heldWeaponsInfo.Capacity = m_heldWeapons.Count;
         RespawnPoint = transform.position;
         for (int i = 0; i < m_heldWeapons.Count; i++) {
@@ -264,12 +273,14 @@ public class Player : MonoBehaviour, IDamagable {
         m_playerAnimator.SetInteger("whichWeapon", m_startingWeaponLocation);
         HeldWeaponLocation = m_startingWeaponLocation;
     }
-    
+
     //Makes sure health never goes above maximum
     //and handles fade transitions on death and respawn
-    private void Update () {
-        if (m_health > m_maxHealth)
-            m_health = m_maxHealth;
+    private void Update() {
+        if (m_health > m_maxHealth) {
+            if (m_healthAmountTextMesh != null)
+                m_health = m_maxHealth;
+        }
         if(Dead) {
             if (HasDroppedTrigger)
                 DropDead();

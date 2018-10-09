@@ -203,6 +203,19 @@ public class Gun : MonoBehaviour {
     //----------------------------
     #region ammo control
 
+    //reloads the gun instantly to full
+    public void InstantReload() {
+        if(m_infiniteAmmo == false) {
+            CurrentAmmo -= (ClipSize - CurrentClip);
+            if (CurrentAmmo < 0) {
+                CurrentClip = CurrentAmmo + ClipSize;
+                CurrentAmmo = 0;
+                return;
+            }
+        }
+        CurrentClip = ClipSize;
+    }
+
     //reloads the gun and also prevents shooting for a time based on the reload time in seconds variable
     //returns true if the gun can reload or false if it cannot
     public bool Reload() {

@@ -6,14 +6,18 @@ using UnityEngine;
 //Last edited 09/10/2018
 
 public class RespawnPoint : MonoBehaviour {
-
+    [Tooltip("The position in the world that the player will respawn")]
     [SerializeField] private Transform m_respawnPoint;
+
+    [Tooltip("The game object that is the parent of all enemies in the next area")]
     [SerializeField] private GameObject m_enemiesParent;
+
+    [Tooltip("The tag which is on the player")]
     [SerializeField] private string m_playerTag;
 
     private bool m_isCurrentRespawnPoint;
     private PlayerInput m_player;
-    private BaseAI[] m_AIs;
+    private AI[] m_AIs;
 
     //To be called by the player when they respawn
     public void ResetEnemies() {
@@ -26,7 +30,7 @@ public class RespawnPoint : MonoBehaviour {
     //to respawn enemies within an are if the
     //player dies before reaching the next checkpoint
     private void Start() {
-        m_AIs = GetComponentsInChildren<BaseAI>();
+        m_AIs = GetComponentsInChildren<AI>();
     }
 
     //When the player enters this trigger range 
