@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 08/10/2018
+//Last edited 10/10/2018
 
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -92,17 +92,15 @@ public class PlayerInput : MonoBehaviour {
     [Tooltip("The Time in seconds the player is invincible after starting to roll")]
     [SerializeField]
     private float m_invicibilityTime = 1f;
-
-    [Tooltip("If an enemy is within this distance from the player " +
-        "consider the player in combat")]
-    [SerializeField]
-    private float m_inCombatRadius = 10f;
-
-    [Tooltip("The time that the player will have their weapons raised after entering combat stance")]
-    [SerializeField]
-    private float m_inCombatTime = 5f;
-
+    
     private Vector3 m_velocityModifyer = Vector3.zero;
+    #endregion
+
+    //----------------------------
+    #region Shooting variables
+        [Tooltip("Does the plpayer have infinite ammo?")]
+        [SerializeField] private bool m_infiniteAmmo;
+
     #endregion
 
     //----------------------------
@@ -240,8 +238,7 @@ public class PlayerInput : MonoBehaviour {
     }
 
     public int CurrentAmmoInClip {
-        get
-        {
+        get {
             if (m_weaponController.GetEquippedGun() != null)
                 return m_weaponController.GetEquippedGun().CurrentClip;
             else
@@ -278,6 +275,10 @@ public class PlayerInput : MonoBehaviour {
         set { m_velocityModifyer = value; }
     }
 
+    public WeaponController WeapCont {
+        get { return m_weaponController; }
+        set { m_weaponController = value; }
+    }
     #endregion
 
     //----------------------------
@@ -807,6 +808,7 @@ public class PlayerInput : MonoBehaviour {
     private void Start() {
         m_equippedWeaponInumerator = Player.HeldWeaponLocation - 1;
         m_meleeHitBox.enabled = false;
+        m_weaponController.EquippedGun.SetInfiniteAmmo(m_infiniteAmmo);
     }
     #endregion
 

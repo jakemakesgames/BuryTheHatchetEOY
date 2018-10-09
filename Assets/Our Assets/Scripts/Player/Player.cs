@@ -8,7 +8,7 @@ using TMPro;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 09/10/2018
+//Last edited 10/10/2018
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(AudioSource))]
@@ -240,6 +240,12 @@ public class Player : MonoBehaviour, IDamagable {
 
         if (m_UIManager != null)
             m_UIManager.DeathFade();
+
+        if (m_input != null) {
+            if (m_input.WeapCont != null)
+                m_input.WeapCont.InstantReload();
+        }
+            
     }
 
     //Drop the player to fall with the animation to appear as to fall
@@ -259,11 +265,13 @@ public class Player : MonoBehaviour, IDamagable {
     #endregion
 
     //updates the health display
-    private void UpdateHealthDisplay() {    
+    private void UpdateHealthDisplay() {
+        float health = m_health;
+        float maxHealth = m_maxHealth;
         if (m_healthAmountTextMesh != null)
             m_healthAmountTextMesh.text = m_health + " / " + m_maxHealth.ToString();
         if (m_healthBar != null)
-            m_healthBar.fillAmount = m_health / m_maxHealth;
+            m_healthBar.fillAmount = (health / maxHealth);
     }
 
     //Sets up health, weapon information and respawn point
