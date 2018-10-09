@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.AI;
+using UnityEngine.UI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
@@ -69,6 +70,9 @@ public class Player : MonoBehaviour, IDamagable {
 
         [SerializeField] private Animator m_playerAnimator;
 
+        [Tooltip("The coloured object that'll fill up the health bar")]
+        [SerializeField] private Image m_healthBar;
+
         [Tooltip("The text mesh object that'll display the heath")]
         [SerializeField] private TextMesh m_healthAmountTextMesh;
         
@@ -114,8 +118,7 @@ public class Player : MonoBehaviour, IDamagable {
             m_hitParticleSystem.Play();
         if (m_hitSound != null)
             m_audioSource.PlayOneShot(m_hitSound);
-        if (m_healthAmountTextMesh != null)
-            m_healthAmountTextMesh.text = m_health.ToString();
+        UpdateHealthDisplay();
     }
     public void TakeHit(int a_damage, RaycastHit a_hit) {
         TakeDamage(a_damage);
@@ -129,8 +132,7 @@ public class Player : MonoBehaviour, IDamagable {
     //Methods for outside scripts to change the players health
     #region Health manipulation
     public void Heal(int a_healAmount) { m_health += a_healAmount;
-        if (m_healthAmountTextMesh != null)
-            m_healthAmountTextMesh.text = m_health.ToString(); }
+        UpdateHealthDisplay(); }
     public int GetHealth() { return m_health; }
     public int GetMaxHealth() { return m_maxHealth; }
     #endregion
@@ -219,17 +221,22 @@ public class Player : MonoBehaviour, IDamagable {
     public void Respawn() {
         transform.position = RespawnPoint;
         m_deathFadeOutTimer = m_deathFadeOutTime;
+
         Dead = false;
         m_hasDropped = false;
         HasDroppedTrigger = false;
+
         m_health = m_maxHealth;
-        if (m_healthAmountTextMesh != null)
-            m_healthAmountTextMesh.text = m_health.ToString();
+        UpdateHealthDisplay();
+
         if (Rp != null)
             Rp.ResetEnemies();
+
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Respawn");
+
         GetComponent<NavMeshAgent>().enabled = true;
+
         if (m_UIManager != null)
             m_UIManager.DeathFade();
     }
@@ -250,11 +257,18 @@ public class Player : MonoBehaviour, IDamagable {
     }
     #endregion
 
+    //updates the health display
+    private void UpdateHealthDisplay() {
+        if (m_healthAmountTextMesh != null)
+            m_healthAmountTextMesh.text = m_health.ToString();
+        if (m_healthBar != null)
+            m_healthBar.fillAmount = m_health / m_maxHealth;
+    }
+
     //Sets up health, weapon information and respawn point
     private void Awake () {
         m_health = m_maxHealth;
-        if (m_healthAmountTextMesh != null)
-            m_healthAmountTextMesh.text = m_health.ToString();
+        UpdateHealthDisplay();
         m_heldWeaponsInfo.Capacity = m_heldWeapons.Count;
         RespawnPoint = transform.position;
         for (int i = 0; i < m_heldWeapons.Count; i++) {
@@ -278,8 +292,8 @@ public class Player : MonoBehaviour, IDamagable {
     //and handles fade transitions on death and respawn
     private void Update() {
         if (m_health > m_maxHealth) {
-            if (m_healthAmountTextMesh != null)
-                m_health = m_maxHealth;
+            UpdateHealthDisplay();
+            m_health = m_maxHealth;
         }
         if(Dead) {
             if (HasDroppedTrigger)
