@@ -239,7 +239,7 @@ MonoBehaviour:
   m_muzzleVelocity: 60
   m_projectileLifeTime: 15
   m_dispersionAngle: 0
-  m_knockBack: 15
+  m_knockBack: 5
   m_numProjectilesPerShot: 1
   m_burstProjectiles: 1
   m_maxAmmo: 100

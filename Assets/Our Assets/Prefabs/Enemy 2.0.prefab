@@ -2272,7 +2272,7 @@ Animator:
   m_GameObject: {fileID: 1118050983768486}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: f93e5494f679c964d99d98beb5593ccd, type: 3}
-  m_Controller: {fileID: 9100000, guid: cf57264a1dd3b4449860754cb6f83c41, type: 2}
+  m_Controller: {fileID: 9100000, guid: 7c9cf2413e2010f419dc9e76e5ffd397, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2342,6 +2342,8 @@ MonoBehaviour:
   m_minAttackDelay: 3
   m_maxAttackDelay: 5
   m_gunRayTransform: {fileID: 4251749152737456}
+  m_telegraphShootDuration: 1
+  m_unAimedBulletSpread: 12
   m_coverLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -2365,7 +2367,7 @@ LineRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1935959088329442}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2398,7 +2400,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 2
-    widthMultiplier: 1
+    widthMultiplier: 0.05
     widthCurve:
       serializedVersion: 2
       m_Curve:

@@ -89,7 +89,6 @@ public class BaseAI : MonoBehaviour, IDamagable
 
     protected virtual void Update()
     {
-        Debug.Log("Dead: " + m_isDead);
         if (m_isDead == false)
         {
             m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
@@ -130,7 +129,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile)
     {
         TakeHit(a_damage, a_hit);
-        m_agent.velocity = a_projectile.transform.forward * a_projectile.KnockBack;
+        m_agent.velocity += a_projectile.transform.forward * a_projectile.KnockBack;
         m_hasTakenImpact = true;
     }
 
@@ -172,7 +171,6 @@ public class BaseAI : MonoBehaviour, IDamagable
         {
             m_counter += Time.deltaTime;
             Vector3 target = new Vector3(transform.position.x, m_bodyDropHeight, transform.position.z);
-
             transform.position = Vector3.Lerp(transform.position, target, m_counter);
 
             if (transform.position.y == m_bodyDropHeight)
@@ -191,6 +189,7 @@ public class BaseAI : MonoBehaviour, IDamagable
                 m_enemyAnimator.SetTrigger("Respawn");
         }
         transform.position = m_respawnPoint;
+        m_weaponController.InstantReload();
         m_isDead = false;
         m_hasDropped = false;
         HasDroppedTrigger = false;

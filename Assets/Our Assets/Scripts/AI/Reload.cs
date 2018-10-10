@@ -20,12 +20,15 @@ public class Reload : IState<AI>
 	
     void ReloadGun(AI a_owner)
     {
-        if (a_owner.Gun.ReloadOne())
+        if (a_owner.Gun.CanReload)
         {
-            a_owner.Agent.SetDestination(a_owner.transform.position);
-            a_owner.FinishedReload = false;
-            if (a_owner.EnemyAnimator.GetBool("Reloading") == false)
-                a_owner.EnemyAnimator.SetBool("Reloading", true);
+            if (a_owner.Gun.ReloadOne())
+            {
+                a_owner.Agent.SetDestination(a_owner.transform.position);
+                a_owner.FinishedReload = false;
+                a_owner.EnemyAnimator.SetTrigger("Reloading");
+                Debug.Log(a_owner.Gun.CurrentClip);
+            }
         }
         else
         {

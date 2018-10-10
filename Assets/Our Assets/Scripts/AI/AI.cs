@@ -79,7 +79,12 @@ public class AI : BaseAI
     [Tooltip("Transform for gun's raycast")]
     [SerializeField]
     private Transform m_gunRayTransform;
-
+    [Tooltip("Amount of seconds before shooting")]
+    [SerializeField]
+    private float m_telegraphShootDuration;
+    [Tooltip("Bullet spread when un-aimed in degrees")]
+    [SerializeField]
+    private float m_unAimedBulletSpread;
 
     [Header("Collison Mask Layers")]
     [Tooltip("Set this to the Cover layer for cover collision detection")]
@@ -122,6 +127,7 @@ public class AI : BaseAI
     private float m_relativePeekChance;
     private float m_seekChance;
     private float m_relativeToSeekChance;
+    private float m_timerBetweenShots;
     private int m_stateCounter;
     //private bool m_isDead = false;
     //private bool m_hasDropped = false;
@@ -194,6 +200,7 @@ public class AI : BaseAI
         m_seekChance = 0f;;
         m_relativeToSeekChance = (100f - m_seekChance) / 100f;
         m_stateCounter = 0;
+        m_timerBetweenShots = m_telegraphShootDuration;
         m_choice = Random.Range(0f, 100f);
 
         if (m_weaponController.GetEquippedGun() != null)
@@ -534,9 +541,26 @@ public class AI : BaseAI
         if (m_gunDistToPlayer < m_attackRadius && m_finishedReload && m_state != STATE.RELOAD)
         {
             m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
-            if (Gun.Shoot())
+            //start wind up timer
+            m_timerBetweenShots -= Time.deltaTime;
+            EnemyAnimator.SetTrigger("Aim");
+
+            if (m_state == STATE.FINDCOVER)
             {
-                EnemyAnimator.SetTrigger("Shoot");
+                m_weaponController.GunSpreadAngle = m_unAimedBulletSpread;
+                if (Gun.Shoot())
+                {
+                    EnemyAnimator.SetTrigger("Shoot");
+                }
+            }
+           else if (m_timerBetweenShots <= 0)
+            {
+                m_weaponController.GunSpreadAngle = 0f;
+                if (Gun.Shoot())
+                {
+                    EnemyAnimator.SetTrigger("Shoot");
+                    m_timerBetweenShots = m_telegraphShootDuration;
+                }
             }
 
         }
