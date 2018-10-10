@@ -258,7 +258,8 @@ public class Gun : MonoBehaviour {
     //returns true if the gun can reload or false if it cannot
     public bool ReloadOne() {
         if (CurrentClip < ClipSize && CurrentAmmo > 0) {
-            if (IsIdle) {
+            if (IsIdle)
+            {
                 if (IsReloading == false)
                     IsReloading = true;
 
@@ -268,14 +269,17 @@ public class Gun : MonoBehaviour {
                 if (m_audioSource != null)
                     m_audioSource.PlayOneShot(m_reloadSound, 0.3f);
             }
-            else if (SetToReloadOne) {
+            else if (SetToReloadOne)
+            {
                 CurrentClip++;
-                if(m_infiniteAmmo == false)
+                if (m_infiniteAmmo == false)
                     CurrentAmmo--;
                 if (CurrentClip == ClipSize)
                     IsFull = true;
                 SetToReloadOne = false;
             }
+            else
+                return false;
             return true;
         }
         return false;
