@@ -24,7 +24,7 @@ public class EndLevelTrigger : MonoBehaviour
             Time.timeScale = 0;
             m_uiManager.m_endLevel.SetActive(true);
         }
-    }
+    } 
 
     public void Restart()
     {
