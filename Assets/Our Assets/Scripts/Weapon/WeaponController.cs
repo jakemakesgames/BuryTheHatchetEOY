@@ -51,6 +51,12 @@ public class WeaponController : MonoBehaviour {
         get { return m_entityCollisionMask; }
         set { m_entityCollisionMask = value; }
     }
+
+    public float GunSpreadAngle {
+        get { return m_equippedGun.SpreadAngle; }
+        set { if (m_equippedGun != null)
+                m_equippedGun.SpreadAngle = value; }
+    }
     #endregion
 
     //----------------------------

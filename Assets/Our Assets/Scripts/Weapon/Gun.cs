@@ -82,6 +82,7 @@ public class Gun : MonoBehaviour {
     private LayerMask m_ricochetCollisionMask;
     
     private float m_timeUntilNextAction;
+    private float m_additionalDispersion = 0;
 
     private int m_currentAmmo;
     private int m_currentClip;
@@ -111,13 +112,30 @@ public class Gun : MonoBehaviour {
         get { return m_isIdle; }
         set { m_isIdle = value; }
     }
+
     public bool IsFull {
         get { return m_isFull; }
         set { m_isFull = value; }
     }
+
     public bool SetToReloadOne {
         get { return m_setToReloadOne; }
         set { m_setToReloadOne = value; }
+    }
+    public bool IsReloading
+    {
+        get { return m_isReloading; }
+        set { m_isReloading = value; }
+    }
+
+    public float TimeUntilNextAction {
+        get { return m_timeUntilNextAction; } 
+        set { m_timeUntilNextAction = value; }
+    }
+
+    public float SpreadAngle {
+        get { return m_additionalDispersion; }
+        set { m_additionalDispersion = value; }
     }
 
     public int CurrentClip {
@@ -125,29 +143,22 @@ public class Gun : MonoBehaviour {
         set { m_currentClip = value; }
     }
 
-    public float TimeUntilNextAction {
-        get { return m_timeUntilNextAction; } 
-        set { m_timeUntilNextAction = value; }
-    }
     public int CurrentAmmo { 
         get { return m_currentAmmo; }
         set { m_currentAmmo = value; }
-    }
-
-    public Transform Muzzle {
-        get { return m_muzzle; }
-        set { m_muzzle = value; }
     }
 
     public int ClipSize {
         get { return m_clipSize; } 
         set { m_clipSize = value; }
     }
-
-    public bool IsReloading {
-        get { return m_isReloading; } 
-        set { m_isReloading = value; }
+    public Transform Muzzle
+    {
+        get { return m_muzzle; }
+        set { m_muzzle = value; }
     }
+
+
     #endregion
 
     //----------------------------
@@ -283,7 +294,7 @@ public class Gun : MonoBehaviour {
     #region shoot
     //Randomises the projectiles angle based on the dispersion angle variable
     private Vector3 RandomAngle() {
-        Vector3 direction = Muzzle.forward + Random.insideUnitSphere * m_dispersionAngle;
+        Vector3 direction = Muzzle.forward + Random.insideUnitSphere * (m_dispersionAngle + m_additionalDispersion);
         direction.x = 0;
         return direction;
     }
