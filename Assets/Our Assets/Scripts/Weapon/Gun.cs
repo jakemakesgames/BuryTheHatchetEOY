@@ -129,7 +129,10 @@ public class Gun : MonoBehaviour {
     }
 
     public bool CanReload {
-        get { if (CurrentClip < ClipSize) return true; else return false; }
+        get { if (CurrentClip < ClipSize)
+                return true;
+            else
+                return false; }
     }
 
     public float TimeUntilNextAction {
@@ -272,21 +275,22 @@ public class Gun : MonoBehaviour {
                 IsIdle = false;
                 if (m_audioSource != null)
                     m_audioSource.PlayOneShot(m_reloadSound, 0.3f);
-            }
-            else if (SetToReloadOne)
-            {
-                CurrentClip++;
-                if (m_infiniteAmmo == false)
-                    CurrentAmmo--;
-                if (CurrentClip == ClipSize)
-                    IsFull = true;
-                SetToReloadOne = false;
+                return true;
             }
             else
                 return false;
-            return true;
         }
         return false;
+    }
+
+    //will put the bullet in the gun after reload one is called
+    private void ReloadOneFollowUp() {
+        CurrentClip++;
+        if (m_infiniteAmmo == false)
+            CurrentAmmo--;
+        if (CurrentClip == ClipSize)
+            IsFull = true;
+        SetToReloadOne = false;
     }
 
     //tells who asks is if the gun is empty
@@ -366,7 +370,7 @@ public class Gun : MonoBehaviour {
             if (IsReloading) 
                 IsReloading = false;
             if (SetToReloadOne)
-                ReloadOne();
+                ReloadOneFollowUp();
             IsIdle = true;
         }
         if (CurrentAmmo > m_maxAmmo)
