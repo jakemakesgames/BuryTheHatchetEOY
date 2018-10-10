@@ -128,6 +128,10 @@ public class Gun : MonoBehaviour {
         set { m_isReloading = value; }
     }
 
+    public bool CanReload {
+        get { if (CurrentClip < ClipSize) return true; else return false; }
+    }
+
     public float TimeUntilNextAction {
         get { return m_timeUntilNextAction; } 
         set { m_timeUntilNextAction = value; }
