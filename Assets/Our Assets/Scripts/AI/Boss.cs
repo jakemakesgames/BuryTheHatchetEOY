@@ -147,36 +147,36 @@ public class Boss : MonoBehaviour, IDamagable
             m_rotation, m_gunRotateSpeed * Time.deltaTime);
 
         #region Lerp
-            /*
-            ///Lerp Attempt
-            m_disTrav = (Time.time - m_startTime) * m_cartSpeed;
-            m_journeyFrac = m_disTrav / m_journeyLength;
+       
+        //Lerp Attempt
+        m_disTrav = (Time.time - m_startTime) * m_cartSpeed;
+        m_journeyFrac = m_disTrav / m_journeyLength;
 
-            //Changes the Boss's new Lerp target position
-            Vector3 targetPos = m_movingLeft ? m_leftSide.position : m_rightSide.position;
-            Vector3 fromPos = m_movingLeft ? m_rightSide.position : m_leftSide.position;
+        //Changes the Boss's new Lerp target position
+        Vector3 targetPos = m_movingLeft ? m_leftSide.position : m_rightSide.position;
+        Vector3 fromPos = m_movingLeft ? m_rightSide.position : m_leftSide.position;
 
-            //Lerps the boss from left to right and right to left
-            m_boss.transform.position = Vector3.Lerp(fromPos, targetPos, m_journeyFrac);
+        //Lerps the boss from left to right and right to left
+        m_boss.transform.position = Vector3.Lerp(fromPos, targetPos, m_journeyFrac);
 
-            //Resets the time when the boss reaches the target position and changes the bool
-            if (Vector3.Distance(m_boss.transform.position, targetPos) < 0.01f)
-            {
-                m_movingLeft = !m_movingLeft;
-                m_startTime = Time.time;
-            }
-            */
-            #endregion
+        //Resets the time when the boss reaches the target position and changes the bool
+        if (Vector3.Distance(m_boss.transform.position, targetPos) < 0.01f)
+        {
+            m_movingLeft = !m_movingLeft;
+            m_startTime = Time.time;
+        }
+        
+        #endregion
 
-            //When the barrels are destroyed we begin initiation of Phase Two
-            //if (m_barrelOne == false && m_barrelTwo == false)
-            //{
-            //    m_barrelsDestroyed = true;
-            //    m_bossAgent.GetComponent<NavMeshAgent>().enabled = true;
-            //    m_railTrack.SetActive(false);
-            //    m_minecart.SetActive(false);
-            //    m_boss.transform.position = m_phaseTwo.position;
-            //}
+        //When the barrels are destroyed we begin initiation of Phase Two
+        //if (m_barrelOne == false && m_barrelTwo == false)
+        //{
+        //    m_barrelsDestroyed = true;
+        //    m_bossAgent.GetComponent<NavMeshAgent>().enabled = true;
+        //    m_railTrack.SetActive(false);
+        //    m_minecart.SetActive(false);
+        //    m_boss.transform.position = m_phaseTwo.position;
+        //}
 
 
         //}
@@ -219,11 +219,11 @@ public class Boss : MonoBehaviour, IDamagable
         //        m_bossAgent.isStopped = true;
         //    }
 
-       //Sets it to be enraged
-       //if (m_bossHealth <= m_enragedHealth)
-       //{
-           //m_enraged = true;
-       //}
+        //Sets it to be enraged
+        //if (m_bossHealth <= m_enragedHealth)
+        //{
+        //m_enraged = true;
+        //}
         //}
     }
 
