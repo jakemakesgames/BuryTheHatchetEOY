@@ -264,6 +264,8 @@ public class AI : BaseAI
     {
         STATE prevState = m_state;
 
+        Debug.Log("isPeeking" + m_isPeeking);
+
         if (m_stateCounter == m_numOfStateChanges)
         {
             m_seekChance += m_seekChanceIncrease;
@@ -545,7 +547,7 @@ public class AI : BaseAI
             m_timerBetweenShots -= Time.deltaTime;
             EnemyAnimator.SetTrigger("Aim");
 
-            if (m_state == STATE.FINDCOVER)
+            if (m_state == STATE.FINDCOVER && IsPeeking == false)
             {
                 m_weaponController.GunSpreadAngle = m_unAimedBulletSpread;
                 if (Gun.Shoot())

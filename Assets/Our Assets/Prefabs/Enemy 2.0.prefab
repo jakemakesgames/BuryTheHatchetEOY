@@ -2342,7 +2342,7 @@ MonoBehaviour:
   m_minAttackDelay: 3
   m_maxAttackDelay: 5
   m_gunRayTransform: {fileID: 4251749152737456}
-  m_telegraphShootDuration: 1
+  m_telegraphShootDuration: 1.6
   m_unAimedBulletSpread: 12
   m_coverLayer:
     serializedVersion: 2
