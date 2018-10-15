@@ -5,15 +5,42 @@ using UnityEngine;
 public class CameraShake : MonoBehaviour
 {
     [SerializeField] Animator m_camAnim;
-    [SerializeField] int m_numShakes;
 
     private int m_randomShake;
 
-    public void ShakeCamera()
+    public void KickbackShake()
     {
-        m_randomShake = Random.Range(0, m_numShakes);
+        int m_numShakes = Random.Range(0, 3);
 
-        m_camAnim.SetInteger("ShakeNum", m_randomShake);
-        m_camAnim.SetTrigger("Shake");
+        if (m_numShakes == 0)
+        {
+            m_camAnim.SetTrigger("Shake");
+        }
+        else if(m_numShakes == 1)
+        {
+            m_camAnim.SetTrigger("Shake2");
+        }
+        else if(m_numShakes == 1)
+        {
+            m_camAnim.SetTrigger("Shake3");
+        }
+    }
+
+    public void PlayerHitShake()
+    {
+        int m_moreShakes = Random.Range(0, 3);
+
+        if (m_moreShakes == 0)
+        {
+            m_camAnim.SetTrigger("Shake4");
+        }
+        else if (m_moreShakes == 1)
+        {
+            m_camAnim.SetTrigger("Shake5");
+        }
+        else if (m_moreShakes == 2)
+        {
+            m_camAnim.SetTrigger("Shake6");
+        }
     }
 }

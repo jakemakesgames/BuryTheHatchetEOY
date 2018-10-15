@@ -51,8 +51,6 @@ public class PlayerCamera : MonoBehaviour
         //Makes the Camera follow the Player
         transform.position = m_smoothedPosition;
         #endregion
-
-
     }
 
  
