@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33852555968870062}
   - component: {fileID: 135447003694898970}
   - component: {fileID: 23316425854966930}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Spawn_Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4444895244394408}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: RespawnTriggerPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 65180096990961682}
   - component: {fileID: 23891044402619542}
   - component: {fileID: 114398887464358778}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Respawn_Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82,15 +82,15 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1104530323825658}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 25.3, y: 1.405, z: 27.66}
+  m_LocalRotation: {x: -0, y: 0.70710677, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 119.980286, y: -28.287489, z: 146.23567}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4939583990421254}
   - {fileID: 4279603299525176}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -90.00001, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90.00001, z: 0}
 --- !u!4 &4939583990421254
 Transform:
   m_ObjectHideFlags: 1
@@ -210,6 +210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_respawnPoint: {fileID: 4279603299525176}
+  m_enemiesParent: {fileID: 0}
   m_playerTag: Player
 --- !u!135 &135447003694898970
 SphereCollider:

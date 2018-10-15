@@ -20,7 +20,7 @@ public class CameraShake : MonoBehaviour
         {
             m_camAnim.SetTrigger("Shake2");
         }
-        else if(m_numShakes == 1)
+        else if(m_numShakes == 2)
         {
             m_camAnim.SetTrigger("Shake3");
         }
