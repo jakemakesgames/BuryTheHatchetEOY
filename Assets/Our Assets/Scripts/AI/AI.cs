@@ -18,6 +18,7 @@ public class AI : BaseAI
     {
         SEEK,
         PEEK,
+        FLEE,
         STATIONARY,
         FINDCOVER,
         RELOAD
@@ -316,6 +317,21 @@ public class AI : BaseAI
                 }
             }
 
+
+
+                if (m_distBetweenPlayer <= m_fleeRadius + m_deadZone && m_distBetweenPlayer >= m_fleeRadius - m_deadZone)
+                {
+                    //If player is within seek and we're at max flee distance (deadzone for floating point precision)
+                    m_state = STATE.STATIONARY;
+                }
+
+                else if (m_distBetweenPlayer < m_fleeRadius)
+                {
+                    //If player is within flee
+                    m_state = STATE.FLEE;
+                }
+            
+
             //if(Gun.CurrentClip <= 2)
             //{
             //    m_state = STATE.PEEK;
@@ -434,14 +450,17 @@ public class AI : BaseAI
             case STATE.FINDCOVER:
                 m_stateMachine.ChangeState(new FindCover());
                 break;
+            case STATE.SEEK:
+                m_stateMachine.ChangeState(new Seek());
+                break;
+            case STATE.FLEE:
+                m_stateMachine.ChangeState(new Flee());
+                break;
             case STATE.STATIONARY:
                 m_stateMachine.ChangeState(new Stationary());
                 break;
             case STATE.RELOAD:
                 m_stateMachine.ChangeState(new Reload());
-                break;
-            case STATE.SEEK:
-                m_stateMachine.ChangeState(new Seek());
                 break;
             default:
                 return;

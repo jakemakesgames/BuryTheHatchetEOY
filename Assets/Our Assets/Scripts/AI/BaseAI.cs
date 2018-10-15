@@ -25,6 +25,10 @@ public class BaseAI : MonoBehaviour, IDamagable
     [Tooltip("Duration in seconds for stun when hit taken")]
     [SerializeField]
     protected float m_stunDuration;
+    [Tooltip("Duration in seconds for knockback when hit taken")]
+    [SerializeField]
+    protected float m_knockbackDuration;
+
 
     [Header("Sounds")]
     [SerializeField]
@@ -49,7 +53,9 @@ public class BaseAI : MonoBehaviour, IDamagable
     protected float m_health;
     protected float m_distBetweenPlayer;
     protected float m_counter = 0;
-    protected float m_takeHitTimer;
+    protected float m_stunHitTimer;
+    protected float m_knockbackTimer;
+    protected float m_projectileKnockBack;
     protected bool m_hasTakenImpact = false;
     protected bool m_isDead = false;
     protected bool m_hasDropped = false;
@@ -58,6 +64,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     protected NavMeshAgent m_agent;
     protected AudioSource m_audioSource;
     protected GameObject m_player;
+    protected Vector3 m_projectileVel;
     protected WeaponController m_weaponController;
 
     public delegate void Dead(AI enemy);
@@ -129,7 +136,11 @@ public class BaseAI : MonoBehaviour, IDamagable
     public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile)
     {
         TakeHit(a_damage, a_hit);
-        m_agent.velocity += a_projectile.transform.forward * a_projectile.KnockBack;
+        m_projectileVel = a_projectile.transform.forward;
+        m_projectileKnockBack = a_projectile.KnockBack;
+        m_stunHitTimer = Time.time + m_stunDuration;
+        m_knockbackTimer = Time.time + m_knockbackDuration;
+        //m_agent.velocity += a_projectile.transform.forward * a_projectile.KnockBack;
         m_hasTakenImpact = true;
     }
 
@@ -137,18 +148,22 @@ public class BaseAI : MonoBehaviour, IDamagable
     {
         if (m_hasTakenImpact)
         {
+            transform.position += m_projectileVel * m_projectileKnockBack * Time.deltaTime;
             m_agent.isStopped = true;
-            m_takeHitTimer = Time.time + m_stunDuration;
-            m_hasTakenImpact = false;
         }
-        if (m_takeHitTimer < Time.time)
+        if (m_stunHitTimer < Time.time)
         {
             m_agent.isStopped = false;
+        }
+        if (m_knockbackTimer < Time.time)
+        {
+            m_hasTakenImpact = false;
         }
     }
 
     protected virtual void Die()
     {
+        EnemyAnimator.SetLayerWeight(1, 0);
         m_agent.ResetPath();
         m_walkingParticleSystem.Stop();
         int randomAnim = Random.Range(0, m_deathAnimationCount);
@@ -156,6 +171,7 @@ public class BaseAI : MonoBehaviour, IDamagable
         EnemyAnimator.SetTrigger("Death");
         EnemyAnimator.ResetTrigger("Reloading");
         EnemyAnimator.ResetTrigger("Shoot");
+        EnemyAnimator.ResetTrigger("Aim");
         RandomPitch();
         if (m_deathSounds.Count != 0)
         {
@@ -183,10 +199,13 @@ public class BaseAI : MonoBehaviour, IDamagable
 
     public void Respawn()
     {
-        if(m_isDead)
+        if (m_isDead)
         {
             if (m_enemyAnimator != null)
+            {
+                EnemyAnimator.SetLayerWeight(1, 1);
                 m_enemyAnimator.SetTrigger("Respawn");
+            }
         }
         transform.position = m_respawnPoint;
         m_weaponController.InstantReload();
