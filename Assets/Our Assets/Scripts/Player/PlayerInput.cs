@@ -352,9 +352,14 @@ public class PlayerInput : MonoBehaviour {
                         {
                             if (m_ammoController != null)
                                 m_ammoController.Shoot();
+
                             m_playerAnimator.SetTrigger("Shoot");
+
                             if (m_shootDustParticle != null)
                                 m_shootDustParticle.Play();
+
+                            if (m_player.m_camAnimator != null)
+                                m_player.m_camAnimator.KickbackShake();
                         }
                     }
                 }
@@ -426,6 +431,9 @@ public class PlayerInput : MonoBehaviour {
 
                 if (m_shootDustParticle != null)
                     m_shootDustParticle.Play();
+
+                if (m_player.m_camAnimator != null)
+                    m_player.m_camAnimator.KickbackShake();
             }
         }
     }
@@ -506,13 +514,11 @@ public class PlayerInput : MonoBehaviour {
             //----------------//
             //ROLLING MOVEMENT//
             //----------------//
-            else
-            {
+            else {
                 m_rollTimePassed = (Time.time - m_rollStartTime) * (m_rollTimeMultiplier + m_rollAccelerationRate);
                 //time passed = t
                 //acceleration rate = a
-                if (m_rollAccelerating)
-                {
+                if (m_rollAccelerating) {
                     //Accelerate along a parabola starting at 0 ending at 1
                     //velocity = -1 * (t - a)^2 + a^2
                     m_rollSpeed = -1 * Mathf.Pow(m_rollTimePassed - m_rollAccelerationRate, 2) + Mathf.Pow(m_rollAccelerationRate, 2);
@@ -520,8 +526,7 @@ public class PlayerInput : MonoBehaviour {
                     if (m_rollTimePassed - m_rollAccelerationRate >= 0)
                         m_rollAccelerating = false;
                 }
-                else
-                {
+                else {
                     //Decelerate along an exponential graph starting at 1 and tending toward 0
                     //velocity = a^( -( t - a ) + 2)
                     //float power = -(m_rollTimePassed - m_rollAccelerationRate) + 2;

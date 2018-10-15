@@ -27,11 +27,13 @@ public class Player : MonoBehaviour, IDamagable {
         private AudioSource m_audioSource;
         private PlayerInput m_input;
         private RespawnPoint m_rp;
+        [HideInInspector] public Animator m_camFadeAnim;
+        [HideInInspector] public CameraShake m_camAnimator; 
     #endregion
 
     //----------------------------
     #region Inspector Variables
-        [SerializeField] private int m_maxHealth;
+    [SerializeField] private int m_maxHealth;
 
         [Tooltip("The number of death animations")]
         [SerializeField] private int m_deathAnimCount;
@@ -70,7 +72,7 @@ public class Player : MonoBehaviour, IDamagable {
         public List<GameObject> m_heldWeapons;
 
         [SerializeField] private Animator m_playerAnimator;
-
+    
         [Tooltip("The coloured object that'll fill up the health bar")]
         [SerializeField] private Image m_healthBar;
 
@@ -110,6 +112,9 @@ public class Player : MonoBehaviour, IDamagable {
     //IDamageble interfaces methods for taking damage
     #region IDamagable methods
     public void TakeDamage(int a_damage) {
+        if (m_camAnimator != null)
+            m_camAnimator.PlayerHitShake();
+
         if (m_input.IsInvincible)
             return;
         m_health -= a_damage;
@@ -202,6 +207,9 @@ public class Player : MonoBehaviour, IDamagable {
             m_playerAnimator.SetTrigger("Death");
             GetComponent<NavMeshAgent>().enabled = false;
         }
+
+        if (m_camFadeAnim != null)
+            m_camFadeAnim.SetTrigger("FadeOut");
         
         if (m_dieSound != null)
             m_audioSource.PlayOneShot(m_dieSound);
@@ -235,6 +243,9 @@ public class Player : MonoBehaviour, IDamagable {
 
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Respawn");
+
+        if (m_camFadeAnim != null)
+            m_camFadeAnim.SetTrigger("FadeIn");
 
         GetComponent<NavMeshAgent>().enabled = true;
 
@@ -302,6 +313,12 @@ public class Player : MonoBehaviour, IDamagable {
         HeldWeaponLocation = m_startingWeaponLocation;
     }
 
+    //Set's up the animator for the camera
+    private void Start() {
+        m_camFadeAnim = Camera.main.GetComponent<Animator>();
+        m_camAnimator = m_camFadeAnim.gameObject.GetComponent<CameraShake>();
+    }
+
     //Makes sure health never goes above maximum
     //and handles fade transitions on death and respawn
     private void Update() {
@@ -313,7 +330,7 @@ public class Player : MonoBehaviour, IDamagable {
             m_health = 0;
             UpdateHealthDisplay();
         }
-        if(Dead) {
+        if (Dead) {
             if (HasDroppedTrigger)
                 DropDead();
 
