@@ -43,4 +43,14 @@ public class CameraShake : MonoBehaviour
             m_camAnim.SetTrigger("Shake6");
         }
     }
+
+    public void PlayerDeath()
+    {
+        m_camAnim.SetTrigger("FadeOut");
+    }
+
+    public void PlayerRespawn()
+    {
+        m_camAnim.SetTrigger("FadeIn");
+    }
 }
