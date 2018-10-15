@@ -27,6 +27,8 @@ public class Gun : MonoBehaviour {
     [Header("VFX")]
     [Tooltip("The particle that will play when the gun shoots")]
     [SerializeField] private GameObject m_shootParticleSystem;
+    [Tooltip("Particle to telgraph shoot")]
+    [SerializeField] private ParticleSystem m_glintParticleSystem;
     [SerializeField] private float m_shootParticleLifeTime = 1f;
 
     [Tooltip("The particle that will play after the gun shoots")]
@@ -107,7 +109,10 @@ public class Gun : MonoBehaviour {
         get { return m_ricochetCollisionMask; } 
         set { m_ricochetCollisionMask = value; }
     }
-
+    public ParticleSystem GlintParticleSystem
+    {
+        get { return m_glintParticleSystem; }
+    }
     public bool IsIdle {
         get { return m_isIdle; }
         set { m_isIdle = value; }

@@ -48,6 +48,9 @@ public class BaseAI : MonoBehaviour, IDamagable
     [Tooltip("Particles that will play when the enemy dies")]
     [SerializeField]
     protected ParticleSystem m_bloodPoolParticleSystem;
+    [Tooltip("Particles that will play when the enemy is stunned")]
+    [SerializeField]
+    protected ParticleSystem m_dazeParticleSystem;
     #endregion
 
     protected float m_health;
@@ -140,7 +143,6 @@ public class BaseAI : MonoBehaviour, IDamagable
         m_projectileKnockBack = a_projectile.KnockBack;
         m_stunHitTimer = Time.time + m_stunDuration;
         m_knockbackTimer = Time.time + m_knockbackDuration;
-        //m_agent.velocity += a_projectile.transform.forward * a_projectile.KnockBack;
         m_hasTakenImpact = true;
     }
 
@@ -150,10 +152,13 @@ public class BaseAI : MonoBehaviour, IDamagable
         {
             transform.position += m_projectileVel * m_projectileKnockBack * Time.deltaTime;
             m_agent.isStopped = true;
+            m_dazeParticleSystem.Play();
         }
         if (m_stunHitTimer < Time.time)
         {
             m_agent.isStopped = false;
+            m_dazeParticleSystem.Stop();
+            m_dazeParticleSystem.Clear();
         }
         if (m_knockbackTimer < Time.time)
         {
@@ -249,6 +254,7 @@ public class BaseAI : MonoBehaviour, IDamagable
             m_bloodPoolParticleSystem.Stop();
             m_bloodPoolParticleSystem.Clear();
         }
+        
     }
 
     private void RandomPitch()

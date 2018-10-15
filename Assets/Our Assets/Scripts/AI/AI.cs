@@ -80,9 +80,14 @@ public class AI : BaseAI
     [Tooltip("Transform for gun's raycast")]
     [SerializeField]
     private Transform m_gunRayTransform;
-    [Tooltip("Amount of seconds before shooting")]
-    [SerializeField]
-    private float m_telegraphShootDuration;
+    [Tooltip("Amount of seconds before shooting when peeking")]
+    [SerializeField] private float m_timeBeforeShootPeek;
+    [Tooltip("Amount of seconds before shooting in cover")]
+    [SerializeField] private float m_timeBeforeShootCover;
+    [Tooltip("Time before gun glint particle when Peeking")]
+    [SerializeField] private float m_timeBeforeGlintPeek;
+    [Tooltip("Time before gun glint particle when Finding Cover")]
+    [SerializeField] private float m_timeBeforeGlintCover;
     [Tooltip("Bullet spread when un-aimed in degrees")]
     [SerializeField]
     private float m_unAimedBulletSpread;
@@ -129,6 +134,7 @@ public class AI : BaseAI
     private float m_seekChance;
     private float m_relativeToSeekChance;
     private float m_timerBetweenShots;
+    private float m_timerBeforeGlint;
     private int m_stateCounter;
     //private bool m_isDead = false;
     //private bool m_hasDropped = false;
@@ -202,7 +208,8 @@ public class AI : BaseAI
         m_seekChance = 0f;;
         m_relativeToSeekChance = (100f - m_seekChance) / 100f;
         m_stateCounter = 0;
-        m_timerBetweenShots = m_telegraphShootDuration;
+        //m_timerBetweenShots = m_timeBeforeShootCover;
+        //m_timerBeforeGlint = m_timeBeforeGlintCover;
         m_choice = Random.Range(0f, 100f);
 
         if (m_weaponController.GetEquippedGun() != null)
@@ -500,67 +507,6 @@ public class AI : BaseAI
         }
 
         return true;
-
-        //RaycastHit[] hits1;
-        //hits1 = Physics.RaycastAll(ray1, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer);
-        //RaycastHit[] hits2;
-        //hits2 = Physics.RaycastAll(ray2, vecBetween.magnitude + m_rayDetectBufferDist, m_environmentLayer);
-
-
-        //if (hits1.Length == 0)
-        //{
-        //    if (hits2.Length == 0)
-        //    {
-        //        return DETECTION.CLEAR;
-        //    }
-        //    else if (hits2.Length == 1)
-        //    {
-        //        if (hits2[0].transform == CurrCoverObj)
-        //        {
-        //            return DETECTION.BEHINDCOVER;
-        //        }
-        //    }          
-        //}
-        //if (hits1.Length == 1)
-        //{
-        //    if (hits2.Length < 2)
-        //    {
-        //        if (hits1[0].transform == CurrCoverObj)
-        //        {
-        //            if (hits2.Length == 0)
-        //            {
-        //                return DETECTION.BEHINDCOVER;
-        //            }
-        //            else if (hits2[0].transform == CurrCoverObj)
-        //            {
-        //                return DETECTION.BEHINDCOVER;
-        //            }
-        //        }
-        //    }
-        //}
-
-        //return DETECTION.BLOCKED;
-
-        //if (hits1.Length == 0 && hits2.Length == 0)
-        //{
-        //    return DETECTION.CLEAR;
-        //}
-        //else if (hits1.Length == 1 && hits2.Length == 1)
-        //{
-        //    if (hits1[0].transform == CurrCoverObj && hits2[0].transform == CurrCoverObj)
-        //    {
-        //        return DETECTION.BEHINDCOVER;
-        //    }
-        //    else
-        //    {
-        //        return DETECTION.BLOCKED;
-        //    }
-        //}
-        //else
-        //{
-        //    return DETECTION.BLOCKED;
-        //}
-
     }
     protected override void Attack()
     {
@@ -571,24 +517,48 @@ public class AI : BaseAI
                 m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
             }
             //start wind up timer
-            m_timerBetweenShots -= Time.deltaTime;
+            m_timerBetweenShots += Time.deltaTime;
+            m_timerBeforeGlint += Time.deltaTime;
             EnemyAnimator.SetTrigger("Aim");
 
-            if (m_state == STATE.FINDCOVER && IsPeeking == false)
+            if (m_state == STATE.FINDCOVER)
+            {
+                if (m_timerBeforeGlint >= m_timeBeforeGlintCover && Gun.GetIsEmpty() == false)
+                {
+                    if (Gun.GlintParticleSystem.isPlaying == false)
+                    {
+                        Gun.GlintParticleSystem.Play();
+                    }
+                }
+            }
+            else if (m_timerBeforeGlint >= m_timeBeforeGlintPeek && Gun.GetIsEmpty() == false)
+            {
+                if (Gun.GlintParticleSystem.isPlaying == false)
+                {
+                    Gun.GlintParticleSystem.Play();
+                }
+            }
+
+            if (m_state == STATE.FINDCOVER && IsPeeking == false && m_timerBetweenShots >= m_timeBeforeShootCover)
             {
                 m_weaponController.GunSpreadAngle = m_unAimedBulletSpread;
                 if (Gun.Shoot())
                 {
                     EnemyAnimator.SetTrigger("Shoot");
+                    m_timerBetweenShots = 0;
+                    m_timerBeforeGlint = 0;
+
                 }
             }
-           else if (m_timerBetweenShots <= 0)
+           else if (m_timerBetweenShots >= m_timeBeforeShootPeek)
             {
                 m_weaponController.GunSpreadAngle = 0f;
                 if (Gun.Shoot())
                 {
+                    //EnemyAnimator.ResetTrigger("Aim");
                     EnemyAnimator.SetTrigger("Shoot");
-                    m_timerBetweenShots = m_telegraphShootDuration;
+                    m_timerBetweenShots = 0;
+                    m_timerBeforeGlint = 0;
                 }
             }
 
@@ -598,75 +568,8 @@ public class AI : BaseAI
 
     protected override void Die()
     {
-        //m_agent.ResetPath();
-        //m_walkingParticleSystem.Stop();
-        //int randomAnim = Random.Range(0, deathAnimationCount);
-        //m_enemyAnimator.SetInteger("WhichDeath", 2);
-        //m_enemyAnimator.SetTrigger("Death");
-        //RandomPitch();
-        //if (m_deathSounds.Count != 0)
-        //{
-        //    m_audioSource.PlayOneShot(m_deathSounds[Random.Range(0, m_deathSounds.Count)]);
-        //}
-        //GetComponent<NavMeshAgent>().enabled = false;
-        //m_isDead = true;
         base.Die();
     }
-
-    //void dropdead()
-    //{
-    //    if (m_hasdropped == false)
-    //    {
-    //        m_counter += time.deltatime;
-    //        vector3 target = new vector3(transform.position.x, m_bodydropheight, transform.position.z);
-    //
-    //        transform.position = vector3.lerp(transform.position, target, m_counter);
-    //
-    //        if (transform.position.y == m_bodydropheight)
-    //        {
-    //            m_hasdropped = true;
-    //        }
-    //    }
-    //}
-
-    // public void takehit(int a_damage, raycasthit a_hit)
-    // {
-    //     takedamage(a_damage);
-    // }
-    //
-    // public void takedamage(int a_damage)
-    // {
-    //     m_health -= a_damage;
-    // }
-    //
-    // public void takeimpact(int a_damage, raycasthit a_hit, projectile a_projectile)
-    // {
-    //     takehit(a_damage, a_hit);
-    // }
-
-    // private void updateanims()
-    // {
-    //     float myvelocity = m_agent.velocity.magnitude;
-    //     vector3 localvel = transform.inversetransformdirection(m_agent.velocity.normalized);
-    //
-    //     m_enemyanimator.setfloat("velocity", myvelocity);
-    //
-    //     m_enemyanimator.setfloat("movementdirectionright", localvel.x);
-    //     m_enemyanimator.setfloat("movementdirectionforward", localvel.z);
-    // }
-
-    //private void updateparticles()
-    //{
-    //    if (m_agent.velocity != vector3.zero)
-    //    {
-    //        if (m_walkingparticlesystem.isplaying == false)
-    //            m_walkingparticlesystem.play();
-    //    }
-    //    else
-    //    {
-    //        m_walkingparticlesystem.stop();
-    //    }
-    //}
 
     private Vector3 HeightCorrectedLookPos(float a_positionY)
     {
