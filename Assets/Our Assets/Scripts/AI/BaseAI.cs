@@ -194,7 +194,7 @@ public class BaseAI : MonoBehaviour, IDamagable
             Vector3 target = new Vector3(transform.position.x, m_bodyDropHeight, transform.position.z);
             transform.position = Vector3.Lerp(transform.position, target, m_counter);
 
-            if (transform.position.y == m_bodyDropHeight)
+            if (transform.position.y <= m_bodyDropHeight)
             {
                 m_hasDropped = true;
                 m_bloodPoolParticleSystem.Play();
