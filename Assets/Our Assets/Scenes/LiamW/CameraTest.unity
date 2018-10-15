@@ -152,10 +152,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1935644011068924, guid: 45ba2ca5736e52447b9a45bb00ab2f0b, type: 2}
-      propertyPath: m_Name
-      value: CameraHolder
-      objectReference: {fileID: 0}
     - target: {fileID: 114523111615350788, guid: 45ba2ca5736e52447b9a45bb00ab2f0b,
         type: 2}
       propertyPath: m_player

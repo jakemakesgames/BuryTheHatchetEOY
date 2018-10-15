@@ -77,6 +77,8 @@ public class Projectile : MonoBehaviour {
     [SerializeField] private List<float> m_environmentParticleDists;
     [Tooltip("Dound to play on impact")]
     [SerializeField] private List<AudioClip> m_environmentAudioClips;
+
+    private GameObject m_instancedTrailRenderer;
     #endregion
 
     public float KnockBack {
@@ -213,7 +215,7 @@ public class Projectile : MonoBehaviour {
             return;
         Destroy(gameObject);
         if (m_trailRenderer != null)
-            Destroy(m_trailRenderer, m_trailRendererLifeTime);
+            Destroy(m_instancedTrailRenderer, m_trailRendererLifeTime);
     }
 
     private void OnHitObject(Collider a_c, bool a_hitEntity) {
@@ -224,7 +226,7 @@ public class Projectile : MonoBehaviour {
         if (m_insideEntity)
             return;
         Destroy(gameObject);
-        Destroy(m_trailRenderer, m_trailRendererLifeTime);
+        Destroy(m_instancedTrailRenderer, m_trailRendererLifeTime);
     }
     
     private void OnHitObject(RaycastHit a_hit, Projectile a_bullet, bool a_hitEntity) {
@@ -260,7 +262,7 @@ public class Projectile : MonoBehaviour {
         }
 
         if (m_trailRenderer != null)
-            m_trailRenderer = Instantiate(m_trailRenderer, transform.position, transform.rotation);
+            m_instancedTrailRenderer = Instantiate(m_trailRenderer, transform.position, transform.rotation) as GameObject;
 
     }
 
@@ -278,9 +280,9 @@ public class Projectile : MonoBehaviour {
             Destroy(gameObject);
 
         m_lifeTime -= Time.deltaTime;
-        if (m_trailRenderer != null) {
-            m_trailRenderer.transform.position = transform.position;
-            m_trailRenderer.transform.rotation = transform.rotation;
+        if (m_instancedTrailRenderer != null) {
+            m_instancedTrailRenderer.transform.position = transform.position;
+            m_instancedTrailRenderer.transform.rotation = transform.rotation;
         }
 
     }

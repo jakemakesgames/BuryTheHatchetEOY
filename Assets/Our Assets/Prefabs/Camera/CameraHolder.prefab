@@ -39,6 +39,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4018369005513036}
   - component: {fileID: 114523111615350788}
+  - component: {fileID: 114079697667441162}
   m_Layer: 0
   m_Name: CameraHolder
   m_TagString: MainCamera
@@ -125,7 +126,7 @@ Animator:
   m_GameObject: {fileID: 1157349962684228}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a6a7128036b802642b384274e5347565, type: 2}
+  m_Controller: {fileID: 9100000, guid: 8368ad5170c5dcc44857bf5f9b285ba3, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -133,6 +134,19 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114079697667441162
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1935644011068924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b28eb0bdc3613c49bec114c3eb82f91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_camAnim: {fileID: 95025789973981216}
+  m_numShakes: 3
 --- !u!114 &114523111615350788
 MonoBehaviour:
   m_ObjectHideFlags: 1
