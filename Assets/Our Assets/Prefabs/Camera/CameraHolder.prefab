@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 124070673742781796}
   - component: {fileID: 81589706569955712}
   - component: {fileID: 95025789973981216}
+  - component: {fileID: 114278007384428168}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -39,7 +40,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4018369005513036}
   - component: {fileID: 114523111615350788}
-  - component: {fileID: 114079697667441162}
   m_Layer: 0
   m_Name: CameraHolder
   m_TagString: MainCamera
@@ -53,14 +53,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1935644011068924}
-  m_LocalRotation: {x: 0.38268343, y: -0, z: -0, w: 0.92387956}
-  m_LocalPosition: {x: 7.33, y: 11.025, z: -16.7}
+  m_LocalRotation: {x: 0.45904404, y: -0, z: -0, w: 0.88841355}
+  m_LocalPosition: {x: -111.99, y: 11.68, z: -109.836}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4099868314310874}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 54.651, y: 0, z: 0}
 --- !u!4 &4099868314310874
 Transform:
   m_ObjectHideFlags: 1
@@ -134,12 +134,12 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114079697667441162
+--- !u!114 &114278007384428168
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1935644011068924}
+  m_GameObject: {fileID: 1157349962684228}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b28eb0bdc3613c49bec114c3eb82f91, type: 3}
@@ -158,7 +158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_player: {fileID: 0}
-  m_offset: {x: 0, y: 8.66, z: -8.5}
+  m_offset: {x: 0, y: 9, z: -7}
   m_smoothSpeed: 9
 --- !u!124 &124070673742781796
 Behaviour:

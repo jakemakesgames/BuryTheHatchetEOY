@@ -27,7 +27,6 @@ public class Player : MonoBehaviour, IDamagable {
         private AudioSource m_audioSource;
         private PlayerInput m_input;
         private RespawnPoint m_rp;
-        [HideInInspector] public Animator m_camFadeAnim;
         [HideInInspector] public CameraShake m_camAnimator; 
     #endregion
 
@@ -208,9 +207,9 @@ public class Player : MonoBehaviour, IDamagable {
             GetComponent<NavMeshAgent>().enabled = false;
         }
 
-        if (m_camFadeAnim != null)
-            m_camFadeAnim.SetTrigger("FadeOut");
-        
+        if (m_camAnimator != null)
+            m_camAnimator.PlayerDeath();
+
         if (m_dieSound != null)
             m_audioSource.PlayOneShot(m_dieSound);
 
@@ -244,8 +243,8 @@ public class Player : MonoBehaviour, IDamagable {
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Respawn");
 
-        if (m_camFadeAnim != null)
-            m_camFadeAnim.SetTrigger("FadeIn");
+        if (m_camAnimator != null)
+            m_camAnimator.PlayerRespawn();
 
         GetComponent<NavMeshAgent>().enabled = true;
 
@@ -315,8 +314,7 @@ public class Player : MonoBehaviour, IDamagable {
 
     //Set's up the animator for the camera
     private void Start() {
-        m_camFadeAnim = Camera.main.GetComponent<Animator>();
-        m_camAnimator = m_camFadeAnim.gameObject.GetComponent<CameraShake>();
+        m_camAnimator = Camera.main.GetComponent<CameraShake>();
     }
 
     //Makes sure health never goes above maximum

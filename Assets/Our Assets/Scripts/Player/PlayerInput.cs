@@ -601,7 +601,8 @@ public class PlayerInput : MonoBehaviour {
 
                 m_isRolling = true;
                 m_canRoll = false;
-                m_canRollObject.SetActive(false);
+                if (m_canRollObject != null)
+                    m_canRollObject.SetActive(false);
                 m_rollAccelerating = true;
                 IsInvincible = true;
 
@@ -914,7 +915,8 @@ public class PlayerInput : MonoBehaviour {
 
                 if (m_rollCoolDownTimer <= Time.time) {
                     m_canRoll = true;
-                    m_canRollObject.SetActive(true);
+                    if (m_canRollObject != null)
+                        m_canRollObject.SetActive(true);
                     if (m_rollSpeaker != null && m_canRollSound != null)
                         m_rollSpeaker.PlayOneShot(m_canRollSound);
                 }
