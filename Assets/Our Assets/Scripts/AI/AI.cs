@@ -138,6 +138,7 @@ public class AI : BaseAI
     private bool m_noCover = false;
     private bool m_noOtherCover = false;
     private bool m_isPeeking;
+    private bool m_needReload = false;
 
     private STATE m_state;
 
@@ -265,8 +266,6 @@ public class AI : BaseAI
     {
         STATE prevState = m_state;
 
-        Debug.Log("isPeeking" + m_isPeeking);
-
         if (m_stateCounter == m_numOfStateChanges)
         {
             m_seekChance += m_seekChanceIncrease;
@@ -282,8 +281,11 @@ public class AI : BaseAI
 
         if (m_distBetweenPlayer < m_attackRadius)
         {
-            transform.LookAt(HeightCorrectedLookPos(transform.position.y));
-            
+            if (m_needReload == false)
+            {
+                transform.LookAt(HeightCorrectedLookPos(transform.position.y));
+            }
+   
             if(m_distBetweenCover < m_seekFromCoverRadius)
             {
                 if ((m_finishedReload == false || m_gun.GetIsEmpty()) == false && AtCover)
@@ -324,8 +326,7 @@ public class AI : BaseAI
                     //If player is within seek and we're at max flee distance (deadzone for floating point precision)
                     m_state = STATE.STATIONARY;
                 }
-
-                else if (m_distBetweenPlayer < m_fleeRadius)
+                else if (m_distBetweenPlayer < m_fleeRadius && m_distBetweenPlayer != 0f)
                 {
                     //If player is within flee
                     m_state = STATE.FLEE;
@@ -393,11 +394,14 @@ public class AI : BaseAI
         {
             if (NoCover == false)
             {
+                //transform.LookAt(new Vector3(CoverPos.x, transform.position.y, CoverPos.z));
+                m_needReload = true;
                 m_state = STATE.FINDCOVER;
             }
             else
             {
                 m_state = STATE.RELOAD;
+                m_needReload = false;
             }
         }
 
@@ -406,6 +410,7 @@ public class AI : BaseAI
             if (m_finishedReload == false || m_gun.GetIsEmpty())
             {
                 m_state = STATE.RELOAD;
+                m_needReload = false;
             }
             else
             {
@@ -561,7 +566,10 @@ public class AI : BaseAI
     {
         if (m_gunDistToPlayer < m_attackRadius && m_finishedReload && m_state != STATE.RELOAD)
         {
-            m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
+            if (m_needReload == false)
+            {
+                m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
+            }
             //start wind up timer
             m_timerBetweenShots -= Time.deltaTime;
             EnemyAnimator.SetTrigger("Aim");
