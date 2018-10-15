@@ -71,6 +71,7 @@ public class PlayerInput : MonoBehaviour {
     [SerializeField]
     private float m_decelerationRate = 0.99f;
 
+    [Header("Roll Variables")]
     [Tooltip("Movement speed of the player at the start of the roll")]
     [SerializeField]
     private float m_rollSpeedStart = 100f;
@@ -92,7 +93,11 @@ public class PlayerInput : MonoBehaviour {
     [Tooltip("The Time in seconds the player is invincible after starting to roll")]
     [SerializeField]
     private float m_invicibilityTime = 1f;
-    
+
+    [Tooltip("the card that will apear when the player can roll")]
+    [SerializeField]
+    private GameObject m_canRollObject;
+
     private Vector3 m_velocityModifyer = Vector3.zero;
     #endregion
 
@@ -596,6 +601,7 @@ public class PlayerInput : MonoBehaviour {
 
                 m_isRolling = true;
                 m_canRoll = false;
+                m_canRollObject.SetActive(false);
                 m_rollAccelerating = true;
                 IsInvincible = true;
 
@@ -908,6 +914,7 @@ public class PlayerInput : MonoBehaviour {
 
                 if (m_rollCoolDownTimer <= Time.time) {
                     m_canRoll = true;
+                    m_canRollObject.SetActive(true);
                     if (m_rollSpeaker != null && m_canRollSound != null)
                         m_rollSpeaker.PlayOneShot(m_canRollSound);
                 }
