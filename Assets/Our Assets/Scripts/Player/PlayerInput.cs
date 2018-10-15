@@ -98,9 +98,16 @@ public class PlayerInput : MonoBehaviour {
 
     //----------------------------
     #region Shooting variables
-        [Tooltip("Does the plpayer have infinite ammo?")]
+
+        [Header("Shooting Variables")]
+        [Tooltip("Does the player have infinite ammo?")]
         [SerializeField] private bool m_infiniteAmmo;
 
+        [Tooltip("Will the player pause when they shoot")]
+        [SerializeField] private bool m_willPause;
+
+        [Tooltip("")]
+        [SerializeField] private float m_shootPauseTime;
     #endregion
 
     //----------------------------
@@ -198,15 +205,18 @@ public class PlayerInput : MonoBehaviour {
     private float m_inCombatTimer = 0f;
     private float m_lungeTimer = 0f;
     private float m_swingTimer = 0f;
+    private float m_isShootingTimer = 0f;
+    private float m_rollSpeed = 0f;
 
     private bool m_isHoldingGun;
-    public bool m_canAttack = true;
+    private bool m_canAttack = true;
     private bool m_isRolling = false;
     private bool m_canRoll = true;
     private bool m_rollAccelerating = true;
     private bool m_inCombat = false;
     private bool m_isInvincible = false;
     private bool m_isLunging = false;
+    private bool m_isShooting = false;
 
     private InteractableObject m_currentlyCanInteractWith;
     private InteractableObject m_currentlyInteractingWith;
@@ -218,6 +228,7 @@ public class PlayerInput : MonoBehaviour {
     private Vector3 m_movementVector;
     private Vector3 m_preMoveVector;
     private Vector3 m_rollVelocity;
+    private Vector3 m_velPreRoll;
 
     private Camera m_viewCamera;
     private WeaponController m_weaponController;
@@ -305,48 +316,62 @@ public class PlayerInput : MonoBehaviour {
 
             m_playerAnimator.SetBool("Reloading", false);
 
-            //---------------//
-            //MELEE ATTACKING//
-            //---------------//
-            if (Input.GetMouseButtonDown(1)) {
-                m_playerAnimator.SetTrigger("HatchetSwingTrigger");
+            if (m_isShooting)
+                DelayedShoot();
 
-                m_isLunging = true;
-                m_lungeTimer = Time.time + m_lungeTime;
-                m_swingTimer = Time.time + m_swingTime;
+            else {
+                //---------------//
+                //MELEE ATTACKING//
+                //---------------//
+                if (Input.GetMouseButtonDown(1))
+                {
+                    m_playerAnimator.SetTrigger("HatchetSwingTrigger");
 
-                if (m_meleeHitBox != null)
-                    m_meleeHitBox.enabled = true;
-            }
+                    m_isLunging = true;
+                    m_lungeTimer = Time.time + m_lungeTime;
+                    m_swingTimer = Time.time + m_swingTime;
 
-            //-------------//
-            //GUN ATTACKING//
-            //-------------//
-            else if (Input.GetMouseButtonDown(0)) {
-                if (m_playerAnimator.GetBool("Reloading") == false) {
-                    if (m_weaponController.Shoot()) {
-                        if (m_ammoController != null)
-                            m_ammoController.Shoot();
-                        m_playerAnimator.SetTrigger("Shoot");
-                        if (m_shootDustParticle != null)
-                            m_shootDustParticle.Play();
+                    if (m_meleeHitBox != null)
+                        m_meleeHitBox.enabled = true;
+                }
+
+                //-------------//
+                //GUN ATTACKING//
+                //-------------//
+                else if (Input.GetMouseButtonDown(0)) {
+                    if (m_playerAnimator.GetBool("Reloading") == false) 
+                    {
+                        if (m_willPause)
+                        {
+                            m_isShootingTimer = Time.time + m_shootPauseTime;
+                            m_isShooting = true;
+                            return;
+                        }
+
+                        if (m_weaponController.Shoot())
+                        {
+                            if (m_ammoController != null)
+                                m_ammoController.Shoot();
+                            m_playerAnimator.SetTrigger("Shoot");
+                            if (m_shootDustParticle != null)
+                                m_shootDustParticle.Play();
+                        }
+                    }
+                }
+
+                //-------------//
+                //GUN RELOADING//
+                //-------------//
+                else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
+                    if (m_playerAnimator.GetBool("Reloading") == false) {
+                        if (m_weaponController.ReloadEquippedGun()) {
+                            if (m_ammoController != null)
+                                m_ammoController.Reload();
+                            m_playerAnimator.SetBool("Reloading", true);
+                        }
                     }
                 }
             }
-
-            //-------------//
-            //GUN RELOADING//
-            //-------------//
-            else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
-                if (m_playerAnimator.GetBool("Reloading") == false) {
-                    if (m_weaponController.ReloadEquippedGun()) {
-                        if (m_ammoController != null)
-                            m_ammoController.Reload();
-                        m_playerAnimator.SetBool("Reloading", true);
-                    } 
-                }
-            }
-
             #region old melee
             //if (equippedGun == null) {
             //    Melee equippedMelee = m_weaponController.GetEquippedMelee();
@@ -388,95 +413,138 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
+    //Delayed shooting
+    private void DelayedShoot() {
+        if (m_isShootingTimer < Time.time) {
+            if (m_weaponController.Shoot()) {
+                m_isShooting = false;
+
+                if (m_ammoController != null)
+                    m_ammoController.Shoot();
+
+                m_playerAnimator.SetTrigger("Shoot");
+
+                if (m_shootDustParticle != null)
+                    m_shootDustParticle.Play();
+            }
+        }
+    }
+
     //Calculates the players velocity for the next frame
     private void Move() {
         Vector3 moveVelocity = Vector3.one;
 
         //Calculating velocity
+        if ((m_willPause && m_isShooting) == false) {
+            //----------------//
+            //LUNGING MOVEMENT//
+            //----------------//
+            if (m_isLunging)
+            {
+                if (m_lungeTimer < Time.time)
+                    m_isLunging = false;
+                else
+                    m_velocity = m_lungeSpeed * transform.forward;
+            }
 
-        //----------------//
-        //LUNGING MOVEMENT//
-        //----------------//
-        if (m_isLunging) {
-            if (m_lungeTimer < Time.time)
-                m_isLunging = false;
-            else
-                m_velocity = m_lungeSpeed * transform.forward;
-        }
+            //----------------//
+            //REGULAR MOVEMENT//
+            //----------------//
+            else if (m_isRolling == false)
+            {
 
-        //----------------//
-        //REGULAR MOVEMENT//
-        //----------------//
-        else if (m_isRolling == false) {
+                m_acceleration = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+                m_acceleration *= m_accelerationRate;
 
-            m_acceleration = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-            m_acceleration *= m_accelerationRate;
+                m_movementVector = Vector3.Lerp(m_movementVector, m_acceleration, m_decelerationRate);
 
-            m_movementVector = Vector3.Lerp(m_movementVector, m_acceleration, m_decelerationRate);
+                if (m_movementVector.sqrMagnitude > 1f)
+                    m_movementVector.Normalize();
 
-            if (m_movementVector.sqrMagnitude > 1f)
-                m_movementVector.Normalize();
+                Vector3 direction = m_camera.transform.rotation * m_movementVector;
+                direction.y = 0;
+                moveVelocity = direction.normalized * m_speed;
+                m_velocity = moveVelocity;
 
-            Vector3 direction = m_camera.transform.rotation * m_movementVector;
-            direction.y = 0;
-            moveVelocity = direction.normalized * m_speed;
-            m_velocity = moveVelocity;
+                //Sound and Particle effects
+                if ((m_walkSpeaker == null || m_clothesSpeaker == null || m_walkingParticleSystem == null) == false)
+                {
+                    if (m_movementVector.sqrMagnitude > 0)
+                    {
+                        if (m_walkSpeaker.isPlaying == false)
+                        {
+                            if (m_walkSpeaker != null && m_walkingSound != null)
+                                m_walkSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
 
-            //Sound and Particle effects
-            if ((m_walkSpeaker == null || m_clothesSpeaker == null || m_walkingParticleSystem == null) == false) {
-                if (m_movementVector.sqrMagnitude > 0) {
-                    if (m_walkSpeaker.isPlaying == false) {
-                        if (m_walkSpeaker != null && m_walkingSound != null)
-                            m_walkSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
-
-                        if (m_clothesSpeaker != null && m_clothesSpeaker != null) {
-                            m_clothesSpeaker.Play();
-                            m_clothesSpeaker.loop = true;
+                            if (m_clothesSpeaker != null && m_clothesSpeaker != null)
+                            {
+                                m_clothesSpeaker.Play();
+                                m_clothesSpeaker.loop = true;
+                            }
+                            if (m_walkingParticleSystem != null)
+                                m_walkingParticleSystem.Play();
                         }
+                        else
+                        {
+
+                        }
+                    }
+                    else if (m_walkSpeaker.isPlaying || m_clothesSpeaker.loop)
+                    {
+                        if (m_walkSpeaker != null && m_walkingSound != null)
+                            m_walkSpeaker.Stop();
+
+                        if (m_clothesSpeaker != null && m_clothesSpeaker != null)
+                            m_clothesSpeaker.loop = false;
+
                         if (m_walkingParticleSystem != null)
-                            m_walkingParticleSystem.Play();
-                    }
-                    else {
-
+                            m_walkingParticleSystem.Stop();
                     }
                 }
-                else if (m_walkSpeaker.isPlaying || m_clothesSpeaker.loop) {
-                    if (m_walkSpeaker != null && m_walkingSound != null)
-                        m_walkSpeaker.Stop();
+            }
 
-                    if (m_clothesSpeaker != null && m_clothesSpeaker != null)
-                        m_clothesSpeaker.loop = false;
-
-                    if (m_walkingParticleSystem != null)
-                        m_walkingParticleSystem.Stop();
+            //----------------//
+            //ROLLING MOVEMENT//
+            //----------------//
+            else
+            {
+                m_rollTimePassed = (Time.time - m_rollStartTime) * (m_rollTimeMultiplier + m_rollAccelerationRate);
+                //time passed = t
+                //acceleration rate = a
+                if (m_rollAccelerating)
+                {
+                    //Accelerate along a parabola starting at 0 ending at 1
+                    //velocity = -1 * (t - a)^2 + a^2
+                    m_rollSpeed = -1 * Mathf.Pow(m_rollTimePassed - m_rollAccelerationRate, 2) + Mathf.Pow(m_rollAccelerationRate, 2);
+                    m_rollVelocity = transform.forward * m_rollSpeed;
+                    if (m_rollTimePassed - m_rollAccelerationRate >= 0)
+                        m_rollAccelerating = false;
                 }
-            }
-        }
+                else
+                {
+                    //Decelerate along an exponential graph starting at 1 and tending toward 0
+                    //velocity = a^( -( t - a ) + 2)
+                    //float power = -(m_rollTimePassed - m_rollAccelerationRate) + 2;
+                    //m_rollVelocity = transform.forward * ((Mathf.Pow(m_rollAccelerationRate, power)));
 
-        //----------------//
-        //ROLLING MOVEMENT//
-        //----------------//
-        else {
-            m_rollTimePassed = (Time.time - m_rollStartTime) * (m_rollTimeMultiplier + m_rollAccelerationRate);
-            //time passed = t
-            //acceleration rate = a
-            if (m_rollAccelerating) {
-                //Accelerate along a parabola starting at 0 ending at 1
-                //velocity = -1 * (t - a)^2 + a^2
-                m_rollVelocity = transform.forward * (-1 * Mathf.Pow(m_rollTimePassed - m_rollAccelerationRate, 2) + Mathf.Pow(m_rollAccelerationRate, 2));
-                if (m_rollTimePassed - m_rollAccelerationRate >= 0)
-                    m_rollAccelerating = false;
+                    //Decelerate along a horizontal porabola starting at one and ending at zero
+                    //-a squareRoot(at - a^2) + a^2
+                    float squareRoot = Mathf.Sqrt(m_rollAccelerationRate * m_rollTimePassed - Mathf.Pow(m_rollAccelerationRate, 2));
+                    m_rollSpeed = (-m_rollAccelerationRate * (squareRoot + Mathf.Pow(m_rollAccelerationRate, 2)));
+                    m_rollVelocity = transform.forward * m_rollSpeed;
+
+                    Debug.Log("Decelerating");
+                }
+                if (m_rollSpeed >= 0)
+                    m_velocity = m_rollVelocity + m_velPreRoll;
+
+                else
+                    m_velocity = m_preMoveVector + m_velPreRoll;
             }
-            else {
-                //Decelerate along an exponential graph starting at 1 and tending toward 0
-                //velocity = a^( -( t - a ) + 2)
-                float power = -(m_rollTimePassed - m_rollAccelerationRate) + 2;
-                m_rollVelocity = transform.forward * ((Mathf.Pow(m_rollAccelerationRate, power)));
-                Debug.Log("Decelerating");
-            }
-            m_velocity = m_rollVelocity;
         }
-        
+        else
+            m_velocity = Vector3.zero;
+
         m_nma.velocity = m_velocity + VelocityModifyer;
         VelocityModifyer = Vector3.zero;
     }
@@ -484,21 +552,22 @@ public class PlayerInput : MonoBehaviour {
     //Forces the player to look at the mouse position on screen
     //as well as place a crosshair object where the player is looking
     private void PlayerLookAt() {
-        Transform hand = m_weaponController.WeaponHold;
+        if ((m_isShooting && m_willPause) == false) { 
+            Transform hand = m_weaponController.WeaponHold;
 
-        //Cast a ray from the given camera through the mouse to the created ground plane
-        Ray ray = m_viewCamera.ScreenPointToRay(Input.mousePosition);
-        Plane groundPlane = new Plane(Vector3.up, hand.position);
+            //Cast a ray from the given camera through the mouse to the created ground plane
+            Ray ray = m_viewCamera.ScreenPointToRay(Input.mousePosition);
+            Plane groundPlane = new Plane(Vector3.up, hand.position);
 
-        if (m_weaponController.EquippedGun != null) {
-            Vector3 planePos = m_weaponController.EquippedGun.Muzzle.position;
-            groundPlane = new Plane(Vector3.up, planePos);
-        }
+            if (m_weaponController.EquippedGun != null) {
+                Vector3 planePos = m_weaponController.EquippedGun.Muzzle.position;
+                groundPlane = new Plane(Vector3.up, planePos);
+            }
 
-        float rayDistance;
+            float rayDistance;
 
-        //Cast the ray from the camera to the generated ground plane which will be created at the players hand position
-        if (groundPlane.Raycast(ray, out rayDistance)) {
+            //Cast the ray from the camera to the generated ground plane which will be created at the players hand position
+            if (groundPlane.Raycast(ray, out rayDistance)) {
             Vector3 lookAtPoint = ray.GetPoint(rayDistance);
 
             Vector3 heightCorrectedLookPoint = new Vector3(lookAtPoint.x, transform.position.y, lookAtPoint.z);
@@ -506,10 +575,11 @@ public class PlayerInput : MonoBehaviour {
             transform.LookAt(heightCorrectedLookPoint);
             if (m_weaponController.EquippedGun != null && m_weaponController.EquippedGun.IsReloading == false)
                 hand.LookAt(lookAtPoint);
+
             m_weaponController.WeaponHold = hand;
         }
+        }
     }
-
     //Quickly moves the player in the direction they are facing
     private void Roll() {
         if (m_isRolling == false) {
@@ -526,11 +596,10 @@ public class PlayerInput : MonoBehaviour {
 
                 if (m_nma.velocity != Vector3.zero) {
                     Vector3 newForward = m_nma.velocity.normalized;
-                    m_rollVelocity = m_rollSpeedStart * newForward;
                     transform.forward = newForward;
                 }
-                else
-                    m_rollVelocity = m_rollSpeedStart * transform.forward;
+
+                m_velPreRoll = m_velocity;
 
                 if (m_rollSpeaker != null && m_rollSound != null)
                     m_rollSpeaker.Play(); /**NEED TO IMPLEMENT VOLUME CONTROL AND RANDOM PITCHING*/
