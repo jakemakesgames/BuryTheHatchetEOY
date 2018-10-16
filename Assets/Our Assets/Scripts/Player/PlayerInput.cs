@@ -311,6 +311,12 @@ public class PlayerInput : MonoBehaviour {
     //and also checks if the player wishes to reload
     public void Attack()
     {
+        if ((m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Idle_v01") ||
+               m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Walking")) == false)
+        {
+            Debug.Log("Can't Attack");
+            return;
+        }
         if (m_swingTimer < Time.time)
             m_meleeHitBox.enabled = false;
 
@@ -344,17 +350,15 @@ public class PlayerInput : MonoBehaviour {
                 //GUN ATTACKING//
                 //-------------//
                 else if (Input.GetMouseButtonDown(0)) {
-                    if (m_playerAnimator.GetBool("Reloading") == false) 
-                    {
-                        if (m_willPause)
-                        {
+                    if (m_playerAnimator.GetBool("Reloading") == false) {
+                        if (m_willPause) {
                             m_isShootingTimer = Time.time + m_shootPauseTime;
                             m_isShooting = true;
+                            //GunLookAt();
                             return;
                         }
 
-                        if (m_weaponController.Shoot())
-                        {
+                        if (m_weaponController.Shoot()) {
                             if (m_ammoController != null)
                                 m_ammoController.Shoot();
 
@@ -365,6 +369,8 @@ public class PlayerInput : MonoBehaviour {
 
                             if (m_player.m_camAnimator != null)
                                 m_player.m_camAnimator.KickbackShake();
+
+                            //GunLookAt();
                         }
                     }
                 }
@@ -373,12 +379,10 @@ public class PlayerInput : MonoBehaviour {
                 //GUN RELOADING//
                 //-------------//
                 else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
-                    if (m_playerAnimator.GetBool("Reloading") == false) {
-                        if (m_weaponController.ReloadEquippedGun()) {
-                            if (m_ammoController != null)
-                                m_ammoController.Reload();
-                            m_playerAnimator.SetBool("Reloading", true);
-                        }
+                    if (m_weaponController.ReloadEquippedGun()) {
+                        if (m_ammoController != null)
+                            m_ammoController.Reload();
+                        m_playerAnimator.SetTrigger("Reload");
                     }
                 }
             }
@@ -560,7 +564,6 @@ public class PlayerInput : MonoBehaviour {
     }
 
     //Forces the player to look at the mouse position on screen
-    //as well as place a crosshair object where the player is looking
     private void PlayerLookAt() {
         if ((m_isShooting && m_willPause) == false) { 
             Transform hand = m_weaponController.WeaponHold;
@@ -583,20 +586,46 @@ public class PlayerInput : MonoBehaviour {
             Vector3 heightCorrectedLookPoint = new Vector3(lookAtPoint.x, transform.position.y, lookAtPoint.z);
 
             transform.LookAt(heightCorrectedLookPoint);
-            if (m_weaponController.EquippedGun != null && m_weaponController.EquippedGun.IsReloading == false)
-                hand.LookAt(lookAtPoint);
-
-            m_weaponController.WeaponHold = hand;
-        }
+            }
         }
     }
+
+    //forces the players held gun to look at the mouse position on screen
+    private void GunLookAt() {
+        if ((m_isShooting && m_willPause) == false)
+        {
+            Transform hand = m_weaponController.WeaponHold;
+
+            //Cast a ray from the given camera through the mouse to the created ground plane
+            Ray ray = m_viewCamera.ScreenPointToRay(Input.mousePosition);
+            Plane groundPlane = new Plane(Vector3.up, hand.position);
+
+            if (m_weaponController.EquippedGun != null)
+            {
+                Vector3 planePos = m_weaponController.EquippedGun.Muzzle.position;
+                groundPlane = new Plane(Vector3.up, planePos);
+            }
+
+            float rayDistance;
+
+            //Cast the ray from the camera to the generated ground plane which will be created at the players hand position
+            if (groundPlane.Raycast(ray, out rayDistance)) {
+                Vector3 lookAtPoint = ray.GetPoint(rayDistance);
+                if (m_weaponController.EquippedGun != null && m_weaponController.EquippedGun.IsReloading == false) {
+                    hand.LookAt(lookAtPoint);
+                    m_weaponController.WeaponHold = hand;
+                }
+            }
+        }
+    }
+
     //Quickly moves the player in the direction they are facing
     private void Roll() {
         if (m_isRolling == false) {
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.LeftShift)) {
                 m_rollStartTime = Time.time;
                 m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
-                m_playerAnimator.SetBool("Roll", true);
+                m_playerAnimator.SetTrigger("Roll");
                 Debug.Log("roll");
 
                 m_isRolling = true;
