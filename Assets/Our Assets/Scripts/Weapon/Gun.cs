@@ -316,6 +316,15 @@ public class Gun : MonoBehaviour {
         return direction;
     }
 
+    //Can shoot check
+    public bool CanShoot()
+    {
+        if (Time.time > TimeUntilNextAction && CurrentClip > 0)
+            return true;
+        return false;
+
+    }
+
     //Creates projectiles when called if this gun has ammo left in the current
     //clip and if the next shot time has passed
     public bool Shoot() {

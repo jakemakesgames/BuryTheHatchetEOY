@@ -47,4 +47,9 @@ public class PlayerAnimationEvents : MonoBehaviour {
     public void HasDropTrigger() {
         GetComponentInParent<Player>().HasDroppedTrigger = true;
     }
+
+    public void Shoot() {
+        if (m_player != null)
+            m_player.Shoot();
+    }
 }

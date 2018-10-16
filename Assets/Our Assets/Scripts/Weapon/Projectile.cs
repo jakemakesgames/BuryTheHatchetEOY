@@ -264,6 +264,8 @@ public class Projectile : MonoBehaviour {
         if (m_trailRenderer != null)
             m_instancedTrailRenderer = Instantiate(m_trailRenderer, transform.position, transform.rotation) as GameObject;
 
+        Quaternion rot = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+        transform.rotation = rot;
     }
 
     //Moves the projectile along its forward

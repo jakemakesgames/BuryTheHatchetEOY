@@ -309,16 +309,25 @@ public class PlayerInput : MonoBehaviour {
     //(swing for melee or shoot for gun)
     //via the weapon controller script
     //and also checks if the player wishes to reload
-    public void Attack()
-    {
-        if ((m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Idle_v01") ||
-               m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Walking")) == false)
-        {
-            Debug.Log("Can't Attack");
-            return;
+    public void Attack() {
+
+        if (m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Reload_v01") ||
+                m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Character_Anim_Reload_v01 0")) {
+            if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
+                if (m_weaponController.ReloadEquippedGun()) {
+                    if (m_ammoController != null)
+                        m_ammoController.Reload();
+                    m_playerAnimator.SetTrigger("Reload");
+                }
+            }
         }
+
         if (m_swingTimer < Time.time)
             m_meleeHitBox.enabled = false;
+
+        if ((m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Idle_v01") ||
+               m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Walking")) == false)
+            return;
 
         //Get's the currently equipped weapon and executes
         //the appropriate attack action and animation
@@ -358,7 +367,7 @@ public class PlayerInput : MonoBehaviour {
                             return;
                         }
 
-                        if (m_weaponController.Shoot()) {
+                        if (m_weaponController.EquippedGun.CanShoot()) {
                             if (m_ammoController != null)
                                 m_ammoController.Shoot();
 
@@ -366,9 +375,6 @@ public class PlayerInput : MonoBehaviour {
 
                             if (m_shootDustParticle != null)
                                 m_shootDustParticle.Play();
-
-                            if (m_player.m_camAnimator != null)
-                                m_player.m_camAnimator.KickbackShake();
 
                             //GunLookAt();
                         }
@@ -430,7 +436,7 @@ public class PlayerInput : MonoBehaviour {
     //Delayed shooting
     private void DelayedShoot() {
         if (m_isShootingTimer < Time.time) {
-            if (m_weaponController.Shoot()) {
+            if (m_weaponController.EquippedGun.CanShoot()) {
                 m_isShooting = false;
 
                 if (m_ammoController != null)
@@ -836,6 +842,15 @@ public class PlayerInput : MonoBehaviour {
         //m_weaponController.GetEquippedMelee().EndSwing();
         if (m_meleeHitBox != null)
             m_meleeHitBox.enabled = false;
+    }
+
+    //Shoots the equipped gun when the animation event triggers it todo so
+    public void Shoot() {
+        if (m_weaponController.EquippedGun != null)
+            m_weaponController.Shoot();
+        if (m_player.m_camAnimator != null)
+            m_player.m_camAnimator.KickbackShake();
+
     }
 
     //Charlie
