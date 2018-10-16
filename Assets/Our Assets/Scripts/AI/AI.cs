@@ -149,6 +149,7 @@ public class AI : BaseAI
     private STATE m_state;
 
     private Vector3 m_coverPos;
+    private Vector3 m_shootTarget;
     private Transform m_currCoverObj;
     private Transform m_nextCoverObj;
     //private NavMeshAgent m_agent;
@@ -230,7 +231,6 @@ public class AI : BaseAI
         if (m_isDead == false)
         {
             //To Do: put this in coroutine
-            Debug.Log("Current State: " + m_state);
             DrawLinePath(m_agent.path);
             //m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
             if (CurrCoverObj != null)
@@ -512,10 +512,10 @@ public class AI : BaseAI
     {
         if (m_gunDistToPlayer < m_attackRadius && m_finishedReload && m_state != STATE.RELOAD)
         {
-            if (m_needReload == false)
-            {
-                m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
-            }
+            //if (m_needReload == false)
+            //{
+            //    m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
+            //}
             //start wind up timer
             m_timerBetweenShots += Time.deltaTime;
             m_timerBeforeGlint += Time.deltaTime;
@@ -528,6 +528,7 @@ public class AI : BaseAI
                     if (Gun.GlintParticleSystem.isPlaying == false)
                     {
                         Gun.GlintParticleSystem.Play();
+                        m_shootTarget = HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y);
                     }
                 }
             }
@@ -536,12 +537,14 @@ public class AI : BaseAI
                 if (Gun.GlintParticleSystem.isPlaying == false)
                 {
                     Gun.GlintParticleSystem.Play();
+                    m_shootTarget = HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y);
                 }
             }
 
             if (m_state == STATE.FINDCOVER && IsPeeking == false && m_timerBetweenShots >= m_timeBeforeShootCover)
             {
                 m_weaponController.GunSpreadAngle = m_unAimedBulletSpread;
+                m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
                 if (Gun.Shoot())
                 {
                     EnemyAnimator.SetTrigger("Shoot");
@@ -553,6 +556,7 @@ public class AI : BaseAI
            else if (m_timerBetweenShots >= m_timeBeforeShootPeek)
             {
                 m_weaponController.GunSpreadAngle = 0f;
+                m_weaponController.m_weaponHold.LookAt(m_shootTarget);
                 if (Gun.Shoot())
                 {
                     //EnemyAnimator.ResetTrigger("Aim");
