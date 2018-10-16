@@ -2888,9 +2888,6 @@ AnimatorStateTransition:
   - m_ConditionMode: 4
     m_ConditionEvent: Velocity
     m_EventTreshold: 0.01
-  - m_ConditionMode: 2
-    m_ConditionEvent: Roll
-    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102836570565091986}
   m_Solo: 0
