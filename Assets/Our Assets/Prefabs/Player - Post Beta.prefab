@@ -5293,13 +5293,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1566784387744524}
-  m_LocalRotation: {x: 0.7930557, y: -0.02626336, z: -0.6042882, w: -0.07217068}
-  m_LocalPosition: {x: -0.031363085, y: 0.05995411, z: 0.051724464}
+  m_LocalRotation: {x: 0.43140644, y: 0.37875503, z: -0.4363446, w: -0.6928468}
+  m_LocalPosition: {x: -0.241, y: 0.056, z: 0.077}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4585917038923120}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -164.499, y: 110.715996, z: -104.851}
 --- !u!4 &4620584946407432
 Transform:
   m_ObjectHideFlags: 1
@@ -6953,7 +6953,6 @@ MonoBehaviour:
   - {fileID: 1074724821504698, guid: a1c393be65c62c84e987b70f8b708bb3, type: 2}
   m_playerAnimator: {fileID: 95370253051823656}
   m_healthBar: {fileID: 0}
-  m_healthAmountTextMesh: {fileID: 0}
 --- !u!114 &114220533214340802
 MonoBehaviour:
   m_ObjectHideFlags: 1
