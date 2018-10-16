@@ -32,7 +32,7 @@ public class Player : MonoBehaviour, IDamagable {
 
     //----------------------------
     #region Inspector Variables
-    [SerializeField] private int m_maxHealth;
+        [SerializeField] private int m_maxHealth;
 
         [Tooltip("The number of death animations")]
         [SerializeField] private int m_deathAnimCount;
@@ -75,8 +75,8 @@ public class Player : MonoBehaviour, IDamagable {
         [Tooltip("The coloured object that'll fill up the health bar")]
         [SerializeField] private Image m_healthBar;
 
-        [Tooltip("The text mesh object that'll display the heath")]
-        [SerializeField] private TextMeshProUGUI m_healthAmountTextMesh;
+        //[Tooltip("The text mesh object that'll display the heath")]
+        //[SerializeField] private TextMeshProUGUI m_healthAmountTextMesh;
         
     #endregion
 
@@ -283,8 +283,8 @@ public class Player : MonoBehaviour, IDamagable {
     private void UpdateHealthDisplay() {
         float health = m_health;
         float maxHealth = m_maxHealth;
-        if (m_healthAmountTextMesh != null)
-            m_healthAmountTextMesh.text = m_health + " / " + m_maxHealth.ToString();
+        //if (m_healthAmountTextMesh != null)
+        //    m_healthAmountTextMesh.text = m_health + " / " + m_maxHealth.ToString();
         if (m_healthBar != null)
             m_healthBar.fillAmount = (health / maxHealth);
     }
