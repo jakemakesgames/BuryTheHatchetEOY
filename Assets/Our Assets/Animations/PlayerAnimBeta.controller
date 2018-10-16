@@ -130,8 +130,8 @@ AnimatorController:
     m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
-    m_Name: Top
-    m_StateMachine: {fileID: 1107946627316661038}
+    m_Name: Legs
+    m_StateMachine: {fileID: 1107894495345301778}
     m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
@@ -142,9 +142,9 @@ AnimatorController:
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   - serializedVersion: 5
-    m_Name: Legs
-    m_StateMachine: {fileID: 1107894495345301778}
-    m_Mask: {fileID: 0}
+    m_Name: Top
+    m_StateMachine: {fileID: 1107946627316661038}
+    m_Mask: {fileID: 31900000, guid: 6d2f19202249d9546bb0676cd710a175, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
