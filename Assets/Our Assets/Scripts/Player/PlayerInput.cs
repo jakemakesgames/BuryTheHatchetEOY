@@ -572,7 +572,7 @@ public class PlayerInput : MonoBehaviour {
     //Forces the player to look at the mouse position on screen
     private void PlayerLookAt() {
         if ((m_isShooting && m_willPause) == false) { 
-            Transform hand = m_weaponController.WeaponHold;
+            Transform hand = m_weaponController.EquippedGun.Muzzle;
 
             //Cast a ray from the given camera through the mouse to the created ground plane
             Ray ray = m_viewCamera.ScreenPointToRay(Input.mousePosition);
@@ -587,11 +587,12 @@ public class PlayerInput : MonoBehaviour {
 
             //Cast the ray from the camera to the generated ground plane which will be created at the players hand position
             if (groundPlane.Raycast(ray, out rayDistance)) {
-            Vector3 lookAtPoint = ray.GetPoint(rayDistance);
+                Vector3 lookAtPoint = ray.GetPoint(rayDistance);
+                Vector3 heightCorrectedLookPoint = new Vector3(lookAtPoint.x, transform.position.y, lookAtPoint.z);
+                transform.LookAt(heightCorrectedLookPoint);
 
-            Vector3 heightCorrectedLookPoint = new Vector3(lookAtPoint.x, transform.position.y, lookAtPoint.z);
-
-            transform.LookAt(heightCorrectedLookPoint);
+                hand.LookAt(lookAtPoint);
+                m_weaponController.EquippedGun.Muzzle = hand;
             }
         }
     }
