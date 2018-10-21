@@ -37,7 +37,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1691147294348018}
   m_LocalRotation: {x: -0, y: 0.0015249111, z: -0, w: 0.99999887}
-  m_LocalPosition: {x: 15.764513, y: -0.06124935, z: 10.19388}
+  m_LocalPosition: {x: 5.3541584, y: -0.06124935, z: 4.1002183}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -110,6 +110,7 @@ MonoBehaviour:
   m_willDestroy: 1
   m_health: 1
   m_destructionParticleLifeTime: 0
-  m_hitParticle: {fileID: 0}
+  m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_destructionParticle: {fileID: 0}
   m_healthStages: []

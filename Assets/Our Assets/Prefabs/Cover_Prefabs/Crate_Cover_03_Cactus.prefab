@@ -169,7 +169,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1470212303367872}
   m_LocalRotation: {x: -0, y: 0.22296251, z: -0, w: 0.97482705}
-  m_LocalPosition: {x: 1.36, y: 0, z: 2.83}
+  m_LocalPosition: {x: 29.36, y: 0, z: 42.83}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4720710934667380}
@@ -189,7 +189,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1584051053943408}
   m_LocalRotation: {x: -0, y: -0.8334927, z: -0, w: 0.5525305}
-  m_LocalPosition: {x: 1.047, y: 0, z: 0.036}
+  m_LocalPosition: {x: 1.18, y: 0, z: 0.009}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4054945780094208}
@@ -653,7 +653,8 @@ MonoBehaviour:
   m_willDestroy: 1
   m_health: 1
   m_destructionParticleLifeTime: 0
-  m_hitParticle: {fileID: 0}
+  m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_destructionParticle: {fileID: 0}
   m_healthStages: []
 --- !u!114 &114570399380579836
@@ -670,7 +671,8 @@ MonoBehaviour:
   m_willDestroy: 1
   m_health: 1
   m_destructionParticleLifeTime: 0
-  m_hitParticle: {fileID: 0}
+  m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_destructionParticle: {fileID: 0}
   m_healthStages: []
 --- !u!114 &114667256591886628
@@ -699,7 +701,8 @@ MonoBehaviour:
   m_willDestroy: 1
   m_health: 1
   m_destructionParticleLifeTime: 0
-  m_hitParticle: {fileID: 0}
+  m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_destructionParticle: {fileID: 0}
   m_healthStages: []
 --- !u!114 &114819346838469822
@@ -728,7 +731,8 @@ MonoBehaviour:
   m_willDestroy: 1
   m_health: 1
   m_destructionParticleLifeTime: 0
-  m_hitParticle: {fileID: 0}
+  m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_destructionParticle: {fileID: 0}
   m_healthStages: []
 --- !u!114 &114944256209889384
@@ -745,7 +749,8 @@ MonoBehaviour:
   m_willDestroy: 1
   m_health: 1
   m_destructionParticleLifeTime: 0
-  m_hitParticle: {fileID: 0}
+  m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_destructionParticle: {fileID: 0}
   m_healthStages: []
 --- !u!208 &208239250886474092

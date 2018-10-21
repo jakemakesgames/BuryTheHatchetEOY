@@ -532,7 +532,8 @@ MonoBehaviour:
   m_willDestroy: 1
   m_health: 1
   m_destructionParticleLifeTime: 0
-  m_hitParticle: {fileID: 0}
+  m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_destructionParticle: {fileID: 0}
   m_healthStages: []
 --- !u!114 &114138212392097252
@@ -549,7 +550,8 @@ MonoBehaviour:
   m_willDestroy: 1
   m_health: 1
   m_destructionParticleLifeTime: 0
-  m_hitParticle: {fileID: 0}
+  m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_destructionParticle: {fileID: 0}
   m_healthStages: []
 --- !u!114 &114231561416084312
@@ -619,7 +621,8 @@ MonoBehaviour:
   m_willDestroy: 1
   m_health: 1
   m_destructionParticleLifeTime: 0
-  m_hitParticle: {fileID: 0}
+  m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_destructionParticle: {fileID: 0}
   m_healthStages: []
 --- !u!114 &114864685639772478
@@ -648,7 +651,8 @@ MonoBehaviour:
   m_willDestroy: 1
   m_health: 1
   m_destructionParticleLifeTime: 0
-  m_hitParticle: {fileID: 0}
+  m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_destructionParticle: {fileID: 0}
   m_healthStages: []
 --- !u!208 &208430429286935180
