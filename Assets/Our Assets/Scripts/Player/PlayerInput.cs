@@ -194,7 +194,7 @@ public class PlayerInput : MonoBehaviour {
     private float m_swingTimer = 0f;
     private float m_isShootingTimer = 0f;
     private float m_rollSpeed = 0f;
-    private float m_inCombatRadius = 10f;
+    private float m_inCombatRadius = 2f;
     private float m_distanceToClosestEnemy = 0f;
 
     private bool m_isHoldingGun;
