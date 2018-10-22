@@ -20,14 +20,18 @@ public class SoundManager : MonoBehaviour
     [SerializeField] float m_fadeInControl;
     [Tooltip("Fade out speed")]
     [SerializeField] float m_fadeOutControl;
-
-    public bool m_musicTransition = false;
-
+    [SerializeField] float m_combatTime;
 
     #endregion
 
+    bool m_musicTransition;
+    bool m_combatStatePrevFrame = false;
+    bool m_countingDown;
+
     float m_inCombatVolume;
     float m_outOfCombatVolume;
+
+    float m_combatTimer;
 
     PlayerInput m_playerInput;
 
@@ -38,6 +42,8 @@ public class SoundManager : MonoBehaviour
         m_outOfCombatMusic.Play();
         m_inCombatMusic.Play();
 
+        m_musicTransition = m_playerInput.InCombat;
+
         m_inCombatVolume = 0;
         m_outOfCombatVolume = 1;
 
@@ -47,11 +53,13 @@ public class SoundManager : MonoBehaviour
 
     private void Update()
     {
+        FinishedCombat();
         TransitionBetween(m_musicTransition);
     }
 
     void TransitionBetween(bool a_toCombat)
     {
+        //In Combat
         if (a_toCombat)
         {
             if (m_outOfCombatVolume > 0)
@@ -72,6 +80,7 @@ public class SoundManager : MonoBehaviour
                 m_inCombatVolume = 1;
             }
         }
+        //Out of combat
         else
         {
             if (m_outOfCombatVolume < 1)
@@ -94,5 +103,42 @@ public class SoundManager : MonoBehaviour
         }
         m_inCombatMusic.volume = m_inCombatVolume;
         m_outOfCombatMusic.volume = m_outOfCombatVolume;
+    }
+
+    void FinishedCombat()
+    {
+        if (!m_playerInput.InCombat && m_combatStatePrevFrame)
+        {
+            m_countingDown = true;
+        }
+
+        //Out of combat
+        if (m_countingDown)
+        {
+            if (!m_playerInput.InCombat)
+            {
+                m_combatTimer -= Time.deltaTime;
+
+                if (m_combatTimer <= 0)
+                {
+                    m_musicTransition = false;
+                    m_countingDown = false;
+                    m_combatTimer = m_combatTime;
+                }
+            }
+            else
+            {
+                m_countingDown = false;
+                m_combatTimer = m_combatTime;
+            }
+        }
+        //In combat
+        else if(m_playerInput.InCombat)
+        {
+            m_musicTransition = true;
+            m_countingDown = false;
+        }
+
+        m_combatStatePrevFrame = m_playerInput.InCombat;
     }
 }
