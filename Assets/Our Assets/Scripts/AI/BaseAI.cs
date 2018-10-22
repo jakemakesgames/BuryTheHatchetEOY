@@ -67,6 +67,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     protected NavMeshAgent m_agent;
     protected AudioSource m_audioSource;
     protected GameObject m_player;
+    protected PlayerInput m_playerInput;
     protected Vector3 m_projectileVel;
     protected WeaponController m_weaponController;
 
@@ -85,6 +86,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     protected virtual void Awake()
     {
         m_player = GameObject.FindGameObjectWithTag("Player");
+        m_playerInput = m_player.GetComponent<PlayerInput>();
         m_weaponController = GetComponent<WeaponController>();
     }
 
@@ -168,6 +170,7 @@ public class BaseAI : MonoBehaviour, IDamagable
 
     protected virtual void Die()
     {
+        m_playerInput.DistanceToClosestEnemy = 200.0f;
         EnemyAnimator.SetLayerWeight(1, 0);
         m_agent.ResetPath();
         m_walkingParticleSystem.Stop();

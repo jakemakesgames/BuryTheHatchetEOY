@@ -232,19 +232,17 @@ public class AI : BaseAI
         {
             //To Do: put this in coroutine
             DrawLinePath(m_agent.path);
-            //m_distBetweenPlayer = Vector3.Distance(transform.position, m_player.transform.position);
+
             if (CurrCoverObj != null)
             {
                 m_distBetweenCover = Vector3.Distance(transform.position, CurrCoverObj.transform.position);
-                //m_distBetweenNextCover = Vector3.Distance(transform.position, CoverPos);
             }
             m_gunDistToPlayer = Vector3.Distance(m_weaponController.GetEquippedWeapon().transform.position, m_player.transform.position);
 
-            //if (m_health <= 0)
-            //{
-            //    Die();
-            //    return;
-            //}
+            if (m_playerInput.DistanceToClosestEnemy > m_distBetweenPlayer)
+            {
+                m_playerInput.DistanceToClosestEnemy = m_distBetweenPlayer;
+            }
 
             if (ClearShot())
                 Attack();
