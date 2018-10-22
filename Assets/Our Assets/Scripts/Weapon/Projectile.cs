@@ -86,6 +86,11 @@ public class Projectile : MonoBehaviour {
         set { m_knockBack = value; }
     }
 
+    public float Speed
+    {
+        get { return m_speed; }
+        set { m_speed = value; }
+    }
     //----------------------------
     #region setters
     public void SetSpeed(float a_speed) {

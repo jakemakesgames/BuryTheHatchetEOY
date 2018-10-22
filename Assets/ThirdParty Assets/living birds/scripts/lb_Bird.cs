@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
-public class lb_Bird : MonoBehaviour {
+public class lb_Bird : MonoBehaviour , IDamagable
+{
 	enum birdBehaviors{
 		sing,
 		preen,
@@ -577,4 +578,19 @@ public class lb_Bird : MonoBehaviour {
 			OnGroundBehaviors();	
 		}
 	}
+
+    public void TakeHit(int a_damage, RaycastHit a_hit)
+    {
+        
+    }
+
+    public void TakeDamage(int a_damage)
+    {
+
+    }
+
+    public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile)
+    {
+        KillBirdWithForce(a_projectile.transform.forward * a_projectile.Speed);
+    }
 }
