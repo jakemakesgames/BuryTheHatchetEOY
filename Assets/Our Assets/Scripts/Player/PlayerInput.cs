@@ -194,6 +194,7 @@ public class PlayerInput : MonoBehaviour {
     private float m_swingTimer = 0f;
     private float m_isShootingTimer = 0f;
     private float m_rollSpeed = 0f;
+    private float m_inCombatRadius = 10f;
 
     private bool m_isHoldingGun;
     private bool m_canAttack = true;
@@ -650,18 +651,13 @@ public class PlayerInput : MonoBehaviour {
     }
 
     //Coroutine used to detect if the player has entered combat range
-    //private IEnumerator CheckEnemyDistance() {
-    //    while (true) {
-    //        Collider[] enemies = Physics.OverlapSphere(transform.position, m_inCombatRadius, m_weaponController.EntityCollisionMask);
-    //        if (m_inCombatTimer < Time.time) {
-    //            m_inCombat = (enemies.Length > 0);
-    //            if (m_inCombat)
-    //                m_inCombatTimer = Time.time + m_inCombatTime;
-    //        }
-    //        m_playerAnimator.SetBool("WeaponActive", m_inCombat);
-    //        yield return new WaitForSeconds(0.25f);
-    //    }
-    //}
+    private IEnumerator CheckEnemyDistance() {
+        while (true) {
+            Collider[] enemies = Physics.OverlapSphere(transform.position, m_inCombatRadius, m_weaponController.EntityCollisionMask);
+            m_inCombat = (enemies.Length > 0);
+            yield return new WaitForSeconds(0.25f);
+        }
+    }
     #endregion
 
     //----------------------------
