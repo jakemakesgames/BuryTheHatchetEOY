@@ -13,67 +13,94 @@ using TMPro;
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(AudioSource))]
 public class Player : MonoBehaviour, IDamagable {
-    
+
+
+    //----------------------------
+    #region Health Variables
+    [Header("Health")]
+    [SerializeField] private int m_maxHealth;
+
+    [Tooltip("The coloured object that'll fill up the health bar")]
+    [SerializeField] private Image m_healthBar;
+
+    private int m_health;
+
+    #endregion
+
+    //----------------------------
+    #region Particles Variables
+    [Header("Particles")]
+    [Tooltip("The particles that will play when ever the player gets hit")]
+    [SerializeField] private ParticleSystem m_hitParticleSystem;
+
+    [Tooltip("The particles that will play once the player has died")]
+    [SerializeField] private ParticleSystem m_dieParticleSystem;
+
+    #endregion
+
+    //----------------------------
+    #region Audio Variables
+    [Header("Audio")]
+    [Tooltip("The audio clip that will play whenever the player gets hit")]
+    [SerializeField] private AudioClip m_hitSound;
+
+    [Tooltip("The audio clip  that will play once the player has died")]
+    [SerializeField] private AudioClip m_dieSound;
+
+    private AudioSource m_audioSource;
+    #endregion
+
+    //----------------------------
+    #region Other Death Variables
+    [Header("Other Death Stuff")]
+    [Tooltip("The number of death animations")]
+    [SerializeField] private int m_deathAnimCount;
+
+    [SerializeField] private float m_deathFadeOutTime;
+
+    [Tooltip("World height of body when dead")]
+    [SerializeField] private float m_bodyDropHeight;
+
+    private bool m_dead;
+    private bool m_hasDropped = false;
+    private bool m_hasDroppedTrigger = false;
+    private float m_dropDeadCounter = 0;
+    private float m_deathFadeOutTimer;
+    private Vector3 m_respawnPoint;
+
+    #endregion
+
+    //----------------------------
     #region Member variables
-        private bool m_dead;
-        private bool m_hasDropped = false;
-        private bool m_hasDroppedTrigger = false;
-        private float m_counter = 0;
-        private int m_health;
-        private int m_heldWeaponLocation;
-        private float m_deathFadeOutTimer;
-        private Vector3 m_respawnPoint;
-        private List<WeaponInfo> m_heldWeaponsInfo = new List<WeaponInfo>();
-        private AudioSource m_audioSource;
-        private PlayerInput m_input;
-        private RespawnPoint m_rp;
-        [HideInInspector] public CameraShake m_camAnimator; 
+    //private int m_heldWeaponLocation;
+    //private List<WeaponInfo> m_heldWeaponsInfo = new List<WeaponInfo>();
+    private PlayerInput m_input;
+    private RespawnPoint m_rp;
+    [HideInInspector] public CameraShake m_camAnimator;
+    private Animator m_playerAnimator;
     #endregion
 
     //----------------------------
     #region Inspector Variables
-        [SerializeField] private int m_maxHealth;
-
-        [Tooltip("The number of death animations")]
-        [SerializeField] private int m_deathAnimCount;
-
-        [SerializeField] private float m_deathFadeOutTime;
-
-        [Tooltip("World height of body when dead")]
-        [SerializeField] private float m_bodyDropHeight;
-
-        [Tooltip("The audio clip that will play whenever the player gets hit")]
-        [SerializeField] private AudioClip m_hitSound;
-
-        [Tooltip("The audio clip  that will play once the player has died")]
-        [SerializeField] private AudioClip m_dieSound;
-
-        [Tooltip("The particles that will play when ever the player gets hit")]
-        [SerializeField] private ParticleSystem m_hitParticleSystem;
-
-        [Tooltip("The particles that will play once the player has died")]
-        [SerializeField] private ParticleSystem m_dieParticleSystem;
+    [Header("Other Requirements")]
 
         [Tooltip("The UI Manager")]
         [SerializeField] private UIManager m_UIManager;
 
-        [Tooltip("Button would you press to equip the starting weapon")]
-        [SerializeField] private int m_startingWeaponLocation = 2;
+        //[Tooltip("Button would you press to equip the starting weapon")]
+        //[SerializeField] private int m_startingWeaponLocation = 2;
 
-        [Header("Needs to be the same number as held weapons")]
-        [Tooltip("which weapons assigned in the below " +
-            "list are currently available to the player")]
-        public List<bool> m_weaponsAvailableToPlayer;
+        //[Header("Needs to be the same number as held weapons")]
+        //[Tooltip("which weapons assigned in the below " +
+        //    "list are currently available to the player")]
+        //public List<bool> m_weaponsAvailableToPlayer;
 
-        [Header("Needs to be filled with weapon prefabs")]
-        [Tooltip("All weapons the player will be able to wield " +
-            "throughout the game and which position they'll be stored")]
-        public List<GameObject> m_heldWeapons;
+        //[Header("Needs to be filled with weapon prefabs")]
+        //[Tooltip("All weapons the player will be able to wield " +
+        //    "throughout the game and which position they'll be stored")]
+        //public List<GameObject> m_heldWeapons;
 
-        [SerializeField] private Animator m_playerAnimator;
     
-        [Tooltip("The coloured object that'll fill up the health bar")]
-        [SerializeField] private Image m_healthBar;
 
         //[Tooltip("The text mesh object that'll display the heath")]
         //[SerializeField] private TextMeshProUGUI m_healthAmountTextMesh;
@@ -82,10 +109,10 @@ public class Player : MonoBehaviour, IDamagable {
 
     //----------------------------
     #region Properties
-    public int HeldWeaponLocation {
-        get { return m_heldWeaponLocation; }
-        set { m_heldWeaponLocation = value; }
-    }
+    //public int HeldWeaponLocation {
+    //    get { return m_heldWeaponLocation; }
+    //    set { m_heldWeaponLocation = value; }
+    //}
 
     public Vector3 RespawnPoint {
         get { return m_respawnPoint; } 
@@ -163,31 +190,31 @@ public class Player : MonoBehaviour, IDamagable {
 
         //Returns false if a successful assignment couldn't occur
         //Sets information for a weapon the player is unequipping
-        public bool AssignWeaponInfo(int a_listIterator, int a_clip, int a_reserveAmmo) {
-            HeldWeaponLocation = a_listIterator;
-            if (m_heldWeapons[a_listIterator].GetComponent<Gun>() != null) {
-                if (m_heldWeapons[a_listIterator].GetComponent<Gun>().SetCurrentClip(a_clip) == false)
-                    return false;
-                m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(false, a_clip, a_reserveAmmo);
-                return true;
-            }
-            else if (m_heldWeapons[a_listIterator].GetComponent<Melee>() != null) {
-                m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(true, 0, 0);
-                return true;
-            }
-            else
-                return false;
-        }
-
-        public bool ToEquipIsMelee(int a_iterator) {
-            return m_heldWeaponsInfo[a_iterator].m_isMelee;
-        }
-        public int ToEquipCurrentClip(int a_iterator) {
-            return m_heldWeaponsInfo[a_iterator].m_curClip;
-        }
-        public int ToEquipCurrentReserve(int a_iterator) {
-            return m_heldWeaponsInfo[a_iterator].m_curReserve;
-        }
+        //public bool AssignWeaponInfo(int a_listIterator, int a_clip, int a_reserveAmmo) {
+        //    HeldWeaponLocation = a_listIterator;
+        //    if (m_heldWeapons[a_listIterator].GetComponent<Gun>() != null) {
+        //        if (m_heldWeapons[a_listIterator].GetComponent<Gun>().SetCurrentClip(a_clip) == false)
+        //            return false;
+        //        m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(false, a_clip, a_reserveAmmo);
+        //        return true;
+        //    }
+        //    else if (m_heldWeapons[a_listIterator].GetComponent<Melee>() != null) {
+        //        m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(true, 0, 0);
+        //        return true;
+        //    }
+        //    else
+        //        return false;
+        //}
+        //
+        //public bool ToEquipIsMelee(int a_iterator) {
+        //    return m_heldWeaponsInfo[a_iterator].m_isMelee;
+        //}
+        //public int ToEquipCurrentClip(int a_iterator) {
+        //    return m_heldWeaponsInfo[a_iterator].m_curClip;
+        //}
+        //public int ToEquipCurrentReserve(int a_iterator) {
+        //    return m_heldWeaponsInfo[a_iterator].m_curReserve;
+        //}
     #endregion
 
     //Functionality to handle what will happen if the player dies
@@ -267,11 +294,11 @@ public class Player : MonoBehaviour, IDamagable {
     //to the ground rather than just fall and float
     private void DropDead() {
         if (m_hasDropped == false) {
-            m_counter += Time.deltaTime;
+            m_dropDeadCounter += Time.deltaTime;
 
             Vector3 target = new Vector3(transform.position.x, m_bodyDropHeight, transform.position.z);
 
-            transform.position = Vector3.Lerp(transform.position, target, m_counter);
+            transform.position = Vector3.Lerp(transform.position, target, m_dropDeadCounter);
 
             if (transform.position.y == m_bodyDropHeight)
                 m_hasDropped = true;    
@@ -293,28 +320,29 @@ public class Player : MonoBehaviour, IDamagable {
     private void Awake () {
         m_health = m_maxHealth;
         UpdateHealthDisplay();
-        m_heldWeaponsInfo.Capacity = m_heldWeapons.Count;
+        //m_heldWeaponsInfo.Capacity = m_heldWeapons.Count;
         RespawnPoint = transform.position;
-        for (int i = 0; i < m_heldWeapons.Count; i++) {
-            if (m_heldWeapons[i].GetComponent<Gun>() != null) {
-                int currentAmmo = m_heldWeapons[i].GetComponent<Gun>().GetCurrentAmmo();
-                int currentClip = m_heldWeapons[i].GetComponent<Gun>().GetCurrentClip();
-                m_heldWeaponsInfo.Add(new WeaponInfo(false, currentClip, currentAmmo));
-            }
-            else if (m_heldWeapons[i].GetComponent<Melee>() != null)
-                m_heldWeaponsInfo.Add(new WeaponInfo(true, 0, 0));
-        }
+        //for (int i = 0; i < m_heldWeapons.Count; i++) {
+        //    if (m_heldWeapons[i].GetComponent<Gun>() != null) {
+        //        int currentAmmo = m_heldWeapons[i].GetComponent<Gun>().GetCurrentAmmo();
+        //        int currentClip = m_heldWeapons[i].GetComponent<Gun>().GetCurrentClip();
+        //        m_heldWeaponsInfo.Add(new WeaponInfo(false, currentClip, currentAmmo));
+        //    }
+        //    else if (m_heldWeapons[i].GetComponent<Melee>() != null)
+        //        m_heldWeaponsInfo.Add(new WeaponInfo(true, 0, 0));
+        //}
         m_audioSource = GetComponent<AudioSource>();
         m_playerAnimator = GetComponentInChildren<Animator>();
         m_input = GetComponent<PlayerInput>();
         m_deathFadeOutTimer = m_deathFadeOutTime;
-        m_playerAnimator.SetInteger("whichWeapon", m_startingWeaponLocation);
-        HeldWeaponLocation = m_startingWeaponLocation;
+        //m_playerAnimator.SetInteger("whichWeapon", m_startingWeaponLocation);
+        //HeldWeaponLocation = m_startingWeaponLocation;
     }
 
     //Set's up the animator for the camera
     private void Start() {
         m_camAnimator = Camera.main.GetComponent<CameraShake>();
+        m_playerAnimator = m_input.m_playerAnimator;
     }
 
     //Makes sure health never goes above maximum

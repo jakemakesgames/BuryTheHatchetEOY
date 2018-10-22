@@ -55,48 +55,36 @@ public class PlayerInput : MonoBehaviour {
     //----------------------------
     #region Movement/ animation variables
     [Header("CHARLIE!")]
-    [SerializeField]
-    private Animator m_playerAnimator;
+    public Animator m_playerAnimator;
 
     [Header("Movement variables")]
     [Tooltip("Movement speed of the player")]
-    [SerializeField]
-    private float m_speed = 5f;
+    [SerializeField] private float m_speed = 5f;
 
     [Tooltip("Percent speed increace per sceond")]
-    [SerializeField]
-    private float m_accelerationRate = 0.1f;
+    [SerializeField] private float m_accelerationRate = 0.1f;
 
     [Tooltip("Percent speed decrease per sceond")]
-    [SerializeField]
-    private float m_decelerationRate = 0.99f;
+    [SerializeField] private float m_decelerationRate = 0.99f;
 
     [Header("Roll Variables")]
     [Tooltip("Movement speed of the player at the start of the roll")]
-    [SerializeField]
-    private float m_rollSpeedStart = 100f;
+    [SerializeField] private float m_rollSpeedStart = 100f;
 
     [Tooltip("The Time in seconds the player has to wait before they can roll again after rolling")]
-    [Range(0.125f, 1f)]
-    [SerializeField]
-    private float m_rollCoolDownTime = 0.25f;
+    [Range(0.125f, 1f)] [SerializeField] private float m_rollCoolDownTime = 0.25f;
 
-    [Tooltip("Unit speed decrease per sceond when rolling")]
-    [Range(1.1f, 5)]
-    [SerializeField]
-    private float m_rollAccelerationRate = 3f;
+    [Tooltip("Speed increase/decrease per sceond when rolling")]
+    [Range(1.1f, 5)]  [SerializeField] private float m_rollAccelerationRate = 3f;
 
     [Tooltip("Controls the x component of the roll curves, higher values make the roll switch curves faster")]
-    [SerializeField]
-    private float m_rollTimeMultiplier = 1.2f;
+    [SerializeField] private float m_rollTimeMultiplier = 1.2f;
 
     [Tooltip("The Time in seconds the player is invincible after starting to roll")]
-    [SerializeField]
-    private float m_invicibilityTime = 1f;
+    [SerializeField] private float m_invicibilityTime = 1f;
 
-    [Tooltip("the card that will apear when the player can roll")]
-    [SerializeField]
-    private GameObject m_canRollObject;
+    [Tooltip("The thing that'll spin while tthe player cannot roll")]
+    [SerializeField] private GameObject m_canRollObject;
 
     private Vector3 m_velocityModifyer = Vector3.zero;
     #endregion
@@ -183,15 +171,9 @@ public class PlayerInput : MonoBehaviour {
     private ParticleSystem m_shootDustParticle;
 
     [Header("Volumes")]
-    [Range(0, 1)]
-    [SerializeField]
-    private float m_walkVol = 0.5f;
-    [Range(0, 1)]
-    [SerializeField]
-    private float m_clothesVol = 0.5f;
-    [Range(0, 1)]
-    [SerializeField]
-    private float m_rollVol = 0.5f;
+    [Range(0, 1)] [SerializeField] private float m_walkVol = 0.5f;
+    [Range(0, 1)] [SerializeField] private float m_clothesVol = 0.5f;
+    [Range(0, 1)] [SerializeField] private float m_rollVol = 0.5f;
     #endregion
 
     //----------------------------
@@ -243,15 +225,11 @@ public class PlayerInput : MonoBehaviour {
 
     //----------------------------
     #region properties
-    public bool IsInvincible {
-        get { return m_isInvincible; }
-        set { m_isInvincible = value; }
-    }
+    public bool IsInvincible { get { return m_isInvincible; } set { m_isInvincible = value; } }
 
-    public bool CanAttack {
-        get { return m_canAttack; }
-        set { m_canAttack = value; }
-    }
+    public bool CanAttack { get { return m_canAttack; } set { m_canAttack = value; } }
+
+    public bool InCombat { get { return m_inCombat; } }
 
     public int CurrentAmmoInClip {
         get {
@@ -303,6 +281,11 @@ public class PlayerInput : MonoBehaviour {
 
     //----------------------------
     //Methods and functionality
+    //----------------------------
+
+    #region Spinning Thing Coroutine
+    #endregion
+
     //----------------------------
     #region Player action methods
     //calls the equipped weapons attacking method 
@@ -732,61 +715,61 @@ public class PlayerInput : MonoBehaviour {
     //Checks if the player has access the weapon that the player atempemted to equip
     //if they do, the method then stores the values of the currently equipped weapon
     //then equipes the player with the new weapon with the stored values for that specific weapon
-    private void ChangeWeapon(int a_inumerator) {
-        if (Player.m_weaponsAvailableToPlayer[a_inumerator]) {
-            if (Player.m_heldWeapons[a_inumerator] != null) {
-                SetWeaponInfo();
-
-                if (m_weaponController.GetEquippedWeapon() != null)
-                    Player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
-                m_equippedWeaponInumerator = a_inumerator;
-                m_weaponController.EquipWeapon(Player.m_heldWeapons[a_inumerator]);
-                Player.HeldWeaponLocation = a_inumerator + 1;
-                m_playerAnimator.SetInteger("whichWeapon", Player.HeldWeaponLocation);
-
-                if (Player.ToEquipIsMelee(a_inumerator) == false) {
-                    Gun gun = m_weaponController.GetEquippedGun();
-                    gun.SetCurrentClip(Player.ToEquipCurrentClip(a_inumerator));
-                    gun.SetCurrentReserveAmmo(Player.ToEquipCurrentReserve(a_inumerator));
-                    if (gun.CurrentClip < gun.ClipSize)
-                        gun.IsFull = false;
-                }
-            }
-        }
-    }
+    //private void ChangeWeapon(int a_inumerator) {
+    //    if (Player.m_weaponsAvailableToPlayer[a_inumerator]) {
+    //        if (Player.m_heldWeapons[a_inumerator] != null) {
+    //            SetWeaponInfo();
+    //
+    //            if (m_weaponController.GetEquippedWeapon() != null)
+    //                Player.AssignWeaponInfo(m_equippedWeaponInumerator, m_ammoInClip, m_ammoInReserve);
+    //            m_equippedWeaponInumerator = a_inumerator;
+    //            m_weaponController.EquipWeapon(Player.m_heldWeapons[a_inumerator]);
+    //            Player.HeldWeaponLocation = a_inumerator + 1;
+    //            m_playerAnimator.SetInteger("whichWeapon", Player.HeldWeaponLocation);
+    //
+    //            if (Player.ToEquipIsMelee(a_inumerator) == false) {
+    //                Gun gun = m_weaponController.GetEquippedGun();
+    //                gun.SetCurrentClip(Player.ToEquipCurrentClip(a_inumerator));
+    //                gun.SetCurrentReserveAmmo(Player.ToEquipCurrentReserve(a_inumerator));
+    //                if (gun.CurrentClip < gun.ClipSize)
+    //                    gun.IsFull = false;
+    //            }
+    //        }
+    //    }
+    //}
 
     //Equip the weapon stored in the location
     //based on which number the player presses 
-    private void SwitchWeapon() {
-        Gun equippedGun = m_weaponController.GetEquippedGun();
-        bool canSwitch = true;
-        if (equippedGun == null) {
-            canSwitch = m_weaponController.GetEquippedMelee().IsIdle;
-        }
-        else {
-            canSwitch = equippedGun.IsIdle;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            int weaponInumerator = 0;
-            ChangeWeapon(weaponInumerator);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-            int weaponInumerator = 1;
-            ChangeWeapon(weaponInumerator);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-            int weaponInumerator = 2;
-            ChangeWeapon(weaponInumerator);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4)) {
-            int weaponInumerator = 3;
-            ChangeWeapon(weaponInumerator);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha5)) {
-            int weaponInumerator = 4;
-            ChangeWeapon(weaponInumerator);
-        }
-    }
+    //private void SwitchWeapon() {
+    //    Gun equippedGun = m_weaponController.GetEquippedGun();
+    //    bool canSwitch = true;
+    //    if (equippedGun == null) {
+    //        canSwitch = m_weaponController.GetEquippedMelee().IsIdle;
+    //    }
+    //    else {
+    //        canSwitch = equippedGun.IsIdle;
+    //    }
+    //    if (Input.GetKeyDown(KeyCode.Alpha1)) {
+    //        int weaponInumerator = 0;
+    //        ChangeWeapon(weaponInumerator);
+    //    }
+    //    else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+    //        int weaponInumerator = 1;
+    //        ChangeWeapon(weaponInumerator);
+    //    }
+    //    else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+    //        int weaponInumerator = 2;
+    //        ChangeWeapon(weaponInumerator);
+    //    }
+    //    else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+    //        int weaponInumerator = 3;
+    //        ChangeWeapon(weaponInumerator);
+    //    }
+    //    else if (Input.GetKeyDown(KeyCode.Alpha5)) {
+    //        int weaponInumerator = 4;
+    //        ChangeWeapon(weaponInumerator);
+    //    }
+    //}
 
     private void OnHitObject(Collider a_c) {
         IDamagable damagableObject = a_c.GetComponent<IDamagable>();
@@ -936,7 +919,7 @@ public class PlayerInput : MonoBehaviour {
     }
 
     private void Start() {
-        m_equippedWeaponInumerator = Player.HeldWeaponLocation - 1;
+        //m_equippedWeaponInumerator = Player.HeldWeaponLocation - 1;
         m_meleeHitBox.enabled = false;
         m_weaponController.EquippedGun.SetInfiniteAmmo(m_infiniteAmmo);
     }
