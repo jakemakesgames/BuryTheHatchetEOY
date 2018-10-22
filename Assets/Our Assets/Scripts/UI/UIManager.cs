@@ -75,7 +75,7 @@ public class UIManager : MonoBehaviour
         m_endLevel.SetActive(false);
 
 
-        CurrentEquippedWeaponImage();
+        //CurrentEquippedWeaponImage();
 
         m_currScene = SceneManager.GetActiveScene();
 
@@ -86,7 +86,7 @@ public class UIManager : MonoBehaviour
 
         if (m_inMenu == false)
         {
-            CurrentEquippedWeaponImage();
+            //CurrentEquippedWeaponImage();
             CurrentHealth();
         }
 
@@ -199,27 +199,27 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void CurrentEquippedWeaponImage()
-    {
-        if (m_player != null)
-        {
-            if (m_player.HeldWeaponLocation == 1)
-            {
-                //Turns the Revolver Bullets off
-                m_revBulletImage.SetActive(false);
-                //Put in Hatchet image
-                m_hatchetImage.SetActive(true);
-            }
-
-            if (m_player.HeldWeaponLocation == 2)
-            {
-                //Turns the Hatchet off
-                m_hatchetImage.SetActive(false);
-                //Put in Revolver image
-                m_revBulletImage.SetActive(true);
-            }
-        }  
-    }
+    //private void CurrentEquippedWeaponImage()
+    //{
+    //    if (m_player != null)
+    //    {
+    //        if (m_player.HeldWeaponLocation == 1)
+    //        {
+    //            //Turns the Revolver Bullets off
+    //            m_revBulletImage.SetActive(false);
+    //            //Put in Hatchet image
+    //            m_hatchetImage.SetActive(true);
+    //        }
+    //
+    //        if (m_player.HeldWeaponLocation == 2)
+    //        {
+    //            //Turns the Hatchet off
+    //            m_hatchetImage.SetActive(false);
+    //            //Put in Revolver image
+    //            m_revBulletImage.SetActive(true);
+    //        }
+    //    }  
+    //}
 
     public void RestartLevel()
     {
