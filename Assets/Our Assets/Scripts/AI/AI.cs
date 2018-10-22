@@ -239,7 +239,7 @@ public class AI : BaseAI
             }
             m_gunDistToPlayer = Vector3.Distance(m_weaponController.GetEquippedWeapon().transform.position, m_player.transform.position);
 
-            if (m_playerInput.DistanceToClosestEnemy > m_distBetweenPlayer)
+            if (m_playerInput.DistanceToClosestEnemy > m_distBetweenPlayer || m_playerInput.DistanceToClosestEnemy == 0f)
             {
                 m_playerInput.DistanceToClosestEnemy = m_distBetweenPlayer;
             }
