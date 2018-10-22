@@ -54,7 +54,7 @@ public class PlayerInput : MonoBehaviour {
 
     //----------------------------
     #region Movement/ animation variables
-    [Header("CHARLIE!")]
+    [Header("!!CHARLIE!!")]
     public Animator m_playerAnimator;
 
     [Header("Movement variables")]
@@ -195,6 +195,7 @@ public class PlayerInput : MonoBehaviour {
     private float m_isShootingTimer = 0f;
     private float m_rollSpeed = 0f;
     private float m_inCombatRadius = 10f;
+    private float m_distanceToClosestEnemy = 0f;
 
     private bool m_isHoldingGun;
     private bool m_canAttack = true;
@@ -244,6 +245,8 @@ public class PlayerInput : MonoBehaviour {
     public int CurrentHealth     {
         get { return m_player.GetHealth(); }
     }
+
+    public float DistanceToClosestEnemy { get { return m_distanceToClosestEnemy; } set { m_distanceToClosestEnemy = value; } }
 
     public InteractableObject CurrentlyCanInteractWith {
         get { return m_currentlyCanInteractWith; }
@@ -653,8 +656,10 @@ public class PlayerInput : MonoBehaviour {
     //Coroutine used to detect if the player has entered combat range
     private IEnumerator CheckEnemyDistance() {
         while (true) {
-            Collider[] enemies = Physics.OverlapSphere(transform.position, m_inCombatRadius, m_weaponController.EntityCollisionMask);
-            m_inCombat = (enemies.Length > 0);
+            if (m_distanceToClosestEnemy <= m_inCombatRadius)
+                m_inCombat = true;
+            else
+                m_inCombat = false;
             yield return new WaitForSeconds(0.25f);
         }
     }
