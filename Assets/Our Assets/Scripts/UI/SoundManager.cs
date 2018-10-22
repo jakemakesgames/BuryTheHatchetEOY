@@ -6,114 +6,93 @@ using UnityEngine.UI;
 public class SoundManager : MonoBehaviour
 {
     #region Public Variables
+    [Header("Sliders")]
+    //[SerializeField] Slider m_mainSlider;
+    //[SerializeField] Slider m_soundEffectsSlider;
+    //[SerializeField] Slider m_musicSlider;
 
-    //Sliders
-    public Slider m_masterSlider;
-    public Slider m_musicSlider;
-    public Slider m_SFXSlider;
+    [Header("AudioSources")]
+    [SerializeField] AudioSource m_outOfCombatMusic;
+    //[SerializeField] AudioSource m_transitionIntoCombatMusic;
+    [SerializeField] AudioSource m_inCombatMusic;
+    [Header("Volume Fade Speed")]
+    [Tooltip("Fade in speed")]
+    [SerializeField] float m_fadeInControl;
+    [Tooltip("Fade out speed")]
+    [SerializeField] float m_fadeOutControl;
 
-    //Audio Sources
-    public AudioSource m_buttonSound;
-    public AudioSource m_backSound;
-    public AudioSource m_musicSound;
-    //public AudioSource m_campFire;
+    public bool m_musicTransition = false;
 
-    //[SerializeField] Transform m_campFireMD;
-
-    #endregion
-
-    #region Private Regions
-
-    private float m_masterVolume;
 
     #endregion
 
-    #region Saving Instance
+    float m_inCombatVolume;
+    float m_outOfCombatVolume;
 
-    public static SoundManager m_instance;
+    PlayerInput m_playerInput;
 
-    //Singleton
-    private void Awake()
-    {
-        if (m_instance == null)
-        {
-            m_instance = this;
-        }
-        else if (m_instance != this)
-        {
-            //Destroys this object
-            Destroy(gameObject);
-        }
-
-        DontDestroyOnLoad(gameObject);
-    }
-
-    //Plays the background music on Start Up
     private void Start()
     {
-        if (m_musicSound != null)
-        {
-            m_musicSound.Play();
-            m_musicSound.loop = true;
-        }
+        m_playerInput = FindObjectOfType<PlayerInput>();
+
+        m_outOfCombatMusic.Play();
+        m_inCombatMusic.Play();
+
+        m_inCombatVolume = 0;
+        m_outOfCombatVolume = 1;
+
+        m_inCombatMusic.volume = m_inCombatVolume;
+        m_outOfCombatMusic.volume = m_outOfCombatVolume;
     }
 
     private void Update()
     {
-        MusicVolume();
-        SFXVolume();
+        TransitionBetween(m_musicTransition);
     }
 
-    #endregion
-
-    #region Public Functions
-
-    public float GetMainVolume()
+    void TransitionBetween(bool a_toCombat)
     {
-        return m_masterSlider.value;
-    }
-
-    //Allows the sliders to change the volume of the SFX
-    public void SFXVolume()
-    {
-        if (m_buttonSound != null)
+        if (a_toCombat)
         {
-            //m_buttonSound.volume = m_SFXSlider.value * m_masterSlider.value;
-            //m_backSound.volume = m_SFXSlider.value * m_masterSlider.value;
-        }
-    }
+            if (m_outOfCombatVolume > 0)
+            {
+                m_outOfCombatVolume -= Time.deltaTime * m_fadeOutControl;
+            }
+            else
+            {
+                m_outOfCombatVolume = 0;
+            }
 
-    //Allows the sliders to change the volume of the Music
-    public void MusicVolume()
-    {
-        if (m_musicSound != null)
+            if (m_inCombatVolume < 1)
+            {
+                m_inCombatVolume += Time.deltaTime * m_fadeInControl;
+            }
+            else
+            {
+                m_inCombatVolume = 1;
+            }
+        }
+        else
         {
-            //m_musicSound.volume = m_musicSlider.value * m_masterSlider.value;
+            if (m_outOfCombatVolume < 1)
+            {
+                m_outOfCombatVolume += Time.deltaTime * m_fadeOutControl;
+            }
+            else
+            {
+                m_outOfCombatVolume = 1;
+            }
+
+            if (m_inCombatVolume > 0)
+            {
+                m_inCombatVolume -= Time.deltaTime * m_fadeInControl;
+            }
+            else
+            {
+                m_inCombatVolume = 0;
+            }
         }
+        m_inCombatMusic.volume = m_inCombatVolume;
+        m_outOfCombatMusic.volume = m_outOfCombatVolume;
     }
-
-    //Plays the Button Sound
-    public void ButtonSound()
-    {
-        if (m_buttonSound != null)
-        {
-            //m_buttonSound.Play();
-        }
-    }
-
-    //Plays a sound when the "Escape" key is pressed in the GUI
-    public void BackSound()
-    {
-        if (m_backSound != null)
-        {
-            //m_backSound.Play();
-        }
-    }
-
-    public void CampFire()
-    {
-        //m_campFire.minDistance = 1;
-    }
-
-    #endregion
 }
