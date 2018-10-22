@@ -244,8 +244,13 @@ public class AI : BaseAI
                 m_playerInput.DistanceToClosestEnemy = m_distBetweenPlayer;
             }
 
-            if (ClearShot())
-                Attack();
+            if (m_gunDistToPlayer < m_attackRadius)
+            {
+                if (ClearShot())
+                {
+                    Attack();
+                }
+            }
 
             if (CheckStates())
                 SwitchState();
