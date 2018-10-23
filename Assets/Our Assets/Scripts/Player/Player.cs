@@ -8,7 +8,7 @@ using TMPro;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 22/10/2018
+//Last edited 23/10/2018
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(AudioSource))]
@@ -136,6 +136,7 @@ public class Player : MonoBehaviour, IDamagable {
     #endregion
 
     //IDamageble interfaces methods for taking damage
+    //----------------------------
     #region IDamagable methods
     public void TakeDamage(int a_damage) {
         if (m_camAnimator != null)
@@ -162,6 +163,7 @@ public class Player : MonoBehaviour, IDamagable {
     #endregion
 
     //Methods for outside scripts to change the players health
+    //----------------------------
     #region Health manipulation
     public void Heal(int a_healAmount) { m_health += a_healAmount;
         UpdateHealthDisplay(); }
@@ -170,11 +172,12 @@ public class Player : MonoBehaviour, IDamagable {
     #endregion
 
     //Returns information about the weapon which is about to be equipped
+    //----------------------------
     #region To Equip Information
-        //This is for storing information on the currently uneqipped weapons of the player
-        //No longer used however as the player will only have one weapon and the melee will
-        //Be specific to the player
-        public struct WeaponInfo
+    //This is for storing information on the currently uneqipped weapons of the player
+    //No longer used however as the player will only have one weapon and the melee will
+    //Be specific to the player
+    public struct WeaponInfo
         {
             public bool m_isMelee;
             public int m_curClip;
@@ -188,36 +191,37 @@ public class Player : MonoBehaviour, IDamagable {
             }
         }
 
-        //Returns false if a successful assignment couldn't occur
-        //Sets information for a weapon the player is unequipping
-        //public bool AssignWeaponInfo(int a_listIterator, int a_clip, int a_reserveAmmo) {
-        //    HeldWeaponLocation = a_listIterator;
-        //    if (m_heldWeapons[a_listIterator].GetComponent<Gun>() != null) {
-        //        if (m_heldWeapons[a_listIterator].GetComponent<Gun>().SetCurrentClip(a_clip) == false)
-        //            return false;
-        //        m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(false, a_clip, a_reserveAmmo);
-        //        return true;
-        //    }
-        //    else if (m_heldWeapons[a_listIterator].GetComponent<Melee>() != null) {
-        //        m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(true, 0, 0);
-        //        return true;
-        //    }
-        //    else
-        //        return false;
-        //}
-        //
-        //public bool ToEquipIsMelee(int a_iterator) {
-        //    return m_heldWeaponsInfo[a_iterator].m_isMelee;
-        //}
-        //public int ToEquipCurrentClip(int a_iterator) {
-        //    return m_heldWeaponsInfo[a_iterator].m_curClip;
-        //}
-        //public int ToEquipCurrentReserve(int a_iterator) {
-        //    return m_heldWeaponsInfo[a_iterator].m_curReserve;
-        //}
+    //Returns false if a successful assignment couldn't occur
+    //Sets information for a weapon the player is unequipping
+    //public bool AssignWeaponInfo(int a_listIterator, int a_clip, int a_reserveAmmo) {
+    //    HeldWeaponLocation = a_listIterator;
+    //    if (m_heldWeapons[a_listIterator].GetComponent<Gun>() != null) {
+    //        if (m_heldWeapons[a_listIterator].GetComponent<Gun>().SetCurrentClip(a_clip) == false)
+    //            return false;
+    //        m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(false, a_clip, a_reserveAmmo);
+    //        return true;
+    //    }
+    //    else if (m_heldWeapons[a_listIterator].GetComponent<Melee>() != null) {
+    //        m_heldWeaponsInfo[a_listIterator] = new WeaponInfo(true, 0, 0);
+    //        return true;
+    //    }
+    //    else
+    //        return false;
+    //}
+    //
+    //public bool ToEquipIsMelee(int a_iterator) {
+    //    return m_heldWeaponsInfo[a_iterator].m_isMelee;
+    //}
+    //public int ToEquipCurrentClip(int a_iterator) {
+    //    return m_heldWeaponsInfo[a_iterator].m_curClip;
+    //}
+    //public int ToEquipCurrentReserve(int a_iterator) {
+    //    return m_heldWeaponsInfo[a_iterator].m_curReserve;
+    //}
     #endregion
 
     //Functionality to handle what will happen if the player dies
+    //----------------------------
     #region Player death handling
     //Calls all subscribed OnDeath methods when the player dies
     //and tells the player it is dead allowing for other 
@@ -307,6 +311,7 @@ public class Player : MonoBehaviour, IDamagable {
     #endregion
 
     //updates the health display
+    //----------------------------
     private void UpdateHealthDisplay() {
         float health = m_health;
         float maxHealth = m_maxHealth;
@@ -317,6 +322,7 @@ public class Player : MonoBehaviour, IDamagable {
     }
 
     //Sets up health, weapon information and respawn point
+    //----------------------------
     private void Awake () {
         m_health = m_maxHealth;
         UpdateHealthDisplay();
@@ -340,6 +346,7 @@ public class Player : MonoBehaviour, IDamagable {
     }
 
     //Set's up the animator for the camera
+    //----------------------------
     private void Start() {
         m_camAnimator = Camera.main.GetComponent<CameraShake>();
         m_playerAnimator = m_input.m_playerAnimator;
@@ -347,6 +354,7 @@ public class Player : MonoBehaviour, IDamagable {
 
     //Makes sure health never goes above maximum
     //and handles fade transitions on death and respawn
+    //----------------------------
     private void Update() {
         if (m_health > m_maxHealth) {
             UpdateHealthDisplay();

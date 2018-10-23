@@ -48,7 +48,7 @@ public class PlayerInput : MonoBehaviour {
     private BoxCollider m_meleeHitBox;
 
     //The damageable objects hit during this swing
-    private List<IDamagable> m_hitThisSwing;
+    private List<IDamagable> m_hitThisSwing = new List<IDamagable>();
 
     #endregion
 
@@ -808,7 +808,7 @@ public class PlayerInput : MonoBehaviour {
 
         if (damagableObject != null) {
             bool ignore = false;
-            for (int i = 0; i < m_hitThisSwing.Count; i++) {
+            for (int i = 0; i < m_hitThisSwing.Count - 1; i++) {
                 if (damagableObject == m_hitThisSwing[i])
                     ignore = true;
             }
@@ -1000,8 +1000,9 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
-    private void OnTriggerEnter(Collider other) {
-        OnHitObject(other);
+    private void OnTriggerStay(Collider other) {
+        if (other.gameObject.layer == m_weaponController.EntityCollisionMask)
+            OnHitObject(other);
     }
     #endregion
 }
