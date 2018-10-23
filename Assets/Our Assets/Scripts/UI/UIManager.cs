@@ -81,6 +81,16 @@ public class UIManager : MonoBehaviour
 
     }
 
+    public bool GetInMenu()
+    {
+        return m_inMenu;
+    }
+
+    public string GetPlayScene()
+    {
+        return m_playScene;
+    }
+
     public void Update()
     {
 

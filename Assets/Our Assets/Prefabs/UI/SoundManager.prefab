@@ -215,6 +215,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_outOfCombatMusic: {fileID: 82110405826046106}
   m_inCombatMusic: {fileID: 82032627892125002}
+  m_mainMenuMusic: {fileID: 0}
   m_fadeInControl: 0.5
   m_fadeOutControl: 0.25
   m_combatTime: 1
