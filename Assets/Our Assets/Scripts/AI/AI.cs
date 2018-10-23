@@ -381,11 +381,23 @@ public class AI : BaseAI
                 IsPeeking = false;
             }
         }
+        else if (m_hasTakenImpact)
+        {
+            transform.LookAt(m_player.transform.position);
+            EnemyAnimator.SetTrigger("Aim");
+            m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
+            if (Gun.Shoot())
+            {
+                EnemyAnimator.SetTrigger("Shoot");
+            }
+        }
         else
         {
             m_state = STATE.FINDCOVER;
             //TO DO: WANDER STATE
         }
+
+        
 
         if (CurrCoverObj != null)
         {
