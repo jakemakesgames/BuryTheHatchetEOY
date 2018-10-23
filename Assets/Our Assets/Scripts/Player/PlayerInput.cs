@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 10/10/2018
+//Last edited 23/10/2018
 
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -83,8 +83,20 @@ public class PlayerInput : MonoBehaviour {
     [Tooltip("The Time in seconds the player is invincible after starting to roll")]
     [SerializeField] private float m_invicibilityTime = 1f;
 
+    [Header("Spur Variables")]
     [Tooltip("The thing that'll spin while tthe player cannot roll")]
-    [SerializeField] private GameObject m_canRollObject;
+    [SerializeField] private GameObject m_spur;
+
+    [Tooltip("the rate of spin over time?")]
+    [SerializeField] private AnimationCurve m_spurAnimCurve;
+
+    [Tooltip("The max angle of rotation the spur will go to by the end of the spin")]
+    [SerializeField] private float m_spurMaxAngle;
+
+    [Tooltip("The time in seconds the object will spin after th eplayer presses the roll button")]
+    [SerializeField] private float m_spurSpinTime = 1f;
+
+    private bool m_spurSpinning = false;
 
     private Vector3 m_velocityModifyer = Vector3.zero;
     #endregion
@@ -288,6 +300,25 @@ public class PlayerInput : MonoBehaviour {
     //----------------------------
 
     #region Spinning Thing Coroutine
+    //
+    IEnumerator SpinThing() {
+        System.DateTime startSpinTime = System.DateTime.Now;
+        m_spurSpinning = true;
+        float spinTimer = 0.0f;
+        float startAngle = m_spur.transform.eulerAngles.z;
+
+        while (spinTimer < m_spurSpinTime)
+        {
+            float currentTime = (float)(System.DateTime.Now - startSpinTime).TotalSeconds;
+            float acceleration = 1.5f * currentTime;
+            float angle = m_spurAnimCurve.Evaluate(spinTimer / m_spurSpinTime) * m_spurMaxAngle;
+            m_spur.GetComponentInChildren<RectTransform>().eulerAngles = new Vector3(0.0f, 0.0f, -(angle + startAngle));
+            spinTimer += (Time.deltaTime * acceleration);
+            yield return 0;
+        }
+        m_spur.GetComponentInChildren<RectTransform>().eulerAngles = new Vector3(0.0f, 0.0f, -(m_spurMaxAngle + startAngle));
+        m_spurSpinning = false;
+    }
     #endregion
 
     //----------------------------
@@ -624,8 +655,8 @@ public class PlayerInput : MonoBehaviour {
 
                 m_isRolling = true;
                 m_canRoll = false;
-                if (m_canRollObject != null)
-                    m_canRollObject.SetActive(false);
+                if (m_spur != null)
+                    StartCoroutine(SpinThing());
                 m_rollAccelerating = true;
                 IsInvincible = true;
 
@@ -944,8 +975,6 @@ public class PlayerInput : MonoBehaviour {
 
                 if (m_rollCoolDownTimer <= Time.time) {
                     m_canRoll = true;
-                    if (m_canRollObject != null)
-                        m_canRollObject.SetActive(true);
                     if (m_rollSpeaker != null && m_canRollSound != null)
                         m_rollSpeaker.PlayOneShot(m_canRollSound);
                 }
