@@ -74,10 +74,8 @@ public class PlayingCardTransforms : MonoBehaviour {
 	}
 
 	public void RestoreCard(){
-		if (!activate){
-			activate = true;
-            rotate = false;
-            playingCard.transform.rotation = Quaternion.Euler(0,0,0);
-		}
+		activate = true;
+        rotate = false;
+        playingCard.transform.rotation = Quaternion.Euler(0,0,0);
 	}
 }
