@@ -38,6 +38,8 @@ public class SoundManager : MonoBehaviour
     UIManager m_UIManager;
     private static SoundManager m_instance;
 
+    private bool m_menuSound = true;
+
     private void Awake()
     {
         if (m_instance == null)
@@ -90,6 +92,7 @@ public class SoundManager : MonoBehaviour
 
     void TransitionBetween(bool a_toCombat)
     {
+
         if (!m_UIManager.GetInMenu())
         {
             //In Combat
@@ -141,15 +144,16 @@ public class SoundManager : MonoBehaviour
 
     void PlayMenuMusic()
     {
-        if (m_UIManager.GetInMenu() == true)
+        if (m_UIManager.GetInMenu() == true && m_menuSound == true)
         {
             m_mainMenuMusic.Play();
-            m_outOfCombatMusic.Stop();
+            m_outOfCombatMusic.volume = 0;
+            m_menuSound = false;
         }
-        else if (m_UIManager.GetInMenu() == false)
+        else if (m_UIManager.GetInMenu() == false && m_menuSound == false)
         {
             m_mainMenuMusic.Stop();
-            m_outOfCombatMusic.Play();
+            m_menuSound = true;
         }
     }
 
