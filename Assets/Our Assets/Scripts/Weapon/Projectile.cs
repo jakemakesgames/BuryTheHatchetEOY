@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 08/10/2018
+//Last edited 24/10/2018
 
 
 public class Projectile : MonoBehaviour {
@@ -125,24 +125,28 @@ public class Projectile : MonoBehaviour {
 
         //The case where the projectile hits a ricochet object
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_ricochetCollisionMask)) {
-            if (m_ricochetParticle != null) {
-                GameObject GO = Instantiate(m_ricochetParticle, transform.position - transform.forward * m_ricochetParticleDist, transform.rotation);
-                Destroy(GO, m_ricochetParticleTimer);
-            }
+            if (hit.transform.gameObject.layer == m_ricochetCollisionMask) {
+                if (m_ricochetParticle != null) {
+                    GameObject GO = Instantiate(m_ricochetParticle, transform.position - transform.forward * m_ricochetParticleDist, transform.rotation);
+                    Destroy(GO, m_ricochetParticleTimer);
+                }
 
-            if (m_ricochetAudioClip != null && m_spawnedSpeaker != null) {
-                SpawnedSpeaker SS = Instantiate(m_spawnedSpeaker, transform) as SpawnedSpeaker;
-                SS.AudioSource.clip = m_ricochetAudioClip;
-                SS.AudioSource.Play();
+                if (m_ricochetAudioClip != null && m_spawnedSpeaker != null) {
+                    SpawnedSpeaker SS = Instantiate(m_spawnedSpeaker, transform) as SpawnedSpeaker;
+                    SS.AudioSource.clip = m_ricochetAudioClip;
+                    SS.AudioSource.Play();
+                }
+                OnHitObject(hit, this, false);
             }
-            OnHitObject(hit, this, false);
         }
 
         //The case where the projectile hits an entity
         if (m_insideEntity == false) {
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
-                OnHitObject(hit, true);
-                m_currentlyInside = hit.transform.gameObject;
+                if (hit.transform.gameObject.layer == m_entityCollisionMask) {
+                    OnHitObject(hit, true);
+                    m_currentlyInside = hit.transform.gameObject;
+                }
             }
         }
 
@@ -153,15 +157,20 @@ public class Projectile : MonoBehaviour {
 
         for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMasks[i])) {
-                OnHitObject(hit, false);
-                if (m_environmentParticles[i] != null) {
-                    GameObject GO = Instantiate(m_environmentParticles[i], transform.position - transform.forward * m_environmentParticleDists[i], transform.rotation);
-                    Destroy(GO, m_environmentParticleTimers[i]);
-                }
-                if (m_environmentAudioClips[i] != null) {
-                    SpawnedSpeaker audio = Instantiate(m_spawnedSpeaker, transform.position, transform.rotation) as SpawnedSpeaker;
-                    audio.AudioSource.clip = m_environmentAudioClips[i];
-                    audio.AudioSource.Play();
+
+                if (hit.transform.gameObject.layer == m_environmentCollisionMasks[i]) {
+                    OnHitObject(hit, false);
+
+                    if (m_environmentParticles[i] != null) {
+                        GameObject GO = Instantiate(m_environmentParticles[i], transform.position - transform.forward * m_environmentParticleDists[i], transform.rotation);
+                        Destroy(GO, m_environmentParticleTimers[i]);
+                    }
+
+                    if (m_environmentAudioClips[i] != null) {
+                        SpawnedSpeaker audio = Instantiate(m_spawnedSpeaker, transform.position, transform.rotation) as SpawnedSpeaker;
+                        audio.AudioSource.clip = m_environmentAudioClips[i];
+                        audio.AudioSource.Play();
+                    }
                 }
             }
         }
