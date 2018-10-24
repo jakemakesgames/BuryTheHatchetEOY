@@ -22,6 +22,7 @@ public class SoundManager : MonoBehaviour
     [Tooltip("Fade out speed")]
     [SerializeField] float m_fadeOutControl;
     [SerializeField] float m_combatTime;
+    [SerializeField] float m_playOutOfCombatMusicTimer;
 
     #endregion
 
@@ -147,13 +148,18 @@ public class SoundManager : MonoBehaviour
         if (m_UIManager.GetInMenu() == true && m_menuSound == true)
         {
             m_mainMenuMusic.Play();
-            m_outOfCombatMusic.volume = 0;
+            m_outOfCombatMusic.Stop();
             m_menuSound = false;
         }
         else if (m_UIManager.GetInMenu() == false && m_menuSound == false)
         {
             m_mainMenuMusic.Stop();
-            m_menuSound = true;
+
+            if (Time.time >= m_playOutOfCombatMusicTimer)
+            {
+                m_menuSound = true;
+                m_outOfCombatMusic.Play();
+            }
         }
     }
 
