@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 23/10/2018
+//Last edited 24/10/2018
 
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -685,7 +685,7 @@ public class PlayerInput : MonoBehaviour {
     }
 
     //Coroutine used to detect if the player has entered combat range
-    private IEnumerator CheckEnemyDistance() {
+    private IEnumerator CheckCombatRadius() {
         while (true) {
             if (m_distanceToClosestEnemy <= m_inCombatRadius)
                 m_inCombat = true;
@@ -947,7 +947,7 @@ public class PlayerInput : MonoBehaviour {
         m_nmaAngledSpeed = m_nma.angularSpeed;
         m_nmaSpeed = m_nma.speed;
 
-        StartCoroutine(CheckEnemyDistance());
+        StartCoroutine(CheckCombatRadius());
     }
 
     private void Start() {

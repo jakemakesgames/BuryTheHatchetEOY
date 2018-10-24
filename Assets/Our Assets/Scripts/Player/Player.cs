@@ -8,7 +8,7 @@ using TMPro;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 23/10/2018
+//Last edited 24/10/2018
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(AudioSource))]
@@ -83,27 +83,24 @@ public class Player : MonoBehaviour, IDamagable {
     //----------------------------
     #region Inspector Variables
     [Header("Other Requirements")]
+    [Tooltip("The UI Manager")]
+    [SerializeField] private UIManager m_UIManager;
 
-        [Tooltip("The UI Manager")]
-        [SerializeField] private UIManager m_UIManager;
+    //[Tooltip("Button would you press to equip the starting weapon")]
+    //[SerializeField] private int m_startingWeaponLocation = 2;
 
-        //[Tooltip("Button would you press to equip the starting weapon")]
-        //[SerializeField] private int m_startingWeaponLocation = 2;
+    //[Header("Needs to be the same number as held weapons")]
+    //[Tooltip("which weapons assigned in the below " +
+    //    "list are currently available to the player")]
+    //public List<bool> m_weaponsAvailableToPlayer;
 
-        //[Header("Needs to be the same number as held weapons")]
-        //[Tooltip("which weapons assigned in the below " +
-        //    "list are currently available to the player")]
-        //public List<bool> m_weaponsAvailableToPlayer;
-
-        //[Header("Needs to be filled with weapon prefabs")]
-        //[Tooltip("All weapons the player will be able to wield " +
-        //    "throughout the game and which position they'll be stored")]
-        //public List<GameObject> m_heldWeapons;
-
+    //[Header("Needs to be filled with weapon prefabs")]
+    //[Tooltip("All weapons the player will be able to wield " +
+    //    "throughout the game and which position they'll be stored")]
+    //public List<GameObject> m_heldWeapons;
     
-
-        //[Tooltip("The text mesh object that'll display the heath")]
-        //[SerializeField] private TextMeshProUGUI m_healthAmountTextMesh;
+    //[Tooltip("The text mesh object that'll display the heath")]
+    //[SerializeField] private TextMeshProUGUI m_healthAmountTextMesh;
         
     #endregion
 
@@ -114,25 +111,13 @@ public class Player : MonoBehaviour, IDamagable {
     //    set { m_heldWeaponLocation = value; }
     //}
 
-    public Vector3 RespawnPoint {
-        get { return m_respawnPoint; } 
-        set { m_respawnPoint = value; }
-    }
+    public Vector3 RespawnPoint { get { return m_respawnPoint; }  set { m_respawnPoint = value; } }
 
-    public bool HasDroppedTrigger {
-        get { return m_hasDroppedTrigger; }
-        set { m_hasDroppedTrigger = value; }
-    }
+    public bool HasDroppedTrigger {  get { return m_hasDroppedTrigger; } set { m_hasDroppedTrigger = value; } }
 
-    public bool Dead {
-        get { return m_dead; }
-        set { m_dead = value; }
-    }
+    public bool Dead { get { return m_dead; } set { m_dead = value;} }
 
-    public RespawnPoint Rp {
-        get { return m_rp; }
-        set { m_rp = value; }
-    }
+    public RespawnPoint Rp { get { return m_rp; } set { m_rp = value; } }
     #endregion
 
     //IDamageble interfaces methods for taking damage
@@ -255,8 +240,8 @@ public class Player : MonoBehaviour, IDamagable {
     }
 
     //Moves the player to the respawn position.
-    //Resets the player's health and give the,
-    //player control over the player character again
+    //Resets the player's health and give the player control over the player character again.
+    //Resets/respawns all enemies in the current area.
     public void Respawn() {
         transform.position = RespawnPoint;
         m_deathFadeOutTimer = m_deathFadeOutTime;
@@ -276,12 +261,11 @@ public class Player : MonoBehaviour, IDamagable {
 
         if (m_camAnimator != null)
             m_camAnimator.PlayerRespawn();
-
-        GetComponent<NavMeshAgent>().enabled = true;
-
-        if (m_UIManager != null)
+        else if (m_UIManager != null)
             m_UIManager.DeathFade();
 
+        GetComponent<NavMeshAgent>().enabled = true;
+        
         if (m_input != null) {
             if (m_input.WeapCont != null) {
                 m_input.WeapCont.InstantReload();

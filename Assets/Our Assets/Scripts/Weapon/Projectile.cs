@@ -20,6 +20,7 @@ public class Projectile : MonoBehaviour {
     private LayerMask m_ricochetCollisionMask;
     private LayerMask m_entityCollisionMask;
     private LayerMask m_environmentCollisionMask;
+    private LayerMask m_hittableCollisionMask;
     private GameObject m_currentlyInside;
     #endregion
 
@@ -81,6 +82,8 @@ public class Projectile : MonoBehaviour {
     private GameObject m_instancedTrailRenderer;
     #endregion
 
+
+    //----------------------------
     public float KnockBack {
         get { return m_knockBack; }
         set { m_knockBack = value; }
@@ -91,6 +94,7 @@ public class Projectile : MonoBehaviour {
         get { return m_speed; }
         set { m_speed = value; }
     }
+
     //----------------------------
     #region setters
     public void SetSpeed(float a_speed) {
@@ -123,6 +127,60 @@ public class Projectile : MonoBehaviour {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
 
+        #region Test area for multilayered layer detection
+        /*
+        if(Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_hittableCollisionMask)) {
+
+            LayerMask hitLayer = hit.transform.gameObject.layer;
+
+            if (hitLayer == m_ricochetCollisionMask) {
+                if (m_ricochetParticle != null) {
+                    GameObject GO = Instantiate(m_ricochetParticle, transform.position - transform.forward * m_ricochetParticleDist, transform.rotation);
+                    Destroy(GO, m_ricochetParticleTimer);
+                }
+
+                if (m_ricochetAudioClip != null && m_spawnedSpeaker != null) {
+                    SpawnedSpeaker SS = Instantiate(m_spawnedSpeaker, transform) as SpawnedSpeaker;
+                    SS.AudioSource.clip = m_ricochetAudioClip;
+                    SS.AudioSource.Play();
+                }
+                OnHitObject(hit, this, false);
+            }
+
+            else if (hitLayer == m_entityCollisionMask) {
+                if (m_insideEntity == false) {
+                    if (hit.transform.gameObject.layer == m_entityCollisionMask) {
+                        OnHitObject(hit, true);
+                        m_currentlyInside = hit.transform.gameObject;
+                    }
+                }
+            }
+            else if (hitLayer == m_environmentCollisionMask)
+                OnHitObject(hit, false);
+            
+            else {
+                for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
+                    if (hitLayer == m_environmentCollisionMasks[i]) { 
+                        OnHitObject(hit, false);
+
+                        if (m_environmentParticles[i] != null) {
+                            GameObject GO = Instantiate(m_environmentParticles[i], transform.position - transform.forward * m_environmentParticleDists[i], transform.rotation);
+                            Destroy(GO, m_environmentParticleTimers[i]);
+                        }
+
+                        if (m_environmentAudioClips[i] != null) {
+                            SpawnedSpeaker audio = Instantiate(m_spawnedSpeaker, transform.position, transform.rotation) as SpawnedSpeaker;
+                            audio.AudioSource.clip = m_environmentAudioClips[i];
+                            audio.AudioSource.Play();
+                        }
+                    }
+                }
+            }
+        }
+        */
+        #endregion
+
+        #region Original collision detection
         //The case where the projectile hits a ricochet object
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_ricochetCollisionMask)) {
             if (hit.transform.gameObject.layer == m_ricochetCollisionMask) {
@@ -174,6 +232,8 @@ public class Projectile : MonoBehaviour {
                 }
             }
         }
+        #endregion
+
     }
 
     //Check for when the projectile leaves an entity it has entered to play appropiate effects
@@ -256,6 +316,12 @@ public class Projectile : MonoBehaviour {
     //Create the trail renderer and check for initial collisions
     private void Start() {
         m_insideEntity = false;
+
+        m_hittableCollisionMask = m_ricochetCollisionMask | m_entityCollisionMask | m_environmentCollisionMask;
+        for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
+            m_hittableCollisionMask = m_hittableCollisionMask | m_environmentCollisionMasks[i];
+        }
+
         //If the projectile spawns within a collider, it will activate the appropriate collision response
         Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
         if (initialEnemyCollision.Length > 0) {
