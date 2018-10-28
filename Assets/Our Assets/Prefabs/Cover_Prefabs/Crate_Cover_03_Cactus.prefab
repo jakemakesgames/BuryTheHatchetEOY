@@ -168,8 +168,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1470212303367872}
-  m_LocalRotation: {x: -0, y: 0.22296251, z: -0, w: 0.97482705}
-  m_LocalPosition: {x: 29.36, y: 0, z: 42.83}
+  m_LocalRotation: {x: -0, y: -0.22296585, z: -0, w: -0.97482634}
+  m_LocalPosition: {x: 4.19, y: 0, z: 6.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4720710934667380}
@@ -181,7 +181,7 @@ Transform:
   - {fileID: 4241384914146488}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 25.766, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -334.233, z: 0}
 --- !u!4 &4241384914146488
 Transform:
   m_ObjectHideFlags: 1
@@ -202,7 +202,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1840790857430556}
   m_LocalRotation: {x: -0, y: 0.17621274, z: -0, w: 0.9843521}
-  m_LocalPosition: {x: 0.643, y: 0, z: 0.08}
+  m_LocalPosition: {x: 0.568, y: 0, z: -0.002}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4054945780094208}
@@ -214,13 +214,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1326320425812970}
-  m_LocalRotation: {x: -0, y: 0.38783064, z: -0, w: 0.92173064}
-  m_LocalPosition: {x: -1.0428066, y: -0.018999994, z: 0.42823982}
+  m_LocalRotation: {x: -0, y: -0.9217301, z: -0, w: 0.38783205}
+  m_LocalPosition: {x: -0.954, y: -0.018999994, z: 0.381}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4054945780094208}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 45.639004, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -134.36101, z: 0}
 --- !u!4 &4622536270218714
 Transform:
   m_ObjectHideFlags: 1
@@ -655,7 +655,8 @@ MonoBehaviour:
   m_destructionParticleLifeTime: 0
   m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
     type: 2}
-  m_destructionParticle: {fileID: 0}
+  m_destructionParticle: {fileID: 1474207008557910, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_healthStages: []
 --- !u!114 &114570399380579836
 MonoBehaviour:
@@ -673,7 +674,8 @@ MonoBehaviour:
   m_destructionParticleLifeTime: 0
   m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
     type: 2}
-  m_destructionParticle: {fileID: 0}
+  m_destructionParticle: {fileID: 1474207008557910, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_healthStages: []
 --- !u!114 &114667256591886628
 MonoBehaviour:
@@ -703,7 +705,8 @@ MonoBehaviour:
   m_destructionParticleLifeTime: 0
   m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
     type: 2}
-  m_destructionParticle: {fileID: 0}
+  m_destructionParticle: {fileID: 1474207008557910, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_healthStages: []
 --- !u!114 &114819346838469822
 MonoBehaviour:
@@ -733,7 +736,8 @@ MonoBehaviour:
   m_destructionParticleLifeTime: 0
   m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
     type: 2}
-  m_destructionParticle: {fileID: 0}
+  m_destructionParticle: {fileID: 1474207008557910, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_healthStages: []
 --- !u!114 &114944256209889384
 MonoBehaviour:
@@ -751,7 +755,8 @@ MonoBehaviour:
   m_destructionParticleLifeTime: 0
   m_hitParticle: {fileID: 198779963298031206, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
     type: 2}
-  m_destructionParticle: {fileID: 0}
+  m_destructionParticle: {fileID: 1474207008557910, guid: 0e2a83d1f56b4f84dbe4d09fd95555bc,
+    type: 2}
   m_healthStages: []
 --- !u!208 &208239250886474092
 NavMeshObstacle:
