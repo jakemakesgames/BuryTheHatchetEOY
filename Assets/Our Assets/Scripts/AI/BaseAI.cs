@@ -64,6 +64,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     protected bool m_hasDropped = false;
     protected bool m_hasDroppedTrigger = false;
     protected Vector3 m_respawnPoint;
+    private Transform m_currCoverObj;
     protected NavMeshAgent m_agent;
     protected AudioSource m_audioSource;
     protected GameObject m_player;
@@ -79,6 +80,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     #region Properties 
     public NavMeshAgent Agent { get { return m_agent; } }
     public Vector3 PlayerPosition { get { return m_player.transform.position; } }
+    public Transform CurrCoverObj { get { return m_currCoverObj; } set { m_currCoverObj = value; } }
     public bool HasDroppedTrigger { set { m_hasDroppedTrigger = value; } }
     public Animator EnemyAnimator {   get { return m_enemyAnimator; } set { m_enemyAnimator = value; } }
     #endregion
@@ -186,6 +188,7 @@ public class BaseAI : MonoBehaviour, IDamagable
             m_audioSource.PlayOneShot(m_deathSounds[Random.Range(0, m_deathSounds.Count)]);
         }
         GetComponent<NavMeshAgent>().enabled = false;
+        CurrCoverObj.tag = "CoverFree";
         m_isDead = true;
     }
 

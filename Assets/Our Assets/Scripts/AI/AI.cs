@@ -150,7 +150,7 @@ public class AI : BaseAI
 
     private Vector3 m_coverPos;
     private Vector3 m_shootTarget;
-    private Transform m_currCoverObj;
+    //private Transform m_currCoverObj;
     private Transform m_nextCoverObj;
     //private NavMeshAgent m_agent;
     private LineRenderer m_line;
@@ -178,7 +178,7 @@ public class AI : BaseAI
     public bool FinishedReload { set { m_finishedReload = value; } }
     public Vector3 CoverPos { get { return m_coverPos; } set { m_coverPos = value; } }
     public bool AtCover { get { return m_atCover; } set { m_atCover = value; } }
-    public Transform CurrCoverObj { get { return m_currCoverObj; } set { m_currCoverObj = value; } }
+    //public Transform CurrCoverObj { get { return m_currCoverObj; } set { m_currCoverObj = value; } }
     public bool NoCover { get { return m_noCover; } set { m_noCover = value; } }
     public Transform NextCoverObj { get { return m_nextCoverObj; } set { m_nextCoverObj = value; } }
     public bool NoOtherCover { get { return m_noOtherCover; } set {m_noOtherCover = value; } }
@@ -261,13 +261,11 @@ public class AI : BaseAI
             //UpdateParticles();
 
         }
-        //else
-        //{
-        //    if (m_hasDroppedTrigger)
-        //    {
-        //        DropDead();
-        //    }
-        //}
+        else
+        {
+            
+        }
+
         base.Update();
     }
 
