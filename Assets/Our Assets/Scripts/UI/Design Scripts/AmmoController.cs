@@ -27,7 +27,6 @@ public class AmmoController : MonoBehaviour {
 	}
 
 	public void Reload(){
-        Debug.Log(currentCard.ToString());
         if (currentCard < ammoCards.Length -1) {
 		    ammoCards [currentCard + 1].GetComponent<PlayingCardTransforms> ().RestoreCard ();
             currentCard++;
