@@ -183,7 +183,7 @@ public class Projectile : MonoBehaviour {
         #region Original collision detection
         //The case where the projectile hits a ricochet object
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_ricochetCollisionMask)) {
-            if (hit.transform.gameObject.layer == m_ricochetCollisionMask) {
+            //if (hit.transform.gameObject.layer == m_ricochetCollisionMask) {
                 if (m_ricochetParticle != null) {
                     GameObject GO = Instantiate(m_ricochetParticle, transform.position - transform.forward * m_ricochetParticleDist, transform.rotation);
                     Destroy(GO, m_ricochetParticleTimer);
@@ -195,16 +195,16 @@ public class Projectile : MonoBehaviour {
                     SS.AudioSource.Play();
                 }
                 OnHitObject(hit, this, false);
-            }
+            //}
         }
 
         //The case where the projectile hits an entity
         if (m_insideEntity == false) {
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_entityCollisionMask)) {
-                if (hit.transform.gameObject.layer == m_entityCollisionMask) {
+                //if (hit.transform.gameObject.layer == m_entityCollisionMask) {
                     OnHitObject(hit, true);
                     m_currentlyInside = hit.transform.gameObject;
-                }
+                //}
             }
         }
 
@@ -216,7 +216,7 @@ public class Projectile : MonoBehaviour {
         for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMasks[i])) {
 
-                if (hit.transform.gameObject.layer == m_environmentCollisionMasks[i]) {
+                //if (hit.transform.gameObject.layer == m_environmentCollisionMasks[i]) {
                     OnHitObject(hit, false);
 
                     if (m_environmentParticles[i] != null) {
@@ -229,7 +229,7 @@ public class Projectile : MonoBehaviour {
                         audio.AudioSource.clip = m_environmentAudioClips[i];
                         audio.AudioSource.Play();
                     }
-                }
+                //}
             }
         }
         #endregion
@@ -317,10 +317,10 @@ public class Projectile : MonoBehaviour {
     private void Start() {
         m_insideEntity = false;
 
-        m_hittableCollisionMask = m_ricochetCollisionMask | m_entityCollisionMask | m_environmentCollisionMask;
-        for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
-            m_hittableCollisionMask = m_hittableCollisionMask | m_environmentCollisionMasks[i];
-        }
+        //m_hittableCollisionMask = m_ricochetCollisionMask | m_entityCollisionMask | m_environmentCollisionMask;
+        //for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
+        //    m_hittableCollisionMask = m_hittableCollisionMask | m_environmentCollisionMasks[i];
+        //}
 
         //If the projectile spawns within a collider, it will activate the appropriate collision response
         Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
