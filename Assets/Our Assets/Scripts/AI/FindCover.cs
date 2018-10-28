@@ -37,6 +37,10 @@ public class FindCover : IState<AI>
             if (a_owner.CurrCoverObj == null || m_coverFound == false)
             {
                 FindNearestCover(a_owner);
+                if (a_owner.CurrCoverObj == null)
+                {
+                    return;
+                }
                 CalcRelativeCoverPos(a_owner);
                 SetPathToCover(a_owner);
             }
