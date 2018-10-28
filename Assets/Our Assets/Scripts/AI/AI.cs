@@ -384,6 +384,7 @@ public class AI : BaseAI
             transform.LookAt(m_player.transform.position);
             EnemyAnimator.SetTrigger("Aim");
             m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
+            m_weaponController.GunSpreadAngle = m_unAimedBulletSpread;
             if (Gun.Shoot())
             {
                 EnemyAnimator.SetTrigger("Shoot");
