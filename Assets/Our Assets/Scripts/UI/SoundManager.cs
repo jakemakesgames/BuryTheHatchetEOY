@@ -13,15 +13,20 @@ public class SoundManager : MonoBehaviour
     //[SerializeField] Slider m_musicSlider;
 
     [Header("AudioSources")]
+    [Tooltip("OutOfCombat Music")]
     [SerializeField] AudioSource m_outOfCombatMusic;
+    [Tooltip("Combat Music")]
     [SerializeField] AudioSource m_inCombatMusic;
+    [Tooltip("Main Menu Music")]
     [SerializeField] AudioSource m_mainMenuMusic;
     [Header("Volume Fade Speed")]
-    [Tooltip("Fade in speed")]
+    [Tooltip("InCombatFade in speed")]
     [SerializeField] float m_fadeInControl;
-    [Tooltip("Fade out speed")]
+    [Tooltip("InCombat Fade out speed")]
     [SerializeField] float m_fadeOutControl;
+    [Tooltip("Timer for Music Transition to occur")]
     [SerializeField] float m_combatTime;
+    [Tooltip("Delay time for OutOfCombatMusic to start playing when scene loads")]
     [SerializeField] float m_playOutOfCombatMusicTimer;
 
     #endregion
