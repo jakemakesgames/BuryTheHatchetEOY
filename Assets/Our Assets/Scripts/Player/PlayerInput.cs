@@ -61,6 +61,14 @@ public class PlayerInput : MonoBehaviour {
     [Header("!!CHARLIE!!")]
     public Animator m_playerAnimator;
 
+    [Header("ReloadMovementEffects")]
+    [Tooltip("Will the player slow down when they reload")]
+    [SerializeField] private bool m_slowWhenReload = false;
+    [Tooltip("Will the player stop when they reload, overrides slow when reload")]
+    [SerializeField] private bool m_stopWhenReload = false; 
+    [Tooltip("the speed multiplier when the player is slowed by reloading")]
+    [SerializeField] private float m_reloadingWalkSpeedMult = 1f;
+
     [Header("Movement variables")]
     [Tooltip("Movement speed of the player")]
     [SerializeField] private float m_speed = 5f;
@@ -585,8 +593,20 @@ public class PlayerInput : MonoBehaviour {
         }
         else
             m_velocity = Vector3.zero;
+        if (m_slowWhenReload) {
+            if (m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Reload_v01") ||
+                    m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Character_Anim_Reload_v01 0")) {
+                m_velocity *= m_reloadingWalkSpeedMult;
+            }
+        }
+            m_nma.velocity = m_velocity + VelocityModifyer;
 
-        m_nma.velocity = m_velocity + VelocityModifyer;
+        if (m_stopWhenReload) {
+            if (m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Reload_v01") ||
+                   m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Character_Anim_Reload_v01 0")) {
+                m_nma.velocity *= 0;
+            }
+        }
         VelocityModifyer = Vector3.zero;
     }
 
@@ -651,33 +671,36 @@ public class PlayerInput : MonoBehaviour {
     private void Roll() {
         if (m_isRolling == false) {
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.LeftShift)) {
-                m_rollStartTime = Time.time;
-                m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
-                m_playerAnimator.SetTrigger("Roll");
-                Debug.Log("roll");
+                if ((m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Reload_v01") ||
+                m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Character_Anim_Reload_v01 0")) == false) {
+                    m_rollStartTime = Time.time;
+                    m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
+                    m_playerAnimator.SetTrigger("Roll");
 
-                m_isRolling = true;
-                m_canRoll = false;
-                if (m_spur != null)
-                    StartCoroutine(SpinThing());
-                m_rollAccelerating = true;
-                IsInvincible = true;
+                    m_isRolling = true;
+                    m_canRoll = false;
+                    if (m_spur != null)
+                        StartCoroutine(SpinThing());
+                    m_rollAccelerating = true;
+                    IsInvincible = true;
 
-                if (m_nma.velocity != Vector3.zero) {
-                    Vector3 newForward = m_nma.velocity.normalized;
-                    transform.forward = newForward;
+                    if (m_nma.velocity != Vector3.zero)
+                    {
+                        Vector3 newForward = m_nma.velocity.normalized;
+                        transform.forward = newForward;
+                    }
+
+                    m_velPreRoll = m_velocity;
+
+                    if (m_rollSpeaker != null && m_rollSound != null)
+                        m_rollSpeaker.Play(); /**NEED TO IMPLEMENT VOLUME CONTROL AND RANDOM PITCHING*/
+
+                    if (m_rollParticleSystem != null)
+                        m_rollParticleSystem.Play();
+
+                    if (m_invincibilityParticle != null)
+                        m_invincibilityParticle.Play();
                 }
-
-                m_velPreRoll = m_velocity;
-
-                if (m_rollSpeaker != null && m_rollSound != null)
-                    m_rollSpeaker.Play(); /**NEED TO IMPLEMENT VOLUME CONTROL AND RANDOM PITCHING*/
-
-                if (m_rollParticleSystem != null)
-                    m_rollParticleSystem.Play();
-
-                if (m_invincibilityParticle != null)
-                    m_invincibilityParticle.Play();
             }
         }
     }
