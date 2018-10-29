@@ -54,6 +54,10 @@ public class PlayerInput : MonoBehaviour {
 
     //----------------------------
     #region Movement/ animation variables
+    [Header("Radii")]
+    [SerializeField] private float m_inCombatRadius = 10f;
+    [SerializeField] private bool m_drawRadius = true;
+
     [Header("!!CHARLIE!!")]
     public Animator m_playerAnimator;
 
@@ -206,7 +210,6 @@ public class PlayerInput : MonoBehaviour {
     private float m_swingTimer = 0f;
     private float m_isShootingTimer = 0f;
     private float m_rollSpeed = 0f;
-    private float m_inCombatRadius = 2f;
     private float m_distanceToClosestEnemy = 200f;
 
     private bool m_isHoldingGun;
@@ -1003,6 +1006,14 @@ public class PlayerInput : MonoBehaviour {
     private void OnTriggerStay(Collider other) {
         if (other.gameObject.layer == m_weaponController.EntityCollisionMask)
             OnHitObject(other);
+    }
+    #endregion
+
+    //----------------------------
+    #region Editor
+    private void OnDrawGizmosSelected() {
+        if (m_drawRadius)
+            Gizmos.DrawSphere(transform.position, m_inCombatRadius);
     }
     #endregion
 }
