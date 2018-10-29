@@ -4,8 +4,62 @@ timeCreated: 18446744011573954816
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
+    100000: YellowSnake01_geo
+    100002: YellowSnake01_jnt010
+    100004: YellowSnake01_jnt011
+    100006: YellowSnake01_jnt012
+    100008: YellowSnake01_jnt013
+    100010: YellowSnake01_jnt014
+    100012: YellowSnake01_jnt015
+    100014: YellowSnake01_jnt016
+    100016: YellowSnake01_jnt017
+    100018: YellowSnake01_jnt018
+    100020: YellowSnake01_jnt02
+    100022: YellowSnake01_jnt020
+    100024: YellowSnake01_jnt03
+    100026: YellowSnake01_jnt04
+    100028: YellowSnake01_jnt05
+    100030: YellowSnake01_jnt06
+    100032: YellowSnake01_jnt07
+    100034: YellowSnake01_jnt08
+    100036: YellowSnake01_jnt09
+    100038: YellowSnake01_jnt_end
+    100040: YellowSnake01Root_jnt01
+    100042: YellowSnake_group
+    100044: //RootNode
+    400000: YellowSnake01_geo
+    400002: YellowSnake01_jnt010
+    400004: YellowSnake01_jnt011
+    400006: YellowSnake01_jnt012
+    400008: YellowSnake01_jnt013
+    400010: YellowSnake01_jnt014
+    400012: YellowSnake01_jnt015
+    400014: YellowSnake01_jnt016
+    400016: YellowSnake01_jnt017
+    400018: YellowSnake01_jnt018
+    400020: YellowSnake01_jnt02
+    400022: YellowSnake01_jnt020
+    400024: YellowSnake01_jnt03
+    400026: YellowSnake01_jnt04
+    400028: YellowSnake01_jnt05
+    400030: YellowSnake01_jnt06
+    400032: YellowSnake01_jnt07
+    400034: YellowSnake01_jnt08
+    400036: YellowSnake01_jnt09
+    400038: YellowSnake01_jnt_end
+    400040: YellowSnake01Root_jnt01
+    400042: YellowSnake_group
+    400044: //RootNode
     4300000: YellowSnake01_geo
-  externalObjects: {}
+    7400000: idle
+    11100000: //RootNode
+    13700000: YellowSnake01_geo
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blinn1
+    second: {fileID: 2100000, guid: 11b0f9d70f8d55140a602950afe589fc, type: 2}
   materials:
     importMaterials: 1
     materialName: 2
