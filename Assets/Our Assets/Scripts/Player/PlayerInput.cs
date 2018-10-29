@@ -1013,7 +1013,7 @@ public class PlayerInput : MonoBehaviour {
     #region Editor
     private void OnDrawGizmosSelected() {
         if (m_drawRadius)
-            Gizmos.DrawSphere(transform.position, m_inCombatRadius);
+            Gizmos.DrawWireSphere(transform.position, m_inCombatRadius);
     }
     #endregion
 }
