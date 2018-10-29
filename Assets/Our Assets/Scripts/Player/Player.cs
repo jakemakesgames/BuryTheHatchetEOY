@@ -144,6 +144,9 @@ public class Player : MonoBehaviour, IDamagable {
     public void TakeImpact(int a_damage, RaycastHit a_hit, Projectile a_projectile) {
         TakeDamage(a_damage);
         m_input.VelocityModifyer = a_projectile.transform.forward * a_projectile.KnockBack;
+        if (m_input.IsInvincible) {
+            a_projectile.TargetInvincible = true;
+        }
     }
     #endregion
 
@@ -228,13 +231,7 @@ public class Player : MonoBehaviour, IDamagable {
 
         if (m_dieSound != null)
             m_audioSource.PlayOneShot(m_dieSound);
-
-        if (m_dieParticleSystem != null) {
-            ParticleSystem bloodPool = Instantiate(m_dieParticleSystem, m_dieParticleSystem.transform.position, m_dieParticleSystem.transform.rotation);
-            bloodPool.Play();
-            Destroy(bloodPool, m_deathFadeOutTime + 1f);
-        }
-
+        
         if (m_UIManager != null)
             m_UIManager.DeathFade();
     }
@@ -258,6 +255,12 @@ public class Player : MonoBehaviour, IDamagable {
 
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Respawn");
+
+        if (m_dieParticleSystem != null)
+        {
+            m_dieParticleSystem.Stop();
+            m_dieParticleSystem.Clear();
+        }
 
         if (m_camAnimator != null)
             m_camAnimator.PlayerRespawn();
@@ -288,8 +291,11 @@ public class Player : MonoBehaviour, IDamagable {
 
             transform.position = Vector3.Lerp(transform.position, target, m_dropDeadCounter);
 
-            if (transform.position.y == m_bodyDropHeight)
-                m_hasDropped = true;    
+            if (transform.position.y == m_bodyDropHeight) {
+                if (m_dieParticleSystem != null)
+                    m_dieParticleSystem.Play();
+                m_hasDropped = true;
+            }
         }
     }
     #endregion

@@ -4,8 +4,62 @@ timeCreated: 18446744011573954816
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
+    100000: RedSnake01_geo
+    100002: RedSnake01_jnt010
+    100004: RedSnake01_jnt011
+    100006: RedSnake01_jnt012
+    100008: RedSnake01_jnt013
+    100010: RedSnake01_jnt014
+    100012: RedSnake01_jnt015
+    100014: RedSnake01_jnt016
+    100016: RedSnake01_jnt017
+    100018: RedSnake01_jnt018
+    100020: RedSnake01_jnt02
+    100022: RedSnake01_jnt020
+    100024: RedSnake01_jnt03
+    100026: RedSnake01_jnt04
+    100028: RedSnake01_jnt05
+    100030: RedSnake01_jnt06
+    100032: RedSnake01_jnt07
+    100034: RedSnake01_jnt08
+    100036: RedSnake01_jnt09
+    100038: RedSnake01_jnt_end
+    100040: RedSnake01Root_jnt01
+    100042: RedSnake_group
+    100044: //RootNode
+    400000: RedSnake01_geo
+    400002: RedSnake01_jnt010
+    400004: RedSnake01_jnt011
+    400006: RedSnake01_jnt012
+    400008: RedSnake01_jnt013
+    400010: RedSnake01_jnt014
+    400012: RedSnake01_jnt015
+    400014: RedSnake01_jnt016
+    400016: RedSnake01_jnt017
+    400018: RedSnake01_jnt018
+    400020: RedSnake01_jnt02
+    400022: RedSnake01_jnt020
+    400024: RedSnake01_jnt03
+    400026: RedSnake01_jnt04
+    400028: RedSnake01_jnt05
+    400030: RedSnake01_jnt06
+    400032: RedSnake01_jnt07
+    400034: RedSnake01_jnt08
+    400036: RedSnake01_jnt09
+    400038: RedSnake01_jnt_end
+    400040: RedSnake01Root_jnt01
+    400042: RedSnake_group
+    400044: //RootNode
     4300000: RedSnake01_geo
-  externalObjects: {}
+    7400000: idle
+    11100000: //RootNode
+    13700000: RedSnake01_geo
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: snake_texture
+    second: {fileID: 2100000, guid: a85bb4eae70565744aab65ec97bce542, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

@@ -2692,6 +2692,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1829957748668720
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4939390492453232}
+  m_Layer: 0
+  m_Name: HipForward
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1835562211918288
 GameObject:
   m_ObjectHideFlags: 1
@@ -3187,6 +3202,23 @@ GameObject:
   - component: {fileID: 4033809770539998}
   m_Layer: 8
   m_Name: mixamorig:RightHandMiddle4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1967345716617544
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4217668590028236}
+  - component: {fileID: 33387782682704648}
+  - component: {fileID: 65683577265933666}
+  m_Layer: 0
+  m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4080,6 +4112,19 @@ Transform:
   m_Father: {fileID: 4585917038923120}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4217668590028236
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1967345716617544}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.01, z: 0.666}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4519470344288306}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4231764777592232
 Transform:
   m_ObjectHideFlags: 1
@@ -4586,7 +4631,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1707636803707616}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.09, y: 0.984, z: -5.63}
+  m_LocalPosition: {x: -3.77, y: 0.96, z: -5.31}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4842977106672378}
@@ -4985,6 +5030,7 @@ Transform:
   - {fileID: 4988849796258282}
   - {fileID: 4363700930858904}
   - {fileID: 4754892162110748}
+  - {fileID: 4217668590028236}
   m_Father: {fileID: 4377931447275796}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5069,6 +5115,7 @@ Transform:
   - {fileID: 4831772481753650}
   - {fileID: 4782613943908274}
   - {fileID: 4078753097920284}
+  - {fileID: 4939390492453232}
   m_Father: {fileID: 4988849796258282}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6251,6 +6298,19 @@ Transform:
   m_Father: {fileID: 4056582981724658}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4939390492453232
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1829957748668720}
+  m_LocalRotation: {x: 0.5, y: -0.5, z: -0.5, w: -0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4558743199995074}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 270, y: 0, z: 90}
 --- !u!4 &4942818246979470
 Transform:
   m_ObjectHideFlags: 1
@@ -6479,6 +6539,13 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1953745245327796}
   m_Mesh: {fileID: 4300000, guid: 429a5125b39fbf84a87e736cee24b440, type: 3}
+--- !u!33 &33387782682704648
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1967345716617544}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!33 &33906814828112530
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -6501,6 +6568,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &65683577265933666
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1967345716617544}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &65902255921678746
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -6936,23 +7015,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa9b54cf6b5d4249a506d25978f87e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_camAnimator: {fileID: 0}
   m_maxHealth: 50
+  m_healthBar: {fileID: 0}
+  m_hitParticleSystem: {fileID: 0}
+  m_dieParticleSystem: {fileID: 0}
+  m_hitSound: {fileID: 8300000, guid: e6b9cd8f36cb14b4192566dc2b535388, type: 3}
+  m_dieSound: {fileID: 8300000, guid: 835a496fb1033314d9c484560525613c, type: 3}
   m_deathAnimCount: 3
   m_deathFadeOutTime: 5
   m_bodyDropHeight: 0.6
-  m_hitSound: {fileID: 8300000, guid: e6b9cd8f36cb14b4192566dc2b535388, type: 3}
-  m_dieSound: {fileID: 8300000, guid: 835a496fb1033314d9c484560525613c, type: 3}
-  m_hitParticleSystem: {fileID: 0}
-  m_dieParticleSystem: {fileID: 0}
+  m_camAnimator: {fileID: 0}
   m_UIManager: {fileID: 0}
-  m_startingWeaponLocation: 2
-  m_weaponsAvailableToPlayer: 0101
-  m_heldWeapons:
-  - {fileID: 1838402518302384, guid: 5e68efd63c582db4b9dc21328ce22ea5, type: 2}
-  - {fileID: 1074724821504698, guid: a1c393be65c62c84e987b70f8b708bb3, type: 2}
-  m_playerAnimator: {fileID: 95370253051823656}
-  m_healthBar: {fileID: 0}
 --- !u!114 &114220533214340802
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7013,41 +7086,71 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5778159e463981f4eb7ae2dc4350093f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_meleeDamage: 1
+  m_meleeDamage: 10
   m_lungeSpeed: 25
-  m_lungeTime: 0.05
+  m_lungeTime: 0.5
   m_swingTime: 0.5
-  m_meleeHitBox: {fileID: 65902255921678746}
+  m_meleeHitBox: {fileID: 65683577265933666}
+  m_inCombatRadius: 10
+  m_drawRadius: 1
   m_playerAnimator: {fileID: 95370253051823656}
-  m_speed: 5
+  m_hips: {fileID: 4939390492453232}
+  m_slowWhenReload: 0
+  m_stopWhenReload: 0
+  m_reloadingWalkSpeedMult: 1
+  m_speed: 4
   m_accelerationRate: 0.1
   m_decelerationRate: 0.99
   m_rollSpeedStart: 20
-  m_rollCoolDownTime: 0.25
-  m_rollAccelerationRate: 5
-  m_rollTimeMultiplier: 10
+  m_rollCoolDownTime: 0.5
+  m_rollAccelerationRate: 4
+  m_rollTimeMultiplier: 1
   m_invicibilityTime: 1
-  m_canRollObject: {fileID: 0}
+  m_spur: {fileID: 0}
+  m_spurAnimCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.6704448
+      value: 0.973143
+      inSlope: 0.39309263
+      outSlope: 0.39309263
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.99383545
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  m_spurMaxAngle: 360
+  m_spurSpinTime: 1
   m_infiniteAmmo: 0
   m_willPause: 0
   m_shootPauseTime: 0
   m_camera: {fileID: 0}
   m_canvas: {fileID: 0}
   m_ammoController: {fileID: 0}
-  m_clipTextTag: UIClip
-  m_ammoTextTag: UIReserve
+  m_clipTextTag: 
+  m_ammoTextTag: 
   m_clipAmmoDisplay: {fileID: 0}
   m_totalAmmoDisplay: {fileID: 0}
   m_clothesRustleSound: {fileID: 0}
-  m_walkingSound: {fileID: 8300000, guid: 86f3ad864f850db46b5e300e3ce3f797, type: 3}
-  m_rollSound: {fileID: 8300000, guid: eacf843f7882bcd47a5cb7f84a0f4265, type: 3}
+  m_walkingSound: {fileID: 0}
+  m_rollSound: {fileID: 0}
   m_canRollSound: {fileID: 0}
-  m_walkingParticleSystem: {fileID: 198113631147028018, guid: d0e94ad31ea49a34ea8d52238797bef2,
-    type: 2}
-  m_rollParticleSystem: {fileID: 198113631147028018, guid: d0e94ad31ea49a34ea8d52238797bef2,
-    type: 2}
+  m_walkingParticleSystem: {fileID: 0}
+  m_rollParticleSystem: {fileID: 0}
   m_invincibilityParticle: {fileID: 0}
-  m_shootDustParticle: {fileID: 198715712563663276}
+  m_shootDustParticle: {fileID: 0}
   m_walkVol: 0.5
   m_clothesVol: 0.5
   m_rollVol: 0.5
@@ -7430,7 +7533,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 0.9
+  m_BaseOffset: 1.07
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!198 &198715712563663276

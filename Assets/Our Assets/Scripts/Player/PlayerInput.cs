@@ -54,8 +54,22 @@ public class PlayerInput : MonoBehaviour {
 
     //----------------------------
     #region Movement/ animation variables
+    [Header("Radii")]
+    [SerializeField] private float m_inCombatRadius = 10f;
+    [SerializeField] private bool m_drawRadius = true;
+
     [Header("!!CHARLIE!!")]
     public Animator m_playerAnimator;
+    [Tooltip("The empty game object on the players hips to get relative movement")]
+    [SerializeField] private Transform m_hips;
+
+    [Header("ReloadMovementEffects")]
+    [Tooltip("Will the player slow down when they reload")]
+    [SerializeField] private bool m_slowWhenReload = false;
+    [Tooltip("Will the player stop when they reload, overrides slow when reload")]
+    [SerializeField] private bool m_stopWhenReload = false; 
+    [Tooltip("the speed multiplier when the player is slowed by reloading")]
+    [SerializeField] private float m_reloadingWalkSpeedMult = 1f;
 
     [Header("Movement variables")]
     [Tooltip("Movement speed of the player")]
@@ -206,7 +220,6 @@ public class PlayerInput : MonoBehaviour {
     private float m_swingTimer = 0f;
     private float m_isShootingTimer = 0f;
     private float m_rollSpeed = 0f;
-    private float m_inCombatRadius = 2f;
     private float m_distanceToClosestEnemy = 200f;
 
     private bool m_isHoldingGun;
@@ -329,8 +342,8 @@ public class PlayerInput : MonoBehaviour {
     //and also checks if the player wishes to reload
     public void Attack() {
 
-        if (m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Reload_v01") ||
-                m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Character_Anim_Reload_v01 0")) {
+        if (m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") ||
+                m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Character_Anim_Reload_v01 0")) {
             if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
                 if (m_weaponController.ReloadEquippedGun()) {
                     if (m_ammoController != null)
@@ -343,8 +356,8 @@ public class PlayerInput : MonoBehaviour {
         if (m_swingTimer < Time.time)
             m_meleeHitBox.enabled = false;
 
-        if ((m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Idle_v01") ||
-               m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Walking")) == false)
+        if ((m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Idle_v01") ||
+               m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Walking")) == false)
             return;
 
         //Get's the currently equipped weapon and executes
@@ -582,8 +595,20 @@ public class PlayerInput : MonoBehaviour {
         }
         else
             m_velocity = Vector3.zero;
+        if (m_slowWhenReload) {
+            if (m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") ||
+                    m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Character_Anim_Reload_v01 0")) {
+                m_velocity *= m_reloadingWalkSpeedMult;
+            }
+        }
+            m_nma.velocity = m_velocity + VelocityModifyer;
 
-        m_nma.velocity = m_velocity + VelocityModifyer;
+        if (m_stopWhenReload) {
+            if (m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") ||
+                   m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Character_Anim_Reload_v01 0")) {
+                m_nma.velocity *= 0;
+            }
+        }
         VelocityModifyer = Vector3.zero;
     }
 
@@ -648,33 +673,36 @@ public class PlayerInput : MonoBehaviour {
     private void Roll() {
         if (m_isRolling == false) {
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.LeftShift)) {
-                m_rollStartTime = Time.time;
-                m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
-                m_playerAnimator.SetTrigger("Roll");
-                Debug.Log("roll");
+                if ((m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") ||
+                m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Character_Anim_Reload_v01 0")) == false) {
+                    m_rollStartTime = Time.time;
+                    m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
+                    m_playerAnimator.SetTrigger("Roll");
 
-                m_isRolling = true;
-                m_canRoll = false;
-                if (m_spur != null)
-                    StartCoroutine(SpinThing());
-                m_rollAccelerating = true;
-                IsInvincible = true;
+                    m_isRolling = true;
+                    m_canRoll = false;
+                    if (m_spur != null)
+                        StartCoroutine(SpinThing());
+                    m_rollAccelerating = true;
+                    IsInvincible = true;
 
-                if (m_nma.velocity != Vector3.zero) {
-                    Vector3 newForward = m_nma.velocity.normalized;
-                    transform.forward = newForward;
+                    if (m_nma.velocity != Vector3.zero)
+                    {
+                        Vector3 newForward = m_nma.velocity.normalized;
+                        transform.forward = newForward;
+                    }
+
+                    m_velPreRoll = m_velocity;
+
+                    if (m_rollSpeaker != null && m_rollSound != null)
+                        m_rollSpeaker.Play(); /**NEED TO IMPLEMENT VOLUME CONTROL AND RANDOM PITCHING*/
+
+                    if (m_rollParticleSystem != null)
+                        m_rollParticleSystem.Play();
+
+                    if (m_invincibilityParticle != null)
+                        m_invincibilityParticle.Play();
                 }
-
-                m_velPreRoll = m_velocity;
-
-                if (m_rollSpeaker != null && m_rollSound != null)
-                    m_rollSpeaker.Play(); /**NEED TO IMPLEMENT VOLUME CONTROL AND RANDOM PITCHING*/
-
-                if (m_rollParticleSystem != null)
-                    m_rollParticleSystem.Play();
-
-                if (m_invincibilityParticle != null)
-                    m_invincibilityParticle.Play();
             }
         }
     }
@@ -873,7 +901,12 @@ public class PlayerInput : MonoBehaviour {
     private void UpdateAnims() {
         float myVelocity = m_velocity.magnitude;
 
-        Vector3 localVel = transform.InverseTransformDirection(m_velocity.normalized);
+        Vector3 localVel;
+        if (m_hips == null)
+            localVel = transform.InverseTransformDirection(m_velocity.normalized);
+
+        else
+            localVel = m_hips.InverseTransformDirection(m_velocity.normalized);
 
         m_playerAnimator.SetFloat("Velocity", myVelocity);
 
@@ -1003,6 +1036,14 @@ public class PlayerInput : MonoBehaviour {
     private void OnTriggerStay(Collider other) {
         if (other.gameObject.layer == m_weaponController.EntityCollisionMask)
             OnHitObject(other);
+    }
+    #endregion
+
+    //----------------------------
+    #region Editor
+    private void OnDrawGizmosSelected() {
+        if (m_drawRadius)
+            Gizmos.DrawWireSphere(transform.position, m_inCombatRadius);
     }
     #endregion
 }

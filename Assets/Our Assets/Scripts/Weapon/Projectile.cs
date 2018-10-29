@@ -8,7 +8,7 @@ using UnityEngine;
 
 
 public class Projectile : MonoBehaviour {
-    
+
     #region private variables
     private float m_lifeTime = 20 /*seconds*/;
     private float m_skinWidth = 0.1f;
@@ -17,6 +17,7 @@ public class Projectile : MonoBehaviour {
     private int m_damage = 1;
     private bool m_insideEntity;
     private bool m_hasEntered;
+    private bool m_targetInvincible;
     private LayerMask m_ricochetCollisionMask;
     private LayerMask m_entityCollisionMask;
     private LayerMask m_environmentCollisionMask;
@@ -34,6 +35,15 @@ public class Projectile : MonoBehaviour {
     [SerializeField] private float m_bulletKillTime = 1f;
 
     [Header("Preset collision effects")]
+    [Header("Invincible Entity Effects")]
+    [Tooltip("The particle that will player when this projectile hits an invincible entity")]
+    [SerializeField] private GameObject m_entityInvincibleParticle;
+    [Tooltip("Life time of the particle system")]
+    [SerializeField] private float m_entityInvincibleParticleTimer = 1f;
+    [Tooltip("The sound that will play when this projectile hits an invincible entity")]
+    [SerializeField] private AudioClip m_entityInvincibleAudioClip;
+
+    [Header("Enter Entity Effects")]
     [Tooltip("The particle that will play when the projectile first hits an entity ie; enemy or player")]
     [SerializeField] private GameObject m_enterEntityParticle;
     [Tooltip("Life time of the particle system")]
@@ -43,6 +53,7 @@ public class Projectile : MonoBehaviour {
     [Tooltip("The sound that will play when the projectile first hits an entity")]
     [SerializeField] private AudioClip m_enterEntityAudioClip;
 
+    [Header("Exit Entity Effects")]
     [Tooltip("The particle that will play when the projectile exits an entities wound")]
     [SerializeField] private GameObject m_exitEntityParticle;
     [Tooltip("Life time of the particle system")]
@@ -52,6 +63,7 @@ public class Projectile : MonoBehaviour {
     [Tooltip("The sound that will play when the projectile exits the entities wound")]
     [SerializeField] private AudioClip m_exitEntityAudioClip;
 
+    [Header("Ricochet Effects")]
     [Tooltip("The particle that will play when the projectile ricochets off the environment")]
     [SerializeField] private GameObject m_ricochetParticle;
     [Tooltip("Life time of the particle system")]
@@ -84,16 +96,15 @@ public class Projectile : MonoBehaviour {
 
 
     //----------------------------
-    public float KnockBack {
-        get { return m_knockBack; }
-        set { m_knockBack = value; }
-    }
+    #region Properties
+    public float KnockBack { get { return m_knockBack; } set { m_knockBack = value; } }
 
-    public float Speed
-    {
-        get { return m_speed; }
-        set { m_speed = value; }
-    }
+    public float Speed { get { return m_speed; } set { m_speed = value; } }
+
+    public bool TargetInvincible { set { m_targetInvincible = value; } }
+
+    public bool InsideEntity { set { m_insideEntity = value; } }
+    #endregion
 
     //----------------------------
     #region setters
@@ -128,28 +139,35 @@ public class Projectile : MonoBehaviour {
         RaycastHit hit;
 
         #region Test area for multilayered layer detection
-        /*
-        if(Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_hittableCollisionMask)) {
+
+        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_hittableCollisionMask))
+        {
 
             LayerMask hitLayer = hit.transform.gameObject.layer;
 
-            if (hitLayer == m_ricochetCollisionMask) {
-                if (m_ricochetParticle != null) {
-                    GameObject GO = Instantiate(m_ricochetParticle, transform.position - transform.forward * m_ricochetParticleDist, transform.rotation);
+            if (hitLayer == m_ricochetCollisionMask)
+            {
+                if (m_ricochetParticle != null)
+                {
+                    GameObject GO = Instantiate(m_ricochetParticle, hit.point, transform.rotation);
                     Destroy(GO, m_ricochetParticleTimer);
                 }
 
-                if (m_ricochetAudioClip != null && m_spawnedSpeaker != null) {
-                    SpawnedSpeaker SS = Instantiate(m_spawnedSpeaker, transform) as SpawnedSpeaker;
+                if (m_ricochetAudioClip != null && m_spawnedSpeaker != null)
+                {
+                    SpawnedSpeaker SS = Instantiate(m_spawnedSpeaker, hit.point, hit.transform.rotation) as SpawnedSpeaker;
                     SS.AudioSource.clip = m_ricochetAudioClip;
                     SS.AudioSource.Play();
                 }
                 OnHitObject(hit, this, false);
             }
 
-            else if (hitLayer == m_entityCollisionMask) {
-                if (m_insideEntity == false) {
-                    if (hit.transform.gameObject.layer == m_entityCollisionMask) {
+            else if (hitLayer == m_entityCollisionMask)
+            {
+                if (m_insideEntity == false)
+                {
+                    if (hit.transform.gameObject.layer == m_entityCollisionMask)
+                    {
                         OnHitObject(hit, true);
                         m_currentlyInside = hit.transform.gameObject;
                     }
@@ -157,19 +175,24 @@ public class Projectile : MonoBehaviour {
             }
             else if (hitLayer == m_environmentCollisionMask)
                 OnHitObject(hit, false);
-            
-            else {
-                for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
-                    if (hitLayer == m_environmentCollisionMasks[i]) { 
+
+            else
+            {
+                for (int i = 0; i < m_environmentCollisionMasks.Count; i++)
+                {
+                    if (hitLayer == m_environmentCollisionMasks[i])
+                    {
                         OnHitObject(hit, false);
 
-                        if (m_environmentParticles[i] != null) {
-                            GameObject GO = Instantiate(m_environmentParticles[i], transform.position - transform.forward * m_environmentParticleDists[i], transform.rotation);
+                        if (m_environmentParticles[i] != null)
+                        {
+                            GameObject GO = Instantiate(m_environmentParticles[i], hit.point, transform.rotation);
                             Destroy(GO, m_environmentParticleTimers[i]);
                         }
 
-                        if (m_environmentAudioClips[i] != null) {
-                            SpawnedSpeaker audio = Instantiate(m_spawnedSpeaker, transform.position, transform.rotation) as SpawnedSpeaker;
+                        if (m_environmentAudioClips[i] != null)
+                        {
+                            SpawnedSpeaker audio = Instantiate(m_spawnedSpeaker, hit.point, transform.rotation) as SpawnedSpeaker;
                             audio.AudioSource.clip = m_environmentAudioClips[i];
                             audio.AudioSource.Play();
                         }
@@ -177,7 +200,8 @@ public class Projectile : MonoBehaviour {
                 }
             }
         }
-        */
+        /*
+         */
         #endregion
 
         #region Original collision detection
@@ -185,7 +209,7 @@ public class Projectile : MonoBehaviour {
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_ricochetCollisionMask)) {
             //if (hit.transform.gameObject.layer == m_ricochetCollisionMask) {
                 if (m_ricochetParticle != null) {
-                    GameObject GO = Instantiate(m_ricochetParticle, transform.position - transform.forward * m_ricochetParticleDist, transform.rotation);
+                    GameObject GO = Instantiate(m_ricochetParticle, hit.point/* * m_ricochetParticleDist*/, transform.rotation);
                     Destroy(GO, m_ricochetParticleTimer);
                 }
 
@@ -217,18 +241,25 @@ public class Projectile : MonoBehaviour {
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMasks[i])) {
 
                 //if (hit.transform.gameObject.layer == m_environmentCollisionMasks[i]) {
-                    OnHitObject(hit, false);
 
-                    if (m_environmentParticles[i] != null) {
-                        GameObject GO = Instantiate(m_environmentParticles[i], transform.position - transform.forward * m_environmentParticleDists[i], transform.rotation);
+                if (m_environmentParticles[i] != null) {
+                    Quaternion goRot = transform.rotation;
+                    if (i != 1) { 
+                        GameObject GO = Instantiate(m_environmentParticles[i], hit.point/* * m_environmentParticleDists[i]*/, Quaternion.LookRotation(-transform.forward));
                         Destroy(GO, m_environmentParticleTimers[i]);
                     }
-
-                    if (m_environmentAudioClips[i] != null) {
-                        SpawnedSpeaker audio = Instantiate(m_spawnedSpeaker, transform.position, transform.rotation) as SpawnedSpeaker;
-                        audio.AudioSource.clip = m_environmentAudioClips[i];
-                        audio.AudioSource.Play();
+                    else {
+                        GameObject GO = Instantiate(m_environmentParticles[i], hit.point/* * m_environmentParticleDists[i]*/, goRot);
+                        Destroy(GO, m_environmentParticleTimers[i]);
                     }
+                }
+
+                if (m_environmentAudioClips[i] != null) {
+                    SpawnedSpeaker audio = Instantiate(m_spawnedSpeaker, hit.point, transform.rotation) as SpawnedSpeaker;
+                    audio.AudioSource.clip = m_environmentAudioClips[i];
+                    audio.AudioSource.Play();
+                }
+                OnHitObject(hit, false);
                 //}
             }
         }
@@ -246,8 +277,7 @@ public class Projectile : MonoBehaviour {
                 Ray enterRay = new Ray(transform.position, transform.forward);
                 RaycastHit enterRayHit;
                 Physics.Raycast(enterRay, out enterRayHit, a_distanceToMove + m_skinWidth, m_entityCollisionMask);
-                if (m_exitEntityParticle != null)
-                {
+                if (m_exitEntityParticle != null) {
                     GameObject GO = Instantiate(m_enterEntityParticle, enterRayHit.point + transform.forward * m_enterParticleDist, transform.rotation);
                     Destroy(GO, m_enterParticleTimer);
                 }
@@ -284,6 +314,23 @@ public class Projectile : MonoBehaviour {
         IDamagable damagableObject = a_hit.collider.GetComponent<IDamagable>();
         if (damagableObject != null)
             damagableObject.TakeImpact(m_damage, a_hit, this);
+        if (m_targetInvincible) {
+            if (m_entityInvincibleParticle != null) {
+                GameObject GO = Instantiate(m_entityInvincibleParticle, a_hit.point, transform.rotation);
+                Destroy(GO, m_entityInvincibleParticleTimer);
+            }
+
+            if (m_entityInvincibleAudioClip != null && m_spawnedSpeaker != null) {
+                SpawnedSpeaker SS = Instantiate(m_spawnedSpeaker, a_hit.point, transform.rotation) as SpawnedSpeaker;
+                SS.AudioSource.clip = m_entityInvincibleAudioClip;
+                SS.AudioSource.Play();
+            }
+
+            Destroy(gameObject);
+            if (m_trailRenderer != null)
+                Destroy(m_instancedTrailRenderer, m_trailRendererLifeTime);
+            return;
+        }
         m_insideEntity = a_hitEntity;
         if (m_insideEntity)
             return;
@@ -317,10 +364,10 @@ public class Projectile : MonoBehaviour {
     private void Start() {
         m_insideEntity = false;
 
-        //m_hittableCollisionMask = m_ricochetCollisionMask | m_entityCollisionMask | m_environmentCollisionMask;
-        //for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
-        //    m_hittableCollisionMask = m_hittableCollisionMask | m_environmentCollisionMasks[i];
-        //}
+        m_hittableCollisionMask = m_ricochetCollisionMask | m_entityCollisionMask | m_environmentCollisionMask;
+        for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
+            m_hittableCollisionMask = m_hittableCollisionMask | m_environmentCollisionMasks[i];
+        }
 
         //If the projectile spawns within a collider, it will activate the appropriate collision response
         Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
