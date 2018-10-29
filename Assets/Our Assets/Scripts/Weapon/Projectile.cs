@@ -231,7 +231,7 @@ public class Projectile : MonoBehaviour {
                     OnHitObject(hit, false);
 
                     if (m_environmentParticles[i] != null) {
-                        GameObject GO = Instantiate(m_environmentParticles[i], hit.point * m_environmentParticleDists[i], transform.rotation);
+                        GameObject GO = Instantiate(m_environmentParticles[i], hit.point/* * m_environmentParticleDists[i]*/, transform.rotation);
                         Destroy(GO, m_environmentParticleTimers[i]);
                     }
 
