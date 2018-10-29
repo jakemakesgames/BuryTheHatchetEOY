@@ -136,6 +136,15 @@ public class UIManager : MonoBehaviour
         SceneManager.LoadScene(a_scene);
     }
 
+    private IEnumerator MenuFade(float a_WaitTime)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(a_WaitTime);
+            SceneManager.LoadScene(m_menuScene);
+        }
+    }
+
     #region Public Functions
 
     [ContextMenu("Play Game")]
@@ -211,9 +220,10 @@ public class UIManager : MonoBehaviour
     [ContextMenu("Return to Menu")]
     public void ReturnToMenu()
     {
-        //FadeOutOfLevel();
-        SceneManager.LoadScene(m_menuScene);
-        //StartCoroutine(WaitForFade(m_fadeTime, m_menuScene));
+        FadeOutOfLevel();
+        //SceneManager.LoadScene(m_menuScene);
+        StartCoroutine(MenuFade(0.5f));
+        FadeToNextLevel();
 
         m_pauseMenu.SetActive(false);
         m_gameHUD.SetActive(false);
