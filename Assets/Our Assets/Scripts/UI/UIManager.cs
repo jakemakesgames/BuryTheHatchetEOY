@@ -35,6 +35,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] Player m_player;
     [Tooltip("Players Health Bar")]
     [SerializeField] Image m_health;
+    [SerializeField] float m_fadeTime;
+    [SerializeField] float m_menuFadeTime;
 
 
     [SerializeField] Animator m_camerFadeAnim;
@@ -42,7 +44,6 @@ public class UIManager : MonoBehaviour
     private bool m_isPaused;
     private bool m_inMenu;
     private bool m_fade = true;
-    [SerializeField] float m_fadeTime;
     private float m_maxHealth;
     private float m_currHealth;
     private int m_fadeLevel;
@@ -134,15 +135,7 @@ public class UIManager : MonoBehaviour
     {
         yield return new WaitForSeconds(a_WaitTime);
         SceneManager.LoadScene(a_scene);
-    }
-
-    private IEnumerator MenuFade(float a_WaitTime)
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(a_WaitTime);
-            SceneManager.LoadScene(m_menuScene);
-        }
+        StopCoroutine(WaitForFade(a_WaitTime, a_scene));
     }
 
     #region Public Functions
@@ -151,13 +144,9 @@ public class UIManager : MonoBehaviour
     public void PlayGame()
     {    
         FadeOutOfLevel();
-
         StartCoroutine(WaitForFade(m_fadeTime, m_playScene));
-
-        //SceneManager.LoadScene(m_playScene);
-        
-
         FadeToNextLevel();
+       
 
         m_mainMenu.SetActive(false);
         m_endLevel.SetActive(false);
@@ -170,22 +159,15 @@ public class UIManager : MonoBehaviour
     {
         m_camerFadeAnim.SetTrigger("FadeOut");
     }
-
-    public void FadeToLevel(int a_levelFade)
-    {
-        m_fadeLevel = a_levelFade;
-        m_camerFadeAnim.SetTrigger("FadeIn");
-
-    }
     
     public void FadeToNextLevel()
     {
-        FadeToLevel(SceneManager.GetActiveScene().buildIndex + 1);
+        m_camerFadeAnim.SetTrigger("FadeIn");
     }
 
-    public void OnFadeComplete()
+    public void FadeToPrevLevel()
     {
-        SceneManager.LoadScene(m_fadeLevel);
+        m_camerFadeAnim.SetTrigger("FadeIn");
     }
 
     [ContextMenu("Options")]
@@ -220,10 +202,10 @@ public class UIManager : MonoBehaviour
     [ContextMenu("Return to Menu")]
     public void ReturnToMenu()
     {
+        Time.timeScale = 1;
         FadeOutOfLevel();
-        //SceneManager.LoadScene(m_menuScene);
-        StartCoroutine(MenuFade(0.5f));
-        FadeToNextLevel();
+        StartCoroutine(WaitForFade(m_menuFadeTime, m_menuScene));
+        FadeToPrevLevel();
 
         m_pauseMenu.SetActive(false);
         m_gameHUD.SetActive(false);
@@ -281,12 +263,12 @@ public class UIManager : MonoBehaviour
     //    }  
     //}
 
-    public void RestartLevel()
-    {
-        Time.timeScale = 1;
-        m_endLevel.SetActive(false);
-        StartCoroutine(WaitForFade(m_fadeTime, m_playScene));
-    }
+    //public void RestartLevel()
+    //{
+    //    Time.timeScale = 1;
+    //    m_endLevel.SetActive(false);
+    //    StartCoroutine(WaitForFade(m_fadeTime, m_playScene));
+    //}
 
     [ContextMenu("Quit Game")]
     public void QuitGame()
