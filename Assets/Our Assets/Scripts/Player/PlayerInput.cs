@@ -340,8 +340,8 @@ public class PlayerInput : MonoBehaviour {
     //and also checks if the player wishes to reload
     public void Attack() {
 
-        if (m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Reload_v01") ||
-                m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Character_Anim_Reload_v01 0")) {
+        if (m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") ||
+                m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Character_Anim_Reload_v01 0")) {
             if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
                 if (m_weaponController.ReloadEquippedGun()) {
                     if (m_ammoController != null)
@@ -354,8 +354,8 @@ public class PlayerInput : MonoBehaviour {
         if (m_swingTimer < Time.time)
             m_meleeHitBox.enabled = false;
 
-        if ((m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Idle_v01") ||
-               m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Walking")) == false)
+        if ((m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Idle_v01") ||
+               m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Walking")) == false)
             return;
 
         //Get's the currently equipped weapon and executes
@@ -594,16 +594,16 @@ public class PlayerInput : MonoBehaviour {
         else
             m_velocity = Vector3.zero;
         if (m_slowWhenReload) {
-            if (m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Reload_v01") ||
-                    m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Character_Anim_Reload_v01 0")) {
+            if (m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") ||
+                    m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Character_Anim_Reload_v01 0")) {
                 m_velocity *= m_reloadingWalkSpeedMult;
             }
         }
             m_nma.velocity = m_velocity + VelocityModifyer;
 
         if (m_stopWhenReload) {
-            if (m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Reload_v01") ||
-                   m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Character_Anim_Reload_v01 0")) {
+            if (m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") ||
+                   m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Character_Anim_Reload_v01 0")) {
                 m_nma.velocity *= 0;
             }
         }
@@ -671,8 +671,8 @@ public class PlayerInput : MonoBehaviour {
     private void Roll() {
         if (m_isRolling == false) {
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.LeftShift)) {
-                if ((m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Top.Character_Anim_Reload_v01") ||
-                m_playerAnimator.GetCurrentAnimatorStateInfo(1).IsName("Character_Anim_Reload_v01 0")) == false) {
+                if ((m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") ||
+                m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Character_Anim_Reload_v01 0")) == false) {
                     m_rollStartTime = Time.time;
                     m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
                     m_playerAnimator.SetTrigger("Roll");
