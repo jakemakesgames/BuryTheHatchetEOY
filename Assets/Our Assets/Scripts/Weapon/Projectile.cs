@@ -35,6 +35,15 @@ public class Projectile : MonoBehaviour {
     [SerializeField] private float m_bulletKillTime = 1f;
 
     [Header("Preset collision effects")]
+    [Header("Invincible Entity Effects")]
+    [Tooltip("The particle that will player when this projectile hits an invincible entity")]
+    [SerializeField] private GameObject m_entityInvincibleParticle;
+    [Tooltip("Life time of the particle system")]
+    [SerializeField] private float m_entityInvincibleParticleTimer = 1f;
+    [Tooltip("The sound that will play when this projectile hits an invincible entity")]
+    [SerializeField] private AudioClip m_entityInvincibleAudioClip;
+
+    [Header("Enter Entity Effects")]
     [Tooltip("The particle that will play when the projectile first hits an entity ie; enemy or player")]
     [SerializeField] private GameObject m_enterEntityParticle;
     [Tooltip("Life time of the particle system")]
@@ -44,6 +53,7 @@ public class Projectile : MonoBehaviour {
     [Tooltip("The sound that will play when the projectile first hits an entity")]
     [SerializeField] private AudioClip m_enterEntityAudioClip;
 
+    [Header("Exit Entity Effects")]
     [Tooltip("The particle that will play when the projectile exits an entities wound")]
     [SerializeField] private GameObject m_exitEntityParticle;
     [Tooltip("Life time of the particle system")]
@@ -53,6 +63,7 @@ public class Projectile : MonoBehaviour {
     [Tooltip("The sound that will play when the projectile exits the entities wound")]
     [SerializeField] private AudioClip m_exitEntityAudioClip;
 
+    [Header("Ricochet Effects")]
     [Tooltip("The particle that will play when the projectile ricochets off the environment")]
     [SerializeField] private GameObject m_ricochetParticle;
     [Tooltip("Life time of the particle system")]
@@ -284,6 +295,17 @@ public class Projectile : MonoBehaviour {
         if (damagableObject != null)
             damagableObject.TakeImpact(m_damage, a_hit, this);
         if (m_targetInvincible) {
+            if (m_entityInvincibleParticle != null) {
+                GameObject GO = Instantiate(m_entityInvincibleParticle, a_hit.point, transform.rotation);
+                Destroy(GO, m_entityInvincibleParticleTimer);
+            }
+
+            if (m_entityInvincibleAudioClip != null && m_spawnedSpeaker != null) {
+                SpawnedSpeaker SS = Instantiate(m_spawnedSpeaker, a_hit.point, transform.rotation) as SpawnedSpeaker;
+                SS.AudioSource.clip = m_entityInvincibleAudioClip;
+                SS.AudioSource.Play();
+            }
+
             Destroy(gameObject);
             if (m_trailRenderer != null)
                 Destroy(m_instancedTrailRenderer, m_trailRendererLifeTime);
