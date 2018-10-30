@@ -263,6 +263,31 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    [ContextMenu("Quit Game")]
+    public void QuitGame()
+    {
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
+    }
+
+    public void DeathFade()
+    {
+        m_camerFadeAnim.SetTrigger("FadeOut");
+    }
+
+    public void RespawnFade()
+    {
+        m_camerFadeAnim.SetTrigger("FadeIn");
+    }
+
+    #endregion
+}
+
+    #region OLG GUI CODE LIAM
+/*
     //private void CurrentEquippedWeaponImage()
     //{
     //    if (m_player != null)
@@ -292,31 +317,6 @@ public class UIManager : MonoBehaviour
     //    StartCoroutine(WaitForFade(m_fadeTime, m_playScene));
     //}
 
-    [ContextMenu("Quit Game")]
-    public void QuitGame()
-    {
-        #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-        #else
-            Application.Quit();
-        #endif
-    }
-
-    public void DeathFade()
-    {
-        m_camerFadeAnim.SetTrigger("FadeOut");
-    }
-
-    public void RespawnFade()
-    {
-        m_camerFadeAnim.SetTrigger("FadeIn");
-    }
-
-    #endregion
-}
-
-    #region LIAM
-/*
     #region Public Variables
 
     [SerializeField] GameObject m_startMenu;

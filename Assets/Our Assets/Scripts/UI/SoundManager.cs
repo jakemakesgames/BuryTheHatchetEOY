@@ -9,7 +9,8 @@ public class SoundManager : MonoBehaviour
     #region Public Variables
 
     [Header("Sliders")]
-    [SerializeField] Slider m_MainVolumeSlider;
+    [SerializeField] Slider m_mainVolumeSlider;
+    [SerializeField] Slider m_musicVolumeSlider;
 
     [Header("AudioSources")]
     [Tooltip("OutOfCombat Music")]
@@ -101,10 +102,33 @@ public class SoundManager : MonoBehaviour
     {
         PlayMenuMusic();
         FinishedCombat();
+        VolumeController();
         TransitionBetween(m_musicTransition);
     }
 
     #region Combat and Passive music Transition
+
+    private void PlayMenuMusic()
+    {
+        if (m_UIManager.GetInMenu() == true && m_menuSound == true)
+        {
+            m_mainMenuMusic.Play();
+            m_outOfCombatMusic.Stop();
+            m_inCombatMusic.Stop();
+            m_menuSound = false;
+        }
+        else if (m_UIManager.GetInMenu() == false && m_menuSound == false)
+        {
+            m_mainMenuMusic.Stop();
+
+            if (Time.time >= m_playOutOfCombatMusicTimer)
+            {
+                m_menuSound = true;
+                m_outOfCombatMusic.Play();
+                m_inCombatMusic.Play();
+            }
+        }
+    }
 
     private void TransitionBetween(bool a_toCombat)
     {
@@ -153,28 +177,8 @@ public class SoundManager : MonoBehaviour
                     m_inCombatVolume = 0;
                 }
             }
-            m_inCombatMusic.volume = m_inCombatVolume;
-            m_outOfCombatMusic.volume = m_outOfCombatVolume;
-        }
-    }
-
-    private void PlayMenuMusic()
-    {
-        if (m_UIManager.GetInMenu() == true && m_menuSound == true)
-        {
-            m_mainMenuMusic.Play();
-            m_outOfCombatMusic.Stop();
-            m_menuSound = false;
-        }
-        else if (m_UIManager.GetInMenu() == false && m_menuSound == false)
-        {
-            m_mainMenuMusic.Stop();
-
-            if (Time.time >= m_playOutOfCombatMusicTimer)
-            {
-                m_menuSound = true;
-                m_outOfCombatMusic.Play();
-            }
+            m_inCombatMusic.volume = m_inCombatVolume * m_mainVolumeSlider.value * m_musicVolumeSlider.value;
+            m_outOfCombatMusic.volume = m_outOfCombatVolume * m_mainVolumeSlider.value  * m_musicVolumeSlider.value;
         }
     }
 
@@ -226,6 +230,9 @@ public class SoundManager : MonoBehaviour
 
     public void VolumeController()
     {
+        m_mainMenuMusic.volume = m_mainVolumeSlider.value * m_musicVolumeSlider.value;
+        //m_outOfCombatMusic.volume = m_mainVolumeSlider.value;
+        //m_inCombatMusic.volume = m_mainVolumeSlider.value;
 
     }
 
