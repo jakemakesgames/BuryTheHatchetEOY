@@ -94,6 +94,11 @@ public class PlayerInput : MonoBehaviour {
     [Tooltip("Controls the x component of the roll curves, higher values make the roll switch curves faster")]
     [SerializeField] private float m_rollTimeMultiplier = 1.2f;
 
+    [Tooltip("")]
+    [SerializeField] private bool m_useAnimCurve = false;
+
+    [Tooltip("")]
+    [SerializeField] private AnimationCurve m_rollAnimCurve; 
     [Tooltip("The Time in seconds the player is invincible after starting to roll")]
     [SerializeField] private float m_invicibilityTime = 1f;
 
@@ -559,27 +564,33 @@ public class PlayerInput : MonoBehaviour {
                 m_rollTimePassed = (Time.time - m_rollStartTime) * (m_rollTimeMultiplier + m_rollAccelerationRate);
                 //time passed = t
                 //acceleration rate = a
-                if (m_rollAccelerating) {
-                    //Accelerate along a parabola starting at 0 ending at 1
-                    //velocity = -1 * (t - a)^2 + a^2
-                    m_rollSpeed = -1 * Mathf.Pow(m_rollTimePassed - m_rollAccelerationRate, 2) + Mathf.Pow(m_rollAccelerationRate, 2);
+                if (m_useAnimCurve && m_rollAnimCurve != null) {
+                    m_rollSpeed = m_rollAnimCurve.Evaluate(m_rollTimePassed * m_rollTimeMultiplier);
                     m_rollVelocity = transform.forward * m_rollSpeed;
-                    if (m_rollTimePassed - m_rollAccelerationRate >= 0)
-                        m_rollAccelerating = false;
                 }
                 else {
-                    //Decelerate along an exponential graph starting at 1 and tending toward 0
-                    //velocity = a^( -( t - a ) + 2)
-                    //float power = -(m_rollTimePassed - m_rollAccelerationRate) + 2;
-                    //m_rollVelocity = transform.forward * ((Mathf.Pow(m_rollAccelerationRate, power)));
+                    if (m_rollAccelerating) {
+                        //Accelerate along a parabola starting at 0 ending at 1
+                        //velocity = -1 * (t - a)^2 + a^2
+                        m_rollSpeed = -1 * Mathf.Pow(m_rollTimePassed - m_rollAccelerationRate, 2) + Mathf.Pow(m_rollAccelerationRate, 2);
+                        m_rollVelocity = transform.forward * m_rollSpeed;
+                        if (m_rollTimePassed - m_rollAccelerationRate >= 0)
+                            m_rollAccelerating = false;
+                    }
+                    else {
+                        //Decelerate along an exponential graph starting at 1 and tending toward 0
+                        //velocity = a^( -( t - a ) + 2)
+                        //float power = -(m_rollTimePassed - m_rollAccelerationRate) + 2;
+                        //m_rollVelocity = transform.forward * ((Mathf.Pow(m_rollAccelerationRate, power)));
 
-                    //Decelerate along a horizontal porabola starting at one and ending at zero
-                    //-a squareRoot(at - a^2) + a^2
-                    float squareRoot = Mathf.Sqrt(m_rollAccelerationRate * m_rollTimePassed - Mathf.Pow(m_rollAccelerationRate, 2));
-                    m_rollSpeed = (-m_rollAccelerationRate * (squareRoot + Mathf.Pow(m_rollAccelerationRate, 2)));
-                    m_rollVelocity = transform.forward * m_rollSpeed;
+                        //Decelerate along a horizontal porabola starting at one and ending at zero
+                        //-a squareRoot(at - a^2) + a^2
+                        float squareRoot = Mathf.Sqrt(m_rollAccelerationRate * m_rollTimePassed - Mathf.Pow(m_rollAccelerationRate, 2));
+                        m_rollSpeed = (-m_rollAccelerationRate * (squareRoot + Mathf.Pow(m_rollAccelerationRate, 2)));
+                        m_rollVelocity = transform.forward * m_rollSpeed;
 
-                    Debug.Log("Decelerating");
+                        Debug.Log("Decelerating");
+                    }
                 }
                 if (m_rollSpeed >= 0)
                     m_velocity = m_rollVelocity + m_velPreRoll;
