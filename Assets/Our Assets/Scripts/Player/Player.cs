@@ -78,13 +78,11 @@ public class Player : MonoBehaviour, IDamagable {
     private RespawnPoint m_rp;
     [HideInInspector] public CameraShake m_camAnimator;
     private Animator m_playerAnimator;
+    private UIManager m_UIManager;
     #endregion
 
     //----------------------------
     #region Inspector Variables
-    [Header("Other Requirements")]
-    [Tooltip("The UI Manager")]
-    [SerializeField] private UIManager m_UIManager;
 
     //[Tooltip("Button would you press to equip the starting weapon")]
     //[SerializeField] private int m_startingWeaponLocation = 2;
@@ -98,10 +96,10 @@ public class Player : MonoBehaviour, IDamagable {
     //[Tooltip("All weapons the player will be able to wield " +
     //    "throughout the game and which position they'll be stored")]
     //public List<GameObject> m_heldWeapons;
-    
+
     //[Tooltip("The text mesh object that'll display the heath")]
     //[SerializeField] private TextMeshProUGUI m_healthAmountTextMesh;
-        
+
     #endregion
 
     //----------------------------
@@ -126,9 +124,11 @@ public class Player : MonoBehaviour, IDamagable {
     public void TakeDamage(int a_damage) {
         if (m_camAnimator != null)
             m_camAnimator.PlayerHitShake();
-
-        if (m_input.IsInvincible)
+        if (m_input.IsInvincible) {
+            
             return;
+        }
+            
         m_health -= a_damage;
         if (m_health <= 0 && !Dead)
             Die();
@@ -232,8 +232,6 @@ public class Player : MonoBehaviour, IDamagable {
         if (m_dieSound != null)
             m_audioSource.PlayOneShot(m_dieSound);
         
-        if (m_UIManager != null)
-            m_UIManager.DeathFade();
     }
 
     //Moves the player to the respawn position.
@@ -265,7 +263,7 @@ public class Player : MonoBehaviour, IDamagable {
         if (m_camAnimator != null)
             m_camAnimator.PlayerRespawn();
         else if (m_UIManager != null)
-            m_UIManager.DeathFade();
+            m_UIManager.RespawnFade();
 
         GetComponent<NavMeshAgent>().enabled = true;
         
@@ -295,6 +293,8 @@ public class Player : MonoBehaviour, IDamagable {
                 if (m_dieParticleSystem != null)
                     m_dieParticleSystem.Play();
                 m_hasDropped = true;
+                if (m_UIManager != null)
+                    m_UIManager.DeathFade();
             }
         }
     }
@@ -340,6 +340,7 @@ public class Player : MonoBehaviour, IDamagable {
     private void Start() {
         m_camAnimator = Camera.main.GetComponent<CameraShake>();
         m_playerAnimator = m_input.m_playerAnimator;
+        m_UIManager = FindObjectOfType<UIManager>();
     }
 
     //Makes sure health never goes above maximum
