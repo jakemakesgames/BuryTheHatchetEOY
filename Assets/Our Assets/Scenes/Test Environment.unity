@@ -1798,6 +1798,11 @@ Transform:
   m_Father: {fileID: 1459944856}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &535489216 stripped
+Animator:
+  m_PrefabParentObject: {fileID: 95990760534400392, guid: ae9d5bd1a4e055d458234d4e6f82f242,
+    type: 2}
+  m_PrefabInternal: {fileID: 895030906}
 --- !u!1 &539025413
 GameObject:
   m_ObjectHideFlags: 0
@@ -2971,7 +2976,7 @@ Prefab:
     - target: {fileID: 114209535597535246, guid: ae9d5bd1a4e055d458234d4e6f82f242,
         type: 2}
       propertyPath: m_playScene
-      value: BetaLevel_1
+      value: BetaLevel_2
       objectReference: {fileID: 0}
     - target: {fileID: 1874467422691906, guid: ae9d5bd1a4e055d458234d4e6f82f242, type: 2}
       propertyPath: m_IsActive
@@ -2989,6 +2994,21 @@ Prefab:
     - target: {fileID: 1219057426753068, guid: ae9d5bd1a4e055d458234d4e6f82f242, type: 2}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114209535597535246, guid: ae9d5bd1a4e055d458234d4e6f82f242,
+        type: 2}
+      propertyPath: m_camerFadeAnim
+      value: 
+      objectReference: {fileID: 535489216}
+    - target: {fileID: 114209535597535246, guid: ae9d5bd1a4e055d458234d4e6f82f242,
+        type: 2}
+      propertyPath: m_fadeTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114209535597535246, guid: ae9d5bd1a4e055d458234d4e6f82f242,
+        type: 2}
+      propertyPath: m_menuFadeTime
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ae9d5bd1a4e055d458234d4e6f82f242, type: 2}
@@ -3898,6 +3918,88 @@ Transform:
   m_Father: {fileID: 1459944856}
   m_RootOrder: 54
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1151596452
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 439.2974
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 308.99402
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -0.5444336
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4352809817773296, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 82049835251653404, guid: f50ce05a22160ba47874c1bcda59f286,
+        type: 2}
+      propertyPath: BypassListenerEffects
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 82049835251653404, guid: f50ce05a22160ba47874c1bcda59f286,
+        type: 2}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 0fa16519747580e4e8d1205648cf1a11, type: 3}
+    - target: {fileID: 82032627892125002, guid: f50ce05a22160ba47874c1bcda59f286,
+        type: 2}
+      propertyPath: m_PlayOnAwake
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 82049835251653404, guid: f50ce05a22160ba47874c1bcda59f286,
+        type: 2}
+      propertyPath: Loop
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114641214375648774, guid: f50ce05a22160ba47874c1bcda59f286,
+        type: 2}
+      propertyPath: m_fadeInControl
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114641214375648774, guid: f50ce05a22160ba47874c1bcda59f286,
+        type: 2}
+      propertyPath: m_fadeOutControl
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 82110405826046106, guid: f50ce05a22160ba47874c1bcda59f286,
+        type: 2}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 468d3944b66421a40a962ef29de013bb, type: 3}
+    - target: {fileID: 114641214375648774, guid: f50ce05a22160ba47874c1bcda59f286,
+        type: 2}
+      propertyPath: m_combatTime
+      value: 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: f50ce05a22160ba47874c1bcda59f286, type: 2}
+  m_IsPrefabParent: 0
 --- !u!4 &1184365059
 Transform:
   m_ObjectHideFlags: 0
