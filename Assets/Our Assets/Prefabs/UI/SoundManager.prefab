@@ -296,6 +296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mainVolumeSlider: {fileID: 0}
   m_musicVolumeSlider: {fileID: 0}
+  m_SFXVolumeSlider: {fileID: 0}
   m_outOfCombatMusic: {fileID: 82110405826046106}
   m_inCombatMusic: {fileID: 82032627892125002}
   m_mainMenuMusic: {fileID: 82049835251653404}

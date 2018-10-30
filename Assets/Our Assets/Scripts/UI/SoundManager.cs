@@ -11,6 +11,7 @@ public class SoundManager : MonoBehaviour
     [Header("Sliders")]
     [SerializeField] Slider m_mainVolumeSlider;
     [SerializeField] Slider m_musicVolumeSlider;
+    [SerializeField] Slider m_SFXVolumeSlider;
 
     [Header("AudioSources")]
     [Tooltip("OutOfCombat Music")]
@@ -227,6 +228,12 @@ public class SoundManager : MonoBehaviour
     #endregion
 
     #region Public Functions
+
+    public float MasterVolume { get { return m_mainVolumeSlider.value; } }
+
+    public float MusicVolume { get { return m_musicVolumeSlider.value; } }
+
+    public float SFXVolume { get { return m_SFXVolumeSlider.value; } }
 
     public void VolumeController()
     {
