@@ -12,7 +12,7 @@ public class UIManager : MonoBehaviour
 {
     #region Public Variables
 
-    [Header("Menu GameObjects")]
+    [Header("GUI GameObjects")]
     [Tooltip("Main Menu object")]
     [SerializeField] GameObject m_mainMenu;
     [Tooltip("Options Menu object")]
@@ -33,15 +33,21 @@ public class UIManager : MonoBehaviour
     [SerializeField] string m_playScene;
     [Tooltip("Menu Scene string")]
     [SerializeField] string m_menuScene;
+
+    [Header("Player GameObject")]
     [Tooltip("Player character")]
     [SerializeField] Player m_player;
     [Tooltip("Players Health Bar")]
     [SerializeField] Image m_health;
+
+    [Header("Menu Fade Controls")]
     [Tooltip("Time it takes for the Menu to fade")]
     [SerializeField] float m_fadeTime;
     [Tooltip("Time it takes for the Play scene to fade")]
     [SerializeField] float m_menuFadeTime;
-    [Tooltip("BlackFade Anim goes here")];
+
+    [Header("BlackFade Animation")]
+    [Tooltip("BlackFade Anim goes here")]
     [SerializeField] Animator m_camerFadeAnim;
 
     #endregion
@@ -145,6 +151,7 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator WaitForFade(float a_WaitTime, string a_scene)
     {
+        //spawns out a thread that executes the loadscene and fading 
         yield return new WaitForSeconds(a_WaitTime);
         SceneManager.LoadScene(a_scene);
         FadeToNextLevel();
