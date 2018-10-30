@@ -371,25 +371,26 @@ public class PlayerInput : MonoBehaviour {
                 DelayedShoot();
 
             else {
+                #region unused melee
                 //---------------//
                 //MELEE ATTACKING//
                 //---------------//
-                if (Input.GetMouseButtonDown(1))
-                {
-                    m_playerAnimator.SetTrigger("HatchetSwingTrigger");
-
-                    m_isLunging = true;
-                    m_lungeTimer = Time.time + m_lungeTime;
-                    m_swingTimer = Time.time + m_swingTime;
-
-                    if (m_meleeHitBox != null)
-                        m_meleeHitBox.enabled = true;
-                }
+                //if (Input.GetMouseButtonDown(1)) {
+                //    m_playerAnimator.SetTrigger("HatchetSwingTrigger");
+                //
+                //    m_isLunging = true;
+                //    m_lungeTimer = Time.time + m_lungeTime;
+                //    m_swingTimer = Time.time + m_swingTime;
+                //
+                //    if (m_meleeHitBox != null)
+                //        m_meleeHitBox.enabled = true;
+                //}
+                #endregion
 
                 //-------------//
                 //GUN ATTACKING//
                 //-------------//
-                else if (Input.GetMouseButtonDown(0)) {
+                if (Input.GetMouseButtonDown(0)) {
                     if (m_playerAnimator.GetBool("Reloading") == false) {
                         if (m_willPause) {
                             m_isShootingTimer = Time.time + m_shootPauseTime;
@@ -422,7 +423,7 @@ public class PlayerInput : MonoBehaviour {
                         m_playerAnimator.SetTrigger("Reload");
                     }
                 }
-            }
+            } 
             #region old melee
             //if (equippedGun == null) {
             //    Melee equippedMelee = m_weaponController.GetEquippedMelee();
@@ -671,10 +672,11 @@ public class PlayerInput : MonoBehaviour {
 
     //Quickly moves the player in the direction they are facing
     private void Roll() {
-        if (m_isRolling == false) {
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.LeftShift)) {
+        if (m_isRolling == false && m_isLunging == false) {
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetMouseButtonDown(1)) {
                 if ((m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") ||
-                m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Character_Anim_Reload_v01 0")) == false) {
+                m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Character_Anim_Reload_v01 0") ||
+                m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Revolver Shoot")) == false) {
                     m_rollStartTime = Time.time;
                     m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
                     m_playerAnimator.SetTrigger("Roll");
