@@ -400,13 +400,7 @@ public class PlayerInput : MonoBehaviour {
                         }
 
                         if (m_weaponController.EquippedGun.CanShoot()) {
-                            if (m_ammoController != null)
-                                m_ammoController.Shoot();
-
                             m_playerAnimator.SetTrigger("Shoot");
-
-                            if (m_shootDustParticle != null)
-                                m_shootDustParticle.Play();
 
                             //GunLookAt();
                         }
@@ -896,6 +890,11 @@ public class PlayerInput : MonoBehaviour {
             m_weaponController.Shoot();
         if (m_player.m_camAnimator != null)
             m_player.m_camAnimator.KickbackShake();
+        if (m_ammoController != null)
+            m_ammoController.Shoot();
+        if (m_shootDustParticle != null)
+            m_shootDustParticle.Play();
+
 
     }
 
