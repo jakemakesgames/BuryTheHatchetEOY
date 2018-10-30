@@ -10,6 +10,8 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    #region Public Variables
+
     [Header("Menu GameObjects")]
     [Tooltip("Main Menu object")]
     [SerializeField] GameObject m_mainMenu;
@@ -35,10 +37,16 @@ public class UIManager : MonoBehaviour
     [SerializeField] Player m_player;
     [Tooltip("Players Health Bar")]
     [SerializeField] Image m_health;
+    [Tooltip("Time it takes for the Menu to fade")]
     [SerializeField] float m_fadeTime;
+    [Tooltip("Time it takes for the Play scene to fade")]
     [SerializeField] float m_menuFadeTime;
-
+    [Tooltip("BlackFade Anim goes here")];
     [SerializeField] Animator m_camerFadeAnim;
+
+    #endregion
+
+    #region Private Variables
 
     private bool m_isPaused;
     private bool m_inMenu;
@@ -49,10 +57,12 @@ public class UIManager : MonoBehaviour
     private int m_fadeLevel;
     private SceneManager m_sceneManager;
     private Scene m_currScene;
-
     private WeaponController m_weaponController;
-
     public static UIManager m_instance;
+
+    #endregion
+
+    #region Private Functions
 
     private void Awake()
     {
@@ -145,6 +155,8 @@ public class UIManager : MonoBehaviour
             m_endLevel.SetActive(false);
         }
     }
+
+    #endregion
 
     #region Public Functions
 
@@ -296,8 +308,8 @@ public class UIManager : MonoBehaviour
     #endregion
 }
 
-/*
     #region LIAM
+/*
     #region Public Variables
 
     [SerializeField] GameObject m_startMenu;
@@ -642,5 +654,5 @@ public class UIManager : MonoBehaviour
 
     #endregion
 
-    #endregion
 */
+    #endregion

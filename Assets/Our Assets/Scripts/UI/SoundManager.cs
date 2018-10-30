@@ -8,9 +8,7 @@ public class SoundManager : MonoBehaviour
 {
     #region Public Variables
     [Header("Sliders")]
-    //[SerializeField] Slider m_mainSlider;
-    //[SerializeField] Slider m_soundEffectsSlider;
-    //[SerializeField] Slider m_musicSlider;
+    [SerializeField] Slider m_MainVolumeSlider;
 
     [Header("AudioSources")]
     [Tooltip("OutOfCombat Music")]
@@ -71,8 +69,10 @@ public class SoundManager : MonoBehaviour
         m_inCombatVolume = 0;
         m_outOfCombatVolume = 1;
 
+
         m_inCombatMusic.volume = m_inCombatVolume;
         m_outOfCombatMusic.volume = m_outOfCombatVolume;
+        
     }
 
     private void OnEnable()
@@ -94,6 +94,11 @@ public class SoundManager : MonoBehaviour
         PlayMenuMusic();
         FinishedCombat();
         TransitionBetween(m_musicTransition);
+    }
+
+    public void VolumeController()
+    {
+
     }
 
     void TransitionBetween(bool a_toCombat)
