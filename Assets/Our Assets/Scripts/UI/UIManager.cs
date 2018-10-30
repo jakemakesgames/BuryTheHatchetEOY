@@ -38,12 +38,12 @@ public class UIManager : MonoBehaviour
     [SerializeField] float m_fadeTime;
     [SerializeField] float m_menuFadeTime;
 
-
     [SerializeField] Animator m_camerFadeAnim;
 
     private bool m_isPaused;
     private bool m_inMenu;
     private bool m_fade = true;
+    private bool m_finishedMenuFade;
     private float m_maxHealth;
     private float m_currHealth;
     private int m_fadeLevel;
@@ -81,6 +81,8 @@ public class UIManager : MonoBehaviour
         m_endLevel.SetActive(false);
 
         //CurrentEquippedWeaponImage();
+
+        m_camerFadeAnim.gameObject.SetActive(false);
 
         m_currScene = SceneManager.GetActiveScene();
 
@@ -135,18 +137,24 @@ public class UIManager : MonoBehaviour
     {
         yield return new WaitForSeconds(a_WaitTime);
         SceneManager.LoadScene(a_scene);
-        StopCoroutine(WaitForFade(a_WaitTime, a_scene));
+        FadeToNextLevel();
+
+        if (m_inMenu)
+        {
+            m_mainMenu.SetActive(true);
+            m_endLevel.SetActive(false);
+        }
     }
 
     #region Public Functions
 
     [ContextMenu("Play Game")]
     public void PlayGame()
-    {    
+    {
+        m_camerFadeAnim.gameObject.SetActive(true);
         FadeOutOfLevel();
         StartCoroutine(WaitForFade(m_fadeTime, m_playScene));
-        FadeToNextLevel();
-       
+
 
         m_mainMenu.SetActive(false);
         m_endLevel.SetActive(false);
@@ -161,11 +169,6 @@ public class UIManager : MonoBehaviour
     }
     
     public void FadeToNextLevel()
-    {
-        m_camerFadeAnim.SetTrigger("FadeIn");
-    }
-
-    public void FadeToPrevLevel()
     {
         m_camerFadeAnim.SetTrigger("FadeIn");
     }
@@ -202,16 +205,16 @@ public class UIManager : MonoBehaviour
     [ContextMenu("Return to Menu")]
     public void ReturnToMenu()
     {
+        m_pauseMenu.SetActive(false);
+        m_gameHUD.SetActive(false);
         Time.timeScale = 1;
         FadeOutOfLevel();
         StartCoroutine(WaitForFade(m_menuFadeTime, m_menuScene));
-        FadeToPrevLevel();
 
-        m_pauseMenu.SetActive(false);
-        m_gameHUD.SetActive(false);
-        m_mainMenu.SetActive(true);
-        m_endLevel.SetActive(false);
+
         m_inMenu = true;
+        
+
     }
 
     [ContextMenu("Back")]
@@ -273,7 +276,11 @@ public class UIManager : MonoBehaviour
     [ContextMenu("Quit Game")]
     public void QuitGame()
     {
-        Application.Quit();
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
     }
 
     public void DeathFade()
