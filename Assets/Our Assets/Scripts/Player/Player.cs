@@ -260,9 +260,10 @@ public class Player : MonoBehaviour, IDamagable {
             m_dieParticleSystem.Clear();
         }
 
-        if (m_camAnimator != null)
-            m_camAnimator.PlayerRespawn();
-        else if (m_UIManager != null)
+        //if (m_camAnimator != null)
+        //    m_camAnimator.PlayerRespawn();
+        //else 
+        if (m_UIManager != null)
             m_UIManager.RespawnFade();
 
         GetComponent<NavMeshAgent>().enabled = true;
