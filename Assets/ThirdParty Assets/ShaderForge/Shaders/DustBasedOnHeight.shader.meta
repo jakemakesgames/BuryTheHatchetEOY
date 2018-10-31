@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 67627c77dfe8bfb4681e6bd3a4867eac
+timeCreated: 1540949513
+licenseType: Pro
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _DustTexture: {fileID: 2800000, guid: 9068f2bdd44df2448aa84778747f6fc6, type: 3}
+  - _node_2582: {fileID: 2800000, guid: 28c7aad1372ff114b90d330f8a2dd938, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
