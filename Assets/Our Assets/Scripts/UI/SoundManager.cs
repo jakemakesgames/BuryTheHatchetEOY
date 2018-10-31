@@ -44,6 +44,7 @@ public class SoundManager : MonoBehaviour
     private bool m_countingDown;
     private bool m_menuSound = true;
     public bool m_creditSound = true;
+    public bool m_exitCreditSound;
 
     private float m_inCombatVolume;
     private float m_outOfCombatVolume;
@@ -250,16 +251,17 @@ public class SoundManager : MonoBehaviour
     {
         if (m_UIManager.CreditScene == true && m_creditSound == true)
         {
-            m_mainMenuMusic.Stop();
             m_creditMusic.Play();
+            m_mainMenuMusic.Stop();
             m_creditSound = false;
         }
         else if (m_UIManager.CreditScene == false && m_creditSound == false)
         {
             m_creditMusic.Stop();
-            if (m_UIManager.GetInMenu())
+            if (m_UIManager.GetInMenu() && m_exitCreditSound == true)
             {
                 m_mainMenuMusic.Play();
+                m_exitCreditSound = false;
             }
         }
     }

@@ -235,7 +235,7 @@ public class UIManager : MonoBehaviour
 
         m_inMenu = true;
         m_inCredit = false;
-        m_soundManager.m_creditSound = false;
+        m_soundManager.m_exitCreditSound = true;
 
     }
 
@@ -273,7 +273,9 @@ public class UIManager : MonoBehaviour
         FadeOutOfLevel();
         StartCoroutine(WaitForFade(m_creditFadeTime, m_creditsScene));
 
+        m_soundManager.m_creditSound = true;
         m_inCredit = true;
+        m_soundManager.m_exitCreditSound = false;
     }
 
     [ContextMenu("Quit Game")]
