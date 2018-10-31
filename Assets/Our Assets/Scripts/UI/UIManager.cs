@@ -15,6 +15,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject m_mainMenu;
     [Tooltip("Options Menu object")]
     [SerializeField] GameObject m_optionsMenu;
+    [Tooltip("Credits object")]
+    [SerializeField] GameObject m_creditsMenu;
     [Tooltip("Pause Menu object")]
     [SerializeField] GameObject m_pauseMenu;
     [Tooltip("Game HUD")]
@@ -31,17 +33,22 @@ public class UIManager : MonoBehaviour
     [SerializeField] string m_playScene;
     [Tooltip("Menu Scene string")]
     [SerializeField] string m_menuScene;
+    [Tooltip("Menu Scene string")]
+    [SerializeField] string m_creditsScene;
     [Tooltip("Player character")]
     [SerializeField] Player m_player;
     [Tooltip("Players Health Bar")]
     [SerializeField] Image m_health;
     [SerializeField] float m_fadeTime;
     [SerializeField] float m_menuFadeTime;
+    [Tooltip("Time it takes for the Credit scene to fade")]
+    [SerializeField] float m_creditFadeTime;
 
     [SerializeField] Animator m_camerFadeAnim;
 
     private bool m_isPaused;
     private bool m_inMenu;
+    private bool m_inCredit;
     private bool m_fade = true;
     private bool m_finishedMenuFade;
     private float m_maxHealth;
@@ -49,6 +56,7 @@ public class UIManager : MonoBehaviour
     private int m_fadeLevel;
     private SceneManager m_sceneManager;
     private Scene m_currScene;
+    private SoundManager m_soundManager;
 
     private WeaponController m_weaponController;
 
@@ -79,6 +87,7 @@ public class UIManager : MonoBehaviour
         m_gameHUD.SetActive(false);
         m_pauseMenu.SetActive(false);
         m_endLevel.SetActive(false);
+        m_creditsMenu.SetActive(false);
 
         //CurrentEquippedWeaponImage();
 
@@ -86,12 +95,16 @@ public class UIManager : MonoBehaviour
 
         m_currScene = SceneManager.GetActiveScene();
 
+        m_soundManager = FindObjectOfType<SoundManager>();
+
     }
 
     public bool GetInMenu()
     {
         return m_inMenu;
     }
+
+    public bool CreditScene { get { return m_inCredit; } }
 
     public string GetPlayScene()
     {
@@ -135,6 +148,7 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator WaitForFade(float a_WaitTime, string a_scene)
     {
+        //spawns out a thread that executes the loadscene and fading 
         yield return new WaitForSeconds(a_WaitTime);
         SceneManager.LoadScene(a_scene);
         FadeToNextLevel();
@@ -143,6 +157,12 @@ public class UIManager : MonoBehaviour
         {
             m_mainMenu.SetActive(true);
             m_endLevel.SetActive(false);
+        }
+
+        if (m_inCredit)
+        {
+            m_mainMenu.SetActive(false);
+            m_creditsMenu.SetActive(true);
         }
     }
 
@@ -207,13 +227,15 @@ public class UIManager : MonoBehaviour
     {
         m_pauseMenu.SetActive(false);
         m_gameHUD.SetActive(false);
+        m_creditsMenu.SetActive(false);
         Time.timeScale = 1;
         FadeOutOfLevel();
         StartCoroutine(WaitForFade(m_menuFadeTime, m_menuScene));
 
 
         m_inMenu = true;
-        
+        m_inCredit = false;
+        m_soundManager.m_creditSound = false;
 
     }
 
@@ -244,7 +266,43 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    //private void CurrentEquippedWeaponImage()
+    [ContextMenu("Credits")]
+    public void Credits()
+    {
+        m_camerFadeAnim.gameObject.SetActive(true);
+        FadeOutOfLevel();
+        StartCoroutine(WaitForFade(m_creditFadeTime, m_creditsScene));
+
+        m_inCredit = true;
+    }
+
+    [ContextMenu("Quit Game")]
+    public void QuitGame()
+    {
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
+    }
+
+    public void DeathFade()
+    {
+        m_camerFadeAnim.SetTrigger("FadeOut");
+    }
+
+    public void RespawnFade()
+    {
+        m_camerFadeAnim.SetTrigger("FadeIn");
+    }
+
+    #endregion
+}
+
+    #region OLD GUI CODE LIAM
+/*
+
+        //private void CurrentEquippedWeaponImage()
     //{
     //    if (m_player != null)
     //    {
@@ -273,31 +331,6 @@ public class UIManager : MonoBehaviour
     //    StartCoroutine(WaitForFade(m_fadeTime, m_playScene));
     //}
 
-    [ContextMenu("Quit Game")]
-    public void QuitGame()
-    {
-        #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-        #else
-            Application.Quit();
-        #endif
-    }
-
-    public void DeathFade()
-    {
-        m_camerFadeAnim.SetTrigger("FadeOut");
-    }
-
-    public void RespawnFade()
-    {
-        m_camerFadeAnim.SetTrigger("FadeIn");
-    }
-
-    #endregion
-}
-
-/*
-    #region LIAM
     #region Public Variables
 
     [SerializeField] GameObject m_startMenu;
@@ -642,5 +675,5 @@ public class UIManager : MonoBehaviour
 
     #endregion
 
-    #endregion
 */
+    #endregion
