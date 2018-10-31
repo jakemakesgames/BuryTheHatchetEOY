@@ -8,7 +8,7 @@ using TMPro;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 29/10/2018
+//Last edited 31/10/2018
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(AudioSource))]
@@ -48,6 +48,7 @@ public class Player : MonoBehaviour, IDamagable {
     [SerializeField] private AudioClip m_dieSound;
 
     private AudioSource m_audioSource;
+    private SoundManager m_soundManager;
     #endregion
 
     //----------------------------
@@ -116,6 +117,16 @@ public class Player : MonoBehaviour, IDamagable {
     public bool Dead { get { return m_dead; } set { m_dead = value;} }
 
     public RespawnPoint Rp { get { return m_rp; } set { m_rp = value; } }
+
+    public float SFXVolume {
+        get {
+            if (m_soundManager == null)
+                return 1f;
+            else {
+                return m_soundManager.MasterVolume * m_soundManager.SFXVolume;
+            }
+        }
+    }
     #endregion
 
     //IDamageble interfaces methods for taking damage
@@ -135,7 +146,7 @@ public class Player : MonoBehaviour, IDamagable {
         if(m_hitParticleSystem != null)
             m_hitParticleSystem.Play();
         if (m_hitSound != null)
-            m_audioSource.PlayOneShot(m_hitSound);
+            m_audioSource.PlayOneShot(m_hitSound, SFXVolume);
         UpdateHealthDisplay();
     }
     public void TakeHit(int a_damage, RaycastHit a_hit) {
@@ -230,7 +241,7 @@ public class Player : MonoBehaviour, IDamagable {
             m_camAnimator.PlayerDeath();
 
         if (m_dieSound != null)
-            m_audioSource.PlayOneShot(m_dieSound);
+            m_audioSource.PlayOneShot(m_dieSound, SFXVolume);
         
     }
 
@@ -342,6 +353,7 @@ public class Player : MonoBehaviour, IDamagable {
         m_camAnimator = Camera.main.GetComponent<CameraShake>();
         m_playerAnimator = m_input.m_playerAnimator;
         m_UIManager = FindObjectOfType<UIManager>();
+        m_soundManager = FindObjectOfType<SoundManager>();
     }
 
     //Makes sure health never goes above maximum
