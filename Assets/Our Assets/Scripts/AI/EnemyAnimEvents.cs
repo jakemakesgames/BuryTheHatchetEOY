@@ -8,4 +8,9 @@ public class EnemyAnimEvents : MonoBehaviour {
     {
         GetComponentInParent<AI>().HasDroppedTrigger = true;
     }
+
+    public void Shoot()
+    {
+
+    }
 }

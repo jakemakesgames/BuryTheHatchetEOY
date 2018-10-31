@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 24/10/2018
+//Last edited 31/10/2018
 
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -400,7 +400,13 @@ public class PlayerInput : MonoBehaviour {
                         }
 
                         if (m_weaponController.EquippedGun.CanShoot()) {
+                            if (m_ammoController != null)
+                                m_ammoController.Shoot();
+
                             m_playerAnimator.SetTrigger("Shoot");
+
+                            if (m_shootDustParticle != null)
+                                m_shootDustParticle.Play();
 
                             //GunLookAt();
                         }
@@ -890,11 +896,6 @@ public class PlayerInput : MonoBehaviour {
             m_weaponController.Shoot();
         if (m_player.m_camAnimator != null)
             m_player.m_camAnimator.KickbackShake();
-        if (m_ammoController != null)
-            m_ammoController.Shoot();
-        if (m_shootDustParticle != null)
-            m_shootDustParticle.Play();
-
 
     }
 

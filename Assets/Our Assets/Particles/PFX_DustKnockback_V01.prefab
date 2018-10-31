@@ -107,8 +107,8 @@ ParticleSystem:
     enabled: 1
     startLifetime:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0.5
+      minMaxState: 3
+      scalar: 1.5
       minScalar: 1.5
       maxCurve:
         serializedVersion: 2
@@ -708,14 +708,14 @@ ParticleSystem:
           outSlope: 0.5531714
           tangentMode: 1
         - serializedVersion: 2
-          time: 0.40133667
+          time: 0.42390442
           value: 0.7527065
           inSlope: 2.1232047
           outSlope: 2.1232047
           tangentMode: 0
         - serializedVersion: 2
-          time: 0.9086822
-          value: 0.9026563
+          time: 0.94029844
+          value: 0.88784194
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -1209,7 +1209,7 @@ ParticleSystem:
     z:
       serializedVersion: 2
       minMaxState: 2
-      scalar: 25
+      scalar: 15
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -1221,16 +1221,16 @@ ParticleSystem:
           outSlope: 0
           tangentMode: 0
         - serializedVersion: 2
-          time: 0.07677446
-          value: -1
+          time: 0.05419909
+          value: -0.91612446
           inSlope: -0.5114605
           outSlope: -0.5114605
           tangentMode: 0
         - serializedVersion: 2
-          time: 0.50584817
-          value: -0.35094512
-          inSlope: 3.049277
-          outSlope: 3.049277
+          time: 0.48553216
+          value: -0.18798219
+          inSlope: 1.8177377
+          outSlope: 1.8177377
           tangentMode: 0
         - serializedVersion: 2
           time: 1
@@ -1257,10 +1257,10 @@ ParticleSystem:
           outSlope: -0.8367107
           tangentMode: 0
         - serializedVersion: 2
-          time: 0.4930752
-          value: -0.24098948
-          inSlope: 2.4690485
-          outSlope: 2.4690485
+          time: 0.47275916
+          value: -0.07802653
+          inSlope: 1.4901161
+          outSlope: 1.4901161
           tangentMode: 0
         - serializedVersion: 2
           time: 1
@@ -1274,7 +1274,7 @@ ParticleSystem:
     speedModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.17
       minScalar: 1
       maxCurve:
         serializedVersion: 2
