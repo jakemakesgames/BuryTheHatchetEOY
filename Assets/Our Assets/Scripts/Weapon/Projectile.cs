@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 24/10/2018
+//Last edited 31/10/2018
 
 
 public class Projectile : MonoBehaviour {
@@ -18,6 +18,7 @@ public class Projectile : MonoBehaviour {
     private bool m_insideEntity;
     private bool m_hasEntered;
     private bool m_targetInvincible;
+    private bool m_destroy = true;
     private LayerMask m_ricochetCollisionMask;
     private LayerMask m_entityCollisionMask;
     private LayerMask m_environmentCollisionMask;
@@ -77,7 +78,7 @@ public class Projectile : MonoBehaviour {
     [Tooltip("The trail renderer prefab which will follow along the projectile as it travels")]
     [SerializeField] private GameObject m_trailRenderer;
     [Tooltip("Life time of the trail renderer after the bullet is destroyed")]
-    [SerializeField] private float m_trailRendererLifeTime = 5f;
+    [SerializeField] private float m_trailRendererLifeTime = 2f;
 
     [Header("Custom Environment effects")]
     [Tooltip("For each of these lists, the information will control what happens when the projectil hits an object on the specified layer")]
@@ -132,18 +133,19 @@ public class Projectile : MonoBehaviour {
     #endregion
 
     //Use ray casts to check for collisions
-    #region Collision Detection Methods
+    #region Collision Detection and First Response Methods
     private void CheckCollisions(float a_distanceToMove) {
 
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
 
-        #region Test area for multilayered layer detection
+        #region Multilayered layer detection
+        
+        //Casts a ray checking all they layers it could potentially hit and then reacting accoridingly
+        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_hittableCollisionMask)) {
 
-        if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_hittableCollisionMask))
-        {
-
-            LayerMask hitLayer = hit.transform.gameObject.layer;
+            //Stores the raycasthit's layer for checking what what hit
+            LayerMask hitLayer = (1 << hit.transform.gameObject.layer);
 
             if (hitLayer == m_ricochetCollisionMask)
             {
@@ -205,11 +207,12 @@ public class Projectile : MonoBehaviour {
         #endregion
 
         #region Original collision detection
+        /*
         //The case where the projectile hits a ricochet object
         if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_ricochetCollisionMask)) {
             //if (hit.transform.gameObject.layer == m_ricochetCollisionMask) {
                 if (m_ricochetParticle != null) {
-                    GameObject GO = Instantiate(m_ricochetParticle, hit.point/* * m_ricochetParticleDist*/, transform.rotation);
+                    GameObject GO = Instantiate(m_ricochetParticle, hit.point, transform.rotation);
                     Destroy(GO, m_ricochetParticleTimer);
                 }
 
@@ -241,16 +244,18 @@ public class Projectile : MonoBehaviour {
             if (Physics.Raycast(ray, out hit, a_distanceToMove + m_skinWidth, m_environmentCollisionMasks[i])) {
 
                 //if (hit.transform.gameObject.layer == m_environmentCollisionMasks[i]) {
-
+                //Gross horrible way of seperating a specific layer change
                 if (m_environmentParticles[i] != null) {
                     Quaternion goRot = transform.rotation;
                     if (i != 1) { 
-                        GameObject GO = Instantiate(m_environmentParticles[i], hit.point/* * m_environmentParticleDists[i]*/, Quaternion.LookRotation(-transform.forward));
+                        GameObject GO = Instantiate(m_environmentParticles[i], hit.point, Quaternion.LookRotation(-transform.forward));
                         Destroy(GO, m_environmentParticleTimers[i]);
                     }
+                    //Cactus grossness
                     else {
-                        GameObject GO = Instantiate(m_environmentParticles[i], hit.point/* * m_environmentParticleDists[i]*/, goRot);
+                        GameObject GO = Instantiate(m_environmentParticles[i], hit.point, goRot);
                         Destroy(GO, m_environmentParticleTimers[i]);
+                        m_destroy = false;
                     }
                 }
 
@@ -263,6 +268,8 @@ public class Projectile : MonoBehaviour {
                 //}
             }
         }
+        /*
+        */
         #endregion
 
     }
@@ -325,15 +332,23 @@ public class Projectile : MonoBehaviour {
                 SS.AudioSource.clip = m_entityInvincibleAudioClip;
                 SS.AudioSource.Play();
             }
-
+            if (m_destroy == false) {
+                m_destroy = true;
+                return;
+            }
             Destroy(gameObject);
             if (m_trailRenderer != null)
                 Destroy(m_instancedTrailRenderer, m_trailRendererLifeTime);
+
             return;
         }
         m_insideEntity = a_hitEntity;
         if (m_insideEntity)
             return;
+        if (m_destroy == false) {
+            m_destroy = true;
+            return;
+        }
         Destroy(gameObject);
         if (m_trailRenderer != null)
             Destroy(m_instancedTrailRenderer, m_trailRendererLifeTime);
@@ -364,6 +379,7 @@ public class Projectile : MonoBehaviour {
     private void Start() {
         m_insideEntity = false;
 
+        //Merge all layers into a new layer set for checking with a ray
         m_hittableCollisionMask = m_ricochetCollisionMask | m_entityCollisionMask | m_environmentCollisionMask;
         for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
             m_hittableCollisionMask = m_hittableCollisionMask | m_environmentCollisionMasks[i];
