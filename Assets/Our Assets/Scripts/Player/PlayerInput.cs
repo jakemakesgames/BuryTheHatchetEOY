@@ -161,40 +161,32 @@ public class PlayerInput : MonoBehaviour {
     private AudioSource m_walkSpeaker;
     private AudioSource m_clothesSpeaker;
     private AudioSource m_rollSpeaker;
-
+    
     [Header("Sounds")]
     [Tooltip("One of the sounds that'll player when the player moves")]
-    [SerializeField]
-    private AudioClip m_clothesRustleSound;
+    [SerializeField] private AudioClip m_clothesRustleSound;
 
     [Tooltip("The sound that'll play when the player is walking")]
-    [SerializeField]
-    private AudioClip m_walkingSound;
+    [SerializeField] private AudioClip m_walkingSound;
 
     [Tooltip("The sound that'll play when the player is rolling")]
-    [SerializeField]
-    private AudioClip m_rollSound;
+    [SerializeField] private AudioClip m_rollSound;
 
     [Tooltip("The sound that will player when the player can roll again")]
-    [SerializeField]
-    private AudioClip m_canRollSound;
+    [SerializeField] private AudioClip m_canRollSound;
 
     [Header("Particles")]
     [Tooltip("Paricles that will play when the player is walking")]
-    [SerializeField]
-    private ParticleSystem m_walkingParticleSystem;
+    [SerializeField] private ParticleSystem m_walkingParticleSystem;
 
     [Tooltip("Particles that will play when the player rolls")]
-    [SerializeField]
-    private ParticleSystem m_rollParticleSystem;
+    [SerializeField] private ParticleSystem m_rollParticleSystem;
 
     [Tooltip("The particle effect to indicate when the player is invincible")]
-    [SerializeField]
-    private ParticleSystem m_invincibilityParticle;
+    [SerializeField] private ParticleSystem m_invincibilityParticle;
 
     [Tooltip("The particle that will play from the players feet when they shoot")]
-    [SerializeField]
-    private ParticleSystem m_shootDustParticle;
+    [SerializeField] private ParticleSystem m_shootDustParticle;
 
     [Header("Volumes")]
     [Range(0, 1)] [SerializeField] private float m_walkVol = 0.5f;
@@ -221,6 +213,7 @@ public class PlayerInput : MonoBehaviour {
     private float m_isShootingTimer = 0f;
     private float m_rollSpeed = 0f;
     private float m_distanceToClosestEnemy = 200f;
+    private float m_lastVolume = 0;
 
     private bool m_isHoldingGun;
     private bool m_canAttack = true;
@@ -935,6 +928,18 @@ public class PlayerInput : MonoBehaviour {
     #endregion
 
     //----------------------------
+    #region Misc Functionality
+    private void UpdateVolumes() {
+        if (m_lastVolume != Player.SFXVolume) {
+            m_clothesSpeaker.volume = Player.SFXVolume;
+            m_rollSpeaker.volume = Player.SFXVolume;
+            m_walkSpeaker.volume = Player.SFXVolume;
+            m_lastVolume = Player.SFXVolume;
+        }
+    }
+    #endregion
+
+    //----------------------------
     #region startup
     //Get all requied attached components and store them for later use
     private void Awake() {
@@ -1032,6 +1037,9 @@ public class PlayerInput : MonoBehaviour {
 
             //Charlie
             UpdateAnims();
+
+            //Checking if the volumes have changed and applying the change to these speakers
+            UpdateVolumes();
         }
     }
 

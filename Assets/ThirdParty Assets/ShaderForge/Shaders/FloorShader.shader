@@ -108,8 +108,8 @@ Shader "Custom/FloorShader" {
                 float4 _A_var = tex2D(_A,TRANSFORM_TEX(i.uv0, _A));
                 float4 _B_var = tex2D(_B,TRANSFORM_TEX(node_1966, _B));
                 float3 node_7841 = lerp(_A_var.rgb,_B_var.rgb,i.vertexColor.r);
-                float4 node_8269 = _Time;
-                float2 node_2297 = (i.uv0+node_8269.g*float2(0.05,0));
+                float4 node_7347 = _Time;
+                float2 node_2297 = (i.uv0+node_7347.g*float2(0.05,0));
                 float4 node_4521 = tex2D(_node_7140,TRANSFORM_TEX(node_2297, _node_7140));
                 float3 diffuseColor = lerp(node_7841,((_SandColour.rgb*node_4521.r)+node_7841),_sandintensity);
                 float3 diffuse = (directDiffuse + indirectDiffuse) * diffuseColor;
@@ -209,8 +209,8 @@ Shader "Custom/FloorShader" {
                 float4 _A_var = tex2D(_A,TRANSFORM_TEX(i.uv0, _A));
                 float4 _B_var = tex2D(_B,TRANSFORM_TEX(node_1966, _B));
                 float3 node_7841 = lerp(_A_var.rgb,_B_var.rgb,i.vertexColor.r);
-                float4 node_3731 = _Time;
-                float2 node_2297 = (i.uv0+node_3731.g*float2(0.05,0));
+                float4 node_7142 = _Time;
+                float2 node_2297 = (i.uv0+node_7142.g*float2(0.05,0));
                 float4 node_4521 = tex2D(_node_7140,TRANSFORM_TEX(node_2297, _node_7140));
                 float3 diffuseColor = lerp(node_7841,((_SandColour.rgb*node_4521.r)+node_7841),_sandintensity);
                 float3 diffuse = directDiffuse * diffuseColor;
