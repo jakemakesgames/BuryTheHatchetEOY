@@ -168,11 +168,8 @@ public class Projectile : MonoBehaviour {
             {
                 if (m_insideEntity == false)
                 {
-                    if (hit.transform.gameObject.layer == m_entityCollisionMask)
-                    {
-                        OnHitObject(hit, true);
-                        m_currentlyInside = hit.transform.gameObject;
-                    }
+                    OnHitObject(hit, true);
+                    m_currentlyInside = hit.transform.gameObject;
                 }
             }
             else if (hitLayer == m_environmentCollisionMask)
