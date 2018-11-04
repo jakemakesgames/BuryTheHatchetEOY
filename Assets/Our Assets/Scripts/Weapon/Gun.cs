@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 08/10/2018
+//Last edited 05/11/2018
 
     [RequireComponent(typeof(AudioSource))]
 public class Gun : MonoBehaviour {
@@ -78,6 +78,7 @@ public class Gun : MonoBehaviour {
     //----------------------------
     #region Private member variables
     private AudioSource m_audioSource;
+    private SoundManager m_soundManager;
 
     private LayerMask m_entityCollisionMask;
     private LayerMask m_environmentCollisionMask;
@@ -164,10 +165,15 @@ public class Gun : MonoBehaviour {
         get { return m_clipSize; } 
         set { m_clipSize = value; }
     }
-    public Transform Muzzle
-    {
+    public Transform Muzzle {
         get { return m_muzzle; }
         set { m_muzzle = value; }
+    }
+    public float SFXVolume {
+        get {
+            if (m_soundManager == null) return 1f;
+            else { return m_soundManager.MasterVolume * m_soundManager.SFXVolume; }
+        }
     }
 
 
@@ -261,7 +267,7 @@ public class Gun : MonoBehaviour {
                 IsFull = true;
             }
             if (m_audioSource != null)
-                    m_audioSource.PlayOneShot(m_reloadSound, 0.3f);
+                    m_audioSource.PlayOneShot(m_reloadSound, SFXVolume);
             return true;
         }
         return false;
@@ -279,7 +285,7 @@ public class Gun : MonoBehaviour {
                 m_setToReloadOne = true;
                 IsIdle = false;
                 if (m_audioSource != null)
-                    m_audioSource.PlayOneShot(m_reloadSound, 0.3f);
+                    m_audioSource.PlayOneShot(m_reloadSound, SFXVolume);
                 return true;
             }
             else
@@ -357,7 +363,7 @@ public class Gun : MonoBehaviour {
                 }
                 if (m_audioSource != null) {
                     if (m_audioSource.isPlaying == false)
-                        m_audioSource.PlayOneShot(m_shootSound, 0.3f);
+                        m_audioSource.PlayOneShot(m_shootSound, SFXVolume);
                 }
                 CurrentClip--;
                 IsFull = false;
@@ -374,6 +380,7 @@ public class Gun : MonoBehaviour {
         m_audioSource = GetComponent<AudioSource>();
         if (m_parent != null)
             m_parent = Instantiate(m_parent, Vector3.zero, Quaternion.identity);
+        m_soundManager = FindObjectOfType<SoundManager>();
     }
     //Keeps track of whether this gun is reloading
     //and stops the ammo stores from going higher than their respective maximums

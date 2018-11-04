@@ -714,6 +714,7 @@ public class PlayerInput : MonoBehaviour {
                 m_inCombat = true;
             else
                 m_inCombat = false;
+            m_distanceToClosestEnemy = 200f;
             yield return new WaitForSeconds(0.25f);
         }
     }
@@ -846,20 +847,15 @@ public class PlayerInput : MonoBehaviour {
     //----------------------------
     #region animation event functions
 
-    public void HalfWay() {
-        Debug.Log("HalfRoll: " + m_rollTimePassed);
-    }
+    public void HalfWay() { Debug.Log("HalfRoll: " + m_rollTimePassed); }
 
     //To be called via an animation event which will tell the roll melthod
     //when to switch from the first curve to the second
-    public void SlowingRoll() {
-        m_rollAccelerating = false;
-    }
+    public void SlowingRoll() { m_rollAccelerating = false; }
 
     //To be called as an animation event at the end of the roll animation.
     //Resets the player to a non-rolling state
     public void EndRoll() {
-
         m_nma.speed = m_nmaSpeed;
         m_nma.angularSpeed = m_nmaAngledSpeed;
         m_nma.acceleration = m_nmaAcceleration;
@@ -889,7 +885,6 @@ public class PlayerInput : MonoBehaviour {
             m_weaponController.Shoot();
         if (m_player.m_camAnimator != null)
             m_player.m_camAnimator.KickbackShake();
-
     }
 
     //Charlie
@@ -1043,8 +1038,10 @@ public class PlayerInput : MonoBehaviour {
         }
     }
 
+    //Melee check
+    //----------------------------
     private void OnTriggerStay(Collider other) {
-        if (other.gameObject.layer == m_weaponController.EntityCollisionMask)
+        if (other.gameObject.layer == 1 << m_weaponController.EntityCollisionMask)
             OnHitObject(other);
     }
     #endregion

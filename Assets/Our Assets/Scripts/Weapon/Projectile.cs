@@ -381,7 +381,8 @@ public class Projectile : MonoBehaviour {
         for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
             m_hittableCollisionMask = m_hittableCollisionMask | m_environmentCollisionMasks[i];
         }
-
+        #region one layer at a time
+        /*
         //If the projectile spawns within a collider, it will activate the appropriate collision response
         Collider[] initialEnemyCollision = Physics.OverlapSphere(transform.position, .1f, m_entityCollisionMask);
         if (initialEnemyCollision.Length > 0) {
@@ -400,6 +401,58 @@ public class Projectile : MonoBehaviour {
             OnHitObject(initialRicochetCollision[0], false);
             return;
         }
+        /*
+         */
+        #endregion
+        #region multilayer
+        Collider[] initialCollision = Physics.OverlapSphere(transform.position, .1f, m_hittableCollisionMask);
+        if (initialCollision.Length > 0) {
+            LayerMask hitLayer = (1 << initialCollision[0].transform.gameObject.layer);
+            if (hitLayer == m_ricochetCollisionMask) {
+                if (m_ricochetParticle != null) {
+                    GameObject GO = Instantiate(m_ricochetParticle, transform.position, transform.rotation);
+                    Destroy(GO, m_ricochetParticleTimer);
+                }
+
+                if (m_ricochetAudioClip != null && m_spawnedSpeaker != null) {
+                    SpawnedSpeaker SS = Instantiate(m_spawnedSpeaker, transform.position, transform.rotation) as SpawnedSpeaker;
+                    SS.AudioSource.clip = m_ricochetAudioClip;
+                    SS.AudioSource.Play();
+                }
+                OnHitObject(initialCollision[0], false); 
+            }
+
+            else if (hitLayer == m_entityCollisionMask) {
+                if (m_insideEntity == false) {
+                    OnHitObject(initialCollision[0], true);
+                    m_currentlyInside = initialCollision[0].transform.gameObject;
+                }
+            }
+            else if (hitLayer == m_environmentCollisionMask) 
+                OnHitObject(initialCollision[0], false);
+
+            else {
+                for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
+                    if (hitLayer == m_environmentCollisionMasks[i]) {
+                        OnHitObject(initialCollision[0], false);
+
+                        if (m_environmentParticles[i] != null) {
+                            GameObject GO = Instantiate(m_environmentParticles[i], transform.position, transform.rotation);
+                            Destroy(GO, m_environmentParticleTimers[i]);
+                        }
+
+                        if (m_environmentAudioClips[i] != null) {
+                            SpawnedSpeaker audio = Instantiate(m_spawnedSpeaker, transform.position, transform.rotation) as SpawnedSpeaker;
+                            audio.AudioSource.clip = m_environmentAudioClips[i];
+                            audio.AudioSource.Play();
+                        }
+                    }
+                }
+            }
+        }
+        /*
+         */
+        #endregion
 
         if (m_trailRenderer != null)
             m_instancedTrailRenderer = Instantiate(m_trailRenderer, transform.position, transform.rotation) as GameObject;
