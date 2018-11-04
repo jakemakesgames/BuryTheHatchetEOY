@@ -134,8 +134,13 @@ public class FindCover : IState<AI>
                     if (distMeCover <= Vector3.Dot(vecMePlayer, vecCoverPlayer) * Vector3.Dot(vecMePlayer, vecCoverPlayer)) //If dist from me to cover is less than the dot of dist from me to player and cover to player
                     {
                         m_didHitCount++;
+                        if (a_owner.CurrCoverObj != null)
+                        {
+                            a_owner.CurrCoverObj.tag = "CoverFree";
+                        }
                         m_nearestPoint = cols[i].transform;
                         a_owner.NextCoverObj = m_nearestPoint;
+                        a_owner.NextCoverObj.tag = "CoverTaken";
                         if (a_owner.CurrCoverObj == null)
                         {
                             a_owner.CurrCoverObj = m_nearestPoint;
