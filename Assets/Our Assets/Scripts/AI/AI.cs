@@ -400,13 +400,8 @@ public class AI : BaseAI
 
         if (CurrCoverObj != null)
         {
-            if (m_distBetweenCover < m_seekFromCoverRadius)
+            if (m_distBetweenCover > m_seekFromCoverRadius)
             {
-                CurrCoverObj.tag = "CoverTaken";
-            }
-            else
-            {
-                CurrCoverObj.tag = "CoverFree";
                 CurrCoverObj = NextCoverObj;
             }
         }
