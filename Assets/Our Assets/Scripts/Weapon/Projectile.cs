@@ -175,26 +175,32 @@ public class Projectile : MonoBehaviour {
             else if (hitLayer == m_environmentCollisionMask)
                 OnHitObject(hit, false);
 
-            else
-            {
-                for (int i = 0; i < m_environmentCollisionMasks.Count; i++)
-                {
-                    if (hitLayer == m_environmentCollisionMasks[i])
-                    {
-                        OnHitObject(hit, false);
+            //Checking the list of extra environmental collisions which will have their own effect
+            else {
+                for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
+                    if (hitLayer == m_environmentCollisionMasks[i]) {
+                        if (m_environmentParticles[i] != null) {
+                            //Gross horrible way of seperating a specific layer change
+                            Quaternion goRot = transform.rotation;
+                            if (i != 1) {
+                                GameObject GO = Instantiate(m_environmentParticles[i], hit.point, Quaternion.LookRotation(-transform.forward));
+                                Destroy(GO, m_environmentParticleTimers[i]);
+                            }
+                            //Cactus grossness
+                            else {
+                                GameObject GO = Instantiate(m_environmentParticles[i], hit.point, goRot);
+                                Destroy(GO, m_environmentParticleTimers[i]);
+                                m_destroy = false;
 
-                        if (m_environmentParticles[i] != null)
-                        {
-                            GameObject GO = Instantiate(m_environmentParticles[i], hit.point, transform.rotation);
-                            Destroy(GO, m_environmentParticleTimers[i]);
+                            }
                         }
-
-                        if (m_environmentAudioClips[i] != null)
-                        {
+                        if (m_environmentAudioClips[i] != null) {
                             SpawnedSpeaker audio = Instantiate(m_spawnedSpeaker, hit.point, transform.rotation) as SpawnedSpeaker;
                             audio.AudioSource.clip = m_environmentAudioClips[i];
                             audio.AudioSource.Play();
                         }
+
+                        OnHitObject(hit, false);
                     }
                 }
             }
@@ -405,7 +411,9 @@ public class Projectile : MonoBehaviour {
          */
         #endregion
         #region multilayer
+        //If the projectile spawns within a collider, it will activate the appropriate collision response
         Collider[] initialCollision = Physics.OverlapSphere(transform.position, .1f, m_hittableCollisionMask);
+        
         if (initialCollision.Length > 0) {
             LayerMask hitLayer = (1 << initialCollision[0].transform.gameObject.layer);
             if (hitLayer == m_ricochetCollisionMask) {
@@ -434,18 +442,28 @@ public class Projectile : MonoBehaviour {
             else {
                 for (int i = 0; i < m_environmentCollisionMasks.Count; i++) {
                     if (hitLayer == m_environmentCollisionMasks[i]) {
-                        OnHitObject(initialCollision[0], false);
 
                         if (m_environmentParticles[i] != null) {
-                            GameObject GO = Instantiate(m_environmentParticles[i], transform.position, transform.rotation);
-                            Destroy(GO, m_environmentParticleTimers[i]);
-                        }
+                            //Gross horrible way of seperating a specific layer change
+                            Quaternion goRot = transform.rotation;
+                            if (i != 1) {
+                                GameObject GO = Instantiate(m_environmentParticles[i], transform.position, Quaternion.LookRotation(-transform.forward));
+                                Destroy(GO, m_environmentParticleTimers[i]);
+                            }
+                            //Cactus grossness
+                            else {
+                                GameObject GO = Instantiate(m_environmentParticles[i], transform.position, goRot);
+                                Destroy(GO, m_environmentParticleTimers[i]);
+                                m_destroy = false;
 
+                            }
+                        }
                         if (m_environmentAudioClips[i] != null) {
                             SpawnedSpeaker audio = Instantiate(m_spawnedSpeaker, transform.position, transform.rotation) as SpawnedSpeaker;
                             audio.AudioSource.clip = m_environmentAudioClips[i];
                             audio.AudioSource.Play();
                         }
+                        OnHitObject(initialCollision[0], false);
                     }
                 }
             }
