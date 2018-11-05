@@ -678,6 +678,7 @@ public class PlayerInput : MonoBehaviour {
                     m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
                     m_playerAnimator.SetTrigger("Roll");
 
+                    m_playerAnimator.SetBool("Reloading", false);
                     m_isRolling = true;
                     m_canRoll = false;
                     if (m_spur != null)
