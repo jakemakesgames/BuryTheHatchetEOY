@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4503439894313418}
   - component: {fileID: 33916990794065716}
   - component: {fileID: 23049448399900566}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: polySurface1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4942244150244404}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Dead_tree_for_sculpt:Tree_blockout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ GameObject:
   - component: {fileID: 95870755227444508}
   - component: {fileID: 208109099110934418}
   - component: {fileID: 65651190903882376}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Environment_DeadTree_Mesh_V04_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68,7 +68,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1796712878914044}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 111.24028, y: -26.94, z: 146.43}
+  m_LocalPosition: {x: 111.24028, y: -27.007, z: 146.43}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4942244150244404}
