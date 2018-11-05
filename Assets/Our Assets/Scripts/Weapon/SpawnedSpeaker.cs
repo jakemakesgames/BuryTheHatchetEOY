@@ -26,6 +26,7 @@ public class SpawnedSpeaker : MonoBehaviour {
     private void Awake() {
         AudioSource = GetComponent<AudioSource>();
         m_soundManager = FindObjectOfType<SoundManager>();
+        AudioSource.volume = SFXVolume;
     }
 
     //When the sound finishes playing destroy this object
