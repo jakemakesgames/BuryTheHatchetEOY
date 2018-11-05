@@ -19,14 +19,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject m_creditsMenu;
     [Tooltip("Pause Menu object")]
     [SerializeField] GameObject m_pauseMenu;
-    [Tooltip("Game HUD")]
-    [SerializeField] GameObject m_gameHUD;
-    [Tooltip("End Level")]
-    public GameObject m_endLevel;
-    [Tooltip("Revolver Bullet")]
-    [SerializeField] GameObject m_revBulletImage;
-    [Tooltip("Hatchet")]
-    [SerializeField] GameObject m_hatchetImage;
     
     [Header("Scene Names")]
     [Tooltip("Game Scene string")]
@@ -86,9 +78,7 @@ public class UIManager : MonoBehaviour
     {
         m_mainMenu.SetActive(true);
         m_optionsMenu.SetActive(false);
-        m_gameHUD.SetActive(false);
         m_pauseMenu.SetActive(false);
-        m_endLevel.SetActive(false);
         m_creditsMenu.SetActive(false);
 
         //CurrentEquippedWeaponImage();
@@ -115,13 +105,6 @@ public class UIManager : MonoBehaviour
 
     public void Update()
     {
-
-        if (m_inMenu == false)
-        {
-            //CurrentEquippedWeaponImage();
-            CurrentHealth();
-        }
-
         if (m_inMenu == false)
         {
             if (Input.GetKeyDown("escape") && m_isPaused == false)
@@ -150,20 +133,7 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator WaitForFade(float a_WaitTime, string a_scene)
     {
-        //if (m_player != null)
-        //{
-            //if (!m_player.Dead)
-            //{
-            //    FadeToNextLevel();
-          //  }
-        //}
-
-        //if (m_currScene.name == m_menuScene)
-        //{
-            FadeToNextLevel();
-        //}
-
-        //spawns out a thread that executes the loadscene and fading 
+        FadeToNextLevel();
         yield return new WaitForSeconds(a_WaitTime);
         m_camerFadeAnim.ResetTrigger("FadeOut");
         SceneManager.LoadScene(a_scene);
@@ -171,7 +141,6 @@ public class UIManager : MonoBehaviour
         if (m_inMenu)
         {
             m_mainMenu.SetActive(true);
-            m_endLevel.SetActive(false);
         }
 
         if (m_inCredit)
@@ -191,9 +160,7 @@ public class UIManager : MonoBehaviour
         StartCoroutine(WaitForFade(m_fadeTime, m_playScene));
 
         m_mainMenu.SetActive(false);
-        m_endLevel.SetActive(false);
         m_inMenu = false;
-        m_gameHUD.SetActive(true);
 
     }
 
@@ -233,14 +200,12 @@ public class UIManager : MonoBehaviour
         m_isPaused = false;
         m_pauseMenu.SetActive(false);
         m_optionsMenu.SetActive(false);
-        m_gameHUD.SetActive(true);
     }
 
     [ContextMenu("Return to Menu")]
     public void ReturnToMenu()
     {
         m_pauseMenu.SetActive(false);
-        m_gameHUD.SetActive(false);
         m_creditsMenu.SetActive(false);
         Time.timeScale = 1;
         FadeOutOfLevel();
@@ -264,18 +229,6 @@ public class UIManager : MonoBehaviour
         {
             m_pauseMenu.SetActive(true);
             m_optionsMenu.SetActive(false);
-        }
-    }
-
-    public void CurrentHealth()
-    {
-        if (m_player != null)
-        {
-            //Grabs the health of the player and fills the bottle based on the players current health
-            m_currHealth = m_player.GetHealth();
-            m_maxHealth = m_player.GetMaxHealth();
-
-            m_health.fillAmount = m_currHealth / m_maxHealth;
         }
     }
 

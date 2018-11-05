@@ -16,15 +16,15 @@ public class EndLevelTrigger : MonoBehaviour
         //endLevel.SetActive(false);
     }
 
-    public void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "Player")
-        {
-            //endLevel.SetActive(true);
-            Time.timeScale = 0;
-            m_uiManager.m_endLevel.SetActive(true);
-        }
-    } 
+    //public void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.tag == "Player")
+    //    {
+    //        //endLevel.SetActive(true);
+    //        Time.timeScale = 0;
+    //        m_uiManager.m_endLevel.SetActive(true);
+    //    }
+    //} 
 
     public void Restart()
     {
