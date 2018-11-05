@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 65235595653684358}
   - component: {fileID: 23666321327626834}
   - component: {fileID: 208578891029989910}
-  m_Layer: 11
+  m_Layer: 1
   m_Name: NavMesh_Obstacle (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 65757027020032940}
   - component: {fileID: 23559648573070086}
   - component: {fileID: 208496499898666008}
-  m_Layer: 11
+  m_Layer: 1
   m_Name: NavMesh_Obstacle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,8 +128,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1137087847157462}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 26.24, y: 0, z: 49.76}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 82.800285, y: -29.64749, z: 120.84567}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4150718387500490}
@@ -152,7 +152,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 1477c6e8d77418949b090c0aa76b7652, type: 3}
+  - {fileID: 2100000, guid: 7a5a77cb3cccac848bd795369c34df37, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -178,7 +178,7 @@ MeshRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1897120583629912}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

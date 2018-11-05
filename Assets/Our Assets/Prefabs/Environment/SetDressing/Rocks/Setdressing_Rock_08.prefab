@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 65562677335134584}
   - component: {fileID: 23606400791768554}
   - component: {fileID: 208063458776743004}
-  m_Layer: 11
+  m_Layer: 1
   m_Name: NavMesh_Obstacle (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,6 +41,7 @@ GameObject:
   - component: {fileID: 33966419315600186}
   - component: {fileID: 23913866604474530}
   - component: {fileID: 64176909544489780}
+  - component: {fileID: 114780016927731414}
   m_Layer: 11
   m_Name: Environment_SetDressing_Rock_8_Mesh_V01
   m_TagString: Untagged
@@ -60,7 +61,7 @@ GameObject:
   - component: {fileID: 65822292430093544}
   - component: {fileID: 23794458559812760}
   - component: {fileID: 208607429030446682}
-  m_Layer: 11
+  m_Layer: 1
   m_Name: NavMesh_Obstacle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +90,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1526916050119826}
   m_LocalRotation: {x: -0, y: -0.13052596, z: -0, w: 0.99144495}
-  m_LocalPosition: {x: 28.5, y: 0, z: 56.18}
+  m_LocalPosition: {x: 85.06029, y: -29.64749, z: 127.26567}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4945032720580398}
@@ -143,7 +144,7 @@ MeshRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1179283767412430}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -219,7 +220,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: ed05056b684ffb9418a917f23012d330, type: 3}
+  - {fileID: 2100000, guid: 7a5a77cb3cccac848bd795369c34df37, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -298,6 +299,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114780016927731414
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1264141447450502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23fa698560b688845bf08bafe6dc1b28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AdditionalVertexStreamMesh: {fileID: 0}
 --- !u!208 &208063458776743004
 NavMeshObstacle:
   m_ObjectHideFlags: 1
