@@ -381,7 +381,8 @@ public class PlayerInput : MonoBehaviour {
         //the appropriate attack action and animation
         if (   m_canShoot 
             || m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Idle_v01") 
-            || m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Walking")) {
+            || m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Walking")
+            || m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Empty")) {
 
             Gun equippedGun = m_weaponController.GetEquippedGun();
             if (equippedGun.IsIdle && m_meleeHitBox.enabled == false) {
