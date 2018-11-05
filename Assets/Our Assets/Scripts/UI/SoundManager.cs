@@ -22,6 +22,8 @@ public class SoundManager : MonoBehaviour
     [SerializeField] AudioSource m_mainMenuMusic;
     [Tooltip("Credits Music")]
     [SerializeField] AudioSource m_creditMusic;
+    [Tooltip("Background Wind")]
+    [SerializeField] AudioSource m_windMusic;
 
     [Header("Volume Fade Controls")]
     [Tooltip("InCombatFade in speed")]
@@ -121,12 +123,14 @@ public class SoundManager : MonoBehaviour
         {
             m_mainMenuMusic.Play();
             m_outOfCombatMusic.Stop();
+            m_windMusic.Stop();
             m_inCombatMusic.Stop();
             m_menuSound = false;
         }
         else if (m_UIManager.GetInMenu() == false && m_menuSound == false)
         {
             m_mainMenuMusic.Stop();
+            m_windMusic.Play();
 
             if (Time.time >= m_playOutOfCombatMusicTimer)
             {
@@ -244,7 +248,9 @@ public class SoundManager : MonoBehaviour
     public void VolumeController()
     {
         m_mainMenuMusic.volume = m_mainVolumeSlider.value * m_musicVolumeSlider.value;
+        
         m_creditMusic.volume = m_mainVolumeSlider.value * m_musicVolumeSlider.value;
+        m_windMusic.volume = m_mainVolumeSlider.value * m_SFXVolumeSlider.value;
     }
 
     public void PlayCreditMusic()
