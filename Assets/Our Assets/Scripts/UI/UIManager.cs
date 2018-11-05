@@ -39,7 +39,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] Player m_player;
     [Tooltip("Players Health Bar")]
     [SerializeField] Image m_health;
+    [Tooltip("Fade time from Main Menu to Game Scene")]
     [SerializeField] float m_fadeTime;
+    [Tooltip("Fade time from Game Scene to Menu")]
     [SerializeField] float m_menuFadeTime;
     [Tooltip("Time it takes for the Credit scene to fade")]
     [SerializeField] float m_creditFadeTime;
