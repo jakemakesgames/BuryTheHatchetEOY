@@ -51,10 +51,10 @@ public class UIManager : MonoBehaviour
     private bool m_inCredit;
     private bool m_fade = true;
     private bool m_finishedMenuFade;
+    private bool m_fading;
     private float m_maxHealth;
     private float m_currHealth;
     private int m_fadeLevel;
-    private SceneManager m_sceneManager;
     private Scene m_currScene;
     private SoundManager m_soundManager;
 
@@ -148,10 +148,22 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator WaitForFade(float a_WaitTime, string a_scene)
     {
+        //if (m_player != null)
+        //{
+            //if (!m_player.Dead)
+            //{
+            //    FadeToNextLevel();
+          //  }
+        //}
+
+        //if (m_currScene.name == m_menuScene)
+        //{
+            FadeToNextLevel();
+        //}
+
         //spawns out a thread that executes the loadscene and fading 
         yield return new WaitForSeconds(a_WaitTime);
         SceneManager.LoadScene(a_scene);
-        FadeToNextLevel();
 
         if (m_inMenu)
         {
@@ -174,7 +186,6 @@ public class UIManager : MonoBehaviour
         m_camerFadeAnim.gameObject.SetActive(true);
         FadeOutOfLevel();
         StartCoroutine(WaitForFade(m_fadeTime, m_playScene));
-
 
         m_mainMenu.SetActive(false);
         m_endLevel.SetActive(false);
@@ -231,7 +242,6 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 1;
         FadeOutOfLevel();
         StartCoroutine(WaitForFade(m_menuFadeTime, m_menuScene));
-
 
         m_inMenu = true;
         m_inCredit = false;
@@ -290,12 +300,16 @@ public class UIManager : MonoBehaviour
 
     public void DeathFade()
     {
+        //Plays the Fade to Black animation
         m_camerFadeAnim.SetTrigger("FadeOut");
+        m_fading = true;
     }
 
     public void RespawnFade()
     {
+        //Plays the Fade from Black animation
         m_camerFadeAnim.SetTrigger("FadeIn");
+        m_fading = true;
     }
 
     #endregion
