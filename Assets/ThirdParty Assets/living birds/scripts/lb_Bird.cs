@@ -23,8 +23,9 @@ public class lb_Bird : MonoBehaviour , IDamagable
 
 	Animator anim;
 	lb_BirdController controller;
+    private SoundManager m_soundManager;
 
-	bool paused = false;
+    bool paused = false;
 	bool idle = true;
 	bool flying = false;
 	bool landing = false;
@@ -65,7 +66,16 @@ public class lb_Bird : MonoBehaviour , IDamagable
 	int flyingDirectionHash;
 	int dieTriggerHash;
 
-	void OnEnable () {
+    public float SFXVolume
+    {
+        get
+        {
+            if (m_soundManager == null) return 1f;
+            else { return m_soundManager.MasterVolume * m_soundManager.SFXVolume; }
+        }
+    }
+
+    void OnEnable () {
 		birdCollider = gameObject.GetComponent<BoxCollider>();
 		bColCenter = birdCollider.center;
 		bColSize = birdCollider.size;
@@ -123,9 +133,9 @@ public class lb_Bird : MonoBehaviour , IDamagable
 	
 	IEnumerator FlyToTarget(Vector3 target){
 		if(Random.value < .5){
-			GetComponent<AudioSource>().PlayOneShot (flyAway1,.1f);
+			GetComponent<AudioSource>().PlayOneShot (flyAway1, SFXVolume);
 		}else{
-			GetComponent<AudioSource>().PlayOneShot (flyAway2,.1f);
+			GetComponent<AudioSource>().PlayOneShot (flyAway2, SFXVolume);
 		}
 		flying = true;
 		landing = false;
@@ -466,7 +476,7 @@ public class lb_Bird : MonoBehaviour , IDamagable
 			StopCoroutine("FlyToTarget");
 			anim.SetBool(landingBoolHash, false);
 			controller.SendMessage ("BirdFindTarget",gameObject);
-            GetComponent<AudioSource>().PlayOneShot(flyAway1);
+            GetComponent<AudioSource>().PlayOneShot(flyAway1, SFXVolume);
         }
 	}
 
@@ -566,9 +576,9 @@ public class lb_Bird : MonoBehaviour , IDamagable
 	void PlaySong(){
 		if (!dead){
 			if(Random.value < .5){
-				GetComponent<AudioSource>().PlayOneShot (song1,1);
+				GetComponent<AudioSource>().PlayOneShot (song1, SFXVolume);
 			}else{
-				GetComponent<AudioSource>().PlayOneShot (song2,1);
+				GetComponent<AudioSource>().PlayOneShot (song2, SFXVolume);
 			}
 		}
 	}
