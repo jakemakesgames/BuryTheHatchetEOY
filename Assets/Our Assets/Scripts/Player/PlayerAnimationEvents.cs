@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 //Michael Corben
 //Created 04/09/2018
-//Last edited 08/10/2018
+//Last edited 05/11/2018
 
 public class PlayerAnimationEvents : MonoBehaviour {
     [Tooltip("The player, needed to grab functions for")]

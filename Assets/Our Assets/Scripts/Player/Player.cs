@@ -8,7 +8,7 @@ using TMPro;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 31/10/2018
+//Last edited 05/11/2018
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(AudioSource))]
@@ -56,10 +56,10 @@ public class Player : MonoBehaviour, IDamagable {
     [Header("Other Death Stuff")]
     [Tooltip("The number of death animations")]
     [SerializeField] private int m_deathAnimCount;
-
+    [Tooltip("The time in seconds the player lays dead before respawning")]
     [SerializeField] private float m_deathFadeOutTime;
 
-    [Tooltip("World height of body when dead")]
+    [Tooltip("World height of body when dead after dropping")]
     [SerializeField] private float m_bodyDropHeight;
 
     private bool m_dead;
@@ -120,11 +120,8 @@ public class Player : MonoBehaviour, IDamagable {
 
     public float SFXVolume {
         get {
-            if (m_soundManager == null)
-                return 1f;
-            else {
-                return m_soundManager.MasterVolume * m_soundManager.SFXVolume;
-            }
+            if (m_soundManager == null) return 1f;
+            else return m_soundManager.MasterVolume * m_soundManager.SFXVolume;
         }
     }
     #endregion
