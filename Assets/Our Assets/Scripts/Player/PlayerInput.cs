@@ -398,9 +398,6 @@ public class PlayerInput : MonoBehaviour {
 
                             m_playerAnimator.SetTrigger("Shoot");
 
-                            if (m_shootDustParticle != null)
-                                m_shootDustParticle.Play();
-
                             //GunLookAt();
                         }
                     }
@@ -887,6 +884,10 @@ public class PlayerInput : MonoBehaviour {
             m_player.m_camAnimator.KickbackShake();
     }
 
+    public void ShootDust() {
+        if (m_shootDustParticle != null)
+            m_shootDustParticle.Play();
+    }
     //Charlie
     private void UpdateAnims() {
         float myVelocity = m_velocity.magnitude;

@@ -52,4 +52,9 @@ public class PlayerAnimationEvents : MonoBehaviour {
         if (m_player != null)
             m_player.Shoot();
     }
+
+    public void ShootDust () {
+        if (m_player != null)
+            m_player.ShootDust();
+    }
 }
