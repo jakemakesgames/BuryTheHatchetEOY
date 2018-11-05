@@ -491,10 +491,10 @@ public class AI : BaseAI
     //Check if there is nothing blocking the gun
     bool ClearShot()
     {
-        Vector3 vecBetween = (new Vector3(m_player.transform.position.x, m_gunRayTransform.position.y, m_player.transform.position.z) - m_gunRayTransform.position);
-        Vector3 rayPos1 = m_gunRayTransform.position - (m_gunRayTransform.forward * m_rayDetectBufferDist);
-        Vector3 rayPos2 = rayPos1 + m_gunRayTransform.right * 0.1f;
-        rayPos1 -= m_gunRayTransform.right * 0.1f;
+        Vector3 vecBetween = (new Vector3(m_player.transform.position.x, Gun.Muzzle.position.y, m_player.transform.position.z) - Gun.Muzzle.position);
+        Vector3 rayPos1 = Gun.Muzzle.position - (Gun.Muzzle.forward * m_rayDetectBufferDist);
+        Vector3 rayPos2 = rayPos1 + Gun.Muzzle.right * 0.1f;
+        rayPos1 -= Gun.Muzzle.right * 0.1f;
 
         Ray ray1 = new Ray(rayPos1, vecBetween);
         Ray ray2 = new Ray(rayPos2, vecBetween);
@@ -553,7 +553,8 @@ public class AI : BaseAI
             if (m_state == STATE.FINDCOVER && IsPeeking == false && m_timerBetweenShots >= m_timeBeforeShootCover)
             {
                 m_weaponController.GunSpreadAngle = m_unAimedBulletSpread;
-                m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
+                //m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
+                Gun.Muzzle.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
                 if (Gun.Shoot())
                 {
                     EnemyAnimator.SetTrigger("Shoot");
@@ -565,7 +566,8 @@ public class AI : BaseAI
            else if (m_timerBetweenShots >= m_timeBeforeShootPeek)
             {
                 m_weaponController.GunSpreadAngle = 0f;
-                m_weaponController.m_weaponHold.LookAt(m_shootTarget);
+                //m_weaponController.m_weaponHold.LookAt(m_shootTarget);
+                Gun.Muzzle.LookAt(m_shootTarget);
                 if (Gun.Shoot())
                 {
                     //EnemyAnimator.ResetTrigger("Aim");
