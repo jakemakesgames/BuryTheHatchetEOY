@@ -262,6 +262,8 @@ public class PlayerInput : MonoBehaviour {
 
     public bool InCombat { get { return m_inCombat; } }
 
+    private bool GunFull { get { return m_weaponController.EquippedGun.IsFull; } }
+
     public int CurrentAmmoInClip {
         get {
             if (m_weaponController.GetEquippedGun() != null)
@@ -364,7 +366,7 @@ public class PlayerInput : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyUp(KeyCode.R))
+        if (Input.GetKeyUp(KeyCode.R) || GunFull)
             m_playerAnimator.SetTrigger("FinishedReloading");
 
         //Get's the currently equipped weapon and executes
