@@ -60,7 +60,7 @@ public class Player : MonoBehaviour, IDamagable {
     [SerializeField] private float m_deathFadeOutTime;
 
     [Tooltip("World height of body when dead after dropping")]
-    [SerializeField] private float m_bodyDropHeight;
+    [SerializeField] [Range(0f, 1f)] private float m_bodyDropHeight;
 
     private bool m_dead;
     private bool m_hasDropped = false;
