@@ -165,6 +165,7 @@ public class UIManager : MonoBehaviour
 
         //spawns out a thread that executes the loadscene and fading 
         yield return new WaitForSeconds(a_WaitTime);
+        m_camerFadeAnim.ResetTrigger("FadeOut");
         SceneManager.LoadScene(a_scene);
 
         if (m_inMenu)

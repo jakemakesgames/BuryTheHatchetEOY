@@ -342,28 +342,32 @@ public class PlayerInput : MonoBehaviour {
     //and also checks if the player wishes to reload
     public void Attack() {
 
-        if (m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") ||
-                m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Character_Anim_Reload_v01 0")) {
+        if (m_swingTimer < Time.time)
+            m_meleeHitBox.enabled = false;
+        
+        if (   m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") 
+            || m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01 0")) {
             if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
                 if (m_weaponController.ReloadEquippedGun()) {
                     if (m_ammoController != null)
                         m_ammoController.Reload();
+                    m_playerAnimator.ResetTrigger("FinishedReloading");
                     m_playerAnimator.SetTrigger("Reload");
-                    m_playerAnimator.SetBool("Reloading", true);
                 }
             }
         }
 
-        if (m_swingTimer < Time.time)
-            m_meleeHitBox.enabled = false;
-        
+        if (Input.GetKeyUp(KeyCode.R))
+            m_playerAnimator.SetTrigger("FinishedReloading");
+
         //Get's the currently equipped weapon and executes
         //the appropriate attack action and animation
-        if (m_canShoot || (m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Idle_v01") ||
-               m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Walking"))) {
+        if (   m_canShoot 
+            || m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Idle_v01") 
+            || m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Walking")) {
+
             Gun equippedGun = m_weaponController.GetEquippedGun();
             if (equippedGun.IsIdle && m_meleeHitBox.enabled == false) {
-                m_playerAnimator.SetBool("Reloading", false);
 
                 if (m_isShooting)
                     DelayedShoot();
@@ -392,7 +396,6 @@ public class PlayerInput : MonoBehaviour {
                         if (m_willPause) {
                             m_isShootingTimer = Time.time + m_shootPauseTime;
                             m_isShooting = true;
-                            //GunLookAt();
                             return;
                         }
 
@@ -401,22 +404,18 @@ public class PlayerInput : MonoBehaviour {
                                 m_ammoController.Shoot();
                             m_canShoot = false;
                             m_playerAnimator.SetTrigger("Shoot");
-
-                            //GunLookAt();
                         }
                     }
 
                     //-------------//
                     //GUN RELOADING//
                     //-------------//
-                    else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false)
-                    {
-                        if (m_weaponController.ReloadEquippedGun())
-                        {
+                    else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
+                        if (m_weaponController.ReloadEquippedGun()) {
                             if (m_ammoController != null)
                                 m_ammoController.Reload();
+                            m_playerAnimator.ResetTrigger("FinishedReloading");
                             m_playerAnimator.SetTrigger("Reload");
-                            m_playerAnimator.SetBool("Reloading", true);
                         }
                     }
                 }
