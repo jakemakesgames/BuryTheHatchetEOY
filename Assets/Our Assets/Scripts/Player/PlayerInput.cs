@@ -349,29 +349,27 @@ public class PlayerInput : MonoBehaviour {
                     if (m_ammoController != null)
                         m_ammoController.Reload();
                     m_playerAnimator.SetTrigger("Reload");
+                    m_playerAnimator.SetBool("Reloading", true);
                 }
             }
         }
 
         if (m_swingTimer < Time.time)
             m_meleeHitBox.enabled = false;
-
-        if ((m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Idle_v01") ||
-               m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Walking")) == false || m_canShoot)
-            return;
-
+        
         //Get's the currently equipped weapon and executes
         //the appropriate attack action and animation
-        Gun equippedGun = m_weaponController.GetEquippedGun();
-        if (equippedGun.IsIdle && m_meleeHitBox.enabled == false) {
+        if (m_canShoot || (m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Idle_v01") ||
+               m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Walking"))) {
+            Gun equippedGun = m_weaponController.GetEquippedGun();
+            if (equippedGun.IsIdle && m_meleeHitBox.enabled == false) {
+                m_playerAnimator.SetBool("Reloading", false);
 
-            m_playerAnimator.SetBool("Reloading", false);
+                if (m_isShooting)
+                    DelayedShoot();
 
-            if (m_isShooting)
-                DelayedShoot();
-
-            else {
-                #region unused melee
+                else {
+                    #region unused melee
                 //---------------//
                 //MELEE ATTACKING//
                 //---------------//
@@ -387,11 +385,10 @@ public class PlayerInput : MonoBehaviour {
                 //}
                 #endregion
 
-                //-------------//
-                //GUN ATTACKING//
-                //-------------//
-                if (Input.GetMouseButtonDown(0)) {
-                    if (m_playerAnimator.GetBool("Reloading") == false) {
+                    //-------------//
+                    //GUN ATTACKING//
+                    //-------------//
+                    if (Input.GetMouseButtonDown(0)) {
                         if (m_willPause) {
                             m_isShootingTimer = Time.time + m_shootPauseTime;
                             m_isShooting = true;
@@ -408,20 +405,22 @@ public class PlayerInput : MonoBehaviour {
                             //GunLookAt();
                         }
                     }
-                }
 
-                //-------------//
-                //GUN RELOADING//
-                //-------------//
-                else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
-                    if (m_weaponController.ReloadEquippedGun()) {
-                        if (m_ammoController != null)
-                            m_ammoController.Reload();
-                        m_playerAnimator.SetTrigger("Reload");
+                    //-------------//
+                    //GUN RELOADING//
+                    //-------------//
+                    else if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false)
+                    {
+                        if (m_weaponController.ReloadEquippedGun())
+                        {
+                            if (m_ammoController != null)
+                                m_ammoController.Reload();
+                            m_playerAnimator.SetTrigger("Reload");
+                            m_playerAnimator.SetBool("Reloading", true);
+                        }
                     }
                 }
-            } 
-            #region old melee
+                #region old melee
             //if (equippedGun == null) {
             //    Melee equippedMelee = m_weaponController.GetEquippedMelee();
             //    if (equippedMelee == null)
@@ -441,7 +440,7 @@ public class PlayerInput : MonoBehaviour {
             //    }
             //}
             #endregion
-            #region unneeded auto gun shooting
+                #region unneeded auto gun shooting
             /*else if (equippedGun.m_isAutomatic && equippedGun.IsIdle) {
                 if (Input.GetMouseButton(0)) {
                     if (m_inCombat) {
@@ -459,6 +458,7 @@ public class PlayerInput : MonoBehaviour {
                 }
             }*/
             #endregion
+            }
         }
     }
 
