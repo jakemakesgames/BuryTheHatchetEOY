@@ -303,15 +303,13 @@ public class UIManager : MonoBehaviour
     public void DeathFade()
     {
         //Plays the Fade to Black animation
-        m_camerFadeAnim.SetTrigger("FadeOut");
-        m_fading = true;
+        m_camerFadeAnim.SetTrigger("DeathFadeOut");
     }
 
     public void RespawnFade()
     {
         //Plays the Fade from Black animation
         m_camerFadeAnim.SetTrigger("FadeIn");
-        m_fading = true;
     }
 
     #endregion
