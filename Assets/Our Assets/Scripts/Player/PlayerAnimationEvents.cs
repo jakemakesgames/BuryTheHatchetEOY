@@ -14,47 +14,23 @@ public class PlayerAnimationEvents : MonoBehaviour {
     //animation events, telling the player what is happening 
     //animation wise so the player character can act appropriately
 
-    public void CannotAttack() {
-        if (m_player != null)
-            m_player.CanAttack = false;
-    }
+    public void CannotAttack() { if (m_player != null) m_player.CanAttack = false; }
 
-    public void CanAttack() {
-        if (m_player != null)
-            m_player.CanAttack = true;
-    }
+    public void CanAttack() { if (m_player != null) m_player.CanAttack = true; }
 
-    public void HalfWay() {
-        if (m_player != null)
-            m_player.HalfWay();
-    }
+    public void HalfWay() { if (m_player != null) m_player.HalfWay(); }
 
-    public void SlowingRoll() {
-        if(m_player != null)
-            m_player.SlowingRoll();
-    }
+    public void SlowingRoll() { if(m_player != null) m_player.SlowingRoll(); }
 
-    public void EndSwing() {
-        if (m_player != null)
-            m_player.EndSwing();
-    }
+    public void EndSwing() { if (m_player != null) m_player.EndSwing(); }
 
-    public void EndRoll(){
-        if (m_player != null)
-            m_player.EndRoll();
-    }
+    public void EndRoll(){ if (m_player != null) m_player.EndRoll(); }
 
-    public void HasDropTrigger() {
-        GetComponentInParent<Player>().HasDroppedTrigger = true;
-    }
+    public void HasDropTrigger() { GetComponentInParent<Player>().HasDroppedTrigger = true; }
 
-    public void Shoot() {
-        if (m_player != null)
-            m_player.Shoot();
-    }
+    public void Shoot() { if (m_player != null) m_player.Shoot(); }
 
-    public void ShootDust () {
-        if (m_player != null)
-            m_player.ShootDust();
-    }
+    public void ShootDust() { if (m_player != null) m_player.ShootDust(); }
+
+    public void CanShoot() { if (m_player != null) m_player.CanShoot(); }
 }

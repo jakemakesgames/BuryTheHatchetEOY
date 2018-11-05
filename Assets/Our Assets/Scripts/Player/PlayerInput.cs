@@ -118,15 +118,19 @@ public class PlayerInput : MonoBehaviour {
     //----------------------------
     #region Shooting variables
 
-        [Header("Shooting Variables")]
-        [Tooltip("Does the player have infinite ammo?")]
-        [SerializeField] private bool m_infiniteAmmo;
+    [Header("Shooting Variables")]
+    [Tooltip("Does the player have infinite ammo?")]
+    [SerializeField] private bool m_infiniteAmmo;
 
-        [Tooltip("Will the player pause when they shoot")]
-        [SerializeField] private bool m_willPause;
+    [Tooltip("Will the player pause when they shoot")]
+    [SerializeField] private bool m_willPause;
 
-        [Tooltip("")]
-        [SerializeField] private float m_shootPauseTime;
+    [Tooltip("")]
+    [SerializeField] private float m_shootPauseTime;
+
+    //for use within the animation event of the same name
+    private bool m_canShoot;
+
     #endregion
 
     //----------------------------
@@ -305,8 +309,8 @@ public class PlayerInput : MonoBehaviour {
     //Methods and functionality
     //----------------------------
 
+    //----------------------------
     #region Spinning Thing Coroutine
-    //
     IEnumerator SpinThing() {
         System.DateTime startSpinTime = System.DateTime.Now;
         m_spurSpinning = true;
@@ -324,6 +328,9 @@ public class PlayerInput : MonoBehaviour {
         }
         m_spur.GetComponentInChildren<RectTransform>().eulerAngles = new Vector3(0.0f, 0.0f, -(m_spurMaxAngle + startAngle));
         m_spurSpinning = false;
+        m_canRoll = true;
+        if (m_rollSpeaker != null && m_canRollSound != null)
+            m_rollSpeaker.PlayOneShot(m_canRollSound);
     }
     #endregion
 
@@ -350,7 +357,7 @@ public class PlayerInput : MonoBehaviour {
             m_meleeHitBox.enabled = false;
 
         if ((m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Idle_v01") ||
-               m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Walking")) == false)
+               m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Walking")) == false || m_canShoot)
             return;
 
         //Get's the currently equipped weapon and executes
@@ -395,7 +402,7 @@ public class PlayerInput : MonoBehaviour {
                         if (m_weaponController.EquippedGun.CanShoot()) {
                             if (m_ammoController != null)
                                 m_ammoController.Shoot();
-
+                            m_canShoot = false;
                             m_playerAnimator.SetTrigger("Shoot");
 
                             //GunLookAt();
@@ -842,7 +849,7 @@ public class PlayerInput : MonoBehaviour {
     #endregion
 
     //----------------------------
-    #region animation event functions
+    #region animation functions
 
     public void HalfWay() { Debug.Log("HalfRoll: " + m_rollTimePassed); }
 
@@ -870,11 +877,7 @@ public class PlayerInput : MonoBehaviour {
     }
 
     //To be called by the animator after the melee weapon swing animation has finished playing
-    public void EndSwing() {
-        //m_weaponController.GetEquippedMelee().EndSwing();
-        if (m_meleeHitBox != null)
-            m_meleeHitBox.enabled = false;
-    }
+    public void EndSwing() { if (m_meleeHitBox != null) m_meleeHitBox.enabled = false; }
 
     //Shoots the equipped gun when the animation event triggers it todo so
     public void Shoot() {
@@ -884,10 +887,12 @@ public class PlayerInput : MonoBehaviour {
             m_player.m_camAnimator.KickbackShake();
     }
 
-    public void ShootDust() {
-        if (m_shootDustParticle != null)
-            m_shootDustParticle.Play();
-    }
+    //Plays the dust knockback particle when the animations event triggers it.
+    public void ShootDust() { if (m_shootDustParticle != null) m_shootDustParticle.Play(); }
+
+    //Tells the player that they canshoot when an animation event fires
+    public void CanShoot() { m_canShoot = true; }
+
     //Charlie
     private void UpdateAnims() {
         float myVelocity = m_velocity.magnitude;
@@ -903,23 +908,6 @@ public class PlayerInput : MonoBehaviour {
 
         m_playerAnimator.SetFloat("MovementDirectionRight", localVel.x);
         m_playerAnimator.SetFloat("MovementDirectionForward", localVel.z);
-
-        //Debug.Log(m_playerAnimator.GetFloat("MovementDirectionRight")/100);
-        //
-        //ORIGINAL CODE//////////////////////////////////////////////////////////////////////////////
-        //        playerAnimator.SetFloat ("MovementDirectionRight", m_velocity.x * transform.right.x);
-        //        playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
-        //////////////////////////////////////////////////////////////////////////////////////////////
-        //
-        //
-        //        if (m_velocity.x * transform.right.x == 0){
-        //            playerAnimator.SetFloat ("MovementDirectionForward", m_velocity.z * transform.forward.z);
-        //        }
-        //
-        //
-        //playerAnimator.SetFloat ("MovementDirectionForward", m_movementVector.x * transform.forward.x);
-        //
-        //playerAnimator.SetFloat ("MovementDirectionRight", m_movementVector.z * transform.right.z);   
     }
     #endregion
 
@@ -1009,11 +997,11 @@ public class PlayerInput : MonoBehaviour {
                 if (CanAttack)
                     Attack();
 
-                if (m_rollCoolDownTimer <= Time.time) {
-                    m_canRoll = true;
-                    if (m_rollSpeaker != null && m_canRollSound != null)
-                        m_rollSpeaker.PlayOneShot(m_canRollSound);
-                }
+                //if (m_rollCoolDownTimer <= Time.time) {
+                //    m_canRoll = true;
+                //    if (m_rollSpeaker != null && m_canRollSound != null)
+                //        m_rollSpeaker.PlayOneShot(m_canRollSound);
+                //}
             }
             if (m_invicibilityTimer <= Time.time) {
                 IsInvincible = false;
