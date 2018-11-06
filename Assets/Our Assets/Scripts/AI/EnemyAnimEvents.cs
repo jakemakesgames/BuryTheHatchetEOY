@@ -13,4 +13,9 @@ public class EnemyAnimEvents : MonoBehaviour {
     {
 
     }
+
+    public void CanShoot()
+    {
+
+    }
 }
