@@ -24,19 +24,19 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _A_Normal:
         m_Texture: {fileID: 2800000, guid: 24f90742c6af44e44aa50a352c89de26, type: 3}
-        m_Scale: {x: 3, y: 3}
+        m_Scale: {x: 30, y: 30}
         m_Offset: {x: 0, y: 0}
     - _B:
         m_Texture: {fileID: 2800000, guid: 73aaabb2ac42b0d468a90bcf0be70b9f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _B_Normal:
-        m_Texture: {fileID: 2800000, guid: 24f90742c6af44e44aa50a352c89de26, type: 3}
-        m_Scale: {x: 3, y: 3}
+        m_Texture: {fileID: 2800000, guid: 4abfde99caa68a740812275f1421cd48, type: 3}
+        m_Scale: {x: 30, y: 30}
         m_Offset: {x: 0, y: 0}
     - _Bottom:
-        m_Texture: {fileID: 2800000, guid: 73aaabb2ac42b0d468a90bcf0be70b9f, type: 3}
-        m_Scale: {x: 3, y: 3}
+        m_Texture: {fileID: 2800000, guid: 88f252a4e2b575a469c8a04c322823f6, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
@@ -76,7 +76,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _RaisedFloor:
         m_Texture: {fileID: 2800000, guid: 9068f2bdd44df2448aa84778747f6fc6, type: 3}
-        m_Scale: {x: 3, y: 3}
+        m_Scale: {x: 30, y: 30}
         m_Offset: {x: 0, y: 0}
     - _SandNoise:
         m_Texture: {fileID: 2800000, guid: 276ef4a24f3e474428ad45bd3bd0206e, type: 3}
