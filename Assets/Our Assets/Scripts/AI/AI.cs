@@ -6,12 +6,8 @@ using StateMachine;
 
 //Mark Phillips
 //Created 13/08/2018
-//Last edited 29/08/2018
+//Last edited 7/11/2018
 
-//[RequireComponent(typeof(WeaponController))]
-//[RequireComponent(typeof(NavMeshAgent))]
-//[RequireComponent(typeof(Rigidbody))]
-//[RequireComponent(typeof(AudioSource))]
 public class AI : BaseAI
 {
     enum STATE
@@ -328,7 +324,6 @@ public class AI : BaseAI
             }
 
 
-
                 if (m_distBetweenPlayer <= m_fleeRadius + m_deadZone && m_distBetweenPlayer >= m_fleeRadius - m_deadZone)
                 {
                     //If player is within seek and we're at max flee distance (deadzone for floating point precision)
@@ -340,16 +335,6 @@ public class AI : BaseAI
                     m_state = STATE.FLEE;
                 }
             
-
-            //if(Gun.CurrentClip <= 2)
-            //{
-            //    m_state = STATE.PEEK;
-            //}
-            //if (m_distBetweenCover < m_seekFromCoverRadius && AtCover) // no other cover
-            //{
-            //    m_state = STATE.PEEK;
-            //}
-
             if (m_distBetweenCover <= m_seekFromCoverRadius + m_deadZone && m_distBetweenCover >= m_seekFromCoverRadius - m_deadZone)
             {
                 if (m_state == STATE.PEEK)
