@@ -176,6 +176,7 @@ public class BaseAI : MonoBehaviour, IDamagable
         EnemyAnimator.SetLayerWeight(1, 0);
         m_agent.ResetPath();
         m_walkingParticleSystem.Stop();
+        m_dazeParticleSystem.Stop();
         int randomAnim = Random.Range(0, m_deathAnimationCount);
         EnemyAnimator.SetInteger("WhichDeath", randomAnim);
         EnemyAnimator.SetTrigger("Death");
