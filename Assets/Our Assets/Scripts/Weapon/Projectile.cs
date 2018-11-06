@@ -364,6 +364,10 @@ public class Projectile : MonoBehaviour {
         m_insideEntity = a_hitEntity;
         if (m_insideEntity)
             return;
+        if (m_destroy == false) {
+            m_destroy = true;
+            return;
+        }
         Destroy(gameObject);
         Destroy(m_instancedTrailRenderer, m_trailRendererLifeTime);
     }
@@ -454,8 +458,6 @@ public class Projectile : MonoBehaviour {
                             else {
                                 GameObject GO = Instantiate(m_environmentParticles[i], transform.position, goRot);
                                 Destroy(GO, m_environmentParticleTimers[i]);
-                                m_destroy = false;
-
                             }
                         }
                         if (m_environmentAudioClips[i] != null) {
@@ -463,6 +465,9 @@ public class Projectile : MonoBehaviour {
                             audio.AudioSource.clip = m_environmentAudioClips[i];
                             audio.AudioSource.Play();
                         }
+                        if (i == 1)
+                            m_destroy = false;
+
                         OnHitObject(initialCollision[0], false);
                     }
                 }
