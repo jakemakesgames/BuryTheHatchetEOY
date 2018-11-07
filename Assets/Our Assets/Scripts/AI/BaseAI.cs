@@ -156,7 +156,8 @@ public class BaseAI : MonoBehaviour, IDamagable
         {
             transform.position += m_projectileVel * m_projectileKnockBack * Time.deltaTime;
             m_agent.isStopped = true;
-            m_dazeParticleSystem.Play();
+            if(m_dazeParticleSystem.isPlaying == false)
+                m_dazeParticleSystem.Play();
         }
         if (m_stunHitTimer < Time.time)
         {
