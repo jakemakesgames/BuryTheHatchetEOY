@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 //Camera Requirements
 // 1 - Create an Offset from the camera to the player
@@ -18,28 +17,28 @@ public class PlayerCamera : MonoBehaviour
     #region Public Variables
     [Header("Player")]
     [Tooltip("Player Character")]
-    [SerializeField] Player m_player;
+    [SerializeField]
+    Player m_player;
     [Tooltip("Camera's offset to the Player Character")]
-    [SerializeField] Vector3 m_offset;
+    [SerializeField]
+    Vector3 m_offset;
 
     [Header("Camera's following speed")]
     [Tooltip("The Smoothness in which our camera follows our player")]
-    [Range(0, 100)] [SerializeField] float m_smoothSpeed;
+    [Range(0, 100)]
+    [SerializeField]
+    float m_smoothSpeed;
 
-
+    private UIManager m_uiManager;
 
     #endregion
 
     #region Private Variables
 
-    private UIManager m_uiManager;
-
-    private Scene m_scene;
-
-    public static PlayerCamera m_instance;
-
     //Target the Camera is going to reach
     private Vector3 m_desiredPosition;
+
+
 
     //The smoothness in which the camera will reach the desired positions
     private Vector3 m_smoothedPosition;
@@ -48,50 +47,15 @@ public class PlayerCamera : MonoBehaviour
 
     private void Awake()
     {
-
-        m_uiManager = FindObjectOfType<UIManager>();
-
-        if (m_instance == null)
-        {
-            m_instance = this;
-        }
-        else if (m_instance != this)
-        {
-            Destroy(gameObject);
-        }
-        DontDestroyOnLoad(gameObject);
-    }
-
-    private void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode a_mode)
-    {
-        if (scene.name == m_uiManager.GetPlayScene())
-        {
-            m_player = (Player)FindObjectOfType((typeof(Player)));
-        }
+        m_player = FindObjectOfType<Player>();
     }
 
     #endregion
-
     //BLAH!
     // Update is called once per frame
-    void Update ()
+    void Update()
     {
-        PlayerCheck();
-    }
-
- 
-     public void PlayerCheck()
-    {
- 
-        if (m_player != null)
-        {
-            CameraFollow();
-        }
+        CameraFollow();
     }
 
     public void CameraFollow()
@@ -101,10 +65,8 @@ public class PlayerCamera : MonoBehaviour
             #region Smoothed Camera Follow
             //Sets the players position to be the desired position
             m_desiredPosition = m_player.transform.position + m_offset;
-            //Lerps the camera between its initial position to the targets position by the smooth speed
             m_smoothedPosition = Vector3.Lerp(transform.position, m_desiredPosition, m_smoothSpeed / 100);
 
-            //Makes the Camera follow the Player
             transform.position = m_smoothedPosition;
             #endregion
         }

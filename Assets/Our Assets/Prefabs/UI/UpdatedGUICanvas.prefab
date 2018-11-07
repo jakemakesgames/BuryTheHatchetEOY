@@ -1562,7 +1562,7 @@ MonoBehaviour:
   m_optionsMenu: {fileID: 1927032586132536}
   m_creditsMenu: {fileID: 1874467422691906}
   m_pauseMenu: {fileID: 1408100201400886}
-  m_playScene: BetaLevel_2
+  m_playScene: BetaLevel_1
   m_menuScene: Test Environment
   m_creditsScene: Credits
   m_player: {fileID: 0}
