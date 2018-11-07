@@ -396,6 +396,8 @@ public class Gun : MonoBehaviour {
             CurrentAmmo = m_maxAmmo;
         if (CurrentClip > ClipSize)
             CurrentClip = ClipSize;
+        if (CurrentClip < ClipSize)
+            IsFull = false;
     }
     
 }

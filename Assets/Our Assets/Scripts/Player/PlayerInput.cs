@@ -533,7 +533,7 @@ public class PlayerInput : MonoBehaviour {
                 if (m_movementVector.sqrMagnitude > 1f)
                     m_movementVector.Normalize();
 
-                Vector3 direction = m_camera.transform.rotation * m_movementVector;
+                Vector3 direction = m_viewCamera.transform.rotation * m_movementVector;
                 direction.y = 0;
                 moveVelocity = direction.normalized * m_speed;
                 m_velocity = moveVelocity;
@@ -1006,6 +1006,9 @@ public class PlayerInput : MonoBehaviour {
         //m_equippedWeaponInumerator = Player.HeldWeaponLocation - 1;
         m_meleeHitBox.enabled = false;
         m_weaponController.EquippedGun.SetInfiniteAmmo(m_infiniteAmmo);
+        for (int i = m_weaponController.EquippedGun.ClipSize; i > m_weaponController.EquippedGun.CurrentClip; i--) {
+            m_ammoController.Shoot();
+        }
     }
     #endregion
 

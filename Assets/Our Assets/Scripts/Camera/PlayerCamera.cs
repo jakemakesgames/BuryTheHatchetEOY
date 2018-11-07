@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //Camera Requirements
 // 1 - Create an Offset from the camera to the player
@@ -25,42 +26,70 @@ public class PlayerCamera : MonoBehaviour
     [Tooltip("The Smoothness in which our camera follows our player")]
     [Range(0, 100)] [SerializeField] float m_smoothSpeed;
 
-    private UIManager m_uiManager;
-    
+
+
     #endregion
 
     #region Private Variables
 
+    private UIManager m_uiManager;
+
+    private Scene m_scene;
+
+    public static PlayerCamera m_instance;
+
     //Target the Camera is going to reach
     private Vector3 m_desiredPosition;
-
-
 
     //The smoothness in which the camera will reach the desired positions
     private Vector3 m_smoothedPosition;
 
     private bool m_foundPlayer = true;
 
+    private void Awake()
+    {
+
+        m_uiManager = FindObjectOfType<UIManager>();
+
+        if (m_instance == null)
+        {
+            m_instance = this;
+        }
+        else if (m_instance != this)
+        {
+            Destroy(gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode a_mode)
+    {
+        if (scene.name == m_uiManager.GetPlayScene())
+        {
+            m_player = (Player)FindObjectOfType((typeof(Player)));
+        }
+    }
+
     #endregion
 
     // Update is called once per frame
     void Update ()
     {
-        //PlayerCheck();
-        CameraFollow();
+        PlayerCheck();
     }
 
  
      public void PlayerCheck()
     {
-        if (!m_uiManager.GetInMenu())
+ 
+        if (m_player != null)
         {
-            m_player = FindObjectOfType<Player>();
-            m_foundPlayer = true;
-        }
-        else
-        {
-            m_foundPlayer = false;
+            CameraFollow();
         }
     }
 
