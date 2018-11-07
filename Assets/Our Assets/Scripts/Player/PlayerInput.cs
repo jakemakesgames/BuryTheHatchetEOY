@@ -368,7 +368,7 @@ public class PlayerInput : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyUp(KeyCode.R) || GunFull)
+        if (Input.GetKey(KeyCode.R) == false || GunFull)
             m_playerAnimator.SetTrigger("FinishedReloading");
 
         //play the gun empty idle
