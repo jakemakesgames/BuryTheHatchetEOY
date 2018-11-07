@@ -2215,7 +2215,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 29792a8d3f9fe0a449ceefb8e228ff74, type: 3}
+  m_Motion: {fileID: 7400000, guid: 1d2263b3c89b8244e9c2a7e66d7c6532, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -2603,7 +2603,7 @@ AnimatorState:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Telegraph Shoot
-  m_Speed: 0.01
+  m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 1101239973717421444}
@@ -2616,7 +2616,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: da94b11209e5065418ca5f15ae1cb9fe, type: 3}
+  m_Motion: {fileID: 7400000, guid: 4d75578e37a0a72488fee97e20c448f0, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
