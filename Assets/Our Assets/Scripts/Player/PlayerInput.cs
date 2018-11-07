@@ -368,7 +368,7 @@ public class PlayerInput : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyUp(KeyCode.R) || GunFull)
+        if (Input.GetKey(KeyCode.R) == false || GunFull)
             m_playerAnimator.SetTrigger("FinishedReloading");
 
         //play the gun empty idle
@@ -694,9 +694,7 @@ public class PlayerInput : MonoBehaviour {
     private void Roll() {
         if (m_isRolling == false && m_isLunging == false) {
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetMouseButtonDown(1)) {
-                if ((m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") ||
-                m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Character_Anim_Reload_v01 0") ||
-                m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Revolver Shoot")) == false) {
+                if (m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Revolver Shoot") == false) {
                     m_rollStartTime = Time.time;
                     m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
                     m_playerAnimator.SetTrigger("Roll");
