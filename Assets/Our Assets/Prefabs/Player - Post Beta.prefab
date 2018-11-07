@@ -7131,18 +7131,42 @@ MonoBehaviour:
   m_speed: 4
   m_accelerationRate: 0.1
   m_decelerationRate: 0.99
-  m_usingCurveForRoll: 0
+  m_usingCurveForRoll: 1
   m_rollCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0.21620558
+      outSlope: 0.21620558
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.015145309
+      value: 10.0869255
+      inSlope: -54.527603
+      outSlope: -54.527603
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.3854827
+      value: 3.7632718
+      inSlope: 5.6808133
+      outSlope: 5.6808133
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.7
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   m_rollSpeedStart: 20
   m_rollCoolDownTime: 0.5
-  m_rollAccelerationRate: 4
-  m_rollTimeMultiplier: 1
-  m_invicibilityTime: 1
+  m_rollAccelerationRate: 1.1
+  m_rollTimeMultiplier: 0.06
+  m_invicibilityTime: 0.5
   m_spur: {fileID: 0}
   m_spurAnimCurve:
     serializedVersion: 2
@@ -7150,20 +7174,26 @@ MonoBehaviour:
     - serializedVersion: 2
       time: 0
       value: 0
-      inSlope: 2
-      outSlope: 2
+      inSlope: 0.24091478
+      outSlope: 0.24091478
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.42360935
+      value: 1.0336665
+      inSlope: 1.1357665
+      outSlope: 1.1357665
       tangentMode: 0
     - serializedVersion: 2
       time: 1
-      value: 1
-      inSlope: 0.39309263
-      outSlope: 0.39309263
+      value: 0
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
   m_spurMaxAngle: 720
-  m_spurSpinTime: 1
+  m_spurSpinTime: 0.5
   m_infiniteAmmo: 1
   m_willPause: 0
   m_shootPauseTime: 0
