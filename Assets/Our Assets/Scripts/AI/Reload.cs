@@ -26,13 +26,18 @@ public class Reload : IState<AI>
             {
                 a_owner.Agent.SetDestination(a_owner.transform.position);
                 a_owner.FinishedReload = false;
-                a_owner.EnemyAnimator.SetTrigger("Reloading");
+            }
+            if (!(a_owner.EnemyAnimator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Character_Anim_Reload_v01")
+                || a_owner.EnemyAnimator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Character_Anim_Reload_v01 0")))
+            {
+                a_owner.EnemyAnimator.SetBool("Reloading", true);
+                a_owner.EnemyAnimator.SetTrigger("ReloadTrigger");
             }
         }
         else
         {
             a_owner.FinishedReload = true;
-            //a_owner.AtCover = false;
+            a_owner.EnemyAnimator.SetBool("Reloading", false);   
         }
     }
 }
