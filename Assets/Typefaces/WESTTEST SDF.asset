@@ -932,7 +932,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: WESTTEST SDF Material
   m_Shader: {fileID: 4800000, guid: dca26082f9cb439469295791d9f76fe5, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: BEVEL_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -964,11 +964,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _Ambient: 0.5
-    - _Bevel: 0.653
-    - _BevelClamp: 0
-    - _BevelOffset: -0.364
+    - _Bevel: 1
+    - _BevelClamp: 0.017
+    - _BevelOffset: -0.282
     - _BevelRoundness: 0.981
-    - _BevelWidth: 0
+    - _BevelWidth: 0.5
     - _BumpFace: 0
     - _BumpOutline: 0
     - _ColorMask: 15
@@ -995,7 +995,7 @@ Material:
     - _ScaleRatioC: 0.6770833
     - _ScaleX: 1
     - _ScaleY: 1
-    - _ShaderFlags: 1
+    - _ShaderFlags: 0
     - _SpecularPower: 2
     - _Stencil: 0
     - _StencilComp: 8

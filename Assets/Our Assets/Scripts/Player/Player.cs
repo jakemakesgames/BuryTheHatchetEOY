@@ -8,7 +8,7 @@ using TMPro;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 05/11/2018
+//Last edited 07/11/2018
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(AudioSource))]
@@ -239,6 +239,7 @@ public class Player : MonoBehaviour, IDamagable {
 
         if (m_dieSound != null)
             m_audioSource.PlayOneShot(m_dieSound, SFXVolume);
+        Invoke("Respawn", m_deathFadeOutTime);
         
     }
 
@@ -262,8 +263,7 @@ public class Player : MonoBehaviour, IDamagable {
         if (m_playerAnimator != null)
             m_playerAnimator.SetTrigger("Respawn");
 
-        if (m_dieParticleSystem != null)
-        {
+        if (m_dieParticleSystem != null) {
             m_dieParticleSystem.Stop();
             m_dieParticleSystem.Clear();
         }
@@ -327,15 +327,17 @@ public class Player : MonoBehaviour, IDamagable {
         UpdateHealthDisplay();
         //m_heldWeaponsInfo.Capacity = m_heldWeapons.Count;
         RespawnPoint = transform.position;
-        //for (int i = 0; i < m_heldWeapons.Count; i++) {
-        //    if (m_heldWeapons[i].GetComponent<Gun>() != null) {
-        //        int currentAmmo = m_heldWeapons[i].GetComponent<Gun>().GetCurrentAmmo();
-        //        int currentClip = m_heldWeapons[i].GetComponent<Gun>().GetCurrentClip();
-        //        m_heldWeaponsInfo.Add(new WeaponInfo(false, currentClip, currentAmmo));
-        //    }
-        //    else if (m_heldWeapons[i].GetComponent<Melee>() != null)
-        //        m_heldWeaponsInfo.Add(new WeaponInfo(true, 0, 0));
-        //}
+        #region held weapons analysis
+        /*for (int i = 0; i < m_heldWeapons.Count; i++) {
+            if (m_heldWeapons[i].GetComponent<Gun>() != null) {
+                int currentAmmo = m_heldWeapons[i].GetComponent<Gun>().GetCurrentAmmo();
+                int currentClip = m_heldWeapons[i].GetComponent<Gun>().GetCurrentClip();
+                m_heldWeaponsInfo.Add(new WeaponInfo(false, currentClip, currentAmmo));
+            }
+            else if (m_heldWeapons[i].GetComponent<Melee>() != null)
+                m_heldWeaponsInfo.Add(new WeaponInfo(true, 0, 0));
+        }/**/
+        #endregion
         m_audioSource = GetComponent<AudioSource>();
         m_playerAnimator = GetComponentInChildren<Animator>();
         m_input = GetComponent<PlayerInput>();
@@ -368,11 +370,10 @@ public class Player : MonoBehaviour, IDamagable {
         if (Dead) {
             if (HasDroppedTrigger)
                 DropDead();
+            //m_deathFadeOutTimer -= Time.deltaTime;
 
-            m_deathFadeOutTimer -= Time.deltaTime;
-
-            if (m_deathFadeOutTimer <= 0)
-                Respawn();
+            //if (m_deathFadeOutTimer <= 0)
+            //    Respawn();
         }
     }
 }

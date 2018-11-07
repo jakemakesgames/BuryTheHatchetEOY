@@ -6,7 +6,7 @@ using UnityEngine.AI;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 31/10/2018
+//Last edited 7/11/2018
 
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -368,7 +368,7 @@ public class PlayerInput : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyUp(KeyCode.R) || GunFull)
+        if (Input.GetKey(KeyCode.R) == false || GunFull)
             m_playerAnimator.SetTrigger("FinishedReloading");
 
         //play the gun empty idle
@@ -576,14 +576,15 @@ public class PlayerInput : MonoBehaviour {
             //ROLLING MOVEMENT//
             //----------------//
             else {
-                m_rollTimePassed = (Time.time - m_rollStartTime) * (m_rollTimeMultiplier + m_rollAccelerationRate);
                 //time passed = t
                 //acceleration rate = a
                 if (m_usingCurveForRoll) {
-                    m_rollSpeed = m_rollCurve.Evaluate(m_rollTimePassed);
+                    m_rollTimePassed = (Time.time - m_rollStartTime);
+                    m_rollSpeed = m_rollCurve.Evaluate(m_rollTimePassed * m_rollTimeMultiplier) * m_rollAccelerationRate;
                     m_rollVelocity = transform.forward * m_rollSpeed;
                 }
                 else {
+                    m_rollTimePassed = (Time.time - m_rollStartTime) * (m_rollTimeMultiplier + m_rollAccelerationRate);
                     if (m_rollAccelerating) {
                         //Accelerate along a parabola starting at 0 ending at 1
                         //velocity = -1 * (t - a)^2 + a^2
@@ -694,9 +695,7 @@ public class PlayerInput : MonoBehaviour {
     private void Roll() {
         if (m_isRolling == false && m_isLunging == false) {
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetMouseButtonDown(1)) {
-                if ((m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") ||
-                m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Character_Anim_Reload_v01 0") ||
-                m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Revolver Shoot")) == false) {
+                if (m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Revolver Shoot") == false) {
                     m_rollStartTime = Time.time;
                     m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
                     m_playerAnimator.SetTrigger("Roll");

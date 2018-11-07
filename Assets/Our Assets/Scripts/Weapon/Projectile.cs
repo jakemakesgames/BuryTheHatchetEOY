@@ -161,6 +161,7 @@ public class Projectile : MonoBehaviour {
                     SS.AudioSource.clip = m_ricochetAudioClip;
                     SS.AudioSource.Play();
                 }
+                m_destroy = false;
                 OnHitObject(hit, this, false);
             }
 
@@ -369,7 +370,8 @@ public class Projectile : MonoBehaviour {
             return;
         }
         Destroy(gameObject);
-        Destroy(m_instancedTrailRenderer, m_trailRendererLifeTime);
+        if (m_trailRenderer != null)
+            Destroy(m_instancedTrailRenderer, m_trailRendererLifeTime);
     }
     
     private void OnHitObject(RaycastHit a_hit, Projectile a_bullet, bool a_hitEntity) {
@@ -379,6 +381,13 @@ public class Projectile : MonoBehaviour {
         m_insideEntity = a_hitEntity;
         if (m_insideEntity)
             return;
+        if (m_destroy == false) {
+            m_destroy = true;
+            return;
+        }
+        Destroy(gameObject);
+        if (m_trailRenderer != null)
+            Destroy(m_instancedTrailRenderer, m_trailRendererLifeTime);
     }
     #endregion
 
@@ -431,6 +440,7 @@ public class Projectile : MonoBehaviour {
                     SS.AudioSource.clip = m_ricochetAudioClip;
                     SS.AudioSource.Play();
                 }
+                m_destroy = false;
                 OnHitObject(initialCollision[0], false); 
             }
 
