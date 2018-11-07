@@ -159,7 +159,7 @@ public class lb_Bird : MonoBehaviour , IDamagable
 			if(!paused){
 				t+= Time.deltaTime;
 				if(t>.2f && !solidCollider.enabled && controller.collideWithObjects){
-					solidCollider.enabled = true;
+					//solidCollider.enabled = true;
 				}
 			}
 			yield return 0;

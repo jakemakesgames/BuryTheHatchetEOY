@@ -171,7 +171,7 @@ public class lb_BirdController : MonoBehaviour {
 			}
 			myBirds[i] = Instantiate (bird, spawnPos, Quaternion.identity) as GameObject;
 			myBirds[i].transform.localScale = myBirds[i].transform.localScale*birdScale;
-			myBirds[i].transform.parent = transform;
+			myBirds[i].transform.parent = transform.parent;
 			myBirds[i].SendMessage ("SetController",this);
 			myBirds[i].SetActive (false);
 		}
@@ -200,7 +200,7 @@ public class lb_BirdController : MonoBehaviour {
 		GameObject fEmitter = Resources.Load ("featherEmitter",typeof(GameObject)) as GameObject;
 		for(int i=0;i<3;i++){
 			featherEmitters[i] = Instantiate (fEmitter,Vector3.zero,Quaternion.identity) as GameObject;
-			featherEmitters[i].transform.parent = transform;
+			featherEmitters[i].transform.parent = transform.parent;
 			featherEmitters[i].SetActive (false);
 		}
 	}
@@ -232,7 +232,7 @@ public class lb_BirdController : MonoBehaviour {
 			SpawnBird();
 		}else if(activeBirds < maximumNumberOfBirds && Random.value < .01 && AreThereActiveTargets()){
 			//if there are less than maximum birds active spawn a bird every 20 seconds
-			SpawnBird();
+			//SpawnBird();
 		}
 
 		//check one bird every second to see if it should be unspawned
@@ -274,16 +274,16 @@ public class lb_BirdController : MonoBehaviour {
 				birdPerchTargets.Remove(entry);
 			}
 			yield return 0;
-			//now check for any new Targets
-			Collider[] hits = Physics.OverlapSphere(currentCamera.transform.position,unspawnDistance);
-			foreach(Collider hit in hits){
-				if (hit.tag == "lb_groundTarget" && !birdGroundTargets.Contains (hit.gameObject)){
-					birdGroundTargets.Add (hit.gameObject);
-				}
-				if (hit.tag == "lb_perchTarget" && !birdPerchTargets.Contains (hit.gameObject)){
-					birdPerchTargets.Add (hit.gameObject);
-				}
-			}
+			////now check for any new Targets
+			//Collider[] hits = Physics.OverlapSphere(currentCamera.transform.position,unspawnDistance);
+			//foreach(Collider hit in hits){
+			//	if (hit.tag == "lb_groundTarget" && !birdGroundTargets.Contains (hit.gameObject)){
+			//		birdGroundTargets.Add (hit.gameObject);
+			//	}
+			//	if (hit.tag == "lb_perchTarget" && !birdPerchTargets.Contains (hit.gameObject)){
+			//		birdPerchTargets.Add (hit.gameObject);
+			//	}
+			//}
 			yield return 0;
 		}
 	}
