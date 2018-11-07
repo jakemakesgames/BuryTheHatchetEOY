@@ -4,7 +4,7 @@ using UnityEngine;
 //Michael Corben
 //Based on Tutorial:https://www.youtube.com/watch?v=rZAnnyensgs&list=PLFt_AvWsXl0ctd4dgE1F8g3uec4zKNRV0&index=3
 //Created 24/07/2018
-//Last edited 08/10/2018
+//Last edited 07/11/2018
 
 public class WeaponController : MonoBehaviour {
 
@@ -13,14 +13,17 @@ public class WeaponController : MonoBehaviour {
     [Tooltip("The position the equipped weapon will be")]
     [SerializeField] public Transform m_weaponHold;
 
+    [Header("Gun")]
     [Tooltip("If anything is here it will be equipped when the game starts")]
     [SerializeField] private Gun m_startingGun;
+    [Range(1,6)] [SerializeField] private int m_startingAmmo;
     private Gun m_equippedGun;
     [Tooltip("If there is anything here and not in " +
         "the starting gun it will be equipped when the game starts")]
     [SerializeField] private Melee m_startingMelee;
     private Melee m_equippedMelee;
 
+    [Header("LayerMasks")]
     [SerializeField] private LayerMask m_entityCollisionMask;
     [Tooltip("The layer on which object that can be destroyed are to be assigned")]
     [SerializeField] private LayerMask m_terrainCollisionMask;
@@ -172,6 +175,7 @@ public class WeaponController : MonoBehaviour {
             EquippedGun.SetEntityCollisionLayer(EntityCollisionMask);
             EquippedGun.SetEnvironmentCollisionLayer(m_terrainCollisionMask);
             EquippedGun.SetRicochetCollisionLayer(m_ricochetCollisionMask);
+            EquippedGun.SetCurrentClip(m_startingAmmo);
         }
         else if (m_startingMelee != null)
         {
