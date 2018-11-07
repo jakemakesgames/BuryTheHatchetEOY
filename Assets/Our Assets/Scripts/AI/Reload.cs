@@ -37,7 +37,7 @@ public class Reload : IState<AI>
         else
         {
             a_owner.FinishedReload = true;
-            a_owner.EnemyAnimator.SetBool("Reloading", true);   
+            a_owner.EnemyAnimator.SetBool("Reloading", false);   
         }
     }
 }
