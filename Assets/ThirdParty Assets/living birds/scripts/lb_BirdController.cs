@@ -5,8 +5,6 @@ using System.Collections.Generic;
 public class lb_BirdController : MonoBehaviour {
 	public int idealNumberOfBirds;
 	public int maximumNumberOfBirds;
-	public Camera currentCamera;
-    public GameObject player;
     public float unspawnDistance = 10.0f;
 	public bool highQuality = true;
 	public bool collideWithObjects = true;
@@ -23,7 +21,9 @@ public class lb_BirdController : MonoBehaviour {
 	public bool goldFinch = true;
 	public bool crow = true;
 
-	bool pause = false;
+    Camera currentCamera;
+    GameObject player;
+    bool pause = false;
     bool playerIsClose = false;
     Vector3 spawnPos;
     float distBetweenPlayer;
@@ -35,36 +35,43 @@ public class lb_BirdController : MonoBehaviour {
 	int birdIndex = 0;
 	GameObject[] featherEmitters = new GameObject[3];
 
-    public void PlayerClose()
-    {
-        distBetweenPlayer = Vector3.Distance(transform.position, player.transform.position);
 
-        if (distBetweenPlayer <= playerFleeRange)
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Player")
         {
-            if (!playerIsClose)
+            PlayerClose();
+        }
+
+    }
+    public void PlayerClose()
+    {      
+        if (!pause)
+        {
+            for (int i = 0; i < myBirds.Length; i++)
             {
-                Debug.Log("Hit");
-                if (!pause)
+                if (myBirds != null)
                 {
-                    for (int i = 0; i < myBirds.Length; i++)
+                    if (myBirds[i].activeSelf)
                     {
-                        if (myBirds[i].activeSelf)
+                        if (Random.value < .6)
                         {
-                            if (Random.value < .6)
-                            {
-                                myBirds[i].SendMessage("FlyAway");
-                            }
+                            myBirds[i].SendMessage("Flee");
+                            StartCoroutine(UnspawnTimed(myBirds[i]));
                         }
                     }
-                    playerIsClose = true;
                 }
             }
         }
-        else
-        {
-            playerIsClose = false;
-        }
+    }
         
+
+    IEnumerator UnspawnTimed(GameObject bird)
+    {
+        yield return new WaitForSeconds(20);
+        Unspawn(bird);
+
+        yield return 0;
     }
 
 
@@ -115,14 +122,20 @@ public class lb_BirdController : MonoBehaviour {
 	}
 
 	void Start () {
-        spawnPos = new Vector3(transform.localPosition.x, spawnHeight, transform.localPosition.z);
+        spawnPos = new Vector3(transform.parent.localPosition.x, spawnHeight, transform.parent.localPosition.z);
 
 		//find the camera
 		if (currentCamera == null){
 			currentCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 		}
 
-		if(idealNumberOfBirds >= maximumNumberOfBirds){
+        //find player
+        if (player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+        }
+
+        if (idealNumberOfBirds >= maximumNumberOfBirds){
 			idealNumberOfBirds = maximumNumberOfBirds-1;
 		}
 		//set up the bird types to use
@@ -186,11 +199,6 @@ public class lb_BirdController : MonoBehaviour {
 			featherEmitters[i].SetActive (false);
 		}
 	}
-
-    private void Update()
-    {
-        PlayerClose();
-    }
 
     void OnEnable(){
 		InvokeRepeating("UpdateBirds",1,1);
@@ -388,11 +396,11 @@ public class lb_BirdController : MonoBehaviour {
 	}
 
 #if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = new Color(0f, 0f, 1f, 0.4f);
-        Gizmos.DrawWireSphere(transform.position, playerFleeRange);
-    }
+   // private void OnDrawGizmos()
+   // {
+   //     Gizmos.color = new Color(0f, 0f, 1f, 0.4f);
+   //     Gizmos.DrawWireSphere(transform.position, playerFleeRange);
+   // }
 
 #endif
 }
