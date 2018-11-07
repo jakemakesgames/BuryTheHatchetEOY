@@ -9,7 +9,7 @@ public class AmmoController : MonoBehaviour {
 	private int currentCard = 5;
     
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		PlayingCardTransforms[] cardTransforms = GetComponentsInChildren<PlayingCardTransforms>();
 
 		for (int i = 0; i < cardTransforms.Length; i++) {

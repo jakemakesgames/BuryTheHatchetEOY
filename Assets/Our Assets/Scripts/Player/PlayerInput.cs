@@ -129,10 +129,13 @@ public class PlayerInput : MonoBehaviour {
     [Tooltip("Does the player have infinite ammo?")]
     [SerializeField] private bool m_infiniteAmmo;
 
+    [Tooltip("The ammo flashing image")]
+    [SerializeField] private Image m_ammoFlash;
+
     [Tooltip("Will the player pause when they shoot")]
     [SerializeField] private bool m_willPause;
 
-    [Tooltip("")]
+    [Tooltip("The time the player is paused for while shooting")]
     [SerializeField] private float m_shootPauseTime;
 
     //for use within the animation event of the same name
@@ -748,6 +751,23 @@ public class PlayerInput : MonoBehaviour {
             yield return new WaitForSeconds(0.25f);
         }
     }
+    
+    IEnumerator FlashAmmo() {
+        Color healthColour = m_ammoFlash.color;
+        float alpha = 0;
+        m_ammoFlash.color = new Color(healthColour.r, healthColour.g, healthColour.b, alpha);
+        while (true) {
+            while (m_weaponController.EquippedGun.GetIsEmpty()) {
+                alpha -= Time.deltaTime;
+                m_ammoFlash.color = new Color(healthColour.r, healthColour.g, healthColour.b, alpha);
+                if (alpha <= 0)
+                    alpha = 1f;
+                yield return new WaitForEndOfFrame();
+            }
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
     #endregion
 
     //----------------------------
@@ -1009,6 +1029,8 @@ public class PlayerInput : MonoBehaviour {
         for (int i = m_weaponController.EquippedGun.ClipSize; i > m_weaponController.EquippedGun.CurrentClip; i--) {
             m_ammoController.Shoot();
         }
+        if (m_ammoFlash != null)
+            StartCoroutine(FlashAmmo());
     }
     #endregion
 

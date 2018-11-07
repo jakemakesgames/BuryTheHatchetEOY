@@ -67,6 +67,7 @@ public class Player : MonoBehaviour, IDamagable {
     private bool m_hasDroppedTrigger = false;
     private float m_dropDeadCounter = 0;
     private float m_deathFadeOutTimer;
+    [SerializeField] private Image m_healthFlashAlpha;
     private Vector3 m_respawnPoint;
 
     #endregion
@@ -145,6 +146,8 @@ public class Player : MonoBehaviour, IDamagable {
         if (m_hitSound != null)
             m_audioSource.PlayOneShot(m_hitSound, SFXVolume);
         UpdateHealthDisplay();
+        if (m_healthFlashAlpha != null)
+            StartCoroutine(FlashHealth());
     }
     public void TakeHit(int a_damage, RaycastHit a_hit) {
         TakeDamage(a_damage);
@@ -318,6 +321,18 @@ public class Player : MonoBehaviour, IDamagable {
         //    m_healthAmountTextMesh.text = m_health + " / " + m_maxHealth.ToString();
         if (m_healthBar != null)
             m_healthBar.fillAmount = (health / maxHealth);
+    }
+
+    IEnumerator FlashHealth()
+    {
+        Color healthColour = m_healthFlashAlpha.color;
+        float alpha = 1;
+        m_healthFlashAlpha.color = new Color(healthColour.r, healthColour.g, healthColour.b, alpha);
+        while (m_healthFlashAlpha.color.a >= 0) {
+            alpha -= Time.deltaTime;
+            m_healthFlashAlpha.color = new Color(healthColour.r, healthColour.g, healthColour.b, alpha);
+            yield return new WaitForEndOfFrame();
+        }
     }
 
     //Sets up health, weapon information and respawn point
