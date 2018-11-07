@@ -576,14 +576,15 @@ public class PlayerInput : MonoBehaviour {
             //ROLLING MOVEMENT//
             //----------------//
             else {
-                m_rollTimePassed = (Time.time - m_rollStartTime) * (m_rollTimeMultiplier + m_rollAccelerationRate);
                 //time passed = t
                 //acceleration rate = a
                 if (m_usingCurveForRoll) {
+                    m_rollTimePassed = (Time.time - m_rollStartTime);
                     m_rollSpeed = m_rollCurve.Evaluate(m_rollTimePassed * m_rollTimeMultiplier) * m_rollAccelerationRate;
                     m_rollVelocity = transform.forward * m_rollSpeed;
                 }
                 else {
+                    m_rollTimePassed = (Time.time - m_rollStartTime) * (m_rollTimeMultiplier + m_rollAccelerationRate);
                     if (m_rollAccelerating) {
                         //Accelerate along a parabola starting at 0 ending at 1
                         //velocity = -1 * (t - a)^2 + a^2
