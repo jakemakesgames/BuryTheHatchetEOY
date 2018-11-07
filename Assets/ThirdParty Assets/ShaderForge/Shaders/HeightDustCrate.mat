@@ -70,7 +70,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Level: 3.34
+    - _Level: 10
     - _Metallic: 0
     - _MetallicRoughness: 0
     - _Mode: 0
@@ -80,10 +80,10 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
-    - _UpNode: 0.263
+    - _UpNode: 0.147
     - _ZWrite: 1
-    - _contrast: 0.5
-    - _dustnoiseopacity: 0.286
+    - _contrast: 0.1
+    - _dustnoiseopacity: 0
     - _dustopacity: 0
     - _node_6297: 10
     - _node_6297_copy: 0.1
@@ -91,10 +91,10 @@ Material:
     - _node_9799: 0
     - _noisetile: 9.54
     - _opacity: 0.46
-    - _overallopacity: 0.008
+    - _overallopacity: 0
     - _texturetile: 6.34
-    - _worldpos: 2
+    - _worldpos: 0.2
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RockBase: {r: 0.24313726, g: 0.13333334, b: 0, a: 1}
+    - _RockBase: {r: 0.18382353, g: 0.14584158, b: 0.10677984, a: 1}

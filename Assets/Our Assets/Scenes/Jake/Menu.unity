@@ -15762,7 +15762,7 @@ MonoBehaviour:
   m_optionsMenu: {fileID: 176618005}
   m_creditsMenu: {fileID: 699534541}
   m_pauseMenu: {fileID: 1852881150}
-  m_playScene: BetaLevel_1
+  m_playScene: BetaLevel_2
   m_menuScene: Menu
   m_creditsScene: Credits
   m_player: {fileID: 0}
@@ -15782,7 +15782,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3b4c26770595a14596d2824f26da1c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eS: {fileID: 1874128276}
 --- !u!4 &1906638286 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4435800326180274, guid: daeca966f21eec545b7acea320544878,
