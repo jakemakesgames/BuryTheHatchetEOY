@@ -353,9 +353,11 @@ public class PlayerInput : MonoBehaviour {
     //and also checks if the player wishes to reload
     public void Attack() {
 
+        //When the timer for the melee attack hit box has finished turn it off
         if (m_swingTimer < Time.time)
             m_meleeHitBox.enabled = false;
         
+        //If the player is in a reload animation check if the user can and wants to reload and if so stay in the reload animation
         if (   m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01") 
             || m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Top.Character_Anim_Reload_v01 0")) {
             if (Input.GetKey(KeyCode.R) && m_weaponController.GetEquippedGun().IsFull == false) {
@@ -368,10 +370,11 @@ public class PlayerInput : MonoBehaviour {
             }
         }
 
+        //If the gun is full or the player doesn't want to reload tell the animator to exit the reloading animations
         if (Input.GetKey(KeyCode.R) == false || GunFull)
             m_playerAnimator.SetTrigger("FinishedReloading");
 
-        //play the gun empty idle
+        //Play the gun empty idle
         if (GunEmpty)
             m_playerAnimator.SetBool("GunEmpty", true);
         else if (GunEmpty == false)
@@ -989,11 +992,13 @@ public class PlayerInput : MonoBehaviour {
             m_invincibilityParticle.Stop();
 
         m_playerAnimator = GetComponentInChildren<Animator>();
-        m_viewCamera = m_camera;
+        if (m_camera == null)
+            m_viewCamera = Camera.main;
+        else
+            m_viewCamera = m_camera;
         m_nmaAcceleration = m_nma.acceleration;
         m_nmaAngledSpeed = m_nma.angularSpeed;
         m_nmaSpeed = m_nma.speed;
-
         StartCoroutine(CheckCombatRadius());
     }
 
