@@ -4648,7 +4648,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1707636803707616}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.17, y: 0.96, z: -5.82}
+  m_LocalPosition: {x: -7.3, y: 0.96, z: -5.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4842977106672378}
@@ -6607,7 +6607,7 @@ BoxCollider:
   m_GameObject: {fileID: 1967345716617544}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -7165,7 +7165,7 @@ MonoBehaviour:
   m_rollSpeedStart: 20
   m_rollCoolDownTime: 0.5
   m_rollAccelerationRate: 1.1
-  m_rollTimeMultiplier: 0.06
+  m_rollTimeMultiplier: 0.05
   m_invicibilityTime: 0.5
   m_spur: {fileID: 0}
   m_spurAnimCurve:

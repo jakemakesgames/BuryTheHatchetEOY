@@ -39,14 +39,14 @@ public class PlayerCamera : MonoBehaviour
     //The smoothness in which the camera will reach the desired positions
     private Vector3 m_smoothedPosition;
 
-    private bool m_foundPlayer;
+    private bool m_foundPlayer = true;
 
     #endregion
 
     // Update is called once per frame
     void Update ()
     {
-        PlayerCheck();
+        //PlayerCheck();
         CameraFollow();
     }
 

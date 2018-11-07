@@ -115,7 +115,7 @@ public class lb_BirdController : MonoBehaviour {
 	}
 
 	void Start () {
-        spawnPos = new Vector3(transform.localPosition.x, spawnHeight, transform.localPosition.z);
+        spawnPos = new Vector3(transform.parent.localPosition.x, spawnHeight, transform.parent.localPosition.z);
 
 		//find the camera
 		if (currentCamera == null){
