@@ -176,9 +176,14 @@ public class lb_BirdController : MonoBehaviour {
 			myBirds[i].SetActive (false);
 		}
 
-		//find all the targets
-		GameObject[] groundTargets = GameObject.FindGameObjectsWithTag("lb_groundTarget");
-		GameObject[] perchTargets = GameObject.FindGameObjectsWithTag("lb_perchTarget");
+        //find all the targets
+        GameObject[] groundTargets = new GameObject[transform.childCount];
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            groundTargets[i] = transform.GetChild(i).gameObject;
+        }
+        //GameObject.FindGameObjectsWithTag("lb_groundTarget");
+        GameObject[] perchTargets = GameObject.FindGameObjectsWithTag("lb_perchTarget");
 
 		for (int i=0;i<groundTargets.Length;i++){
 			if(Vector3.Distance (groundTargets[i].transform.position,currentCamera.transform.position)<unspawnDistance){
