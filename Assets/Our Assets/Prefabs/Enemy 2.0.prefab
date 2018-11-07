@@ -3092,6 +3092,7 @@ GameObject:
   - component: {fileID: 120164493994491102}
   - component: {fileID: 114460678494928610}
   - component: {fileID: 114323979707526152}
+  - component: {fileID: 114996485045062692}
   m_Layer: 9
   m_Name: Enemy 2.0
   m_TagString: Untagged
@@ -4088,8 +4089,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1935959088329442}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0.3826841, z: -0, w: 0.92387927}
+  m_LocalPosition: {x: 0.91067505, y: -0.3600006, z: 20.916103}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4700581048052408}
@@ -4247,7 +4248,7 @@ Transform:
   m_GameObject: {fileID: 1437866586196290}
   m_LocalRotation: {x: 0.6021245, y: -0.3707372, z: -0.3707372, w: -0.6021245}
   m_LocalPosition: {x: 0, y: 0.74, z: 0}
-  m_LocalScale: {x: 0.11286754, y: 0.11286753, z: 0.11286753}
+  m_LocalScale: {x: 0.1310653, y: 0.1310653, z: 0.1310653}
   m_Children: []
   m_Father: {fileID: 4700581048052408}
   m_RootOrder: 2
@@ -6749,6 +6750,7 @@ MonoBehaviour:
   m_weaponHold: {fileID: 4507266021402648}
   m_startingGun: {fileID: 114602979445381950, guid: a1c393be65c62c84e987b70f8b708bb3,
     type: 2}
+  m_startingAmmo: 0
   m_startingMelee: {fileID: 114496311847859846, guid: 5e68efd63c582db4b9dc21328ce22ea5,
     type: 2}
   m_entityCollisionMask:
@@ -6777,7 +6779,7 @@ MonoBehaviour:
   m_maxHealth: 20
   m_deadZone: 0.1
   m_bodyDropHeight: 0.3
-  m_stunDuration: 0.5
+  m_stunDuration: 1
   m_knockbackDuration: 0.15
   m_deathSounds:
   - {fileID: 8300000, guid: b05fd4b13e6775b41afdc221f5d39481, type: 3}
@@ -6832,7 +6834,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a3fb429c8ecdb14dbbabe2154af9725, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 50
+  speed: 20
+--- !u!114 &114996485045062692
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1935959088329442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23fa698560b688845bf08bafe6dc1b28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AdditionalVertexStreamMesh: {fileID: 0}
 --- !u!120 &120164493994491102
 LineRenderer:
   m_ObjectHideFlags: 1
@@ -10621,7 +10635,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -475192815
+  randomSeed: -1398342493
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -11266,8 +11280,8 @@ ParticleSystem:
       time: 0
       countCurve:
         serializedVersion: 2
-        minMaxState: 3
-        scalar: 20
+        minMaxState: 0
+        scalar: 4
         minScalar: 15
         maxCurve:
           serializedVersion: 2
@@ -14081,7 +14095,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1824419179
+  randomSeed: 1920232914
   InitialModule:
     serializedVersion: 3
     enabled: 1
