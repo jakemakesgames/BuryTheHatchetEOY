@@ -181,6 +181,7 @@ public class UIManager : MonoBehaviour
         m_mainMenu.SetActive(false);
         m_pauseMenu.SetActive(false);
 
+
     }
 
     [ContextMenu("Pause Game")]

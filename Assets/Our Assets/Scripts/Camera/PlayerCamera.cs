@@ -17,7 +17,7 @@ public class PlayerCamera : MonoBehaviour
     #region Public Variables
     [Header("Player")]
     [Tooltip("Player Character")]
-    [SerializeField] GameObject m_player;
+    [SerializeField] Player m_player;
     [Tooltip("Camera's offset to the Player Character")]
     [SerializeField] Vector3 m_offset;
 
@@ -25,6 +25,7 @@ public class PlayerCamera : MonoBehaviour
     [Tooltip("The Smoothness in which our camera follows our player")]
     [Range(0, 100)] [SerializeField] float m_smoothSpeed;
 
+    private UIManager m_uiManager;
     
     #endregion
 
@@ -37,21 +38,45 @@ public class PlayerCamera : MonoBehaviour
 
     //The smoothness in which the camera will reach the desired positions
     private Vector3 m_smoothedPosition;
+
+    private bool m_foundPlayer;
+
     #endregion
 
     // Update is called once per frame
     void Update ()
     {
-        #region Smoothed Camera Follow
-        //Sets the players position to be the desired position
-        m_desiredPosition = m_player.transform.position + m_offset;
-        //Lerps the camera between its initial position to the targets position by the smooth speed
-        m_smoothedPosition = Vector3.Lerp(transform.position, m_desiredPosition, m_smoothSpeed / 100);
-
-        //Makes the Camera follow the Player
-        transform.position = m_smoothedPosition;
-        #endregion
+        PlayerCheck();
+        CameraFollow();
     }
 
  
+     public void PlayerCheck()
+    {
+        if (!m_uiManager.GetInMenu())
+        {
+            m_player = FindObjectOfType<Player>();
+            m_foundPlayer = true;
+        }
+        else
+        {
+            m_foundPlayer = false;
+        }
+    }
+
+    public void CameraFollow()
+    {
+        if (m_foundPlayer)
+        {
+            #region Smoothed Camera Follow
+            //Sets the players position to be the desired position
+            m_desiredPosition = m_player.transform.position + m_offset;
+            //Lerps the camera between its initial position to the targets position by the smooth speed
+            m_smoothedPosition = Vector3.Lerp(transform.position, m_desiredPosition, m_smoothSpeed / 100);
+
+            //Makes the Camera follow the Player
+            transform.position = m_smoothedPosition;
+            #endregion
+        }
+    }
 }
