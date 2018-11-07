@@ -580,7 +580,7 @@ public class PlayerInput : MonoBehaviour {
                 //time passed = t
                 //acceleration rate = a
                 if (m_usingCurveForRoll) {
-                    m_rollSpeed = m_rollCurve.Evaluate(m_rollTimePassed * m_rollTimeMultiplier);
+                    m_rollSpeed = m_rollCurve.Evaluate(m_rollTimePassed * m_rollTimeMultiplier) * m_rollAccelerationRate;
                     m_rollVelocity = transform.forward * m_rollSpeed;
                 }
                 else {
