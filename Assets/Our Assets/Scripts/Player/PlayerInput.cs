@@ -554,7 +554,7 @@ public class PlayerInput : MonoBehaviour {
                                 m_clothesSpeaker.loop = true;
                                 m_clothesSpeaker.pitch = Random.Range(0.9f, 1.1f);
                             }
-                            if (m_walkingParticleSystem != null)
+                            if (m_walkingParticleSystem != null && m_walkingParticleSystem.isPlaying == false)
                                 m_walkingParticleSystem.Play();
                         }
                         else
