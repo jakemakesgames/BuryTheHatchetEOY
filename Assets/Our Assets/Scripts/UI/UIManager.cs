@@ -39,7 +39,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] Animator m_camerFadeAnim;
 
     private bool m_isPaused;
-    private bool m_inMenu;
+    public bool m_inMenu;
     private bool m_inCredit;
     private bool m_fade = true;
     private bool m_finishedMenuFade;
@@ -232,6 +232,8 @@ public class UIManager : MonoBehaviour
     public void Credits()
     {
         m_camerFadeAnim.gameObject.SetActive(true);
+        m_inMenu = false;
+        m_mainMenu.SetActive(false);
         FadeOutOfLevel();
         StartCoroutine(WaitForFade(m_creditFadeTime, m_creditsScene));
 
@@ -239,7 +241,6 @@ public class UIManager : MonoBehaviour
         m_inCredit = true;
         m_soundManager.m_exitCreditSound = false;
 
-        m_mainMenu.SetActive(false);
     }
 
     [ContextMenu("Quit Game")]

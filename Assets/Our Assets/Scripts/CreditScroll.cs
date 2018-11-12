@@ -45,6 +45,7 @@ public class CreditScroll : MonoBehaviour {
     public void BackToMenu()
     {
         m_uiManager.FadeOutOfLevel();
+        m_uiManager.m_inMenu = true;
         StartCoroutine(m_uiManager.WaitForFade(m_toMenuFade, m_uiManager.GetMenuScene()));
         //SceneManager.LoadScene(sceneToLoad);
     }
