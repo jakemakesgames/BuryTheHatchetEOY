@@ -22,12 +22,7 @@ public class SnakeMove : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Backspace))
-        {
-            Reset();
-        }
-       
+    {       
         if (move)
         {
             MoveToTarget();
@@ -42,15 +37,10 @@ public class SnakeMove : MonoBehaviour
         gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, target, moveSpeed * speedMultiplier);
         if (gameObject.transform.position == target)
         {
+            gameObject.transform.GetChild(1).gameObject.SetActive(false);
             move = false;
         }
 
-    }
-
-    private void Reset()
-    {
-        transform.position = startPos;
-        move = false;
     }
 
     IEnumerator SpeedModifier()
