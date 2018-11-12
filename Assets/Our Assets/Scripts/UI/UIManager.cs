@@ -144,11 +144,6 @@ public class UIManager : MonoBehaviour
         {
             m_mainMenu.SetActive(true);
         }
-
-        if (m_inCredit)
-        {
-            m_mainMenu.SetActive(false);
-        }
     }
 
     #region Public Functions
