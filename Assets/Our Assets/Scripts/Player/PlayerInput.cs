@@ -989,17 +989,17 @@ public class PlayerInput : MonoBehaviour {
         //Create the speakers for the individual sounds
 
         m_walkSpeaker = gameObject.AddComponent<AudioSource>();
-        m_walkSpeaker.volume = m_walkVol;
+        m_walkSpeaker.volume = Player.SFXVolume;
         if (m_walkSpeaker != null)
             m_walkSpeaker.clip = m_walkingSound;
 
         m_clothesSpeaker = gameObject.AddComponent<AudioSource>();
-        m_clothesSpeaker.volume = m_clothesVol;
+        m_clothesSpeaker.volume = Player.SFXVolume;
         if (m_clothesSpeaker != null)
             m_clothesSpeaker.clip = m_clothesRustleSound;
 
         m_rollSpeaker = gameObject.AddComponent<AudioSource>();
-        m_rollSpeaker.volume = m_rollVol;
+        m_rollSpeaker.volume = Player.SFXVolume;
         if (m_rollSpeaker != null)
             m_rollSpeaker.clip = m_rollSound;
 

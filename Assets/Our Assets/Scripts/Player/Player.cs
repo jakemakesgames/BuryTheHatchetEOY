@@ -62,6 +62,9 @@ public class Player : MonoBehaviour, IDamagable {
     [Tooltip("World height of body when dead after dropping")]
     [SerializeField] [Range(0f, 1f)] private float m_bodyDropHeight;
 
+    [Tooltip("The time in seconds after the death animation bool is set to true that it is set to false")]
+    [SerializeField] private float m_resetDeathAnimTime = 0.2f;
+
     private bool m_dead;
     private bool m_hasDropped = false;
     private bool m_hasDroppedTrigger = false;
@@ -69,6 +72,7 @@ public class Player : MonoBehaviour, IDamagable {
     private float m_deathFadeOutTimer;
     [SerializeField] private Image m_healthFlashAlpha;
     private Vector3 m_respawnPoint;
+    private Vector3 m_dropFrom;
 
     #endregion
 
@@ -227,7 +231,7 @@ public class Player : MonoBehaviour, IDamagable {
     //functionality to occur elsewhere
     private void Die() {
         Dead = true;
-
+        m_dropFrom = transform.position;
         //if the player animator exists, play a random death animation
         //and disable their navmesh agent to let the player fall with their mesh
         if (m_playerAnimator != null) {
@@ -235,6 +239,7 @@ public class Player : MonoBehaviour, IDamagable {
             m_playerAnimator.SetInteger("WhichDeath", randomAnim);
             m_playerAnimator.SetBool("Death", true);
             GetComponent<NavMeshAgent>().enabled = false;
+            Invoke("ResetDeathBool", m_resetDeathAnimTime);
         }
 
         if (m_camAnimator != null)
@@ -303,7 +308,7 @@ public class Player : MonoBehaviour, IDamagable {
 
             transform.position = Vector3.Lerp(transform.position, target, m_dropDeadCounter);
 
-            if (transform.position.y == m_bodyDropHeight) {
+            if (transform.position.y <= m_bodyDropHeight) {
                 if (m_dieParticleSystem != null)
                     m_dieParticleSystem.Play();
                 m_hasDropped = true;
@@ -311,6 +316,9 @@ public class Player : MonoBehaviour, IDamagable {
                     m_UIManager.DeathFade();
             }
         }
+    }
+    private void ResetDeathBool() { 
+        m_playerAnimator.SetBool("Death", false);
     }
     #endregion
 
