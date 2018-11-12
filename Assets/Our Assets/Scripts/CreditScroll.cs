@@ -6,7 +6,11 @@ using UnityEngine.SceneManagement;
 public class CreditScroll : MonoBehaviour {
 
     public float speed;
+    public float m_toMenuFade;
+    public string m_menuScene;
     public GameObject backBtn;
+
+    private UIManager m_uiManager;
 
     [Header("Back Button Timer")]
     private float timeCounter;
@@ -20,6 +24,8 @@ public class CreditScroll : MonoBehaviour {
     private void Start()
     {
         backBtn.SetActive(false);
+
+        m_uiManager = FindObjectOfType<UIManager>();
     }
 
     private void Update()
@@ -38,6 +44,8 @@ public class CreditScroll : MonoBehaviour {
     }
     public void BackToMenu()
     {
-        SceneManager.LoadScene(sceneToLoad);
+        m_uiManager.FadeOutOfLevel();
+        StartCoroutine(m_uiManager.WaitForFade(m_toMenuFade, m_uiManager.GetMenuScene()));
+        //SceneManager.LoadScene(sceneToLoad);
     }
 }

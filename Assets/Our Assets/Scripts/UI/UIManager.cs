@@ -133,7 +133,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitForFade(float a_WaitTime, string a_scene)
+    public IEnumerator WaitForFade(float a_WaitTime, string a_scene)
     {
         FadeToNextLevel();
         yield return new WaitForSeconds(a_WaitTime);
@@ -238,6 +238,8 @@ public class UIManager : MonoBehaviour
         m_soundManager.m_creditSound = true;
         m_inCredit = true;
         m_soundManager.m_exitCreditSound = false;
+
+        m_mainMenu.SetActive(false);
     }
 
     [ContextMenu("Quit Game")]
