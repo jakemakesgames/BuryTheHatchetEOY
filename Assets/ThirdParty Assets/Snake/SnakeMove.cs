@@ -9,13 +9,26 @@ public class SnakeMove : MonoBehaviour
     [SerializeField] Animation snakingAnim;
     [SerializeField] float animSpeed;
     [SerializeField] float speedMultiplier;
+    [SerializeField] float snakeHissVolume;
+    AudioSource m_audioSource;
+    SoundManager m_soundManager;
     Vector3 startPos;
     float moveSpeed;
     bool move = false;
 
+    public float SFXVolume
+    {
+        get
+        {
+            if (m_soundManager == null) return 1f;
+            else { return m_soundManager.MasterVolume * m_soundManager.SFXVolume; }
+        }
+    }
     // Use this for initialization
     void Start()
     {
+        m_audioSource = GetComponent<AudioSource>();
+        m_soundManager = FindObjectOfType<SoundManager>();
         snakingAnim["idle"].speed = animSpeed;
         startPos = transform.position;
     }
@@ -37,7 +50,7 @@ public class SnakeMove : MonoBehaviour
         gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, target, moveSpeed * speedMultiplier);
         if (gameObject.transform.position == target)
         {
-            gameObject.transform.GetChild(1).gameObject.SetActive(false);
+            Destroy(gameObject);
             move = false;
         }
 
@@ -60,6 +73,8 @@ public class SnakeMove : MonoBehaviour
             gameObject.transform.GetChild(1).gameObject.SetActive(true);
             move = true;
             StartCoroutine(SpeedModifier());
+            m_audioSource.volume = snakeHissVolume * SFXVolume;
+            m_audioSource.Play();
         }
 
     }

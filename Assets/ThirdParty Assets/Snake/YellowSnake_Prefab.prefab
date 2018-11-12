@@ -348,7 +348,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &400000
 Transform:
   m_ObjectHideFlags: 1
@@ -801,6 +801,7 @@ MonoBehaviour:
   snakingAnim: {fileID: 11100000}
   animSpeed: 4
   speedMultiplier: 0.25
+  snakeHissVolume: 0.03
 --- !u!135 &135726241824722756
 SphereCollider:
   m_ObjectHideFlags: 1
