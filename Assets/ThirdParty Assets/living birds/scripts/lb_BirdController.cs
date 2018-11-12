@@ -54,11 +54,8 @@ public class lb_BirdController : MonoBehaviour {
                 {
                     if (myBirds[i].activeSelf)
                     {
-                        if (Random.value < .6)
-                        {
-                            myBirds[i].SendMessage("Flee");
-                            StartCoroutine(UnspawnTimed(myBirds[i]));
-                        }
+                        myBirds[i].SendMessage("Flee");
+                        StartCoroutine(UnspawnTimed(myBirds[i]));
                     }
                 }
             }
