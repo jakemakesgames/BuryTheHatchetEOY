@@ -966,7 +966,7 @@ Material:
     - _Ambient: 0.5
     - _Bevel: 1
     - _BevelClamp: 0.017
-    - _BevelOffset: -0.282
+    - _BevelOffset: 0.032
     - _BevelRoundness: 0.981
     - _BevelWidth: 0.5
     - _BumpFace: 0
