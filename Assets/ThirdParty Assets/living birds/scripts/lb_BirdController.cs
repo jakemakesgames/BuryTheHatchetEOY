@@ -25,6 +25,7 @@ public class lb_BirdController : MonoBehaviour {
     GameObject player;
     bool pause = false;
     bool playerIsClose = false;
+    bool spawnedAlready = false;
     Vector3 spawnPos;
     float distBetweenPlayer;
     GameObject[] myBirds;
@@ -224,9 +225,10 @@ public class lb_BirdController : MonoBehaviour {
 
 	void UpdateBirds(){
 		//this function is called once a second
-		if(activeBirds < idealNumberOfBirds  && AreThereActiveTargets()){
+		if(activeBirds < idealNumberOfBirds  && AreThereActiveTargets() && !spawnedAlready){
 			//if there are less than ideal birds active, spawn a bird
 			SpawnBird();
+            //spawnedAlready = true;
 		}else if(activeBirds < maximumNumberOfBirds && Random.value < .01 && AreThereActiveTargets()){
 			//if there are less than maximum birds active spawn a bird every 20 seconds
 			//SpawnBird();
