@@ -60,6 +60,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     protected float m_knockbackTimer;
     protected float m_projectileKnockBack;
     protected bool m_hasTakenImpact = false;
+    protected bool m_isStunned = false;
     protected bool m_isDead = false;
     protected bool m_hasDropped = false;
     protected bool m_hasDroppedTrigger = false;
@@ -147,6 +148,7 @@ public class BaseAI : MonoBehaviour, IDamagable
         m_projectileKnockBack = a_projectile.KnockBack;
         m_stunHitTimer = Time.time + m_stunDuration;
         m_knockbackTimer = Time.time + m_knockbackDuration;
+        m_isStunned = true;
         if(m_isDead == false)
         {
             m_hasTakenImpact = true;
