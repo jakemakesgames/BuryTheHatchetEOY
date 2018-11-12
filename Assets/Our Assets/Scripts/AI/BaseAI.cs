@@ -72,6 +72,7 @@ public class BaseAI : MonoBehaviour, IDamagable
     protected PlayerInput m_playerInput;
     protected Vector3 m_projectileVel;
     protected WeaponController m_weaponController;
+    protected SoundManager m_soundManager;
 
     public delegate void Dead(AI enemy);
     public Dead OnDeath;
@@ -85,12 +86,21 @@ public class BaseAI : MonoBehaviour, IDamagable
     public bool HasDroppedTrigger { set { m_hasDroppedTrigger = value; } }
     public Animator EnemyAnimator {   get { return m_enemyAnimator; } set { m_enemyAnimator = value; } }
     #endregion
+    public float SFXVolume
+    {
+        get
+        {
+            if (m_soundManager == null) return 1f;
+            else { return m_soundManager.MasterVolume * m_soundManager.SFXVolume; }
+        }
+    }
 
     protected virtual void Awake()
     {
         m_player = GameObject.FindGameObjectWithTag("Player");
         m_playerInput = m_player.GetComponent<PlayerInput>();
         m_weaponController = GetComponent<WeaponController>();
+        m_soundManager = FindObjectOfType<SoundManager>();
     }
 
     protected virtual void Start()
@@ -192,7 +202,7 @@ public class BaseAI : MonoBehaviour, IDamagable
         RandomPitch();
         if (m_deathSounds.Count != 0)
         {
-            m_audioSource.PlayOneShot(m_deathSounds[Random.Range(0, m_deathSounds.Count)]);
+            m_audioSource.PlayOneShot(m_deathSounds[Random.Range(0, m_deathSounds.Count)], SFXVolume);
         }
         GetComponent<NavMeshAgent>().enabled = false;
         CurrCoverObj.tag = "CoverFree";
