@@ -233,7 +233,7 @@ public class Player : MonoBehaviour, IDamagable {
         if (m_playerAnimator != null) {
             int randomAnim = Random.Range(0, m_deathAnimCount - 1);
             m_playerAnimator.SetInteger("WhichDeath", randomAnim);
-            m_playerAnimator.SetTrigger("Death");
+            m_playerAnimator.SetBool("Death", true);
             GetComponent<NavMeshAgent>().enabled = false;
         }
 
@@ -263,8 +263,10 @@ public class Player : MonoBehaviour, IDamagable {
         if (Rp != null)
             Rp.ResetEnemies();
 
-        if (m_playerAnimator != null)
+        if (m_playerAnimator != null) {
             m_playerAnimator.SetTrigger("Respawn");
+            m_playerAnimator.SetBool("Death", false);
+        }
 
         if (m_dieParticleSystem != null) {
             m_dieParticleSystem.Stop();
