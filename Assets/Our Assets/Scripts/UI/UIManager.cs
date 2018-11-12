@@ -15,8 +15,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject m_mainMenu;
     [Tooltip("Options Menu object")]
     [SerializeField] GameObject m_optionsMenu;
-    [Tooltip("Credits object")]
-    [SerializeField] GameObject m_creditsMenu;
     [Tooltip("Pause Menu object")]
     [SerializeField] GameObject m_pauseMenu;
     
@@ -79,7 +77,6 @@ public class UIManager : MonoBehaviour
         m_mainMenu.SetActive(true);
         m_optionsMenu.SetActive(false);
         m_pauseMenu.SetActive(false);
-        m_creditsMenu.SetActive(false);
 
         //CurrentEquippedWeaponImage();
 
@@ -101,6 +98,11 @@ public class UIManager : MonoBehaviour
     public string GetPlayScene()
     {
         return m_playScene;
+    }
+
+    public string GetMenuScene()
+    {
+        return m_menuScene;
     }
 
     public void Update()
@@ -146,7 +148,6 @@ public class UIManager : MonoBehaviour
         if (m_inCredit)
         {
             m_mainMenu.SetActive(false);
-            m_creditsMenu.SetActive(true);
         }
     }
 
@@ -207,7 +208,6 @@ public class UIManager : MonoBehaviour
     public void ReturnToMenu()
     {
         m_pauseMenu.SetActive(false);
-        m_creditsMenu.SetActive(false);
         Time.timeScale = 1;
         FadeOutOfLevel();
         StartCoroutine(WaitForFade(m_menuFadeTime, m_menuScene));
@@ -268,6 +268,7 @@ public class UIManager : MonoBehaviour
     }
 
     #endregion
+
 }
 
     #region OLD GUI CODE LIAM
