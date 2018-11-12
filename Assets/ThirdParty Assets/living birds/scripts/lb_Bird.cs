@@ -76,6 +76,7 @@ public class lb_Bird : MonoBehaviour , IDamagable
     }
 
     void OnEnable () {
+        m_soundManager = FindObjectOfType<SoundManager>();
 		birdCollider = gameObject.GetComponent<BoxCollider>();
 		bColCenter = birdCollider.center;
 		bColSize = birdCollider.size;
