@@ -21,10 +21,9 @@ GameObject:
   - component: {fileID: 4385328163432830}
   - component: {fileID: 33843784191540676}
   - component: {fileID: 23656714791932510}
-  - component: {fileID: 95576420442387800}
   - component: {fileID: 208889087662414112}
-  - component: {fileID: 65954007510173662}
-  - component: {fileID: 65126206991319540}
+  - component: {fileID: 64412238863954268}
+  - component: {fileID: 114358567891549170}
   m_Layer: 10
   m_Name: Environment_Rock_Cover_V01
   m_TagString: CoverFree
@@ -39,8 +38,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1300646180433234}
   m_LocalRotation: {x: -0, y: 0.6402598, z: -0, w: 0.7681585}
-  m_LocalPosition: {x: 77.649994, y: 0, z: 132.20001}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 66.65, y: 0, z: 116.2}
+  m_LocalScale: {x: 1.0000005, y: 1, z: 1.0000005}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -71,7 +70,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
+  m_SelectedEditorRenderState: 2
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -86,8 +85,8 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1300646180433234}
   m_Mesh: {fileID: 4300000, guid: 7d305b80559f55f43bc420bd57c22cc6, type: 3}
---- !u!65 &65126206991319540
-BoxCollider:
+--- !u!64 &64412238863954268
+MeshCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -95,38 +94,23 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.6733446, y: 1.3408179, z: 1.3268592}
-  m_Center: {x: 0.3650422, y: 1.8118777, z: -0.05617559}
---- !u!65 &65954007510173662
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1300646180433234}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.3343887, y: 1.1496916, z: 1.3095343}
-  m_Center: {x: 0.0508852, y: 0.5531335, z: -0.051195145}
---- !u!95 &95576420442387800
-Animator:
   serializedVersion: 3
+  m_Convex: 0
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 4300000, guid: 7d305b80559f55f43bc420bd57c22cc6, type: 3}
+--- !u!114 &114358567891549170
+MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1300646180433234}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 7d305b80559f55f43bc420bd57c22cc6, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23fa698560b688845bf08bafe6dc1b28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AdditionalVertexStreamMesh: {fileID: 0}
 --- !u!208 &208889087662414112
 NavMeshObstacle:
   m_ObjectHideFlags: 1
