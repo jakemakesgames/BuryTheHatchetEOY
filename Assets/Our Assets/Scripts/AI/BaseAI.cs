@@ -195,7 +195,8 @@ public class BaseAI : MonoBehaviour, IDamagable
         m_dazeParticleSystem.Stop();
         int randomAnim = Random.Range(0, m_deathAnimationCount);
         EnemyAnimator.SetInteger("WhichDeath", randomAnim);
-        EnemyAnimator.SetTrigger("Death");
+        EnemyAnimator.SetBool("Death", true);
+        Invoke("ResetDeathBool", .2f);
         EnemyAnimator.ResetTrigger("Reloading");
         EnemyAnimator.ResetTrigger("Shoot");
         EnemyAnimator.ResetTrigger("Aim");
@@ -225,6 +226,10 @@ public class BaseAI : MonoBehaviour, IDamagable
         }
     }
 
+    void ResetDeathBool()
+    {
+        EnemyAnimator.SetBool("Death", false);
+    }
     public void Respawn()
     {
         if (m_isDead)
