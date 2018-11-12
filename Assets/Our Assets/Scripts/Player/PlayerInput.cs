@@ -366,15 +366,14 @@ public class PlayerInput : MonoBehaviour {
                     if (m_ammoController != null)
                         m_ammoController.Reload();
                     m_playerAnimator.ResetTrigger("FinishedReloading");
-                    m_playerAnimator.SetTrigger("Reload");
+                    m_playerAnimator.SetBool("Reload", true);
                 }
             }
         }
 
         //If the gun is full or the player doesn't want to reload tell the animator to exit the reloading animations
-        if (Input.GetKey(KeyCode.R) == false || GunFull)
-            m_playerAnimator.SetTrigger("FinishedReloading");
-
+        if (Input.GetKey(KeyCode.R) == false || GunFull) { m_playerAnimator.SetTrigger("FinishedReloading"); m_playerAnimator.SetBool("Reload", false); }
+            
         //Play the gun empty idle
         if (GunEmpty)
             m_playerAnimator.SetBool("GunEmpty", true);
@@ -437,7 +436,7 @@ public class PlayerInput : MonoBehaviour {
                             if (m_ammoController != null)
                                 m_ammoController.Reload();
                             m_playerAnimator.ResetTrigger("FinishedReloading");
-                            m_playerAnimator.SetTrigger("Reload");
+                            m_playerAnimator.SetBool("Reload", true);
                         }
                     }
                 }
