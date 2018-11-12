@@ -331,8 +331,7 @@ public class PlayerInput : MonoBehaviour {
         float spinTimer = 0.0f;
         float startAngle = m_spur.transform.eulerAngles.z;
 
-        while (spinTimer < m_spurSpinTime)
-        {
+        while (spinTimer < m_spurSpinTime) {
             float currentTime = (float)(System.DateTime.Now - startSpinTime).TotalSeconds;
             float acceleration = 1.5f * currentTime;
             float angle = m_spurAnimCurve.Evaluate(spinTimer / m_spurSpinTime) * m_spurMaxAngle;
@@ -343,8 +342,7 @@ public class PlayerInput : MonoBehaviour {
         m_spur.GetComponentInChildren<RectTransform>().eulerAngles = new Vector3(0.0f, 0.0f, -(m_spurMaxAngle + startAngle));
         m_spurSpinning = false;
         m_canRoll = true;
-        if (m_rollSpeaker != null && m_canRollSound != null)
-            m_rollSpeaker.PlayOneShot(m_canRollSound);
+        if (m_rollSpeaker != null && m_canRollSound != null) m_rollSpeaker.PlayOneShot(m_canRollSound, Player.SFXVolume);
     }
     #endregion
 
@@ -548,13 +546,14 @@ public class PlayerInput : MonoBehaviour {
                     {
                         if (m_walkSpeaker.isPlaying == false)
                         {
-                            if (m_walkSpeaker != null && m_walkingSound != null)
-                                m_walkSpeaker.Play(); /*NEED TO IMPLAMENT VOLUME CONTROL, RANDOM PITCHING AND RANDOMISE IF IT PLAYS*/
+                            if (m_walkSpeaker != null && m_walkingSound != null) {
+                                if (Random.Range(0, 1) == 1) { m_walkSpeaker.Play(); m_walkSpeaker.pitch = Random.Range(0.9f, 1.1f); }
+                            }
 
-                            if (m_clothesSpeaker != null && m_clothesSpeaker != null)
-                            {
+                            if (m_clothesSpeaker != null && m_clothesSpeaker != null) {
                                 m_clothesSpeaker.Play();
                                 m_clothesSpeaker.loop = true;
+                                m_clothesSpeaker.pitch = Random.Range(0.9f, 1.1f);
                             }
                             if (m_walkingParticleSystem != null)
                                 m_walkingParticleSystem.Play();
@@ -722,8 +721,8 @@ public class PlayerInput : MonoBehaviour {
 
                     m_velPreRoll = m_velocity;
 
-                    if (m_rollSpeaker != null && m_rollSound != null)
-                        m_rollSpeaker.Play(); /**NEED TO IMPLEMENT VOLUME CONTROL AND RANDOM PITCHING*/
+                    if (m_rollSpeaker != null && m_rollSound != null) { m_rollSpeaker.Play(); m_rollSpeaker.pitch = Random.Range(0.9f, 1.1f);}
+
 
                     if (m_rollParticleSystem != null)
                         m_rollParticleSystem.Play();

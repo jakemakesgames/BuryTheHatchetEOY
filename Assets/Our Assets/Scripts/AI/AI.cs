@@ -141,6 +141,7 @@ public class AI : BaseAI
     private bool m_noOtherCover = false;
     private bool m_isPeeking;
     private bool m_needReload = false;
+    private bool m_glintPlayed = false;
 
     private STATE m_state;
 
@@ -377,7 +378,7 @@ public class AI : BaseAI
         }
         else
         {
-            m_state = STATE.FINDCOVER;
+             m_state = STATE.FINDCOVER;
             //TO DO: WANDER STATE
         }
 
@@ -504,37 +505,41 @@ public class AI : BaseAI
     }
     protected override void Attack()
     {
+        if (m_stunHitTimer > Time.time)
+        {
+            Gun.GlintParticleSystem.Stop();
+            return;
+        }
         if (m_gunDistToPlayer < m_attackRadius && m_finishedReload && m_state != STATE.RELOAD)
         {
-            //if (m_needReload == false)
-            //{
-            //    m_weaponController.m_weaponHold.LookAt(HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y));
-            //}
             //start wind up timer
             m_timerBetweenShots += Time.deltaTime;
             m_timerBeforeGlint += Time.deltaTime;
             EnemyAnimator.SetTrigger("Aim");
 
+            //Glint particle logic
             if (m_state == STATE.FINDCOVER)
             {
                 if (m_timerBeforeGlint >= m_timeBeforeGlintCover && Gun.GetIsEmpty() == false)
                 {
-                    if (Gun.GlintParticleSystem.isPlaying == false)
+                    if (Gun.GlintParticleSystem.isPlaying == false && m_glintPlayed == false)
                     {
                         Gun.GlintParticleSystem.Play();
                         m_shootTarget = HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y);
+                        m_glintPlayed = true;
                     }
                 }
             }
             else if (m_timerBeforeGlint >= m_timeBeforeGlintPeek && Gun.GetIsEmpty() == false)
             {
-                if (Gun.GlintParticleSystem.isPlaying == false)
+                if (Gun.GlintParticleSystem.isPlaying == false && m_glintPlayed == false)
                 {
                     Gun.GlintParticleSystem.Play();
                     m_shootTarget = HeightCorrectedLookPos(m_weaponController.m_weaponHold.transform.position.y);
                 }
             }
 
+            //Shoot
             if (m_state == STATE.FINDCOVER && IsPeeking == false && m_timerBetweenShots >= m_timeBeforeShootCover)
             {
                 m_weaponController.GunSpreadAngle = m_unAimedBulletSpread;
@@ -545,7 +550,7 @@ public class AI : BaseAI
                     EnemyAnimator.SetTrigger("Shoot");
                     m_timerBetweenShots = 0;
                     m_timerBeforeGlint = 0;
-
+                    m_glintPlayed = false;
                 }
             }
            else if (m_timerBetweenShots >= m_timeBeforeShootPeek)
@@ -559,6 +564,7 @@ public class AI : BaseAI
                     EnemyAnimator.SetTrigger("Shoot");
                     m_timerBetweenShots = 0;
                     m_timerBeforeGlint = 0;
+                    m_glintPlayed = false;
                 }
             }
 
