@@ -703,7 +703,8 @@ public class PlayerInput : MonoBehaviour {
                 if (m_playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("Revolver Shoot") == false) {
                     m_rollStartTime = Time.time;
                     m_invicibilityTimer = m_rollStartTime + m_invicibilityTime;
-                    m_playerAnimator.SetTrigger("Roll");
+                    m_playerAnimator.SetBool("Roll", true);
+                    Invoke("ResetRollBool", 0.2f);
 
                     m_playerAnimator.SetBool("Reloading", false);
                     m_isRolling = true;
@@ -733,6 +734,8 @@ public class PlayerInput : MonoBehaviour {
             }
         }
     }
+
+    private void ResetRollBool() { m_playerAnimator.SetBool("Roll", false); }
 
     //Player interacting with the world in way other than moving and attacking
     private void Interact() {
