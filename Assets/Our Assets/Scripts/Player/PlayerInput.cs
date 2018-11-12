@@ -756,13 +756,13 @@ public class PlayerInput : MonoBehaviour {
         float alpha = 0;
         m_ammoFlash.color = new Color(healthColour.r, healthColour.g, healthColour.b, alpha);
         while (true) {
-            while (m_weaponController.EquippedGun.GetIsEmpty()) {
+            if (m_weaponController.EquippedGun.GetIsEmpty()) {
                 alpha -= Time.deltaTime;
                 m_ammoFlash.color = new Color(healthColour.r, healthColour.g, healthColour.b, alpha);
                 if (alpha <= 0)
                     alpha = 1f;
-                yield return new WaitForEndOfFrame();
             }
+            else { m_ammoFlash.color = new Color(healthColour.r, healthColour.g, healthColour.b, 0); }
             yield return new WaitForEndOfFrame();
         }
     }
