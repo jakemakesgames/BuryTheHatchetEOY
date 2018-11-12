@@ -147,7 +147,10 @@ public class BaseAI : MonoBehaviour, IDamagable
         m_projectileKnockBack = a_projectile.KnockBack;
         m_stunHitTimer = Time.time + m_stunDuration;
         m_knockbackTimer = Time.time + m_knockbackDuration;
-        m_hasTakenImpact = true;
+        if(m_isDead == false)
+        {
+            m_hasTakenImpact = true;
+        }
     }
 
     private void CheckIfHitTaken()
