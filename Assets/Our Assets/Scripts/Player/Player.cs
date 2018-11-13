@@ -295,6 +295,7 @@ public class Player : MonoBehaviour, IDamagable {
                     }
                 }
             }
+            m_input.EndRoll();
         }
     }
 

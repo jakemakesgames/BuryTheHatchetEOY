@@ -6,16 +6,17 @@ using UnityEngine.SceneManagement;
 public class BetaEndLevel : MonoBehaviour {
 
     public GameObject GameUI;
-    public GameObject GameOverUI;
 
-    public string levelToReload;
-    public string menuToLoad;
+    //public string levelToReload;
+    //public string menuToLoad;
+
+    private UIManager m_uiManager;
 
     private void Start()
     {
         Time.timeScale = 1;
         GameUI.SetActive(true);
-        GameOverUI.SetActive(false);
+        m_uiManager = FindObjectOfType<UIManager>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -23,15 +24,15 @@ public class BetaEndLevel : MonoBehaviour {
         if (other.tag == "Player") {
             Time.timeScale = 0;
             GameUI.SetActive(false);
-            GameOverUI.SetActive(true);
+            m_uiManager.EndLevelMenu.SetActive(true);
         }
     }
 
     public void ReloadScene() {
-        SceneManager.LoadScene(levelToReload);
+        //SceneManager.LoadScene(levelToReload);
     }
 
     public void QuitToMenu() {
-        SceneManager.LoadScene(menuToLoad);
+        //SceneManager.LoadScene(menuToLoad);
     }
 }
