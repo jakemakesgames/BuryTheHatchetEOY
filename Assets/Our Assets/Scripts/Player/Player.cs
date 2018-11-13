@@ -270,7 +270,6 @@ public class Player : MonoBehaviour, IDamagable {
 
         if (m_playerAnimator != null) {
             m_playerAnimator.SetTrigger("Respawn");
-            m_playerAnimator.SetBool("Death", false);
         }
 
         if (m_dieParticleSystem != null) {
@@ -317,9 +316,7 @@ public class Player : MonoBehaviour, IDamagable {
             }
         }
     }
-    private void ResetDeathBool() { 
-        m_playerAnimator.SetBool("Death", false);
-    }
+    private void ResetDeathBool() { m_playerAnimator.SetBool("Death", false); }
     #endregion
 
     //updates the health display

@@ -27,6 +27,7 @@ public class SpawnedSpeaker : MonoBehaviour {
         AudioSource = GetComponent<AudioSource>();
         m_soundManager = FindObjectOfType<SoundManager>();
         AudioSource.volume = SFXVolume;
+        AudioSource.pitch = Random.Range(0.9f, 1.1f);
     }
 
     //When the sound finishes playing destroy this object

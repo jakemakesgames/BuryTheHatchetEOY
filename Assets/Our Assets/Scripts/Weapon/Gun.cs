@@ -266,8 +266,7 @@ public class Gun : MonoBehaviour {
                 CurrentClip = ClipSize;
                 IsFull = true;
             }
-            if (m_audioSource != null)
-                    m_audioSource.PlayOneShot(m_reloadSound, SFXVolume);
+            if (m_audioSource != null) { m_audioSource.pitch = Random.Range(0.9f, 1.1f); m_audioSource.PlayOneShot(m_reloadSound, SFXVolume); }
             return true;
         }
         return false;
@@ -284,8 +283,7 @@ public class Gun : MonoBehaviour {
                 TimeUntilNextAction = Time.time + m_reloadTimeInSeconds;
                 m_setToReloadOne = true;
                 IsIdle = false;
-                if (m_audioSource != null)
-                    m_audioSource.PlayOneShot(m_reloadSound, SFXVolume);
+                if (m_audioSource != null) { m_audioSource.pitch = Random.Range(0.9f, 1.1f); m_audioSource.PlayOneShot(m_reloadSound, SFXVolume); }
                 return true;
             }
             else
@@ -362,8 +360,7 @@ public class Gun : MonoBehaviour {
                     Destroy(GO, m_smokeParticleLifeTime);
                 }
                 if (m_audioSource != null) {
-                    if (m_audioSource.isPlaying == false)
-                        m_audioSource.PlayOneShot(m_shootSound, SFXVolume);
+                    if (m_audioSource.isPlaying == false) { m_audioSource.pitch = Random.Range(0.9f, 1.1f); m_audioSource.PlayOneShot(m_shootSound, SFXVolume); }
                 }
                 CurrentClip--;
                 IsFull = false;
