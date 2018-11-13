@@ -17,7 +17,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject m_optionsMenu;
     [Tooltip("Pause Menu object")]
     [SerializeField] GameObject m_pauseMenu;
-    
+    [Tooltip("End Level Menu object")]
+    [SerializeField] GameObject m_endLevelMenu;
+
     [Header("Scene Names")]
     [Tooltip("Game Scene string")]
     [SerializeField] string m_playScene;
@@ -74,17 +76,17 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        m_mainMenu.SetActive(true);
-        m_optionsMenu.SetActive(false);
-        m_pauseMenu.SetActive(false);
-
-        //CurrentEquippedWeaponImage();
 
         m_camerFadeAnim.gameObject.SetActive(false);
 
         m_currScene = SceneManager.GetActiveScene();
 
         m_soundManager = FindObjectOfType<SoundManager>();
+
+        if (m_currScene.buildIndex == 0)
+        {
+            m_mainMenu.SetActive(true);
+        }
 
     }
 
@@ -94,6 +96,19 @@ public class UIManager : MonoBehaviour
     }
 
     public bool CreditScene { get { return m_inCredit; } }
+
+    public GameObject EndLevelMenu
+    {
+        get
+        {
+            return m_endLevelMenu;
+        }
+
+        set
+        {
+            m_endLevelMenu = value;
+        }
+    }
 
     public string GetPlayScene()
     {
@@ -135,8 +150,11 @@ public class UIManager : MonoBehaviour
 
     public IEnumerator WaitForFade(float a_WaitTime, string a_scene)
     {
+        Time.timeScale = 1;
         FadeToNextLevel();
         yield return new WaitForSeconds(a_WaitTime);
+        m_pauseMenu.SetActive(false);
+        m_endLevelMenu.SetActive(false);
         m_camerFadeAnim.ResetTrigger("FadeOut");
         SceneManager.LoadScene(a_scene);
 
@@ -202,10 +220,12 @@ public class UIManager : MonoBehaviour
     [ContextMenu("Return to Menu")]
     public void ReturnToMenu()
     {
-        m_pauseMenu.SetActive(false);
         Time.timeScale = 1;
         FadeOutOfLevel();
         StartCoroutine(WaitForFade(m_menuFadeTime, m_menuScene));
+        //m_pauseMenu.SetActive(false);
+        //m_endLevelMenu.SetActive(false);
+
 
         m_inMenu = true;
         m_inCredit = false;

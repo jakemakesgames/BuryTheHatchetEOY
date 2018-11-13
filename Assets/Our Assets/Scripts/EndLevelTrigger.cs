@@ -33,6 +33,7 @@ public class EndLevelTrigger : MonoBehaviour
 
     public void LoadMenu()
     {
-        SceneManager.LoadScene(menu);
+        //SceneManager.LoadScene(menu);
+        m_uiManager.ReturnToMenu();
     }
 }
