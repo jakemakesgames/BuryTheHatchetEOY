@@ -18,6 +18,7 @@ public class lb_Bird : MonoBehaviour , IDamagable
 	public AudioClip song2;
 	public AudioClip flyAway1;
 	public AudioClip flyAway2;
+    public AudioSource flyAway;
 
 	public bool fleeCrows = true;
 
@@ -133,11 +134,11 @@ public class lb_Bird : MonoBehaviour , IDamagable
 	}
 	
 	IEnumerator FlyToTarget(Vector3 target){
-		if(Random.value < .5){
-			GetComponent<AudioSource>().PlayOneShot (flyAway1, SFXVolume);
-		}else{
-			GetComponent<AudioSource>().PlayOneShot (flyAway2, SFXVolume);
-		}
+		//if(Random.value < .5){
+		//	GetComponent<AudioSource>().PlayOneShot (flyAway1, SFXVolume);
+		//}else{
+		//	GetComponent<AudioSource>().PlayOneShot (flyAway2, SFXVolume);
+		//}
 		flying = true;
 		landing = false;
 		onGround = false;
@@ -477,7 +478,7 @@ public class lb_Bird : MonoBehaviour , IDamagable
 			StopCoroutine("FlyToTarget");
 			anim.SetBool(landingBoolHash, false);
 			controller.SendMessage ("BirdFindTarget",gameObject);
-            GetComponent<AudioSource>().PlayOneShot(flyAway1, SFXVolume);
+            //GetComponent<AudioSource>().PlayOneShot(flyAway1, SFXVolume);
         }
 	}
 
@@ -489,7 +490,8 @@ public class lb_Bird : MonoBehaviour , IDamagable
 			Vector3 farAwayTarget = transform.position;
 			farAwayTarget += new Vector3(Random.Range (-100,100)*controller.birdScale,10*controller.birdScale,Random.Range (-100,100)*controller.birdScale);
 			StartCoroutine("FlyToTarget",farAwayTarget);
-		}
+            flyAway.PlayOneShot(flyAway1, SFXVolume);
+        }
 	}
 
 	void CrowIsClose(){
