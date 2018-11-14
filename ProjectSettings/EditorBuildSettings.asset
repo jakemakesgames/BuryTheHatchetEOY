@@ -14,12 +14,21 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Our Assets/Scenes/LiamW/TestGuiScene.unity
     guid: e4c7a2da5e29b6543a765d924aadf8cd
-  - enabled: 1
+  - enabled: 0
     path: Assets/Our Assets/Scenes/Test Environment.unity
     guid: e31523566e52b1e4d9b20eeeda98f225
-  - enabled: 1
+  - enabled: 0
     path: Assets/Our Assets/Scenes/JakeBlockout_Level.unity
     guid: c1a4dbe6df56640478d0cac321e57355
-  - enabled: 1
+  - enabled: 0
     path: Assets/Our Assets/Scenes/Mark - main_03.unity
     guid: f4118deb54c05c34c9e48f813e06e3cb
+  - enabled: 1
+    path: Assets/Our Assets/Scenes/Jake/Menu.unity
+    guid: a6c92d232ff2f8c4da056ff5f19aad24
+  - enabled: 1
+    path: Assets/Our Assets/Scenes/Jason/BetaLevel_2.unity
+    guid: 03b46070b32add84b9c49a4290a1f805
+  - enabled: 1
+    path: Assets/Our Assets/Scenes/Credits.unity
+    guid: 4129d74d410a43f43845bf6610b9f570
