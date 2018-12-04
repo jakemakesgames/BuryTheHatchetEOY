@@ -18,7 +18,7 @@ public class lb_Bird : MonoBehaviour , IDamagable
 	public AudioClip song2;
 	public AudioClip flyAway1;
 	public AudioClip flyAway2;
-    public AudioSource flyAway;
+    public AudioSource audioSource;
 
 	public bool fleeCrows = true;
 
@@ -79,6 +79,7 @@ public class lb_Bird : MonoBehaviour , IDamagable
     void OnEnable () {
         m_soundManager = FindObjectOfType<SoundManager>();
 		birdCollider = gameObject.GetComponent<BoxCollider>();
+        audioSource = GetComponent<AudioSource>();
 		bColCenter = birdCollider.center;
 		bColSize = birdCollider.size;
 		solidCollider = gameObject.GetComponent<SphereCollider>();
@@ -490,7 +491,9 @@ public class lb_Bird : MonoBehaviour , IDamagable
 			Vector3 farAwayTarget = transform.position;
 			farAwayTarget += new Vector3(Random.Range (-100,100)*controller.birdScale,10*controller.birdScale,Random.Range (-100,100)*controller.birdScale);
 			StartCoroutine("FlyToTarget",farAwayTarget);
-            flyAway.PlayOneShot(flyAway1, SFXVolume);
+            audioSource.spatialBlend = 0;
+            audioSource.PlayOneShot(flyAway1, SFXVolume);
+            audioSource.PlayOneShot(song2, SFXVolume);
         }
 	}
 

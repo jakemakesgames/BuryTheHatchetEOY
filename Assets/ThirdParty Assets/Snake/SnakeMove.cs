@@ -7,9 +7,9 @@ public class SnakeMove : MonoBehaviour
     [SerializeField] Transform targetTransform;
     [SerializeField] AnimationCurve animCurve;
     [SerializeField] Animation snakingAnim;
+    [SerializeField] AudioClip snakeHiss;
     [SerializeField] float animSpeed;
     [SerializeField] float speedMultiplier;
-    [SerializeField] float snakeHissVolume;
     AudioSource m_audioSource;
     SoundManager m_soundManager;
     Vector3 startPos;
@@ -73,8 +73,8 @@ public class SnakeMove : MonoBehaviour
             gameObject.transform.GetChild(1).gameObject.SetActive(true);
             move = true;
             StartCoroutine(SpeedModifier());
-            m_audioSource.volume = snakeHissVolume * SFXVolume;
-            m_audioSource.Play();
+            //m_audioSource.volume = snakeHissVolume * SFXVolume;
+           m_audioSource.PlayOneShot(snakeHiss, SFXVolume);
         }
 
     }
